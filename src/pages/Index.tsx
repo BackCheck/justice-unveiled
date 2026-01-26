@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
 import { timelineData, TimelineEvent } from "@/data/timelineData";
-import { TimelineCard } from "@/components/TimelineCard";
 import { TimelineFilters } from "@/components/TimelineFilters";
 import { TimelineStats } from "@/components/TimelineStats";
+import { DynamicTimeline } from "@/components/timeline/DynamicTimeline";
 import { Button } from "@/components/ui/button";
 import { Printer } from "lucide-react";
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
@@ -83,18 +83,11 @@ const Index = () => {
           />
         </div>
 
-        {/* Timeline */}
-        <div className="relative">
-          {filteredEvents.map((event, index) => (
-            <div key={`${event.date}-${index}`} className="timeline-card">
-              <TimelineCard 
-                event={event} 
-                index={timelineData.indexOf(event)}
-                forceExpanded={isPrintMode}
-              />
-            </div>
-          ))}
-        </div>
+        {/* Dynamic Timeline */}
+        <DynamicTimeline 
+          events={filteredEvents} 
+          isPrintMode={isPrintMode}
+        />
 
         {/* Footer */}
         <footer className="mt-16 pt-8 border-t text-center text-sm text-muted-foreground">
