@@ -9,10 +9,12 @@ import { format, parseISO } from "date-fns";
 interface TimelineCardProps {
   event: TimelineEvent;
   index: number;
+  forceExpanded?: boolean;
 }
 
-export const TimelineCard = ({ event, index }: TimelineCardProps) => {
+export const TimelineCard = ({ event, index, forceExpanded = false }: TimelineCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const showDetails = forceExpanded || isExpanded;
 
   const formattedDate = format(parseISO(event.date), "MMMM d, yyyy");
 
@@ -42,26 +44,28 @@ export const TimelineCard = ({ event, index }: TimelineCardProps) => {
         </CardHeader>
 
         <CardContent className="pt-0">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="mb-3 text-muted-foreground hover:text-foreground"
-          >
-            {isExpanded ? (
-              <>
-                <ChevronUp className="w-4 h-4 mr-1" />
-                Hide Details
-              </>
-            ) : (
-              <>
-                <ChevronDown className="w-4 h-4 mr-1" />
-                Show Details
-              </>
-            )}
-          </Button>
+          {!forceExpanded && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="mb-3 text-muted-foreground hover:text-foreground no-print"
+            >
+              {isExpanded ? (
+                <>
+                  <ChevronUp className="w-4 h-4 mr-1" />
+                  Hide Details
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-4 h-4 mr-1" />
+                  Show Details
+                </>
+              )}
+            </Button>
+          )}
 
-          {isExpanded && (
+          {showDetails && (
             <div className="space-y-4 animate-in slide-in-from-top-2 duration-200">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">

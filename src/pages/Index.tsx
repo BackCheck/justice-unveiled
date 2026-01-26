@@ -3,7 +3,8 @@ import { timelineData, TimelineEvent } from "@/data/timelineData";
 import { TimelineCard } from "@/components/TimelineCard";
 import { TimelineFilters } from "@/components/TimelineFilters";
 import { TimelineStats } from "@/components/TimelineStats";
-import { Scale, FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Scale, FileText, Printer } from "lucide-react";
 
 const Index = () => {
   const [selectedCategories, setSelectedCategories] = useState<TimelineEvent["category"][]>([
@@ -12,6 +13,15 @@ const Index = () => {
     "Legal Proceeding",
     "Criminal Allegation"
   ]);
+  const [isPrintMode, setIsPrintMode] = useState(false);
+
+  const handlePrint = () => {
+    setIsPrintMode(true);
+    setTimeout(() => {
+      window.print();
+      setIsPrintMode(false);
+    }, 100);
+  };
 
   const handleCategoryToggle = (category: TimelineEvent["category"]) => {
     setSelectedCategories(prev => {
@@ -44,9 +54,19 @@ const Index = () => {
           <h2 className="text-xl md:text-2xl text-slate-300 mb-6">
             Danish Thanvi vs. Agencies
           </h2>
-          <div className="flex items-center gap-2 text-slate-400">
-            <FileText className="w-4 h-4" />
-            <span className="text-sm">Based on 117 documented sources</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-slate-400">
+              <FileText className="w-4 h-4" />
+              <span className="text-sm">Based on 117 documented sources</span>
+            </div>
+            <Button
+              onClick={handlePrint}
+              variant="outline"
+              className="no-print bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white"
+            >
+              <Printer className="w-4 h-4 mr-2" />
+              Print / Export PDF
+            </Button>
           </div>
         </div>
       </header>
@@ -54,24 +74,30 @@ const Index = () => {
       {/* Main Content */}
       <main className="max-w-5xl mx-auto px-4 py-8">
         {/* Stats */}
-        <TimelineStats />
+        <div className="no-print">
+          <TimelineStats />
+        </div>
 
         {/* Filters */}
-        <TimelineFilters
-          selectedCategories={selectedCategories}
-          onCategoryToggle={handleCategoryToggle}
-          totalEvents={timelineData.length}
-          filteredCount={filteredEvents.length}
-        />
+        <div className="no-print">
+          <TimelineFilters
+            selectedCategories={selectedCategories}
+            onCategoryToggle={handleCategoryToggle}
+            totalEvents={timelineData.length}
+            filteredCount={filteredEvents.length}
+          />
+        </div>
 
         {/* Timeline */}
         <div className="relative">
           {filteredEvents.map((event, index) => (
-            <TimelineCard 
-              key={`${event.date}-${index}`} 
-              event={event} 
-              index={timelineData.indexOf(event)}
-            />
+            <div key={`${event.date}-${index}`} className="timeline-card">
+              <TimelineCard 
+                event={event} 
+                index={timelineData.indexOf(event)}
+                forceExpanded={isPrintMode}
+              />
+            </div>
           ))}
         </div>
 
