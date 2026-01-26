@@ -103,3 +103,50 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Print Styles */
+@media print {
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .print-expand {
+    display: block !important;
+  }
+
+  /* Force page breaks appropriately */
+  .timeline-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Ensure backgrounds print */
+  .bg-gradient-to-r,
+  [class*="bg-amber"],
+  [class*="bg-red"],
+  [class*="bg-blue"],
+  [class*="bg-purple"] {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Remove shadows for cleaner print */
+  .shadow-lg,
+  .shadow-sm {
+    box-shadow: none !important;
+  }
+
+  /* Adjust spacing for print */
+  .sticky {
+    position: relative !important;
+  }
+}
