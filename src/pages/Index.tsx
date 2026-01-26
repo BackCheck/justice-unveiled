@@ -4,7 +4,8 @@ import { TimelineCard } from "@/components/TimelineCard";
 import { TimelineFilters } from "@/components/TimelineFilters";
 import { TimelineStats } from "@/components/TimelineStats";
 import { Button } from "@/components/ui/button";
-import { Scale, FileText, Printer } from "lucide-react";
+import { Printer } from "lucide-react";
+import { PlatformLayout } from "@/components/layout/PlatformLayout";
 
 const Index = () => {
   const [selectedCategories, setSelectedCategories] = useState<TimelineEvent["category"][]>([
@@ -40,36 +41,30 @@ const Index = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white py-12 px-4">
+    <PlatformLayout>
+      {/* Sub-header for Timeline */}
+      <div className="bg-gradient-to-r from-slate-800 to-slate-900 text-white py-8 px-4 no-print">
         <div className="max-w-5xl mx-auto">
-          <div className="flex items-center gap-3 mb-4">
-            <Scale className="w-10 h-10 text-amber-400" />
-            <span className="text-amber-400 text-sm font-medium uppercase tracking-wider">Legal Case Documentation</span>
-          </div>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
-            Timeline of Legal Events and Systemic Harassment
-          </h1>
-          <h2 className="text-xl md:text-2xl text-slate-300 mb-6">
-            Danish Thanvi vs. Agencies
-          </h2>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-slate-400">
-              <FileText className="w-4 h-4" />
-              <span className="text-sm">Based on 117 documented sources</span>
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold mb-2">
+                Case Timeline: Danish Thanvi vs. Agencies
+              </h2>
+              <p className="text-slate-300">
+                {timelineData.length} documented events from 117 verified sources
+              </p>
             </div>
             <Button
               onClick={handlePrint}
               variant="outline"
-              className="no-print bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white"
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white"
             >
               <Printer className="w-4 h-4 mr-2" />
-              Print / Export PDF
+              Export PDF
             </Button>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Main Content */}
       <main className="max-w-5xl mx-auto px-4 py-8">
@@ -107,7 +102,7 @@ const Index = () => {
           <p className="mt-2">All dates and events are based on official court documents, FIR records, and verified testimonies.</p>
         </footer>
       </main>
-    </div>
+    </PlatformLayout>
   );
 };
 
