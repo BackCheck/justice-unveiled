@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const navItems = [
   { path: "/", label: "Timeline", icon: Clock },
@@ -62,7 +63,7 @@ export const PlatformHeader = () => {
             })}
           </nav>
 
-          {/* Search & Mobile menu */}
+          {/* Search, Theme & Mobile menu */}
           <div className="flex items-center gap-2">
             <Button 
               variant="outline" 
@@ -72,6 +73,7 @@ export const PlatformHeader = () => {
               <Search className="w-4 h-4 mr-2" />
               Search Intel
             </Button>
+            <ThemeToggle />
             <Button
               variant="ghost"
               size="icon"
