@@ -8,7 +8,8 @@ import {
   Clock, 
   Menu,
   X,
-  Shield
+  Shield,
+  Upload
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,7 @@ const navItems = [
   { path: "/dashboard", label: "Intel Dashboard", icon: BarChart3 },
   { path: "/network", label: "Entity Network", icon: Network },
   { path: "/evidence", label: "Evidence Matrix", icon: FileText },
+  { path: "/uploads", label: "Uploads", icon: Upload },
 ];
 
 export const PlatformHeader = () => {
