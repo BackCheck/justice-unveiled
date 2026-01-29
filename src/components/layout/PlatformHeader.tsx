@@ -32,13 +32,13 @@ export const PlatformHeader = () => {
       <div className="max-w-7xl mx-auto px-4">
         {/* Top bar */}
         <div className="flex items-center justify-between py-4 border-b border-border">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden">
-              <img src={hrpmLogo} alt="HRPM Logo" className="w-12 h-12 object-contain" />
+          <Link to="/" className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-lg flex items-center justify-center overflow-hidden">
+              <img src={hrpmLogo} alt="HRPM Logo" className="w-16 h-16 object-contain" />
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight text-foreground">HRPM.org</h1>
-              <p className="text-xs text-muted-foreground">Human Rights Protection Movement</p>
+              <p className="text-sm text-muted-foreground">Human Rights Protection Movement</p>
             </div>
           </Link>
 
