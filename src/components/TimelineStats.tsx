@@ -11,29 +11,29 @@ export const TimelineStats = () => {
       label: "Business Interference",
       count: getCategoryCount("Business Interference"),
       icon: Briefcase,
-      color: "text-amber-500",
-      bgColor: "bg-amber-500/10"
+      color: "text-amber-500 dark:text-amber-400",
+      bgColor: "bg-amber-500/10 dark:bg-amber-500/20"
     },
     {
       label: "Harassment",
       count: getCategoryCount("Harassment"),
       icon: AlertOctagon,
-      color: "text-red-500",
-      bgColor: "bg-red-500/10"
+      color: "text-red-500 dark:text-red-400",
+      bgColor: "bg-red-500/10 dark:bg-red-500/20"
     },
     {
       label: "Legal Proceedings",
       count: getCategoryCount("Legal Proceeding"),
       icon: Scale,
-      color: "text-blue-500",
-      bgColor: "bg-blue-500/10"
+      color: "text-blue-500 dark:text-blue-400",
+      bgColor: "bg-blue-500/10 dark:bg-blue-500/20"
     },
     {
       label: "Criminal Allegations",
       count: getCategoryCount("Criminal Allegation"),
       icon: FileWarning,
-      color: "text-purple-500",
-      bgColor: "bg-purple-500/10"
+      color: "text-purple-500 dark:text-purple-400",
+      bgColor: "bg-purple-500/10 dark:bg-purple-500/20"
     }
   ];
 

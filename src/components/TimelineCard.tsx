@@ -24,12 +24,12 @@ export const TimelineCard = ({ event, index, forceExpanded = false }: TimelineCa
       <div className="absolute left-[23px] top-12 bottom-0 w-0.5 bg-border last:hidden" />
       
       {/* Timeline dot */}
-      <div className={`relative z-10 flex-shrink-0 w-12 h-12 rounded-full ${categoryColors[event.category]} flex items-center justify-center shadow-lg`}>
+      <div className={`relative z-10 flex-shrink-0 w-12 h-12 rounded-full ${categoryColors[event.category]} flex items-center justify-center shadow-lg ring-4 ring-background`}>
         <span className="text-white font-bold text-sm">{index + 1}</span>
       </div>
 
       {/* Content */}
-      <Card className={`flex-1 border-l-4 ${categoryBorderColors[event.category]} hover:shadow-lg transition-shadow duration-300`}>
+      <Card className={`flex-1 border-l-4 ${categoryBorderColors[event.category]} hover:shadow-lg transition-all duration-300 hover:translate-x-1`}>
         <CardHeader className="pb-3">
           <div className="flex flex-wrap items-center gap-3 mb-2">
             <Badge variant="secondary" className="flex items-center gap-1">
@@ -100,10 +100,10 @@ export const TimelineCard = ({ event, index, forceExpanded = false }: TimelineCa
 
                 <div className="space-y-2">
                   <div className="flex items-start gap-2">
-                    <AlertTriangle className="w-4 h-4 mt-1 text-amber-500 flex-shrink-0" />
+                    <AlertTriangle className="w-4 h-4 mt-1 text-primary flex-shrink-0" />
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">Evidence Discrepancy</p>
-                      <p className="text-sm text-amber-700 dark:text-amber-400">{event.evidenceDiscrepancy}</p>
+                      <p className="text-sm text-primary">{event.evidenceDiscrepancy}</p>
                     </div>
                   </div>
                 </div>
