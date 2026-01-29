@@ -1,10 +1,8 @@
 import { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
   Select,
@@ -17,6 +15,7 @@ import { Upload, FileAudio, FileText, File, X, CheckCircle, AlertCircle } from "
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { EventSelector } from "./EventSelector";
 
 const ACCEPTED_TYPES = {
   "audio/mpeg": { ext: "mp3", icon: FileAudio, label: "Audio" },
@@ -47,6 +46,7 @@ export const EvidenceUploader = ({ onUploadComplete }: { onUploadComplete?: () =
   const [uploads, setUploads] = useState<UploadState[]>([]);
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("general");
+  const [selectedEventIds, setSelectedEventIds] = useState<number[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -133,6 +133,7 @@ export const EvidenceUploader = ({ onUploadComplete }: { onUploadComplete?: () =
             public_url: publicUrl,
             description: description || null,
             category,
+            related_event_ids: selectedEventIds.length > 0 ? selectedEventIds : null,
           });
 
         if (dbError) throw dbError;
@@ -282,6 +283,11 @@ export const EvidenceUploader = ({ onUploadComplete }: { onUploadComplete?: () =
                 rows={3}
               />
             </div>
+
+            <EventSelector
+              selectedEventIds={selectedEventIds}
+              onSelectionChange={setSelectedEventIds}
+            />
 
             <Button onClick={uploadFiles} className="w-full">
               <Upload className="w-4 h-4 mr-2" />

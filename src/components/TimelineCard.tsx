@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Calendar, Users, Scale, AlertTriangle, FileText } from "lucide-react";
 import { TimelineEvent, categoryColors, categoryBorderColors } from "@/data/timelineData";
 import { format, parseISO } from "date-fns";
+import { LinkedEvidence } from "@/components/timeline/LinkedEvidence";
 
 interface TimelineCardProps {
   event: TimelineEvent;
@@ -112,6 +113,9 @@ export const TimelineCard = ({ event, index, forceExpanded = false }: TimelineCa
               <div className="pt-2 border-t">
                 <p className="text-xs text-muted-foreground">Sources: {event.sources}</p>
               </div>
+
+              {/* Linked Evidence */}
+              <LinkedEvidence eventIndex={index} />
             </div>
           )}
         </CardContent>
