@@ -33,11 +33,11 @@ export const PlatformHeader = () => {
         {/* Top bar */}
         <div className="flex items-center justify-between py-4 border-b border-border">
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-background flex items-center justify-center overflow-hidden">
-              <img src={hrpmLogo} alt="HRPM Logo" className="w-9 h-9 object-contain" />
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden">
+              <img src={hrpmLogo} alt="HRPM Logo" className="w-12 h-12 object-contain" />
             </div>
             <div>
-              <h1 className="text-lg font-bold tracking-tight text-foreground">HRPM.org</h1>
+              <h1 className="text-xl font-bold tracking-tight text-foreground">HRPM.org</h1>
               <p className="text-xs text-muted-foreground">Human Rights Protection Movement</p>
             </div>
           </Link>
