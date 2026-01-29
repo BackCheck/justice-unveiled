@@ -47,11 +47,17 @@ const Index = () => {
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xs font-medium px-2 py-1 rounded bg-primary/20 text-primary">
+                  CASE FILE #001
+                </span>
+              </div>
               <h2 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">
-                Case Timeline: Danish Thanvi vs. Agencies
+                Danish Thanvi vs. State Agencies
               </h2>
               <p className="text-muted-foreground">
-                {timelineData.length} documented events from 117 verified sources
+                {timelineData.length} documented events from 117 verified sources • 
+                <span className="text-primary ml-1">Pakistan, 2015–2025</span>
               </p>
             </div>
             <Button
@@ -90,8 +96,12 @@ const Index = () => {
 
         {/* Footer */}
         <footer className="mt-16 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p>This timeline is compiled from 48 documented sources for legal reference purposes.</p>
+          <p className="font-medium text-foreground mb-2">HRPM.org — Human Rights Protection Movement</p>
+          <p>This case file is compiled from 48 documented sources for legal reference purposes.</p>
           <p className="mt-2">All dates and events are based on official court documents, FIR records, and verified testimonies.</p>
+          <p className="mt-4 text-xs">
+            Documenting injustice. Demanding accountability.
+          </p>
         </footer>
       </main>
     </PlatformLayout>
