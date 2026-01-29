@@ -107,6 +107,88 @@ export const sources: Source[] = [
     reliability: "high",
     events: [23],
     summary: "Handwriting expert analysis confirming forged signatures on recovery memos."
+  },
+  // New sources from NotebookLM Intelligence Briefing
+  {
+    id: 48,
+    title: "X24 Threat Intelligence Data Collection - NotebookLM Analysis",
+    type: "report",
+    category: "primary",
+    reliability: "high",
+    events: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+    summary: "AI-powered comprehensive analysis of 123 sources covering forensic evidence, witness statements, and persecution patterns."
+  },
+  {
+    id: 49,
+    title: "Audio Transcript Annex 7 - Abduction Conspiracy Recording",
+    type: "audio",
+    category: "primary",
+    reliability: "high",
+    events: [3],
+    summary: "Recorded phone call from November 11, 2016 between Tayyab Shah and Lt. Col. Saqib discussing plans to 'disappear' Danish Thanvi."
+  },
+  {
+    id: 50,
+    title: "IBMS Travel History Screenshot Evidence",
+    type: "document",
+    category: "primary",
+    reliability: "high",
+    events: [6],
+    summary: "WhatsApp screenshot showing Danish's 4-year international travel history obtained from restricted IBMS database."
+  },
+  {
+    id: 51,
+    title: "GPS Coordinates Threat Messages",
+    type: "document",
+    category: "primary",
+    reliability: "high",
+    events: [6],
+    summary: "WhatsApp messages containing real-time GPS coordinates with threatening messages like 'Run Lola run, u can't hide.'"
+  },
+  {
+    id: 52,
+    title: "Prosecution Witness Cross-Examination Transcripts",
+    type: "testimony",
+    category: "judicial",
+    reliability: "high",
+    events: [9, 12, 13, 14],
+    summary: "Court transcripts showing prosecution witnesses admitting to procedural violations and lack of evidence."
+  },
+  {
+    id: 53,
+    title: "Sindh Home Department Protection Order - October 2024",
+    type: "legal",
+    category: "primary",
+    reliability: "high",
+    events: [20],
+    summary: "Official government approval for personal protection following documented threats and extortion attempts."
+  },
+  {
+    id: 54,
+    title: "Federal Ministry of Interior Direction - October 2024",
+    type: "legal",
+    category: "primary",
+    reliability: "high",
+    events: [20],
+    summary: "Ministry directive to IGP Islamabad to review harassment complaint and take necessary action."
+  },
+  {
+    id: 55,
+    title: "Affidavit of Irreparable Loss - Islamabad High Court",
+    type: "legal",
+    category: "judicial",
+    reliability: "high",
+    events: [20, 21, 22],
+    summary: "Sworn affidavit documenting $2 million in losses due to LinkedIn hack, NADRA termination, and SECP actions."
+  },
+  {
+    id: 56,
+    title: "LinkedIn Account Deletion Evidence - June 2024",
+    type: "document",
+    category: "primary",
+    reliability: "high",
+    events: [20],
+    summary: "Documentation of 28-year professional profile hijacking and permanent deletion."
   }
 ];
 

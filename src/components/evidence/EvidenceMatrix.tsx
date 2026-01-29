@@ -13,8 +13,9 @@ import {
 import { sources, sourceTypeColors, reliabilityColors, Source } from "@/data/sourcesData";
 import { timelineData } from "@/data/timelineData";
 import { keyFindings, findingCategoryColors, severityColors } from "@/data/keyFindingsData";
-import { FileText, CheckCircle, AlertTriangle, Filter, Grid, List } from "lucide-react";
+import { FileText, CheckCircle, AlertTriangle, Filter, Grid, List, BookOpen, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 export const EvidenceMatrix = () => {
   const [viewMode, setViewMode] = useState<"matrix" | "list">("list");
@@ -46,6 +47,12 @@ export const EvidenceMatrix = () => {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Link to="/intel-briefing">
+            <Button variant="outline" size="sm">
+              <BookOpen className="w-4 h-4 mr-1" />
+              Intel Briefing
+            </Button>
+          </Link>
           <Button
             variant={viewMode === "list" ? "default" : "outline"}
             size="sm"
@@ -64,6 +71,31 @@ export const EvidenceMatrix = () => {
           </Button>
         </div>
       </div>
+
+      {/* Intel Briefing Banner */}
+      <Card className="bg-gradient-to-r from-primary/10 to-transparent border-primary/20">
+        <CardContent className="py-4">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <BookOpen className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-sm">X24 Intelligence Briefing Available</h3>
+                <p className="text-xs text-muted-foreground">
+                  Comprehensive analysis of forensic evidence, witness statements, and persecution patterns from 123 sources
+                </p>
+              </div>
+            </div>
+            <Link to="/intel-briefing">
+              <Button size="sm">
+                View Full Briefing
+                <ExternalLink className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Filters */}
       <Card>

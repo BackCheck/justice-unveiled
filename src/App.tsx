@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import NetworkPage from "./pages/Network";
 import EvidencePage from "./pages/Evidence";
 import UploadsPage from "./pages/Uploads";
+import IntelBriefing from "./pages/IntelBriefing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/network" element={<NetworkPage />} />
           <Route path="/evidence" element={<EvidencePage />} />
           <Route path="/uploads" element={<UploadsPage />} />
+          <Route path="/intel-briefing" element={<IntelBriefing />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
