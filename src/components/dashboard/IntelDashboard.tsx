@@ -17,6 +17,7 @@ import { keyFindings, severityColors, findingCategoryColors } from "@/data/keyFi
 import { sources } from "@/data/sourcesData";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { IntelBriefingCard } from "./IntelBriefingCard";
 
 export const IntelDashboard = () => {
   const stats = useMemo(() => {
@@ -137,6 +138,9 @@ export const IntelDashboard = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Intel Briefing Card */}
+      <IntelBriefingCard />
 
       {/* Key Findings */}
       <div>

@@ -1,9 +1,9 @@
-import { AlertTriangle, FileWarning, Shield, Gavel, Building2, Users } from "lucide-react";
+import { AlertTriangle, FileWarning, Shield, Gavel, Building2, Users, Eye, Phone, Banknote } from "lucide-react";
 
 export interface KeyFinding {
   id: string;
   title: string;
-  category: "procedural" | "forensic" | "corruption" | "judicial" | "regulatory" | "conspiracy";
+  category: "procedural" | "forensic" | "corruption" | "judicial" | "regulatory" | "conspiracy" | "surveillance" | "financial";
   severity: "critical" | "high" | "medium";
   summary: string;
   details: string[];
@@ -124,6 +124,54 @@ export const keyFindings: KeyFinding[] = [
     relatedEvents: [20, 21, 22],
     sources: "[2-4, 6, 8, 11, 16, 20, 36, 39-44]",
     icon: Gavel
+  },
+  {
+    id: "state-surveillance",
+    title: "State Surveillance Weaponization",
+    category: "surveillance",
+    severity: "critical",
+    summary: "Military officer sent victim's IBMS travel history and real-time GPS coordinates as threats.",
+    details: [
+      "4-year international travel history accessed from IBMS",
+      "Real-time GPS coordinates sent via WhatsApp",
+      "Threatening messages: 'Run Lola run, u can't hide'",
+      "Use of LIMS/GSM triangulation for civilian stalking"
+    ],
+    relatedEvents: [6],
+    sources: "[8, 9, 14]",
+    icon: Eye
+  },
+  {
+    id: "witness-coercion",
+    title: "Witness Coercion & Blank Document Signing",
+    category: "procedural",
+    severity: "high",
+    summary: "BCG employee detained 9 hours and forced to sign blank documents by FIA.",
+    details: [
+      "Irfan-ul-Haq detained from 2:00 PM to 11:30 PM",
+      "Forced to sign blank papers without knowledge of contents",
+      "Summoned 9 months before official enquiry number assigned",
+      "Evidence of pre-planned fabrication"
+    ],
+    relatedEvents: [9],
+    sources: "[19, 22]",
+    icon: Users
+  },
+  {
+    id: "financial-sabotage",
+    title: "Financial Sabotage via Stolen Data",
+    category: "financial",
+    severity: "critical",
+    summary: "Unsealed seized devices enabled LinkedIn hack and NADRA termination after criminal case collapsed.",
+    details: [
+      "16 devices never entered in Malkhana—handed to Col. Saqib",
+      "LinkedIn profile (28 years) deleted in June 2024",
+      "NADRA VeriSys identified as 'kill switch' from stolen data",
+      "Affidavit documents $2 million in damages"
+    ],
+    relatedEvents: [20, 21],
+    sources: "[2-4, 6, 8, 11, 16, 20, 36, 39-44]",
+    icon: Banknote
   }
 ];
 
@@ -133,7 +181,9 @@ export const findingCategoryColors: Record<KeyFinding["category"], string> = {
   corruption: "bg-purple-500/10 text-purple-700 border-purple-200",
   judicial: "bg-blue-500/10 text-blue-700 border-blue-200",
   regulatory: "bg-emerald-500/10 text-emerald-700 border-emerald-200",
-  conspiracy: "bg-rose-500/10 text-rose-700 border-rose-200"
+  conspiracy: "bg-rose-500/10 text-rose-700 border-rose-200",
+  surveillance: "bg-cyan-500/10 text-cyan-700 border-cyan-200",
+  financial: "bg-orange-500/10 text-orange-700 border-orange-200"
 };
 
 export const severityColors: Record<KeyFinding["severity"], string> = {

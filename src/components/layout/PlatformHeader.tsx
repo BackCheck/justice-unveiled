@@ -8,7 +8,8 @@ import {
   Clock, 
   Menu,
   X,
-  Upload
+  Upload,
+  BookOpen
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -18,6 +19,7 @@ import hrpmLogo from "@/assets/hrpm-logo.png";
 const navItems = [
   { path: "/", label: "Timeline", icon: Clock },
   { path: "/dashboard", label: "Intel Dashboard", icon: BarChart3 },
+  { path: "/intel-briefing", label: "Briefing", icon: BookOpen },
   { path: "/network", label: "Entity Network", icon: Network },
   { path: "/evidence", label: "Evidence Matrix", icon: FileText },
   { path: "/uploads", label: "Uploads", icon: Upload },
