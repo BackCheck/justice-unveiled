@@ -37,8 +37,8 @@ export const PlatformHeader = () => {
               <Shield className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-lg font-bold tracking-tight text-foreground">INTEL PLATFORM</h1>
-              <p className="text-xs text-muted-foreground">Investigative Intelligence</p>
+              <h1 className="text-lg font-bold tracking-tight text-foreground">HRPM.org</h1>
+              <p className="text-xs text-muted-foreground">Human Rights Protection Movement</p>
             </div>
           </Link>
 
