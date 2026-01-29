@@ -26,17 +26,17 @@ export const PlatformHeader = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white sticky top-0 z-50">
+    <header className="bg-card border-b border-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4">
         {/* Top bar */}
-        <div className="flex items-center justify-between py-4 border-b border-white/10">
+        <div className="flex items-center justify-between py-4 border-b border-border">
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-amber-500 flex items-center justify-center">
-              <Shield className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+              <Shield className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-lg font-bold tracking-tight">INTEL PLATFORM</h1>
-              <p className="text-xs text-slate-400">Investigative Intelligence</p>
+              <h1 className="text-lg font-bold tracking-tight text-foreground">INTEL PLATFORM</h1>
+              <p className="text-xs text-muted-foreground">Investigative Intelligence</p>
             </div>
           </Link>
 
@@ -51,8 +51,8 @@ export const PlatformHeader = () => {
                     variant="ghost"
                     size="sm"
                     className={cn(
-                      "text-slate-300 hover:text-white hover:bg-white/10",
-                      isActive && "bg-white/10 text-white"
+                      "text-muted-foreground hover:text-foreground hover:bg-accent",
+                      isActive && "bg-accent text-foreground"
                     )}
                   >
                     <Icon className="w-4 h-4 mr-2" />
@@ -68,7 +68,7 @@ export const PlatformHeader = () => {
             <Button 
               variant="outline" 
               size="sm" 
-              className="hidden sm:flex bg-white/5 border-white/20 text-white hover:bg-white/10"
+              className="hidden sm:flex"
             >
               <Search className="w-4 h-4 mr-2" />
               Search Intel
@@ -77,7 +77,7 @@ export const PlatformHeader = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden text-white"
+              className="md:hidden"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -99,8 +99,8 @@ export const PlatformHeader = () => {
                 >
                   <div
                     className={cn(
-                      "flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors",
-                      isActive && "bg-white/10 text-white"
+                      "flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors",
+                      isActive && "bg-accent text-foreground"
                     )}
                   >
                     <Icon className="w-5 h-5" />

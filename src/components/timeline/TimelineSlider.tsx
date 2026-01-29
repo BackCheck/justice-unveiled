@@ -222,9 +222,9 @@ export const TimelineSlider = ({
         {/* Playback hint */}
         <div className="text-center mt-2">
           <span className="text-xs text-muted-foreground">
-            Press <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">Space</kbd> to play/pause • 
-            <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono ml-1">←</kbd>
-            <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">→</kbd> to navigate
+            Press <kbd className="px-1.5 py-0.5 bg-secondary border border-border rounded text-[10px] font-mono">Space</kbd> to play/pause • 
+            <kbd className="px-1.5 py-0.5 bg-secondary border border-border rounded text-[10px] font-mono ml-1">←</kbd>
+            <kbd className="px-1.5 py-0.5 bg-secondary border border-border rounded text-[10px] font-mono">→</kbd> to navigate
           </span>
         </div>
       </div>

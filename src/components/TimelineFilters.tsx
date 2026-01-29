@@ -23,7 +23,7 @@ export const TimelineFilters = ({
   filteredCount
 }: TimelineFiltersProps) => {
   return (
-    <div className="bg-card border rounded-lg p-4 mb-8 sticky top-4 z-20 shadow-sm">
+    <div className="bg-card border rounded-lg p-4 mb-8 sticky top-20 z-10 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-wrap gap-2">
           <span className="text-sm font-medium text-muted-foreground mr-2 self-center">Filter by:</span>

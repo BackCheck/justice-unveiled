@@ -43,21 +43,20 @@ const Index = () => {
   return (
     <PlatformLayout>
       {/* Sub-header for Timeline */}
-      <div className="bg-gradient-to-r from-slate-800 to-slate-900 text-white py-8 px-4 no-print">
+      <div className="bg-secondary border-b border-border py-8 px-4 no-print">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold mb-2">
+              <h2 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">
                 Case Timeline: Danish Thanvi vs. Agencies
               </h2>
-              <p className="text-slate-300">
+              <p className="text-muted-foreground">
                 {timelineData.length} documented events from 117 verified sources
               </p>
             </div>
             <Button
               onClick={handlePrint}
               variant="outline"
-              className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white"
             >
               <Printer className="w-4 h-4 mr-2" />
               Export PDF
