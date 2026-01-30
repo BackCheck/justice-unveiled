@@ -40,14 +40,17 @@ export const TimelineStats = () => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
       {stats.map((stat) => (
-        <Card key={stat.label} className="overflow-hidden glass-card hover:shadow-professional-lg transition-all duration-300">
+        <Card key={stat.label} className="overflow-hidden glass-card card-hover">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className={`p-2.5 rounded-xl ${stat.bgColor}`}>
+              <div className={`p-2.5 rounded-full ${stat.bgColor}`}>
                 <stat.icon className={`w-5 h-5 ${stat.color}`} />
               </div>
               <div>
-                <p className="text-2xl font-bold text-primary">{stat.count}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-2xl font-bold text-primary">{stat.count}</p>
+                  <span className={`pill-stat h-2 bg-current opacity-40 ${stat.color}`} style={{ width: `${Math.max(stat.count * 3, 12)}px` }} />
+                </div>
                 <p className="text-xs text-muted-foreground">{stat.label}</p>
               </div>
             </div>
