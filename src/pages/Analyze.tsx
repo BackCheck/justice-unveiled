@@ -1,9 +1,11 @@
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
 import { DocumentAnalyzer } from "@/components/intel/DocumentAnalyzer";
+import { BatchDocumentUploader } from "@/components/intel/BatchDocumentUploader";
 import { AnalyzedDataSummary } from "@/components/intel/AnalyzedDataSummary";
 import { Brain, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Analyze = () => {
   return (
@@ -24,8 +26,19 @@ const Analyze = () => {
           </p>
         </div>
 
-        {/* Document Analyzer Form */}
-        <DocumentAnalyzer />
+        {/* Document Analyzer Tabs */}
+        <Tabs defaultValue="single" className="w-full">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="single">Single Document</TabsTrigger>
+            <TabsTrigger value="batch">Batch Upload</TabsTrigger>
+          </TabsList>
+          <TabsContent value="single" className="mt-4">
+            <DocumentAnalyzer />
+          </TabsContent>
+          <TabsContent value="batch" className="mt-4">
+            <BatchDocumentUploader />
+          </TabsContent>
+        </Tabs>
 
         {/* Separator */}
         <Separator />
