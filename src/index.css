@@ -30,9 +30,9 @@
     --popover: 60 20% 98%;
     --popover-foreground: 180 8% 15%;
 
-    /* Dark charcoal primary - gravity, authority */
-    --primary: 180 8% 15%;
-    --primary-foreground: 60 20% 97%;
+    /* Dark yellow/gold primary - authoritative, impactful */
+    --primary: 45 90% 38%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 100 12% 88%;
     --secondary-foreground: 180 8% 20%;
@@ -49,12 +49,12 @@
 
     --border: 100 15% 75%;
     --input: 100 15% 80%;
-    --ring: 180 8% 25%;
+    --ring: 45 90% 40%;
 
     --radius: 0.75rem;
 
-    /* Chart colors - professional sage palette */
-    --chart-1: 180 8% 20%;
+    /* Chart colors - professional palette with gold accent */
+    --chart-1: 45 90% 38%;
     --chart-2: 75 45% 55%;
     --chart-3: 0 60% 50%;
     --chart-4: 270 35% 50%;
@@ -62,12 +62,12 @@
 
     --sidebar-background: 180 10% 12%;
     --sidebar-foreground: 100 15% 85%;
-    --sidebar-primary: 75 45% 55%;
+    --sidebar-primary: 45 90% 45%;
     --sidebar-primary-foreground: 180 8% 12%;
     --sidebar-accent: 180 8% 20%;
     --sidebar-accent-foreground: 100 15% 90%;
     --sidebar-border: 180 8% 20%;
-    --sidebar-ring: 75 45% 60%;
+    --sidebar-ring: 45 90% 50%;
 
     /* Professional tokens */
     --justice-olive: 75 45% 55%;
@@ -88,8 +88,8 @@
     --popover: 180 10% 14%;
     --popover-foreground: 100 12% 90%;
 
-    /* Muted olive primary - refined, professional */
-    --primary: 75 40% 50%;
+    /* Dark yellow/gold primary - refined, authoritative */
+    --primary: 45 85% 50%;
     --primary-foreground: 180 10% 8%;
 
     /* Darker secondary surfaces */
@@ -111,10 +111,10 @@
     /* Subtle borders */
     --border: 180 8% 20%;
     --input: 180 8% 18%;
-    --ring: 75 40% 50%;
+    --ring: 45 85% 50%;
 
-    /* Chart colors - professional dark palette */
-    --chart-1: 75 40% 50%;
+    /* Chart colors - professional dark palette with gold */
+    --chart-1: 45 85% 50%;
     --chart-2: 100 25% 45%;
     --chart-3: 0 55% 50%;
     --chart-4: 270 40% 55%;
@@ -123,15 +123,15 @@
     /* Sidebar with depth */
     --sidebar-background: 180 10% 6%;
     --sidebar-foreground: 100 12% 85%;
-    --sidebar-primary: 75 40% 50%;
+    --sidebar-primary: 45 85% 50%;
     --sidebar-primary-foreground: 180 10% 8%;
     --sidebar-accent: 180 8% 14%;
     --sidebar-accent-foreground: 100 12% 90%;
     --sidebar-border: 180 8% 18%;
-    --sidebar-ring: 75 40% 55%;
+    --sidebar-ring: 45 85% 55%;
 
     /* Professional tokens */
-    --justice-olive: 75 40% 50%;
+    --justice-olive: 45 85% 50%;
     --authority-charcoal: 180 10% 12%;
     --sage-green: 100 25% 45%;
   }
