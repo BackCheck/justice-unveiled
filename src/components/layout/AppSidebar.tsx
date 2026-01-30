@@ -90,7 +90,7 @@ export function AppSidebar() {
     navigate("/auth");
   };
 
-  const NavItem = ({ item }: { item: { path: string; label: string; icon: React.ComponentType<{ className?: string }> } }) => {
+  const NavItem = ({ item, index = 0 }: { item: { path: string; label: string; icon: React.ComponentType<{ className?: string }> }; index?: number }) => {
     const Icon = item.icon;
     const active = isActive(item.path);
     
@@ -100,14 +100,22 @@ export function AppSidebar() {
           <Link 
             to={item.path}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-200",
+              "flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-300 group/item",
               active 
-                ? "bg-primary/10 text-primary border border-primary/20" 
-                : "text-muted-foreground hover:text-foreground hover:bg-accent/20"
+                ? "bg-primary/10 text-primary border border-primary/20 shadow-sm" 
+                : "text-muted-foreground hover:text-foreground hover:bg-accent/20 hover:translate-x-1"
             )}
+            style={{ animationDelay: `${index * 50}ms` }}
           >
-            <Icon className={cn("h-5 w-5 shrink-0", active && "text-primary")} />
+            <Icon className={cn(
+              "h-5 w-5 shrink-0 transition-all duration-300",
+              active && "text-primary",
+              !active && "group-hover/item:scale-110"
+            )} />
             <span className={cn("truncate", collapsed && "sr-only")}>{item.label}</span>
+            {active && (
+              <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            )}
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
@@ -118,12 +126,12 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r border-border/50">
       <SidebarHeader className="border-b border-border/50 p-4">
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-professional transition-all duration-300 group-hover:shadow-professional-lg shrink-0">
-            <Globe className="w-6 h-6 text-primary-foreground" />
+          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-professional transition-all duration-300 group-hover:shadow-professional-lg group-hover:scale-105 shrink-0">
+            <Globe className="w-6 h-6 text-primary-foreground transition-transform duration-500 group-hover:rotate-12" />
           </div>
           {!collapsed && (
-            <div className="flex flex-col min-w-0">
-              <span className="text-xl font-bold text-primary tracking-tight leading-none">HRPM</span>
+            <div className="flex flex-col min-w-0 overflow-hidden">
+              <span className="text-xl font-bold text-primary tracking-tight leading-none text-gradient-animate">HRPM</span>
               <span className="text-[10px] font-medium text-muted-foreground tracking-wide uppercase mt-0.5 truncate">
                 Human Rights Protection
               </span>
