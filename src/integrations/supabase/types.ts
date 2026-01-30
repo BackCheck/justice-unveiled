@@ -14,6 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      document_analysis_jobs: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          discrepancies_extracted: number | null
+          entities_extracted: number | null
+          error_message: string | null
+          events_extracted: number | null
+          id: string
+          started_at: string | null
+          status: string
+          upload_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          discrepancies_extracted?: number | null
+          entities_extracted?: number | null
+          error_message?: string | null
+          events_extracted?: number | null
+          id?: string
+          started_at?: string | null
+          status?: string
+          upload_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          discrepancies_extracted?: number | null
+          entities_extracted?: number | null
+          error_message?: string | null
+          events_extracted?: number | null
+          id?: string
+          started_at?: string | null
+          status?: string
+          upload_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_analysis_jobs_upload_id_fkey"
+            columns: ["upload_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_uploads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       evidence_uploads: {
         Row: {
           category: string | null
@@ -52,6 +99,153 @@ export type Database = {
           storage_path?: string
         }
         Relationships: []
+      }
+      extracted_discrepancies: {
+        Row: {
+          created_at: string
+          description: string
+          discrepancy_type: string
+          id: string
+          legal_reference: string | null
+          related_dates: string[] | null
+          severity: string
+          source_upload_id: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          discrepancy_type: string
+          id?: string
+          legal_reference?: string | null
+          related_dates?: string[] | null
+          severity: string
+          source_upload_id?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          discrepancy_type?: string
+          id?: string
+          legal_reference?: string | null
+          related_dates?: string[] | null
+          severity?: string
+          source_upload_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "extracted_discrepancies_source_upload_id_fkey"
+            columns: ["source_upload_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_uploads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      extracted_entities: {
+        Row: {
+          created_at: string
+          description: string | null
+          entity_type: string
+          id: string
+          name: string
+          related_event_ids: string[] | null
+          role: string | null
+          source_upload_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          entity_type: string
+          id?: string
+          name: string
+          related_event_ids?: string[] | null
+          role?: string | null
+          source_upload_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          entity_type?: string
+          id?: string
+          name?: string
+          related_event_ids?: string[] | null
+          role?: string | null
+          source_upload_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "extracted_entities_source_upload_id_fkey"
+            columns: ["source_upload_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_uploads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      extracted_events: {
+        Row: {
+          category: string
+          confidence_score: number | null
+          created_at: string
+          date: string
+          description: string
+          evidence_discrepancy: string
+          extraction_method: string | null
+          id: string
+          individuals: string
+          is_approved: boolean | null
+          legal_action: string
+          outcome: string
+          source_upload_id: string | null
+          sources: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          confidence_score?: number | null
+          created_at?: string
+          date: string
+          description: string
+          evidence_discrepancy: string
+          extraction_method?: string | null
+          id?: string
+          individuals: string
+          is_approved?: boolean | null
+          legal_action: string
+          outcome: string
+          source_upload_id?: string | null
+          sources: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          confidence_score?: number | null
+          created_at?: string
+          date?: string
+          description?: string
+          evidence_discrepancy?: string
+          extraction_method?: string | null
+          id?: string
+          individuals?: string
+          is_approved?: boolean | null
+          legal_action?: string
+          outcome?: string
+          source_upload_id?: string | null
+          sources?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "extracted_events_source_upload_id_fkey"
+            columns: ["source_upload_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_uploads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
