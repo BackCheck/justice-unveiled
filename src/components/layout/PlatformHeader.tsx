@@ -9,12 +9,13 @@ import {
   Menu,
   X,
   Upload,
-  BookOpen
+  BookOpen,
+  Scale,
+  Shield
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import hrpmLogo from "@/assets/hrpm-logo.png";
 
 const navItems = [
   { path: "/", label: "Timeline", icon: Clock },
@@ -35,8 +36,8 @@ export const PlatformHeader = () => {
         {/* Top bar */}
         <div className="flex items-center justify-between py-4 border-b border-border">
           <Link to="/" className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-lg flex items-center justify-center overflow-hidden">
-              <img src={hrpmLogo} alt="HRPM Logo" className="w-16 h-16 object-contain" />
+            <div className="w-14 h-14 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+              <Scale className="w-8 h-8 text-primary" />
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight text-foreground">HRPM.org</h1>
