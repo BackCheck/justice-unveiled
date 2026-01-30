@@ -14,7 +14,8 @@ import {
   LogOut,
   ChevronUp,
   LogIn,
-  Shield
+  Shield,
+  Home
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -46,7 +47,8 @@ import {
 import { toast } from "sonner";
 
 const mainNavItems = [
-  { path: "/", label: "Timeline", icon: Clock },
+  { path: "/", label: "Home", icon: Home },
+  { path: "/timeline", label: "Timeline", icon: Clock },
   { path: "/dashboard", label: "Intel Dashboard", icon: BarChart3 },
   { path: "/intel-briefing", label: "Briefing", icon: BookOpen },
   { path: "/network", label: "Entity Network", icon: Network },
