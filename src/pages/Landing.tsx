@@ -159,13 +159,13 @@ const Landing = () => {
               )}
               style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}
             >
-              <Link to="/">
-                <Button size="lg" className="group hover-lift">
-                  Explore Case File #001
-                  <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </Link>
-              <Link to="/dashboard">
+            <Link to="/timeline">
+              <Button size="lg" className="group hover-lift">
+                Explore Case File #001
+                <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </Link>
+            <Link to="/dashboard">
                 <Button size="lg" variant="outline" className="hover-lift">
                   View Intel Dashboard
                 </Button>
@@ -269,7 +269,7 @@ const Landing = () => {
                 ))}
               </ul>
 
-              <Link to="/">
+              <Link to="/timeline">
                 <Button className="group hover-lift">
                   View Full Timeline
                   <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
@@ -387,7 +387,7 @@ const Landing = () => {
             into structured intelligence.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/">
+            <Link to="/timeline">
               <Button size="lg" className="group hover-lift">
                 Start Exploring
                 <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
