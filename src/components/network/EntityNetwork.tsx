@@ -1,15 +1,18 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCombinedEntities, CombinedEntity, CombinedConnection } from "@/hooks/useCombinedEntities";
 import { useEntityClusters, EntityCluster } from "@/hooks/useEntityClusters";
 import { categoryColors } from "@/data/entitiesData";
-import { Users, Building2, Shield, Scale, Filter, ZoomIn, ZoomOut, Sparkles, Loader2, Network, Layers } from "lucide-react";
+import { Users, Building2, Shield, Scale, Filter, ZoomIn, ZoomOut, Sparkles, Loader2, Network, Layers, Bookmark, EyeOff, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { NodeContextMenu } from "./NodeContextMenu";
+import { toast } from "sonner";
 
 interface NetworkNodeProps {
   entity: CombinedEntity;
@@ -18,9 +21,10 @@ interface NetworkNodeProps {
   position: { x: number; y: number };
   clusterColor?: string;
   isHighlightedCluster?: boolean;
+  isOnWatchlist?: boolean;
 }
 
-const NetworkNode = ({ entity, isSelected, onClick, position, clusterColor, isHighlightedCluster }: NetworkNodeProps) => {
+const NetworkNode = ({ entity, isSelected, onClick, position, clusterColor, isHighlightedCluster, isOnWatchlist }: NetworkNodeProps) => {
   const getIcon = () => {
     switch (entity.type) {
       case "person": return Users;
@@ -38,6 +42,17 @@ const NetworkNode = ({ entity, isSelected, onClick, position, clusterColor, isHi
       onClick={onClick}
       className="cursor-pointer"
     >
+      {/* Watchlist indicator ring */}
+      {isOnWatchlist && (
+        <circle
+          r={46}
+          fill="none"
+          stroke="hsl(var(--primary))"
+          strokeWidth={2}
+          strokeDasharray="6,3"
+          opacity={0.9}
+        />
+      )}
       {/* Cluster highlight ring */}
       {isHighlightedCluster && clusterColor && (
         <circle
@@ -75,6 +90,14 @@ const NetworkNode = ({ entity, isSelected, onClick, position, clusterColor, isHi
           <Icon className="w-5 h-5 text-white" />
         </div>
       </foreignObject>
+      {/* Watchlist badge */}
+      {isOnWatchlist && (
+        <foreignObject x={-32} y={-32} width={20} height={20}>
+          <div className="flex items-center justify-center w-full h-full">
+            <Bookmark className="w-4 h-4 text-primary fill-primary" />
+          </div>
+        </foreignObject>
+      )}
       {/* AI badge indicator */}
       {entity.isAIExtracted && (
         <foreignObject x={12} y={-32} width={20} height={20}>
@@ -103,6 +126,58 @@ export const EntityNetwork = () => {
   const [filterType, setFilterType] = useState<string | null>(null);
   const [showAIOnly, setShowAIOnly] = useState(false);
   const [zoom, setZoom] = useState(1);
+  
+  // Watchlist and hidden entities state
+  const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
+  const [hiddenEntities, setHiddenEntities] = useState<Set<string>>(new Set());
+  const [showHidden, setShowHidden] = useState(false);
+
+  // Context menu handlers
+  const handleExpand = useCallback((entity: CombinedEntity) => {
+    setSelectedEntity(entity);
+    toast.info(`Expanded connections for ${entity.name}`);
+  }, []);
+
+  const handleHide = useCallback((entity: CombinedEntity) => {
+    setHiddenEntities(prev => {
+      const next = new Set(prev);
+      if (next.has(entity.id)) {
+        next.delete(entity.id);
+        toast.success(`${entity.name} is now visible`);
+      } else {
+        next.add(entity.id);
+        toast.success(`${entity.name} hidden from view`);
+      }
+      return next;
+    });
+  }, []);
+
+  const handleInvestigate = useCallback((entity: CombinedEntity) => {
+    setSelectedEntity(entity);
+    toast.info(`Opening investigation for ${entity.name}`, {
+      description: `${entity.role} - ${entity.category}`,
+    });
+  }, []);
+
+  const handleToggleWatchlist = useCallback((entity: CombinedEntity) => {
+    setWatchlist(prev => {
+      const next = new Set(prev);
+      if (next.has(entity.id)) {
+        next.delete(entity.id);
+        toast.success(`${entity.name} removed from watchlist`);
+      } else {
+        next.add(entity.id);
+        toast.success(`${entity.name} added to watchlist`, {
+          description: "Track this entity for updates",
+        });
+      }
+      return next;
+    });
+  }, []);
+
+  const handleShowConnections = useCallback((entity: CombinedEntity) => {
+    setSelectedEntity(entity);
+  }, []);
 
   const filteredEntities = useMemo(() => {
     let filtered = entities;
@@ -112,8 +187,12 @@ export const EntityNetwork = () => {
     if (showAIOnly) {
       filtered = filtered.filter(e => e.isAIExtracted);
     }
+    // Filter out hidden entities unless showHidden is true
+    if (!showHidden) {
+      filtered = filtered.filter(e => !hiddenEntities.has(e.id));
+    }
     return filtered;
-  }, [entities, filterType, showAIOnly]);
+  }, [entities, filterType, showAIOnly, hiddenEntities, showHidden]);
 
   const nodePositions = useMemo(() => {
     const positions: Record<string, { x: number; y: number }> = {};
@@ -254,9 +333,28 @@ export const EntityNetwork = () => {
                 />
                 <Label htmlFor="cluster-mode" className="flex items-center gap-1.5 text-sm cursor-pointer">
                   <Layers className="w-4 h-4" />
-                  Cluster Detection
+                  Clusters
                 </Label>
               </div>
+              
+              <div className="flex items-center gap-2">
+                <Switch
+                  id="show-hidden"
+                  checked={showHidden}
+                  onCheckedChange={setShowHidden}
+                />
+                <Label htmlFor="show-hidden" className="flex items-center gap-1.5 text-sm cursor-pointer">
+                  {showHidden ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                  Hidden ({hiddenEntities.size})
+                </Label>
+              </div>
+
+              {watchlist.size > 0 && (
+                <Badge variant="outline" className="gap-1 border-primary text-primary">
+                  <Bookmark className="w-3 h-3" />
+                  Watchlist: {watchlist.size}
+                </Badge>
+              )}
               
               <Separator orientation="vertical" className="h-6" />
               
@@ -421,26 +519,129 @@ export const EntityNetwork = () => {
                   );
                 })}
 
-                {/* Nodes */}
+                {/* Nodes with Context Menus */}
                 {filteredEntities.map(entity => {
                   const pos = nodePositions[entity.id];
                   if (!pos) return null;
                   
                   const entityCluster = showClusters ? getEntityCluster(entity.id) : undefined;
                   const inSelectedCluster = isInSelectedCluster(entity.id);
+                  const onWatchlist = watchlist.has(entity.id);
+                  const isHidden = hiddenEntities.has(entity.id);
                   
                   return (
-                    <NetworkNode
+                    <foreignObject
                       key={entity.id}
-                      entity={entity}
-                      position={pos}
-                      isSelected={selectedEntity?.id === entity.id}
-                      clusterColor={entityCluster?.color}
-                      isHighlightedCluster={inSelectedCluster}
-                      onClick={() => setSelectedEntity(
-                        selectedEntity?.id === entity.id ? null : entity
-                      )}
-                    />
+                      x={pos.x - 60}
+                      y={pos.y - 60}
+                      width={120}
+                      height={120}
+                      style={{ overflow: 'visible' }}
+                    >
+                      <NodeContextMenu
+                        entity={entity}
+                        onExpand={handleExpand}
+                        onHide={handleHide}
+                        onInvestigate={handleInvestigate}
+                        onToggleWatchlist={handleToggleWatchlist}
+                        onShowConnections={handleShowConnections}
+                        isOnWatchlist={onWatchlist}
+                        isHidden={isHidden}
+                      >
+                        <svg width="120" height="120" className="overflow-visible">
+                          <g transform="translate(60, 60)">
+                            {/* Watchlist indicator ring */}
+                            {onWatchlist && (
+                              <circle
+                                r={46}
+                                fill="none"
+                                stroke="hsl(var(--primary))"
+                                strokeWidth={2}
+                                strokeDasharray="6,3"
+                                opacity={0.9}
+                              />
+                            )}
+                            {/* Hidden indicator */}
+                            {isHidden && showHidden && (
+                              <circle
+                                r={48}
+                                fill="none"
+                                stroke="hsl(var(--muted-foreground))"
+                                strokeWidth={1}
+                                strokeDasharray="2,4"
+                                opacity={0.5}
+                              />
+                            )}
+                            {/* Cluster highlight ring */}
+                            {inSelectedCluster && entityCluster?.color && (
+                              <circle
+                                r={42}
+                                fill="none"
+                                stroke={entityCluster.color}
+                                strokeWidth={3}
+                                opacity={0.8}
+                                className="animate-pulse"
+                              />
+                            )}
+                            {/* AI Extracted glow effect */}
+                            {entity.isAIExtracted && (
+                              <circle
+                                r={38}
+                                fill="none"
+                                stroke="hsl(var(--chart-5))"
+                                strokeWidth={2}
+                                strokeDasharray="4,4"
+                                opacity={0.6}
+                                className="animate-pulse"
+                              />
+                            )}
+                            <circle
+                              r={selectedEntity?.id === entity.id ? 35 : 28}
+                              fill={inSelectedCluster && entityCluster?.color ? entityCluster.color : categoryColors[entity.category || "neutral"]}
+                              className={cn(
+                                "transition-all duration-200 cursor-pointer",
+                                selectedEntity?.id === entity.id ? "stroke-[hsl(var(--primary))] stroke-[3]" : "stroke-[hsl(var(--background))] stroke-2"
+                              )}
+                              opacity={inSelectedCluster ? 1 : isHidden ? 0.4 : 0.9}
+                              onClick={() => setSelectedEntity(
+                                selectedEntity?.id === entity.id ? null : entity
+                              )}
+                            />
+                            <foreignObject x={-12} y={-12} width={24} height={24} className="pointer-events-none">
+                              <div className="flex items-center justify-center w-full h-full">
+                                {entity.type === "person" && <Users className="w-5 h-5 text-white" />}
+                                {entity.type === "organization" && <Building2 className="w-5 h-5 text-white" />}
+                                {entity.type === "agency" && <Shield className="w-5 h-5 text-white" />}
+                                {entity.type !== "person" && entity.type !== "organization" && entity.type !== "agency" && <Scale className="w-5 h-5 text-white" />}
+                              </div>
+                            </foreignObject>
+                            {/* Watchlist badge */}
+                            {onWatchlist && (
+                              <foreignObject x={-32} y={-32} width={20} height={20} className="pointer-events-none">
+                                <div className="flex items-center justify-center w-full h-full">
+                                  <Bookmark className="w-4 h-4 text-primary fill-primary" />
+                                </div>
+                              </foreignObject>
+                            )}
+                            {/* AI badge indicator */}
+                            {entity.isAIExtracted && (
+                              <foreignObject x={12} y={-32} width={20} height={20} className="pointer-events-none">
+                                <div className="flex items-center justify-center w-full h-full">
+                                  <Sparkles className="w-4 h-4 text-amber-400" />
+                                </div>
+                              </foreignObject>
+                            )}
+                            <text
+                              y={45}
+                              textAnchor="middle"
+                              className="fill-foreground text-[10px] font-medium pointer-events-none"
+                            >
+                              {entity.name.split(' ').slice(0, 2).join(' ')}
+                            </text>
+                          </g>
+                        </svg>
+                      </NodeContextMenu>
+                    </foreignObject>
                   );
                 })}
               </svg>
