@@ -11,128 +11,124 @@
   display: none;
 }
 
-/* Definition of the design system - Web3 Aesthetic
- * Bold yellows, cyans, and deep dark backgrounds
+/* Definition of the design system - Professional Human Rights
+ * Deep blues for trust, muted golds for justice, clean grays for clarity
  * All colors MUST be HSL.
  */
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 222 47% 11%;
+    --background: 210 25% 98%;
+    --foreground: 220 30% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 220 30% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 220 30% 15%;
 
-    /* Amber/Gold primary for Web3 aesthetic */
-    --primary: 45 93% 47%;
-    --primary-foreground: 222 47% 11%;
+    /* Deep navy primary - trust, authority, justice */
+    --primary: 220 65% 28%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 210 20% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary-foreground: 220 30% 15%;
 
     --muted: 210 20% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted-foreground: 220 15% 45%;
 
-    /* Cyan accent for Web3 flair */
-    --accent: 185 84% 39%;
+    /* Muted amber accent - justice, gravitas */
+    --accent: 38 60% 50%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 45 93% 47%;
+    --border: 220 20% 88%;
+    --input: 220 20% 88%;
+    --ring: 220 65% 28%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    /* Chart colors - vibrant Web3 palette */
-    --chart-1: 45 93% 47%;
-    --chart-2: 185 84% 39%;
-    --chart-3: 280 65% 60%;
-    --chart-4: 340 75% 55%;
-    --chart-5: 142 76% 36%;
+    /* Chart colors - professional palette */
+    --chart-1: 220 65% 35%;
+    --chart-2: 38 60% 50%;
+    --chart-3: 0 65% 50%;
+    --chart-4: 270 45% 50%;
+    --chart-5: 160 50% 40%;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 45 93% 47%;
-    --sidebar-primary-foreground: 222 47% 11%;
-    --sidebar-accent: 185 50% 95%;
-    --sidebar-accent-foreground: 185 84% 25%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 45 93% 50%;
+    --sidebar-background: 220 25% 97%;
+    --sidebar-foreground: 220 30% 20%;
+    --sidebar-primary: 220 65% 28%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 38 40% 95%;
+    --sidebar-accent-foreground: 38 60% 35%;
+    --sidebar-border: 220 20% 90%;
+    --sidebar-ring: 220 65% 35%;
 
-    /* Custom Web3 tokens */
-    --glow-yellow: 45 93% 60%;
-    --glow-cyan: 185 84% 50%;
-    --gradient-start: 45 93% 47%;
-    --gradient-end: 185 84% 39%;
+    /* Professional tokens */
+    --justice-gold: 38 60% 50%;
+    --trust-blue: 220 65% 28%;
   }
 
   .dark {
-    /* Deep dark background with subtle blue undertone */
-    --background: 225 25% 6%;
-    --foreground: 45 20% 95%;
+    /* Deep slate/navy background - serious, professional */
+    --background: 220 25% 8%;
+    --foreground: 210 20% 92%;
 
-    /* Elevated card surfaces with glass effect */
-    --card: 225 25% 9%;
-    --card-foreground: 45 20% 95%;
+    /* Elevated card surfaces */
+    --card: 220 25% 11%;
+    --card-foreground: 210 20% 92%;
 
     /* Popovers with depth */
-    --popover: 225 25% 11%;
-    --popover-foreground: 45 20% 95%;
+    --popover: 220 25% 13%;
+    --popover-foreground: 210 20% 92%;
 
-    /* Vibrant amber/gold primary */
-    --primary: 45 100% 50%;
-    --primary-foreground: 225 25% 6%;
+    /* Muted gold primary - justice, authority */
+    --primary: 38 55% 55%;
+    --primary-foreground: 220 25% 8%;
 
     /* Darker secondary surfaces */
-    --secondary: 225 20% 14%;
-    --secondary-foreground: 45 20% 90%;
+    --secondary: 220 20% 15%;
+    --secondary-foreground: 210 20% 88%;
 
-    /* Muted with subtle warmth */
-    --muted: 225 20% 12%;
+    /* Muted tones */
+    --muted: 220 20% 14%;
     --muted-foreground: 220 15% 55%;
 
-    /* Cyan accent for highlights */
-    --accent: 185 90% 45%;
-    --accent-foreground: 225 25% 6%;
+    /* Deep blue accent */
+    --accent: 210 60% 55%;
+    --accent-foreground: 220 25% 8%;
 
-    /* Destructive with glow */
-    --destructive: 0 85% 60%;
+    /* Destructive with gravity */
+    --destructive: 0 65% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Subtle warm-tinted borders */
-    --border: 225 20% 18%;
-    --input: 225 20% 15%;
-    --ring: 45 100% 50%;
+    /* Subtle borders */
+    --border: 220 20% 18%;
+    --input: 220 20% 16%;
+    --ring: 38 55% 55%;
 
-    /* Chart colors - neon Web3 */
-    --chart-1: 45 100% 55%;
-    --chart-2: 185 90% 50%;
-    --chart-3: 280 85% 65%;
-    --chart-4: 340 85% 60%;
-    --chart-5: 142 80% 45%;
+    /* Chart colors - professional dark palette */
+    --chart-1: 38 55% 55%;
+    --chart-2: 210 60% 55%;
+    --chart-3: 0 60% 55%;
+    --chart-4: 270 50% 60%;
+    --chart-5: 160 45% 50%;
 
     /* Sidebar with depth */
-    --sidebar-background: 225 25% 5%;
-    --sidebar-foreground: 45 20% 90%;
-    --sidebar-primary: 45 100% 50%;
-    --sidebar-primary-foreground: 225 25% 6%;
-    --sidebar-accent: 225 20% 12%;
-    --sidebar-accent-foreground: 45 20% 95%;
-    --sidebar-border: 225 20% 15%;
-    --sidebar-ring: 45 100% 55%;
+    --sidebar-background: 220 25% 6%;
+    --sidebar-foreground: 210 20% 88%;
+    --sidebar-primary: 38 55% 55%;
+    --sidebar-primary-foreground: 220 25% 8%;
+    --sidebar-accent: 220 20% 14%;
+    --sidebar-accent-foreground: 210 20% 92%;
+    --sidebar-border: 220 20% 16%;
+    --sidebar-ring: 38 55% 60%;
 
-    /* Custom Web3 tokens */
-    --glow-yellow: 45 100% 60%;
-    --glow-cyan: 185 90% 55%;
-    --gradient-start: 45 100% 50%;
-    --gradient-end: 185 90% 45%;
+    /* Professional tokens */
+    --justice-gold: 38 55% 55%;
+    --trust-blue: 210 60% 55%;
   }
 }
 
@@ -146,28 +142,27 @@
   }
 }
 
-/* Web3 Glow Effects */
+/* Professional Effects - subtle and refined */
 @layer utilities {
-  .glow-yellow {
-    box-shadow: 0 0 20px hsl(var(--glow-yellow) / 0.3),
-                0 0 40px hsl(var(--glow-yellow) / 0.15);
+  .shadow-professional {
+    box-shadow: 0 1px 3px hsl(220 25% 10% / 0.08),
+                0 4px 12px hsl(220 25% 10% / 0.05);
   }
 
-  .glow-cyan {
-    box-shadow: 0 0 20px hsl(var(--glow-cyan) / 0.3),
-                0 0 40px hsl(var(--glow-cyan) / 0.15);
+  .shadow-professional-lg {
+    box-shadow: 0 2px 8px hsl(220 25% 10% / 0.1),
+                0 8px 24px hsl(220 25% 10% / 0.08);
   }
 
-  .glow-primary {
-    box-shadow: 0 0 15px hsl(var(--primary) / 0.4),
-                0 0 30px hsl(var(--primary) / 0.2);
+  .border-subtle {
+    border-color: hsl(var(--border) / 0.6);
   }
 
-  .gradient-primary {
+  .gradient-professional {
     background: linear-gradient(
       135deg,
-      hsl(var(--gradient-start)) 0%,
-      hsl(var(--gradient-end)) 100%
+      hsl(var(--primary)) 0%,
+      hsl(var(--accent)) 100%
     );
   }
 
@@ -183,9 +178,17 @@
   }
 
   .glass-card {
-    background: hsl(var(--card) / 0.8);
-    backdrop-filter: blur(12px);
+    background: hsl(var(--card) / 0.95);
+    backdrop-filter: blur(8px);
     border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  .accent-bar {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--accent)) 100%
+    );
   }
 }
 
