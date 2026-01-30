@@ -19,60 +19,64 @@
 
 @layer base {
   :root {
-    /* Sage/muted green background - calm, professional */
-    --background: 100 18% 82%;
-    --foreground: 180 8% 15%;
+    /* Warm cream/off-white background - elegant, refined */
+    --background: 45 30% 96%;
+    --foreground: 220 15% 18%;
 
-    /* Clean white cards with subtle warmth */
-    --card: 60 20% 97%;
-    --card-foreground: 180 8% 15%;
+    /* Pure white cards with subtle shadow-ready surface */
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 18%;
 
-    --popover: 60 20% 98%;
-    --popover-foreground: 180 8% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 18%;
 
     /* Dark yellow/gold primary - authoritative, impactful */
     --primary: 45 90% 38%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 100 12% 88%;
-    --secondary-foreground: 180 8% 20%;
+    /* Soft warm gray secondary */
+    --secondary: 45 15% 92%;
+    --secondary-foreground: 220 15% 25%;
 
-    --muted: 100 10% 90%;
-    --muted-foreground: 180 5% 40%;
+    /* Warm muted tones */
+    --muted: 45 10% 94%;
+    --muted-foreground: 220 10% 45%;
 
-    /* Muted olive accent - professional, grounded */
-    --accent: 75 45% 55%;
-    --accent-foreground: 180 8% 12%;
+    /* Gold-tinted accent - cohesive with primary */
+    --accent: 45 60% 88%;
+    --accent-foreground: 45 90% 25%;
 
-    --destructive: 0 65% 50%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 100 15% 75%;
-    --input: 100 15% 80%;
+    /* Refined warm borders */
+    --border: 45 15% 85%;
+    --input: 45 15% 88%;
     --ring: 45 90% 40%;
 
     --radius: 0.75rem;
 
-    /* Chart colors - professional palette with gold accent */
+    /* Chart colors - professional warm palette */
     --chart-1: 45 90% 38%;
-    --chart-2: 75 45% 55%;
-    --chart-3: 0 60% 50%;
-    --chart-4: 270 35% 50%;
-    --chart-5: 160 40% 40%;
+    --chart-2: 160 45% 40%;
+    --chart-3: 0 65% 50%;
+    --chart-4: 280 40% 55%;
+    --chart-5: 200 60% 45%;
 
-    --sidebar-background: 180 10% 12%;
-    --sidebar-foreground: 100 15% 85%;
-    --sidebar-primary: 45 90% 45%;
-    --sidebar-primary-foreground: 180 8% 12%;
-    --sidebar-accent: 180 8% 20%;
-    --sidebar-accent-foreground: 100 15% 90%;
-    --sidebar-border: 180 8% 20%;
-    --sidebar-ring: 45 90% 50%;
+    /* Dark sidebar for contrast in light mode too */
+    --sidebar-background: 220 15% 14%;
+    --sidebar-foreground: 45 20% 92%;
+    --sidebar-primary: 45 90% 50%;
+    --sidebar-primary-foreground: 220 15% 12%;
+    --sidebar-accent: 220 12% 22%;
+    --sidebar-accent-foreground: 45 20% 95%;
+    --sidebar-border: 220 12% 22%;
+    --sidebar-ring: 45 90% 55%;
 
     /* Professional tokens */
-    --justice-olive: 75 45% 55%;
-    --authority-charcoal: 180 8% 15%;
-    --sage-green: 100 18% 82%;
+    --justice-olive: 45 90% 38%;
+    --authority-charcoal: 220 15% 18%;
+    --sage-green: 45 30% 96%;
   }
 
   .dark {
