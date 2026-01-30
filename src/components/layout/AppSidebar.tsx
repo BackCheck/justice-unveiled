@@ -13,7 +13,8 @@ import {
   User,
   Settings,
   LogOut,
-  ChevronUp
+  ChevronUp,
+  LogIn
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -195,65 +196,86 @@ export function AppSidebar() {
           <ThemeToggle />
         </div>
 
-        {/* User Profile Section */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              className={cn(
-                "flex items-center gap-3 w-full rounded-lg p-2 transition-all duration-200",
-                "hover:bg-accent/20 focus:outline-none focus:ring-2 focus:ring-primary/20",
-                collapsed && "justify-center"
-              )}
+        {/* User Profile Section - Show Sign In for guests */}
+        {user ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className={cn(
+                  "flex items-center gap-3 w-full rounded-lg p-2 transition-all duration-200",
+                  "hover:bg-accent/20 focus:outline-none focus:ring-2 focus:ring-primary/20",
+                  collapsed && "justify-center"
+                )}
+              >
+                <Avatar className="h-9 w-9 shrink-0 border-2 border-primary/20">
+                  <AvatarImage src={avatarUrl} alt="User avatar" />
+                  <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+                {!collapsed && (
+                  <>
+                    <div className="flex flex-col items-start min-w-0 flex-1">
+                      <span className="text-sm font-medium text-foreground truncate w-full">
+                        {displayName}
+                      </span>
+                      <span className="text-xs text-muted-foreground truncate w-full">
+                        {userRole}
+                      </span>
+                    </div>
+                    <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0" />
+                  </>
+                )}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent 
+              side="top" 
+              align={collapsed ? "center" : "start"}
+              className="w-56 mb-2"
             >
-              <Avatar className="h-9 w-9 shrink-0 border-2 border-primary/20">
-                <AvatarImage src={avatarUrl} alt="User avatar" />
-                <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
-              {!collapsed && (
-                <>
-                  <div className="flex flex-col items-start min-w-0 flex-1">
-                    <span className="text-sm font-medium text-foreground truncate w-full">
-                      {displayName}
-                    </span>
-                    <span className="text-xs text-muted-foreground truncate w-full">
-                      {userRole}
-                    </span>
-                  </div>
-                  <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0" />
-                </>
-              )}
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent 
-            side="top" 
-            align={collapsed ? "center" : "start"}
-            className="w-56 mb-2"
+              <div className="px-2 py-1.5">
+                <p className="text-sm font-medium">{displayName}</p>
+                <p className="text-xs text-muted-foreground">{userEmail}</p>
+              </div>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="cursor-pointer">
+                <User className="mr-2 h-4 w-4" />
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                <Settings className="mr-2 h-4 w-4" />
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                className="cursor-pointer text-destructive focus:text-destructive"
+                onClick={handleSignOut}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Sign out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Link
+            to="/auth"
+            className={cn(
+              "flex items-center gap-3 w-full rounded-lg p-2 transition-all duration-200",
+              "hover:bg-primary/10 text-muted-foreground hover:text-primary",
+              collapsed && "justify-center"
+            )}
           >
-            <div className="px-2 py-1.5">
-              <p className="text-sm font-medium">{displayName}</p>
-              <p className="text-xs text-muted-foreground">{userEmail}</p>
+            <div className="h-9 w-9 shrink-0 rounded-full bg-muted/50 flex items-center justify-center border-2 border-dashed border-muted-foreground/30">
+              <LogIn className="h-4 w-4" />
             </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">
-              <User className="mr-2 h-4 w-4" />
-              Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem 
-              className="cursor-pointer text-destructive focus:text-destructive"
-              onClick={handleSignOut}
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Sign out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            {!collapsed && (
+              <div className="flex flex-col items-start min-w-0 flex-1">
+                <span className="text-sm font-medium">Sign In</span>
+                <span className="text-xs text-muted-foreground">Optional</span>
+              </div>
+            )}
+          </Link>
+        )}
       </SidebarFooter>
     </Sidebar>
   );
