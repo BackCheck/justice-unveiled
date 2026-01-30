@@ -1,11 +1,13 @@
 import { useState, useMemo } from "react";
-import { timelineData, TimelineEvent } from "@/data/timelineData";
+import { TimelineEvent } from "@/data/timelineData";
 import { TimelineFilters } from "@/components/TimelineFilters";
 import { TimelineStats } from "@/components/TimelineStats";
 import { DynamicTimeline } from "@/components/timeline/DynamicTimeline";
 import { Button } from "@/components/ui/button";
-import { Printer } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Printer, Sparkles } from "lucide-react";
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
+import { useCombinedTimeline } from "@/hooks/useCombinedTimeline";
 
 const Index = () => {
   const [selectedCategories, setSelectedCategories] = useState<TimelineEvent["category"][]>([
@@ -15,6 +17,9 @@ const Index = () => {
     "Criminal Allegation"
   ]);
   const [isPrintMode, setIsPrintMode] = useState(false);
+
+  // Use combined timeline (static + AI-extracted events)
+  const { events: allEvents, stats, isLoading } = useCombinedTimeline();
 
   const handlePrint = () => {
     setIsPrintMode(true);
@@ -36,8 +41,8 @@ const Index = () => {
   };
 
   const filteredEvents = useMemo(() => 
-    timelineData.filter(event => selectedCategories.includes(event.category)),
-    [selectedCategories]
+    allEvents.filter(event => selectedCategories.includes(event.category)),
+    [allEvents, selectedCategories]
   );
 
   return (
@@ -55,9 +60,15 @@ const Index = () => {
               <h2 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">
                 Danish Thanvi vs. State Agencies
               </h2>
-              <p className="text-muted-foreground">
-                {timelineData.length} documented events from 117 verified sources • 
-                <span className="text-primary ml-1">Pakistan, 2015–2025</span>
+              <p className="text-muted-foreground flex items-center gap-2 flex-wrap">
+                <span>{stats.total} documented events from 117 verified sources</span>
+                {stats.extracted > 0 && (
+                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+                    <Sparkles className="w-3 h-3 mr-1" />
+                    {stats.extracted} AI-extracted
+                  </Badge>
+                )}
+                <span className="text-primary">Pakistan, 2015–2025</span>
               </p>
             </div>
             <Button
@@ -83,7 +94,7 @@ const Index = () => {
           <TimelineFilters
             selectedCategories={selectedCategories}
             onCategoryToggle={handleCategoryToggle}
-            totalEvents={timelineData.length}
+            totalEvents={stats.total}
             filteredCount={filteredEvents.length}
           />
         </div>

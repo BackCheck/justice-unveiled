@@ -16,11 +16,14 @@ import {
   ChevronRight,
   AlertTriangle,
   ArrowRight,
-  BookOpen
+  BookOpen,
+  Brain
 } from "lucide-react";
 import { intelligenceBriefing, briefingStats } from "@/data/intelligenceBriefingData";
 import { Link } from "react-router-dom";
 import { ProceduralFailuresTimeline } from "@/components/intel/ProceduralFailuresTimeline";
+import { DocumentAnalyzer } from "@/components/intel/DocumentAnalyzer";
+import { ExtractedEventsList } from "@/components/intel/ExtractedEventsList";
 
 const IntelBriefing = () => {
   const [expandedSection, setExpandedSection] = useState<string | undefined>("forensic-digital-evidence");
@@ -219,6 +222,16 @@ const IntelBriefing = () => {
             );
           })}
         </Accordion>
+
+        {/* AI Document Analyzer */}
+        <div className="mt-8">
+          <DocumentAnalyzer />
+        </div>
+
+        {/* AI-Extracted Events */}
+        <div className="mt-8">
+          <ExtractedEventsList limit={5} />
+        </div>
 
         {/* Procedural Failures Timeline */}
         <div className="mt-8">

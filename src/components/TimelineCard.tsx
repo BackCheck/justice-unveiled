@@ -2,13 +2,15 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp, Calendar, Users, Scale, AlertTriangle, FileText } from "lucide-react";
+import { ChevronDown, ChevronUp, Calendar, Users, Scale, AlertTriangle, FileText, Sparkles } from "lucide-react";
 import { TimelineEvent, categoryColors, categoryBorderColors } from "@/data/timelineData";
 import { format, parseISO } from "date-fns";
 import { LinkedEvidence } from "@/components/timeline/LinkedEvidence";
+import { CombinedTimelineEvent } from "@/hooks/useCombinedTimeline";
+import { cn } from "@/lib/utils";
 
 interface TimelineCardProps {
-  event: TimelineEvent;
+  event: TimelineEvent | CombinedTimelineEvent;
   index: number;
   forceExpanded?: boolean;
 }
@@ -16,6 +18,10 @@ interface TimelineCardProps {
 export const TimelineCard = ({ event, index, forceExpanded = false }: TimelineCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const showDetails = forceExpanded || isExpanded;
+  
+  // Check if this is an AI-extracted event
+  const isExtracted = 'isExtracted' in event && event.isExtracted;
+  const confidenceScore = 'confidenceScore' in event ? event.confidenceScore : undefined;
 
   const formattedDate = format(parseISO(event.date), "MMMM d, yyyy");
 
@@ -25,14 +31,26 @@ export const TimelineCard = ({ event, index, forceExpanded = false }: TimelineCa
       <div className="absolute left-[23px] top-12 bottom-0 w-0.5 bg-border last:hidden" />
       
       {/* Timeline dot */}
-      <div className={`relative z-10 flex-shrink-0 w-12 h-12 rounded-full ${categoryColors[event.category]} flex items-center justify-center shadow-lg ring-4 ring-background`}>
-        <span className="text-white font-bold text-sm">{index + 1}</span>
+      <div className={cn(
+        "relative z-10 flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center shadow-lg ring-4 ring-background",
+        categoryColors[event.category],
+        isExtracted && "ring-primary/50"
+      )}>
+        {isExtracted ? (
+          <Sparkles className="w-5 h-5 text-white" />
+        ) : (
+          <span className="text-white font-bold text-sm">{index + 1}</span>
+        )}
       </div>
 
       {/* Content */}
-      <Card className={`flex-1 border-l-4 ${categoryBorderColors[event.category]} hover:shadow-lg transition-all duration-300 hover:translate-x-1`}>
+      <Card className={cn(
+        "flex-1 border-l-4 hover:shadow-lg transition-all duration-300 hover:translate-x-1",
+        categoryBorderColors[event.category],
+        isExtracted && "bg-gradient-to-r from-primary/5 via-transparent to-transparent"
+      )}>
         <CardHeader className="pb-3">
-          <div className="flex flex-wrap items-center gap-3 mb-2">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
             <Badge variant="secondary" className="flex items-center gap-1">
               <Calendar className="w-3 h-3" />
               {formattedDate}
@@ -40,6 +58,17 @@ export const TimelineCard = ({ event, index, forceExpanded = false }: TimelineCa
             <Badge className={`${categoryColors[event.category]} text-white`}>
               {event.category}
             </Badge>
+            {isExtracted && (
+              <Badge variant="outline" className="flex items-center gap-1 bg-primary/10 text-primary border-primary/30">
+                <Sparkles className="w-3 h-3" />
+                AI Extracted
+                {confidenceScore && confidenceScore >= 0.8 && (
+                  <span className="ml-1 text-xs opacity-70">
+                    {Math.round(confidenceScore * 100)}%
+                  </span>
+                )}
+              </Badge>
+            )}
           </div>
           <p className="text-foreground leading-relaxed">{event.description}</p>
         </CardHeader>
