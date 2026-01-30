@@ -35,13 +35,15 @@ export const PlatformHeader = () => {
       <div className="max-w-7xl mx-auto px-4">
         {/* Top bar */}
         <div className="flex items-center justify-between py-4 border-b border-border">
-          <Link to="/" className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
-              <Scale className="w-8 h-8 text-primary" />
+          <Link to="/" className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+                <Shield className="w-6 h-6 text-primary-foreground" />
+              </div>
+              <span className="text-lg font-bold text-primary tracking-tight">HRPM</span>
             </div>
-            <div>
-              <h1 className="text-xl font-bold tracking-tight text-foreground">HRPM.org</h1>
-              <p className="text-sm text-muted-foreground">Human Rights Protection Movement</p>
+            <div className="hidden sm:block border-l border-border pl-3">
+              <p className="text-sm font-medium text-foreground">Human Rights Protection Movement</p>
             </div>
           </Link>
 
