@@ -34,16 +34,18 @@ export const PlatformHeader = () => {
       <div className="max-w-7xl mx-auto px-4">
         {/* Top bar */}
         <div className="flex items-center justify-between py-4 border-b border-border/50">
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-4 group">
+            <div className="flex items-center gap-3">
               {/* Logo with Web3 glow effect */}
-              <div className="w-11 h-11 rounded-xl bg-primary flex items-center justify-center glow-primary transition-all duration-300 group-hover:scale-105">
-                <Globe className="w-6 h-6 text-primary-foreground" />
+              <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center glow-primary transition-all duration-300 group-hover:scale-105">
+                <Globe className="w-7 h-7 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold gradient-text tracking-tight">HRPM</span>
-            </div>
-            <div className="hidden sm:block border-l border-border/50 pl-3">
-              <p className="text-sm font-medium text-foreground">Human Rights Protection Movement</p>
+              <div className="flex flex-col">
+                <span className="text-2xl font-bold gradient-text tracking-tight leading-none">HRPM</span>
+                <span className="hidden sm:block text-[11px] font-medium text-muted-foreground tracking-wide uppercase mt-0.5">
+                  Human Rights Protection Movement
+                </span>
+              </div>
             </div>
           </Link>
 
