@@ -198,8 +198,8 @@ export const entityTypeColors: Record<EntityType, string> = {
 };
 
 export const categoryColors: Record<string, string> = {
-  protagonist: "hsl(142, 76%, 36%)",
-  antagonist: "hsl(0, 84%, 60%)",
-  neutral: "hsl(217, 91%, 60%)",
-  official: "hsl(280, 65%, 60%)"
+  protagonist: "hsl(var(--chart-5))",
+  antagonist: "hsl(var(--chart-4))",
+  neutral: "hsl(var(--chart-2))",
+  official: "hsl(var(--chart-3))"
 };

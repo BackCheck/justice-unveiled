@@ -11,43 +11,43 @@ export const TimelineStats = () => {
       label: "Business Interference",
       count: getCategoryCount("Business Interference"),
       icon: Briefcase,
-      color: "text-amber-500 dark:text-amber-400",
-      bgColor: "bg-amber-500/10 dark:bg-amber-500/20"
+      color: "text-chart-1",
+      bgColor: "bg-chart-1/10"
     },
     {
       label: "Harassment",
       count: getCategoryCount("Harassment"),
       icon: AlertOctagon,
-      color: "text-red-500 dark:text-red-400",
-      bgColor: "bg-red-500/10 dark:bg-red-500/20"
+      color: "text-chart-4",
+      bgColor: "bg-chart-4/10"
     },
     {
       label: "Legal Proceedings",
       count: getCategoryCount("Legal Proceeding"),
       icon: Scale,
-      color: "text-blue-500 dark:text-blue-400",
-      bgColor: "bg-blue-500/10 dark:bg-blue-500/20"
+      color: "text-chart-2",
+      bgColor: "bg-chart-2/10"
     },
     {
       label: "Criminal Allegations",
       count: getCategoryCount("Criminal Allegation"),
       icon: FileWarning,
-      color: "text-purple-500 dark:text-purple-400",
-      bgColor: "bg-purple-500/10 dark:bg-purple-500/20"
+      color: "text-chart-3",
+      bgColor: "bg-chart-3/10"
     }
   ];
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
       {stats.map((stat) => (
-        <Card key={stat.label} className="overflow-hidden">
+        <Card key={stat.label} className="overflow-hidden glass-card hover:glow-primary transition-all duration-300">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${stat.bgColor}`}>
+              <div className={`p-2.5 rounded-xl ${stat.bgColor}`}>
                 <stat.icon className={`w-5 h-5 ${stat.color}`} />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stat.count}</p>
+                <p className="text-2xl font-bold gradient-text">{stat.count}</p>
                 <p className="text-xs text-muted-foreground">{stat.label}</p>
               </div>
             </div>
