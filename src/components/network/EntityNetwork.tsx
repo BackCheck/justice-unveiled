@@ -12,6 +12,7 @@ import { categoryColors } from "@/data/entitiesData";
 import { Users, Building2, Shield, Scale, Filter, ZoomIn, ZoomOut, Sparkles, Loader2, Network, Layers, Bookmark, EyeOff, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NodeContextMenu } from "./NodeContextMenu";
+import { EntitySearch } from "./EntitySearch";
 import { toast } from "sonner";
 
 interface NetworkNodeProps {
@@ -126,11 +127,31 @@ export const EntityNetwork = () => {
   const [filterType, setFilterType] = useState<string | null>(null);
   const [showAIOnly, setShowAIOnly] = useState(false);
   const [zoom, setZoom] = useState(1);
+  const [focusedEntity, setFocusedEntity] = useState<CombinedEntity | null>(null);
   
   // Watchlist and hidden entities state
   const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
   const [hiddenEntities, setHiddenEntities] = useState<Set<string>>(new Set());
   const [showHidden, setShowHidden] = useState(false);
+
+  // Handle search result selection - focus and select the entity
+  const handleSearchSelect = useCallback((entity: CombinedEntity) => {
+    setSelectedEntity(entity);
+    setFocusedEntity(entity);
+    
+    // Clear filters to ensure the entity is visible
+    setFilterType(null);
+    setShowAIOnly(false);
+    
+    // Show entity if it's hidden
+    if (hiddenEntities.has(entity.id)) {
+      setShowHidden(true);
+    }
+    
+    toast.success(`Found: ${entity.name}`, {
+      description: entity.role,
+    });
+  }, [hiddenEntities]);
 
   // Context menu handlers
   const handleExpand = useCallback((entity: CombinedEntity) => {
@@ -301,7 +322,16 @@ export const EntityNetwork = () => {
                 <Users className="w-5 h-5" />
                 Entity Relationship Network
               </CardTitle>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
+                {/* Entity Search */}
+                <EntitySearch 
+                  entities={entities}
+                  onSelectEntity={handleSearchSelect}
+                  selectedEntity={selectedEntity}
+                />
+                
+                <Separator orientation="vertical" className="h-6" />
+                
                 <Button
                   variant="outline"
                   size="icon"
@@ -528,6 +558,7 @@ export const EntityNetwork = () => {
                   const inSelectedCluster = isInSelectedCluster(entity.id);
                   const onWatchlist = watchlist.has(entity.id);
                   const isHidden = hiddenEntities.has(entity.id);
+                  const isFocused = focusedEntity?.id === entity.id;
                   
                   return (
                     <foreignObject
@@ -550,6 +581,28 @@ export const EntityNetwork = () => {
                       >
                         <svg width="120" height="120" className="overflow-visible">
                           <g transform="translate(60, 60)">
+                            {/* Search focus ring */}
+                            {isFocused && (
+                              <circle
+                                r={52}
+                                fill="none"
+                                stroke="hsl(var(--primary))"
+                                strokeWidth={3}
+                              >
+                                <animate
+                                  attributeName="r"
+                                  values="48;54;48"
+                                  dur="1.5s"
+                                  repeatCount="indefinite"
+                                />
+                                <animate
+                                  attributeName="opacity"
+                                  values="1;0.5;1"
+                                  dur="1.5s"
+                                  repeatCount="indefinite"
+                                />
+                              </circle>
+                            )}
                             {/* Watchlist indicator ring */}
                             {onWatchlist && (
                               <circle
@@ -603,9 +656,10 @@ export const EntityNetwork = () => {
                                 selectedEntity?.id === entity.id ? "stroke-[hsl(var(--primary))] stroke-[3]" : "stroke-[hsl(var(--background))] stroke-2"
                               )}
                               opacity={inSelectedCluster ? 1 : isHidden ? 0.4 : 0.9}
-                              onClick={() => setSelectedEntity(
-                                selectedEntity?.id === entity.id ? null : entity
-                              )}
+                              onClick={() => {
+                                setSelectedEntity(selectedEntity?.id === entity.id ? null : entity);
+                                setFocusedEntity(null); // Clear focus when manually selecting
+                              }}
                             />
                             <foreignObject x={-12} y={-12} width={24} height={24} className="pointer-events-none">
                               <div className="flex items-center justify-center w-full h-full">
