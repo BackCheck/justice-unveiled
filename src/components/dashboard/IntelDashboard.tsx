@@ -40,59 +40,71 @@ export const IntelDashboard = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
-      {/* Hero Stats */}
+      {/* Hero Stats - Pill-shaped indicators with hover effects */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+        <Card className="glass-card card-hover border-primary/20">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
+              <div className="p-2.5 rounded-full bg-primary/10">
                 <Calendar className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats.yearsSpan}</p>
-                <p className="text-sm text-muted-foreground">Timeline Span</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-2xl font-bold text-primary">{stats.yearsSpan}</p>
+                  <span className="pill-stat h-2 w-8 bg-primary/60" />
+                </div>
+                <p className="text-xs text-muted-foreground">Timeline Span</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-destructive/10 to-destructive/5 border-destructive/20">
+        <Card className="glass-card card-hover border-destructive/20">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-destructive/10">
+              <div className="p-2.5 rounded-full bg-destructive/10">
                 <AlertTriangle className="w-5 h-5 text-destructive" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats.criticalFindings}</p>
-                <p className="text-sm text-muted-foreground">Critical Findings</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-2xl font-bold text-destructive">{stats.criticalFindings}</p>
+                  <span className="pill-stat h-2 w-6 bg-destructive/60" />
+                </div>
+                <p className="text-xs text-muted-foreground">Critical Findings</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-chart-2/10 to-chart-2/5 border-chart-2/20">
+        <Card className="glass-card card-hover border-chart-2/20">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-chart-2/10">
+              <div className="p-2.5 rounded-full bg-chart-2/10">
                 <Users className="w-5 h-5 text-chart-2" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats.entities}</p>
-                <p className="text-sm text-muted-foreground">Entities Mapped</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-2xl font-bold text-chart-2">{stats.entities}</p>
+                  <span className="pill-stat h-2 w-10 bg-chart-2/60" />
+                </div>
+                <p className="text-xs text-muted-foreground">Entities Mapped</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-chart-4/10 to-chart-4/5 border-chart-4/20">
+        <Card className="glass-card card-hover border-chart-4/20">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-chart-4/10">
+              <div className="p-2.5 rounded-full bg-chart-4/10">
                 <FileCheck className="w-5 h-5 text-chart-4" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats.sources}</p>
-                <p className="text-sm text-muted-foreground">Verified Sources</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-2xl font-bold text-chart-4">{stats.sources}</p>
+                  <span className="pill-stat h-2 w-8 bg-chart-4/60" />
+                </div>
+                <p className="text-xs text-muted-foreground">Verified Sources</p>
               </div>
             </div>
           </CardContent>
@@ -157,14 +169,14 @@ export const IntelDashboard = () => {
           {keyFindings.slice(0, 6).map((finding) => {
             const Icon = finding.icon;
             return (
-              <Card key={finding.id} className="hover:shadow-lg transition-shadow">
+              <Card key={finding.id} className="glass-card card-hover">
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <div className={`p-2 rounded-lg ${findingCategoryColors[finding.category]}`}>
+                      <div className={`p-2.5 rounded-full ${findingCategoryColors[finding.category]}`}>
                         <Icon className="w-4 h-4" />
                       </div>
-                      <Badge className={severityColors[finding.severity]} variant="secondary">
+                      <Badge className={`${severityColors[finding.severity]} rounded-full px-3`} variant="secondary">
                         {finding.severity.toUpperCase()}
                       </Badge>
                     </div>
@@ -176,7 +188,7 @@ export const IntelDashboard = () => {
                   <ul className="text-xs space-y-1">
                     {finding.details.slice(0, 2).map((detail, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="text-primary">•</span>
+                        <span className="pill-stat h-1.5 w-1.5 mt-1.5 bg-accent" />
                         <span className="text-muted-foreground">{detail}</span>
                       </li>
                     ))}
@@ -191,15 +203,18 @@ export const IntelDashboard = () => {
       {/* Quick Links */}
       <div className="grid md:grid-cols-3 gap-4">
         <Link to="/">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
+          <Card className="glass-card card-hover cursor-pointer group">
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                <div className="p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
                   <TrendingUp className="w-6 h-6 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-semibold">Interactive Timeline</h3>
-                  <p className="text-sm text-muted-foreground">{stats.totalEvents} documented events</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm text-muted-foreground">{stats.totalEvents} documented events</p>
+                    <span className="pill-stat h-1.5 w-4 bg-primary/40" />
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -207,15 +222,18 @@ export const IntelDashboard = () => {
         </Link>
 
         <Link to="/network">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
+          <Card className="glass-card card-hover cursor-pointer group">
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-chart-2/10 group-hover:bg-chart-2/20 transition-colors">
+                <div className="p-3 rounded-full bg-chart-2/10 group-hover:bg-chart-2/20 transition-colors">
                   <Users className="w-6 h-6 text-chart-2" />
                 </div>
                 <div>
                   <h3 className="font-semibold">Entity Network</h3>
-                  <p className="text-sm text-muted-foreground">Map connections between actors</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm text-muted-foreground">Map connections between actors</p>
+                    <span className="pill-stat h-1.5 w-4 bg-chart-2/40" />
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -223,15 +241,18 @@ export const IntelDashboard = () => {
         </Link>
 
         <Link to="/evidence">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
+          <Card className="glass-card card-hover cursor-pointer group">
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-chart-4/10 group-hover:bg-chart-4/20 transition-colors">
+                <div className="p-3 rounded-full bg-chart-4/10 group-hover:bg-chart-4/20 transition-colors">
                   <Building2 className="w-6 h-6 text-chart-4" />
                 </div>
                 <div>
                   <h3 className="font-semibold">Evidence Matrix</h3>
-                  <p className="text-sm text-muted-foreground">Cross-reference sources</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm text-muted-foreground">Cross-reference sources</p>
+                    <span className="pill-stat h-1.5 w-4 bg-chart-4/40" />
+                  </div>
                 </div>
               </div>
             </CardContent>
