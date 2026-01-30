@@ -135,17 +135,24 @@ const AdminPanel = () => {
 
   return (
     <PlatformLayout>
-      {/* Sub-header */}
-      <div className="bg-secondary border-b border-border py-8 px-4">
-        <div className="max-w-5xl mx-auto">
+      {/* Sub-header with glass effect */}
+      <div className="bg-secondary/50 backdrop-blur-xl border-b border-border/30 py-8 px-4 relative overflow-hidden">
+        {/* Background glow for header */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 right-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-1/4 w-48 h-48 bg-accent/10 rounded-full blur-3xl" />
+        </div>
+        <div className="max-w-5xl mx-auto relative z-10">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" asChild>
+            <Button variant="ghost" size="icon" asChild className="hover-glow-primary">
               <Link to="/">
                 <ArrowLeft className="w-5 h-5" />
               </Link>
             </Button>
             <div className="flex items-center gap-3">
-              <Shield className="w-7 h-7 text-primary" />
+              <div className="p-2 rounded-xl bg-primary/10 glow-primary-sm">
+                <Shield className="w-7 h-7 text-primary" />
+              </div>
               <div>
                 <h2 className="text-2xl md:text-3xl font-bold text-foreground">
                   Admin Panel
