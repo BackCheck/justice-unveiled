@@ -15,6 +15,7 @@ import About from "./pages/About";
 import InternationalAnalysis from "./pages/InternationalAnalysis";
 import Auth from "./pages/Auth";
 import AdminPanel from "./pages/AdminPanel";
+import Analyze from "./pages/Analyze";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/intel-briefing" element={<IntelBriefing />} />
             <Route path="/about" element={<About />} />
             <Route path="/international" element={<InternationalAnalysis />} />
+            <Route path="/analyze" element={<Analyze />} />
             <Route path="/admin" element={<AdminPanel />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
