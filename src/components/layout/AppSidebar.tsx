@@ -9,7 +9,11 @@ import {
   Upload, 
   Info,
   Globe,
-  Search
+  Search,
+  User,
+  Settings,
+  LogOut,
+  ChevronUp
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -27,6 +31,14 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const mainNavItems = [
   { path: "/", label: "Timeline", icon: Clock },
@@ -152,13 +164,71 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-border/50 p-4">
-        <div className={cn("flex items-center", collapsed ? "justify-center" : "justify-between")}>
+      <SidebarFooter className="border-t border-border/50 p-2">
+        {/* Theme Toggle */}
+        <div className={cn("flex items-center px-2 py-1", collapsed ? "justify-center" : "justify-between")}>
           {!collapsed && (
             <span className="text-xs text-muted-foreground">Theme</span>
           )}
           <ThemeToggle />
         </div>
+
+        {/* User Profile Section */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              className={cn(
+                "flex items-center gap-3 w-full rounded-lg p-2 transition-all duration-200",
+                "hover:bg-accent/20 focus:outline-none focus:ring-2 focus:ring-primary/20",
+                collapsed && "justify-center"
+              )}
+            >
+              <Avatar className="h-9 w-9 shrink-0 border-2 border-primary/20">
+                <AvatarImage src="" alt="User avatar" />
+                <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
+                  JD
+                </AvatarFallback>
+              </Avatar>
+              {!collapsed && (
+                <>
+                  <div className="flex flex-col items-start min-w-0 flex-1">
+                    <span className="text-sm font-medium text-foreground truncate w-full">
+                      Jane Doe
+                    </span>
+                    <span className="text-xs text-muted-foreground truncate w-full">
+                      Investigator
+                    </span>
+                  </div>
+                  <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0" />
+                </>
+              )}
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent 
+            side="top" 
+            align={collapsed ? "center" : "start"}
+            className="w-56 mb-2"
+          >
+            <div className="px-2 py-1.5">
+              <p className="text-sm font-medium">Jane Doe</p>
+              <p className="text-xs text-muted-foreground">jane.doe@hrpm.org</p>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="cursor-pointer">
+              <User className="mr-2 h-4 w-4" />
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">
+              <Settings className="mr-2 h-4 w-4" />
+              Settings
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive">
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </SidebarFooter>
     </Sidebar>
   );
