@@ -57,10 +57,10 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Web3 custom colors
-        glow: {
-          yellow: "hsl(var(--glow-yellow))",
-          cyan: "hsl(var(--glow-cyan))",
+        // Professional custom colors
+        justice: {
+          gold: "hsl(var(--justice-gold))",
+          blue: "hsl(var(--trust-blue))",
         },
         chart: {
           1: "hsl(var(--chart-1))",
@@ -92,30 +92,10 @@ export default {
             height: "0",
           },
         },
-        "pulse-glow": {
-          "0%, 100%": {
-            opacity: "1",
-            boxShadow: "0 0 15px hsl(var(--primary) / 0.4)",
-          },
-          "50%": {
-            opacity: "0.8",
-            boxShadow: "0 0 25px hsl(var(--primary) / 0.6)",
-          },
-        },
-        "shimmer": {
-          "0%": {
-            backgroundPosition: "-200% 0",
-          },
-          "100%": {
-            backgroundPosition: "200% 0",
-          },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
-        "shimmer": "shimmer 2s linear infinite",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

@@ -23,6 +23,7 @@ const navItems = [
   { path: "/network", label: "Entity Network", icon: Network },
   { path: "/evidence", label: "Evidence Matrix", icon: FileText },
   { path: "/uploads", label: "Uploads", icon: Upload },
+  { path: "/about", label: "About", icon: Globe },
 ];
 
 export const PlatformHeader = () => {
@@ -36,12 +37,12 @@ export const PlatformHeader = () => {
         <div className="flex items-center justify-between py-4 border-b border-border/50">
           <Link to="/" className="flex items-center gap-4 group">
             <div className="flex items-center gap-3">
-              {/* Logo with Web3 glow effect */}
-              <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center glow-primary transition-all duration-300 group-hover:scale-105">
+              {/* Logo with professional styling */}
+              <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-professional transition-all duration-300 group-hover:shadow-professional-lg">
                 <Globe className="w-7 h-7 text-primary-foreground" />
               </div>
               <div className="flex flex-col">
-                <span className="text-2xl font-bold gradient-text tracking-tight leading-none">HRPM</span>
+                <span className="text-2xl font-bold text-primary tracking-tight leading-none">HRPM</span>
                 <span className="hidden sm:block text-[11px] font-medium text-muted-foreground tracking-wide uppercase mt-0.5">
                   Human Rights Protection Movement
                 </span>
