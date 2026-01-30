@@ -26,18 +26,19 @@ export const TimelineCard = ({ event, index, forceExpanded = false }: TimelineCa
   const formattedDate = format(parseISO(event.date), "MMMM d, yyyy");
 
   return (
-    <div className="relative flex gap-6 pb-8 last:pb-0">
+    <div className="relative flex gap-6 pb-8 last:pb-0 group">
       {/* Timeline line */}
-      <div className="absolute left-[23px] top-12 bottom-0 w-0.5 bg-border last:hidden" />
+      <div className="absolute left-[23px] top-12 bottom-0 w-0.5 bg-border last:hidden transition-colors duration-300 group-hover:bg-primary/30" />
       
       {/* Timeline dot */}
       <div className={cn(
         "relative z-10 flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center shadow-lg ring-4 ring-background",
+        "transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl",
         categoryColors[event.category],
-        isExtracted && "ring-primary/50"
+        isExtracted && "ring-primary/50 glow-pulse"
       )}>
         {isExtracted ? (
-          <Sparkles className="w-5 h-5 text-white" />
+          <Sparkles className="w-5 h-5 text-white animate-pulse" />
         ) : (
           <span className="text-white font-bold text-sm">{index + 1}</span>
         )}
@@ -45,7 +46,8 @@ export const TimelineCard = ({ event, index, forceExpanded = false }: TimelineCa
 
       {/* Content */}
       <Card className={cn(
-        "flex-1 border-l-4 hover:shadow-lg transition-all duration-300 hover:translate-x-1",
+        "flex-1 border-l-4 transition-all duration-300",
+        "hover:shadow-xl hover:translate-x-2 hover:-translate-y-1",
         categoryBorderColors[event.category],
         isExtracted && "bg-gradient-to-r from-primary/5 via-transparent to-transparent"
       )}>
