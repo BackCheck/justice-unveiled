@@ -8,7 +8,9 @@ import {
   Scale,
   Building2,
   AlertTriangle,
-  FileText
+  FileText,
+  Gavel,
+  ClipboardCheck
 } from "lucide-react";
 
 export interface BriefingSection {
@@ -305,42 +307,179 @@ export const intelligenceBriefing: BriefingSection[] = [
     icon: Phone,
     summary: "The 'spyware' allegation was the fabricated basis for the Cybercrime case, yet call recordings ultimately became exculpatory evidence exposing the abduction conspiracy.",
     keyPoints: [
-      "Prosecution alleged Danish installed 'spyware' on victim's device",
-      "Forensic analysis found no spyware on any examined device",
-      "The actual recording app was 'Auto Call Recorder' on victim's phone",
-      "This app was installed by the victim's husband (Tayyab) for surveillance",
-      "Ironically, this app recorded the conspirators' own abduction planning calls",
-      "The recordings became evidence against the conspirators, not Danish"
+      "Prosecution alleged Danish installed 'Spy Bug Monitoring Software' on victim's Samsung J5",
+      "Claim: Software enabled GPS tracking, call interception, and data extraction for blackmail",
+      "Reality: 'Couple App' was consensual relationship app twisted into criminal allegation",
+      "Auto Call Recorder (ACR/AAR) was actually on victim's phone—installed by husband Tayyab",
+      "App auto-uploaded to cloud, inadvertently recording November 11, 2016 abduction conspiracy",
+      "Forensic analysis found zero spyware on any examined device",
+      "Device discrepancy: FIR mentioned Samsung J5, FIA analyzed Samsung J7",
+      "Victim admitted in court she provided no evidence of any spyware"
     ],
     details: [
       {
-        heading: "The Allegation",
-        content: "The complainant Major Mumtaz alleged that Danish installed malicious 'spyware' on the victim's phone, enabling unauthorized surveillance and recording of private communications. This became the foundation of the Cybercrime Case (FIR 04/2019).",
-        evidence: "FIR 04/2019, Complainant statement"
+        heading: "The Spyware Allegation",
+        content: "Major Mumtaz alleged Danish installed 'Spy Bug Monitoring Software' or 'spyware' on Mehwish's Samsung J5 mobile phone without her knowledge. The prosecution claimed this software allowed Danish to monitor GPS location, listen to calls, and extract private data/pictures for blackmail purposes.",
+        evidence: "FIR 04/2019, Sources 157, 257, 260, 275"
       },
       {
-        heading: "The Forensic Reality",
-        content: "FIA forensic experts Nauman Ali and Aamir Zaib admitted under oath: 'No spyware software was detected during forensic tests of devices.' The entire spyware narrative was unsupported by any technical evidence.",
-        evidence: "Forensic Reports Ex-7/A, Ex-8/A, Expert testimony"
+        heading: "The 'Couple App' Twist",
+        content: "In family proceedings, it was revealed Danish had installed an app called 'Couple App' (com.bettertomorrowapps.spyyourlovefree) on his own and his wife's phones to share locations during a domestic dispute. The opposing party twisted this consensual relationship app into a criminal allegation of 'spyware' installation on employees' phones.",
+        evidence: "Family court records, Sources 1, 219, 222"
       },
       {
-        heading: "The Auto Call Recorder",
-        content: "Investigation revealed the victim's phone (which was in custody of her husband Tayyab) had an 'Auto Call Recorder' app installed. This app was used by Tayyab to record calls—not installed by Danish.",
-        evidence: "Device analysis, App installation records"
+        heading: "The Auto Call Recorder Reality",
+        content: "The specific application identified was 'Auto Call Recorder' (ACR) or 'Automatic Audio Recorder' (AAR). This app was installed on Mehwish's phone—crucially, configured to automatically record audio and upload data to a cloud server. The phone was in custody of her husband, Syed Tayyab Ali Shah.",
+        evidence: "Device analysis, Sources 492, 494, 496, 718"
       },
       {
-        heading: "The Ironic Evidence",
-        content: "The Auto Call Recorder installed by the conspirators inadvertently recorded their own calls regarding the abduction plot. These recordings of the November 11, 2016 conspiracy between Tayyab and Saqib became evidence against them.",
-        evidence: "Audio Transcript Annex 7"
+        heading: "The Smoking Gun (Nov 11, 2016)",
+        content: "The app recorded a conversation between Tayyab and Lt. Col. Saqib conspiring to use 'contacts in Military Intelligence Karachi' (a 'lower cadre' operative) to have Danish 'picked up' and disappear for days. Because the software auto-uploaded to cloud, the defense retrieved this audio file proving the Cybercrime case was a cover for a failed abduction plot.",
+        evidence: "Audio Transcript Annex 7, Sources 717, 720, 724, 762"
+      },
+      {
+        heading: "Forensic Collapse",
+        content: "The FIR alleged spyware on a Samsung J5, but FIA seized and analyzed a Samsung J7. FIA Forensic Experts Nauman Ali and Aamir Zaib admitted: 'No spyware software was detected during forensic tests of devices.' The victim herself admitted: 'I did not provide any evidence of any spyware software installed in the cell phone.'",
+        evidence: "Forensic Reports, Sources 22, 96, 112, 121, 160, 169, 263, 300, 314"
+      },
+      {
+        heading: "Weaponization for Sabotage",
+        content: "While the spyware legal case failed, the opposing network utilized data extraction from 16 stolen devices (handed to Col. Saqib Mumtaz) to facilitate the LinkedIn hack (June 2024) and provide intelligence needed to terminate NADRA VeriSys access (October 2024), causing $2 million in losses.",
+        evidence: "Sources 6, 7, 280, 303, 486"
       }
     ],
     connections: [
-      "Spyware allegation → Foundation of Cybercrime case",
-      "Forensic analysis → Proved no spyware existed",
-      "Auto Call Recorder → Actually installed by conspirators",
-      "Recorded abduction plot → Became evidence against them"
+      "First FIR Phase: Opponents used Auto Call Recorder to plot abduction—recording intercepted by defense",
+      "Cybercrime Case: Opponents falsely accused Danish of using 'Spyware' (twisting 'Couple App' usage)",
+      "Acquittal: Forensics proved zero spyware existed",
+      "Financial Sabotage: Physical theft of devices under guise of raid used to extract data when legal narrative failed"
     ],
-    sources: "Sources 14, 26, 28, 40, 41, 54, 104"
+    sources: "Sources 1, 6, 7, 14, 22, 26, 28, 40, 41, 54, 96, 104, 112, 121, 157, 160, 169, 219, 222, 257, 260, 263, 275, 280, 300, 303, 314, 486, 492, 494, 496, 503, 563, 717, 718, 720, 724, 762"
+  },
+  {
+    id: "quashment-of-fir",
+    title: "Quashment of FIR Proceedings",
+    icon: Gavel,
+    summary: "Central legal remedy sought to halt systematic persecution through the 'extraordinary remedy' of FIR quashment, with mixed results revealing how process itself becomes punishment.",
+    keyPoints: [
+      "Writ Petition No. 3376/2025 filed in Islamabad High Court to quash Mobina Sohail FIR",
+      "FIR initially charged Section 420 (Cheating); Section 406 added later to convert to non-bailable",
+      "3-month delay between alleged incident (April 14, 2025) and FIR registration (July 3, 2025)",
+      "Video evidence: Complainant visited Danish's apartment amicably on May 25, 2025—after alleged theft",
+      "High Court dismissed quashment petition on December 13, 2025",
+      "Court ruled factual disputes must be decided by trial court—directing accused to trial",
+      "First FIR (25/2017) effectively quashed via 'C' Class police cancellation and April 2017 acquittal"
+    ],
+    details: [
+      {
+        heading: "The Current Battle: Mobina Sohail FIR (2025)",
+        content: "Danish filed Writ Petition No. 3376/2025 in Islamabad High Court under Article 199 read with Section 561-A CrPC to quash FIR No. 673/25. The FIR initially charged Section 420 (Cheating) PPC, but police added Section 406 (Criminal Breach of Trust) via zimni later—defense argued this was mala fide intent to convert bailable to non-bailable offense.",
+        evidence: "Writ Petition No. 3376/2025, Source 4, 5, 418"
+      },
+      {
+        heading: "Grounds for Quashment",
+        content: "Delay: Alleged incident on April 14, 2025, but FIR registered July 3, 2025 (nearly 3 months delay) with no explanation. Contradictory Evidence: Complainant visited Danish's apartment amicably on May 25, 2025 (captured on video)—weeks after alleged theft. Civil Nature: Defense argued dispute was civil, not criminal, as complainant sought monetary compensation.",
+        evidence: "Source 4, 420, 1176"
+      },
+      {
+        heading: "The Court's Dismissal (December 2025)",
+        content: "On December 13, 2025, Justice Muhammad Asif of Islamabad High Court dismissed the quashment petition. The court ruled quashment is an 'extraordinary remedy' used only when complaint discloses no offense on its face. Factual disputes (was bag entrusted or stolen?) must be decided by trial court after evidence. Directed Danish to seek remedy under Section 249-A or 265-K CrPC instead.",
+        evidence: "IHC Order dated 2025-12-13, Source 4, 6"
+      },
+      {
+        heading: "The Precedent: First FIR (2017)",
+        content: "First FIR No. 25/2017 registered January 16, 2017 alleging robbery and kidnapping. Police investigation found no evidence—submitted 'C' Class (cancellation) report. On April 14, 2017, Magistrate accepted cancellation and acquitted Danish. This failure forced opponents to shift from physical crime to cybercrime allegations.",
+        evidence: "FIR 25/2017, Source 163, 166, 1150"
+      },
+      {
+        heading: "Cybercrime Case: Process as Punishment",
+        content: "Had FIR 04/2019 been quashed on grounds of Section 33 PECA violation (illegal warrantless raid), Danish would have been spared 6 years of litigation. Sessions Court Judgment (May 22, 2025) eventually validated grounds that should have led to earlier quashment—ruling raid was illegal and evidence 'planted and concocted.' Effect of quashment achieved only after wrongful conviction and years of suffering.",
+        evidence: "Sessions Court Judgment, Source 191, 572, 573, 1272"
+      },
+      {
+        heading: "Quashment Strategy vs. Financial Sabotage",
+        content: "Dismissal of quashment petition keeps case 'pending.' Opponents use this status to justify NADRA VeriSys termination and SECP notices. If FIRs were quashed immediately, there would be no 'criminal record' to cite for regulatory failures. Dismissal directly fuels the $2 million financial loss by keeping Danish entangled in legal system.",
+        evidence: "Source 288, 421"
+      }
+    ],
+    connections: [
+      "2017: Police cancel First FIR (de facto quashment) → Opponents pivot to Cybercrime",
+      "2019-2025: Cybercrime case proceeds (quashment not obtained) → 6 years harassment before acquittal",
+      "2025: High Court dismisses quashment for Mobina Sohail FIR → Forces Danish back into trial cycle",
+      "Pattern ensures systematic persecution continues into 2026, enabling further financial sabotage"
+    ],
+    sources: "Sources 4, 5, 6, 91, 163, 166, 191, 253, 288, 418, 420, 421, 572, 573, 1150, 1272"
+  },
+  {
+    id: "compliance-audit-report",
+    title: "Compliance Audit: Procedural Failures (Criminal Appeal No. 16/2024)",
+    icon: ClipboardCheck,
+    summary: "Comprehensive audit of statutory violations and procedural failures in digital evidence handling that led to systemic evidentiary nullity and total exoneration.",
+    keyPoints: [
+      "Section 33 PECA 2016: Mandatory search warrant NOT obtained for March 2019 raid",
+      "No Gazetted Officer present—violation of Section 10 proviso",
+      "No 24-hour judicial notice after seizure—no court record of notification",
+      "No independent private witnesses in residential setting—violates CrPC Section 103",
+      "No Roznamcha (departure) entries—cuts case 'from its roots'",
+      "Chain of custody breakdown: 16 devices seized but 21 items received by forensics",
+      "3-year delay in forensic reports with no chain of custody documentation",
+      "Section 342 CrPC violation: Accused not questioned about specific seized items"
+    ],
+    details: [
+      {
+        heading: "Statutory Framework: Section 33 PECA 2016",
+        content: "Under Section 33 of PECA 2016, FIA must obtain a search warrant from competent court to enter specified places and seize digital systems. PW-01 Inspector Shagufta Ahmed admitted: 'No search warrant was available at time of raid.' Operation conducted without Gazetted Officer (Section 10 proviso violation) and FIA failed to notify court within statutory 24-hour window.",
+        evidence: "PW-01 Testimony (Exh-03), Daim vs. The State (2021 PCrLJ 1061)"
+      },
+      {
+        heading: "Procedural Deficiency Matrix",
+        content: "FAIL: Mandatory Search Warrant (raid conducted without authorization). FAIL: Gazetted Officer Presence (Inspector-led, no Gazetted Officer). FAIL: 24-Hour Judicial Notice (no court notification record). FAIL: Independent Witness Protocol (no private witnesses in residential area). FAIL: Documentation of Departure (no Roznamcha entries produced). Court characterized actions as 'mockery of legal procedure.'",
+        evidence: "Case Diary, CrPC 103, PECA Section 33(1)"
+      },
+      {
+        heading: "Inventory Discrepancy Analysis",
+        content: "IO PW-08 SI Imran Saad recorded seizure of 16 digital devices on March 22, 2019. Forensic expert PW-06 Nauman Ali testified receiving: 3 items on April 10, 2019 (Samsung, iPhone, Tablet); 18 items on May 20, 2019. Total reaching 21 items despite only 16 seized—systemic anomaly prosecution failed to explain.",
+        evidence: "Seizure records vs. Forensic intake records"
+      },
+      {
+        heading: "Custodial Breakdown and Third-Party Influence",
+        content: "Defense asserted 16 seized devices were never placed in official Malkhana but unlawfully handed to Col. Saqib Mumtaz (Signal Corps officer with technical training). Corroborated by prosecution's failure to: produce Malkhana in-charge as witness, present Register No. XIX entries, document interim custody between March seizure and May forensic submission.",
+        evidence: "Missing Malkhana records, Defense pleadings"
+      },
+      {
+        heading: "Physical Integrity Assessment",
+        content: "PW-04 Tariq Hussain Arbab admitted digital gadgets were 'not in a sealed condition' when handed to him. In absence of on-site sealing in residential complex, physical and logical integrity of devices was compromised. Custodial vacuum renders any subsequent data extraction legally moot—court cannot exclude possibility data was planted or modified.",
+        evidence: "PW-04 Cross-examination testimony"
+      },
+      {
+        heading: "Technical Forensic Findings",
+        content: "Forensic reports (Exh 7/A, 8/A, 8/B) and expert testimonies confirmed: Lack of Hacking Evidence (no unauthorized access proven), Absence of Spyware (contradicting FIR allegations), Unproven Identity Creation (no link to 'Maya Ali' or 'Kazim Khan' profiles). Final report submitted after 3-year delay. PW-05 admitted no chain of custody form was included.",
+        evidence: "Forensic Reports, Expert testimony"
+      },
+      {
+        heading: "Systemic Evidentiary Nullity",
+        content: "Critical contradiction: IO (PW-08) claimed to seize victim's Samsung J7 via memo (Exh-9/B), but victim (PW-07) explicitly admitted she 'never provided her mobile phone or laptop to FIA for analysis.' If victim never provided source device, forensic reports regarding her WhatsApp and Email are effectively fraudulent or based on foisted hardware.",
+        evidence: "PW-07 vs. PW-08 testimony contradiction"
+      },
+      {
+        heading: "Trial Court Errors",
+        content: "During trial, actual gadgets were never properly exhibited. A 'khaki box' was produced by PW-08 but individual items were not marked, listed, or shown to witnesses. Trial court committed procedural nullity by failing to question accused about specific seized items during Section 342 CrPC statement—mandatory requirement essential for accused to explain incriminating evidence.",
+        evidence: "Trial record, Section 342 CrPC violation"
+      },
+      {
+        heading: "Judicial Application: Falsus in Uno, Falsus in Omnibus",
+        content: "Applying Saghir Ahmad vs. The State (2023 SCMR 241), appellate court ruled 'a single doubt' is sufficient for acquittal. Cumulative effect of warrantless raid, broken chain of custody involving Col. Saqib, and forensic contradictions established mountain of reasonable doubt. Total exoneration was inevitable result of investigation that was not merely failed, but 'maliciously structured.'",
+        evidence: "Criminal Appeal No. 16/2024 Judgment"
+      }
+    ],
+    connections: [
+      "Warrantless raid → 'Fruit of the poisonous tree' effect vitiating all recoveries",
+      "Broken chain of custody → Evidence tampering justified by adverse inference",
+      "Device discrepancy (16 seized vs. 21 analyzed) → Unexplained systemic anomaly",
+      "Section 342 CrPC violation → Trial nullified for failure to question accused",
+      "Total exoneration → Procedural discipline is only safeguard against institutional abuse"
+    ],
+    sources: "Criminal Appeal No. 16/2024, PECA 2016 Section 33, CrPC Sections 103, 342, 249-A, 265-K, Saghir Ahmad vs. The State (2023 SCMR 241), Daim vs. The State (2021 PCrLJ 1061)"
   },
   {
     id: "financial-sabotage",
@@ -446,7 +585,7 @@ export const intelligenceBriefing: BriefingSection[] = [
 
 // Summary statistics for the briefing
 export const briefingStats = {
-  totalSections: 8,
+  totalSections: 10,
   yearsDocumented: "2015-2025",
   sourcesReferenced: 123,
   keyThemes: [
@@ -455,12 +594,15 @@ export const briefingStats = {
     "Regulatory Weaponization",
     "Witness Coercion",
     "Document Forgery",
-    "Financial Sabotage"
+    "Financial Sabotage",
+    "Procedural Violations",
+    "Chain of Custody Failures"
   ],
   caseStatus: "Acquitted - May 2025",
   ongoingThreats: [
     "State Appeal No. 449/2025",
     "New FIR (Mobina Sohail) July 2025",
-    "SECP proceedings (stayed)"
+    "SECP proceedings (stayed)",
+    "Quashment petition dismissed Dec 2025"
   ]
 };
