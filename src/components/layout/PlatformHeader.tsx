@@ -10,7 +10,9 @@ import {
   X,
   Upload,
   BookOpen,
-  Globe
+  Globe,
+  Scale,
+  Info
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -22,8 +24,9 @@ const navItems = [
   { path: "/intel-briefing", label: "Briefing", icon: BookOpen },
   { path: "/network", label: "Entity Network", icon: Network },
   { path: "/evidence", label: "Evidence Matrix", icon: FileText },
+  { path: "/international", label: "International Rights", icon: Scale },
   { path: "/uploads", label: "Uploads", icon: Upload },
-  { path: "/about", label: "About", icon: Globe },
+  { path: "/about", label: "About", icon: Info },
 ];
 
 export const PlatformHeader = () => {
