@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   AlertTriangle, 
   FileCheck, 
@@ -9,7 +10,10 @@ import {
   TrendingUp, 
   Calendar,
   Scale,
-  Target
+  Target,
+  BarChart3,
+  MessageSquare,
+  FileText
 } from "lucide-react";
 import { timelineData } from "@/data/timelineData";
 import { entities } from "@/data/entitiesData";
@@ -19,6 +23,9 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { IntelBriefingCard } from "./IntelBriefingCard";
 import { CaseProfileBadges } from "./CaseProfileBadges";
+import { EntityCharts } from "./EntityCharts";
+import { IntelChat } from "./IntelChat";
+import { IntelReports } from "./IntelReports";
 
 export const IntelDashboard = () => {
   const stats = useMemo(() => {
@@ -154,6 +161,36 @@ export const IntelDashboard = () => {
 
       {/* Case Profile Badges */}
       <CaseProfileBadges />
+
+      {/* Analytics Section with Tabs */}
+      <Tabs defaultValue="charts" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 max-w-md">
+          <TabsTrigger value="charts" className="flex items-center gap-2">
+            <BarChart3 className="w-4 h-4" />
+            Entity Charts
+          </TabsTrigger>
+          <TabsTrigger value="chat" className="flex items-center gap-2">
+            <MessageSquare className="w-4 h-4" />
+            AI Chat
+          </TabsTrigger>
+          <TabsTrigger value="reports" className="flex items-center gap-2">
+            <FileText className="w-4 h-4" />
+            Reports
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="charts" className="mt-4">
+          <EntityCharts />
+        </TabsContent>
+        
+        <TabsContent value="chat" className="mt-4">
+          <IntelChat />
+        </TabsContent>
+        
+        <TabsContent value="reports" className="mt-4">
+          <IntelReports />
+        </TabsContent>
+      </Tabs>
 
       {/* Intel Briefing Card */}
       <IntelBriefingCard />
