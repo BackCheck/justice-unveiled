@@ -59,8 +59,11 @@ export default {
         },
         // Professional custom colors
         justice: {
-          gold: "hsl(var(--justice-gold))",
-          blue: "hsl(var(--trust-blue))",
+          olive: "hsl(var(--justice-olive))",
+          charcoal: "hsl(var(--authority-charcoal))",
+        },
+        sage: {
+          DEFAULT: "hsl(var(--sage-green))",
         },
         chart: {
           1: "hsl(var(--chart-1))",

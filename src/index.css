@@ -11,124 +11,129 @@
   display: none;
 }
 
-/* Definition of the design system - Professional Human Rights
- * Deep blues for trust, muted golds for justice, clean grays for clarity
+/* Definition of the design system - Modern Professional Human Rights
+ * Sage greens for calm authority, charcoal for gravity, muted accents
+ * Inspired by modern dashboard aesthetics with professional restraint
  * All colors MUST be HSL.
  */
 
 @layer base {
   :root {
-    --background: 210 25% 98%;
-    --foreground: 220 30% 15%;
+    /* Sage/muted green background - calm, professional */
+    --background: 100 18% 82%;
+    --foreground: 180 8% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 30% 15%;
+    /* Clean white cards with subtle warmth */
+    --card: 60 20% 97%;
+    --card-foreground: 180 8% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 30% 15%;
+    --popover: 60 20% 98%;
+    --popover-foreground: 180 8% 15%;
 
-    /* Deep navy primary - trust, authority, justice */
-    --primary: 220 65% 28%;
-    --primary-foreground: 0 0% 100%;
+    /* Dark charcoal primary - gravity, authority */
+    --primary: 180 8% 15%;
+    --primary-foreground: 60 20% 97%;
 
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 220 30% 15%;
+    --secondary: 100 12% 88%;
+    --secondary-foreground: 180 8% 20%;
 
-    --muted: 210 20% 96%;
-    --muted-foreground: 220 15% 45%;
+    --muted: 100 10% 90%;
+    --muted-foreground: 180 5% 40%;
 
-    /* Muted amber accent - justice, gravitas */
-    --accent: 38 60% 50%;
-    --accent-foreground: 0 0% 100%;
+    /* Muted olive accent - professional, grounded */
+    --accent: 75 45% 55%;
+    --accent-foreground: 180 8% 12%;
 
-    --destructive: 0 72% 50%;
+    --destructive: 0 65% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 20% 88%;
-    --input: 220 20% 88%;
-    --ring: 220 65% 28%;
+    --border: 100 15% 75%;
+    --input: 100 15% 80%;
+    --ring: 180 8% 25%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    /* Chart colors - professional palette */
-    --chart-1: 220 65% 35%;
-    --chart-2: 38 60% 50%;
-    --chart-3: 0 65% 50%;
-    --chart-4: 270 45% 50%;
-    --chart-5: 160 50% 40%;
+    /* Chart colors - professional sage palette */
+    --chart-1: 180 8% 20%;
+    --chart-2: 75 45% 55%;
+    --chart-3: 0 60% 50%;
+    --chart-4: 270 35% 50%;
+    --chart-5: 160 40% 40%;
 
-    --sidebar-background: 220 25% 97%;
-    --sidebar-foreground: 220 30% 20%;
-    --sidebar-primary: 220 65% 28%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 38 40% 95%;
-    --sidebar-accent-foreground: 38 60% 35%;
-    --sidebar-border: 220 20% 90%;
-    --sidebar-ring: 220 65% 35%;
+    --sidebar-background: 180 10% 12%;
+    --sidebar-foreground: 100 15% 85%;
+    --sidebar-primary: 75 45% 55%;
+    --sidebar-primary-foreground: 180 8% 12%;
+    --sidebar-accent: 180 8% 20%;
+    --sidebar-accent-foreground: 100 15% 90%;
+    --sidebar-border: 180 8% 20%;
+    --sidebar-ring: 75 45% 60%;
 
     /* Professional tokens */
-    --justice-gold: 38 60% 50%;
-    --trust-blue: 220 65% 28%;
+    --justice-olive: 75 45% 55%;
+    --authority-charcoal: 180 8% 15%;
+    --sage-green: 100 18% 82%;
   }
 
   .dark {
-    /* Deep slate/navy background - serious, professional */
-    --background: 220 25% 8%;
-    --foreground: 210 20% 92%;
+    /* Deep charcoal background - serious, professional */
+    --background: 180 10% 8%;
+    --foreground: 100 12% 90%;
 
-    /* Elevated card surfaces */
-    --card: 220 25% 11%;
-    --card-foreground: 210 20% 92%;
+    /* Elevated dark card surfaces */
+    --card: 180 10% 12%;
+    --card-foreground: 100 12% 90%;
 
     /* Popovers with depth */
-    --popover: 220 25% 13%;
-    --popover-foreground: 210 20% 92%;
+    --popover: 180 10% 14%;
+    --popover-foreground: 100 12% 90%;
 
-    /* Muted gold primary - justice, authority */
-    --primary: 38 55% 55%;
-    --primary-foreground: 220 25% 8%;
+    /* Muted olive primary - refined, professional */
+    --primary: 75 40% 50%;
+    --primary-foreground: 180 10% 8%;
 
     /* Darker secondary surfaces */
-    --secondary: 220 20% 15%;
-    --secondary-foreground: 210 20% 88%;
+    --secondary: 180 8% 16%;
+    --secondary-foreground: 100 12% 85%;
 
     /* Muted tones */
-    --muted: 220 20% 14%;
-    --muted-foreground: 220 15% 55%;
+    --muted: 180 8% 15%;
+    --muted-foreground: 100 10% 55%;
 
-    /* Deep blue accent */
-    --accent: 210 60% 55%;
-    --accent-foreground: 220 25% 8%;
+    /* Sage accent */
+    --accent: 100 25% 45%;
+    --accent-foreground: 180 10% 8%;
 
     /* Destructive with gravity */
-    --destructive: 0 65% 55%;
+    --destructive: 0 60% 50%;
     --destructive-foreground: 0 0% 100%;
 
     /* Subtle borders */
-    --border: 220 20% 18%;
-    --input: 220 20% 16%;
-    --ring: 38 55% 55%;
+    --border: 180 8% 20%;
+    --input: 180 8% 18%;
+    --ring: 75 40% 50%;
 
     /* Chart colors - professional dark palette */
-    --chart-1: 38 55% 55%;
-    --chart-2: 210 60% 55%;
-    --chart-3: 0 60% 55%;
-    --chart-4: 270 50% 60%;
-    --chart-5: 160 45% 50%;
+    --chart-1: 75 40% 50%;
+    --chart-2: 100 25% 45%;
+    --chart-3: 0 55% 50%;
+    --chart-4: 270 40% 55%;
+    --chart-5: 160 35% 45%;
 
     /* Sidebar with depth */
-    --sidebar-background: 220 25% 6%;
-    --sidebar-foreground: 210 20% 88%;
-    --sidebar-primary: 38 55% 55%;
-    --sidebar-primary-foreground: 220 25% 8%;
-    --sidebar-accent: 220 20% 14%;
-    --sidebar-accent-foreground: 210 20% 92%;
-    --sidebar-border: 220 20% 16%;
-    --sidebar-ring: 38 55% 60%;
+    --sidebar-background: 180 10% 6%;
+    --sidebar-foreground: 100 12% 85%;
+    --sidebar-primary: 75 40% 50%;
+    --sidebar-primary-foreground: 180 10% 8%;
+    --sidebar-accent: 180 8% 14%;
+    --sidebar-accent-foreground: 100 12% 90%;
+    --sidebar-border: 180 8% 18%;
+    --sidebar-ring: 75 40% 55%;
 
     /* Professional tokens */
-    --justice-gold: 38 55% 55%;
-    --trust-blue: 210 60% 55%;
+    --justice-olive: 75 40% 50%;
+    --authority-charcoal: 180 10% 12%;
+    --sage-green: 100 25% 45%;
   }
 }
 
@@ -142,20 +147,20 @@
   }
 }
 
-/* Professional Effects - subtle and refined */
+/* Professional Effects - modern dashboard style */
 @layer utilities {
   .shadow-professional {
-    box-shadow: 0 1px 3px hsl(220 25% 10% / 0.08),
-                0 4px 12px hsl(220 25% 10% / 0.05);
+    box-shadow: 0 1px 3px hsl(180 10% 10% / 0.06),
+                0 4px 16px hsl(180 10% 10% / 0.04);
   }
 
   .shadow-professional-lg {
-    box-shadow: 0 2px 8px hsl(220 25% 10% / 0.1),
-                0 8px 24px hsl(220 25% 10% / 0.08);
+    box-shadow: 0 4px 12px hsl(180 10% 10% / 0.08),
+                0 12px 32px hsl(180 10% 10% / 0.06);
   }
 
   .border-subtle {
-    border-color: hsl(var(--border) / 0.6);
+    border-color: hsl(var(--border) / 0.5);
   }
 
   .gradient-professional {
@@ -178,17 +183,37 @@
   }
 
   .glass-card {
-    background: hsl(var(--card) / 0.95);
-    backdrop-filter: blur(8px);
-    border: 1px solid hsl(var(--border) / 0.5);
+    background: hsl(var(--card) / 0.92);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.4);
+    border-radius: var(--radius);
   }
 
   .accent-bar {
-    background: linear-gradient(
-      90deg,
-      hsl(var(--primary)) 0%,
-      hsl(var(--accent)) 100%
-    );
+    background: hsl(var(--accent));
+    border-radius: 9999px;
+  }
+
+  /* Modern pill-style elements */
+  .pill-stat {
+    background: hsl(var(--primary));
+    border-radius: 9999px;
+    min-width: 0.5rem;
+  }
+
+  /* Card hover effect */
+  .card-hover {
+    transition: all 0.2s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px hsl(180 10% 10% / 0.1);
+  }
+
+  /* Charcoal sidebar style */
+  .sidebar-modern {
+    background: hsl(var(--sidebar-background));
+    border-radius: var(--radius);
   }
 }
 
