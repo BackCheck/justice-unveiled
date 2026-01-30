@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { intelligenceBriefing, briefingStats } from "@/data/intelligenceBriefingData";
 import { Link } from "react-router-dom";
+import { ProceduralFailuresTimeline } from "@/components/intel/ProceduralFailuresTimeline";
 
 const IntelBriefing = () => {
   const [expandedSection, setExpandedSection] = useState<string | undefined>("forensic-digital-evidence");
@@ -218,6 +219,11 @@ const IntelBriefing = () => {
             );
           })}
         </Accordion>
+
+        {/* Procedural Failures Timeline */}
+        <div className="mt-8">
+          <ProceduralFailuresTimeline />
+        </div>
 
         {/* Ongoing Threats Section */}
         <Card className="mt-8 border-destructive/30 bg-destructive/5">
