@@ -2,19 +2,13 @@ import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  entities, 
-  connections, 
-  Entity, 
-  EntityConnection,
-  entityTypeColors,
-  categoryColors 
-} from "@/data/entitiesData";
-import { Users, Building2, Shield, Scale, Filter, ZoomIn, ZoomOut } from "lucide-react";
+import { useCombinedEntities, CombinedEntity, CombinedConnection } from "@/hooks/useCombinedEntities";
+import { categoryColors } from "@/data/entitiesData";
+import { Users, Building2, Shield, Scale, Filter, ZoomIn, ZoomOut, Sparkles, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NetworkNodeProps {
-  entity: Entity;
+  entity: CombinedEntity;
   isSelected: boolean;
   onClick: () => void;
   position: { x: number; y: number };
@@ -38,6 +32,18 @@ const NetworkNode = ({ entity, isSelected, onClick, position }: NetworkNodeProps
       onClick={onClick}
       className="cursor-pointer"
     >
+      {/* AI Extracted glow effect */}
+      {entity.isAIExtracted && (
+        <circle
+          r={38}
+          fill="none"
+          stroke="hsl(var(--chart-5))"
+          strokeWidth={2}
+          strokeDasharray="4,4"
+          opacity={0.6}
+          className="animate-pulse"
+        />
+      )}
       <circle
         r={isSelected ? 35 : 28}
         fill={categoryColors[entity.category || "neutral"]}
@@ -52,6 +58,14 @@ const NetworkNode = ({ entity, isSelected, onClick, position }: NetworkNodeProps
           <Icon className="w-5 h-5 text-white" />
         </div>
       </foreignObject>
+      {/* AI badge indicator */}
+      {entity.isAIExtracted && (
+        <foreignObject x={12} y={-32} width={20} height={20}>
+          <div className="flex items-center justify-center w-full h-full">
+            <Sparkles className="w-4 h-4 text-amber-400" />
+          </div>
+        </foreignObject>
+      )}
       <text
         y={45}
         textAnchor="middle"
@@ -64,14 +78,22 @@ const NetworkNode = ({ entity, isSelected, onClick, position }: NetworkNodeProps
 };
 
 export const EntityNetwork = () => {
-  const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
+  const { entities, connections, isLoading, aiEntityCount, inferredConnectionCount } = useCombinedEntities();
+  const [selectedEntity, setSelectedEntity] = useState<CombinedEntity | null>(null);
   const [filterType, setFilterType] = useState<string | null>(null);
+  const [showAIOnly, setShowAIOnly] = useState(false);
   const [zoom, setZoom] = useState(1);
 
   const filteredEntities = useMemo(() => {
-    if (!filterType) return entities;
-    return entities.filter(e => e.category === filterType);
-  }, [filterType]);
+    let filtered = entities;
+    if (filterType) {
+      filtered = filtered.filter(e => e.category === filterType);
+    }
+    if (showAIOnly) {
+      filtered = filtered.filter(e => e.isAIExtracted);
+    }
+    return filtered;
+  }, [entities, filterType, showAIOnly]);
 
   const nodePositions = useMemo(() => {
     const positions: Record<string, { x: number; y: number }> = {};
@@ -85,8 +107,8 @@ export const EntityNetwork = () => {
     categories.forEach((cat, catIndex) => {
       const categoryEntities = filteredEntities.filter(e => e.category === cat);
       categoryEntities.forEach((entity, i) => {
-        const angle = (2 * Math.PI * i) / categoryEntities.length - Math.PI / 2;
-        const radius = radiuses[catIndex];
+        const angle = (2 * Math.PI * i) / Math.max(categoryEntities.length, 1) - Math.PI / 2;
+        const radius = radiuses[catIndex] + (entity.isAIExtracted ? 30 : 0); // AI entities slightly outer
         positions[entity.id] = {
           x: centerX + radius * Math.cos(angle + catIndex * 0.5),
           y: centerY + radius * Math.sin(angle + catIndex * 0.5)
@@ -102,10 +124,11 @@ export const EntityNetwork = () => {
     return connections.filter(
       c => entityIds.has(c.source) && entityIds.has(c.target)
     );
-  }, [filteredEntities]);
+  }, [filteredEntities, connections]);
 
-  const getConnectionColor = (type: EntityConnection["type"]) => {
-    switch (type) {
+  const getConnectionColor = (conn: CombinedConnection) => {
+    if (conn.isInferred) return "hsl(var(--chart-5))";
+    switch (conn.type) {
       case "family": return "hsl(var(--chart-1))";
       case "professional": return "hsl(var(--chart-2))";
       case "adversarial": return "hsl(var(--destructive))";
@@ -120,10 +143,34 @@ export const EntityNetwork = () => {
     return connections.filter(
       c => c.source === selectedEntity.id || c.target === selectedEntity.id
     );
-  }, [selectedEntity]);
+  }, [selectedEntity, connections]);
+
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <Card>
+          <CardContent className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            <span className="ml-3 text-muted-foreground">Loading entity network...</span>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      {/* Stats Banner */}
+      {(aiEntityCount > 0 || inferredConnectionCount > 0) && (
+        <div className="mb-4 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-amber-500" />
+          <span className="text-sm">
+            <strong>{aiEntityCount}</strong> AI-extracted entities and{" "}
+            <strong>{inferredConnectionCount}</strong> inferred connections from document analysis
+          </span>
+        </div>
+      )}
+
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Network Graph */}
         <Card className="flex-1">
@@ -158,19 +205,28 @@ export const EntityNetwork = () => {
             {/* Filter buttons */}
             <div className="flex flex-wrap gap-2 mb-4">
               <Button
-                variant={filterType === null ? "default" : "outline"}
+                variant={filterType === null && !showAIOnly ? "default" : "outline"}
                 size="sm"
-                onClick={() => setFilterType(null)}
+                onClick={() => { setFilterType(null); setShowAIOnly(false); }}
               >
                 <Filter className="w-4 h-4 mr-1" />
-                All
+                All ({entities.length})
+              </Button>
+              <Button
+                variant={showAIOnly ? "default" : "outline"}
+                size="sm"
+                onClick={() => setShowAIOnly(!showAIOnly)}
+                className={showAIOnly ? "bg-amber-500 hover:bg-amber-600" : ""}
+              >
+                <Sparkles className="w-4 h-4 mr-1" />
+                AI Extracted ({aiEntityCount})
               </Button>
               {["protagonist", "antagonist", "official", "neutral"].map(cat => (
                 <Button
                   key={cat}
                   variant={filterType === cat ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setFilterType(filterType === cat ? null : cat)}
+                  onClick={() => { setFilterType(filterType === cat ? null : cat); setShowAIOnly(false); }}
                   style={{
                     backgroundColor: filterType === cat ? categoryColors[cat] : undefined,
                     borderColor: categoryColors[cat]
@@ -205,10 +261,10 @@ export const EntityNetwork = () => {
                       y1={source.y}
                       x2={target.x}
                       y2={target.y}
-                      stroke={getConnectionColor(conn.type)}
-                      strokeWidth={isHighlighted ? 3 : 1.5}
+                      stroke={getConnectionColor(conn)}
+                      strokeWidth={isHighlighted ? 3 : conn.isInferred ? 1 : 1.5}
                       strokeOpacity={isHighlighted ? 1 : 0.4}
-                      strokeDasharray={conn.type === "adversarial" ? "5,3" : undefined}
+                      strokeDasharray={conn.type === "adversarial" ? "5,3" : conn.isInferred ? "3,3" : undefined}
                     />
                   );
                 })}
@@ -251,6 +307,14 @@ export const EntityNetwork = () => {
                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: categoryColors.neutral }} />
                 <span>Neutral</span>
               </div>
+              <div className="flex items-center gap-2 border-l pl-4">
+                <Sparkles className="w-3 h-3 text-amber-400" />
+                <span>AI Extracted</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-0.5 border-t-2 border-dashed" style={{ borderColor: "hsl(var(--chart-5))" }} />
+                <span>Inferred Connection</span>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -264,7 +328,15 @@ export const EntityNetwork = () => {
             {selectedEntity ? (
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-semibold text-lg">{selectedEntity.name}</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold text-lg">{selectedEntity.name}</h3>
+                    {selectedEntity.isAIExtracted && (
+                      <Badge className="bg-amber-500/20 text-amber-600 border-amber-500/30 text-[10px]">
+                        <Sparkles className="w-3 h-3 mr-1" />
+                        AI Extracted
+                      </Badge>
+                    )}
+                  </div>
                   <Badge 
                     style={{ backgroundColor: categoryColors[selectedEntity.category || "neutral"] }}
                     className="text-white mt-1"
@@ -284,7 +356,7 @@ export const EntityNetwork = () => {
                   <p className="text-sm font-medium text-muted-foreground mb-2">
                     Connections ({selectedConnections.length})
                   </p>
-                  <div className="space-y-2">
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
                     {selectedConnections.map((conn, i) => {
                       const otherId = conn.source === selectedEntity.id ? conn.target : conn.source;
                       const other = entities.find(e => e.id === otherId);
@@ -293,9 +365,16 @@ export const EntityNetwork = () => {
                           key={i} 
                           className="flex items-center justify-between text-xs p-2 rounded bg-muted"
                         >
-                          <span className="font-medium">{other?.name.split(' ')[0]}</span>
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium">{other?.name.split(' ')[0]}</span>
+                            {conn.isInferred && (
+                              <Sparkles className="w-3 h-3 text-amber-400" />
+                            )}
+                          </div>
                           <Badge variant="outline" className="text-[10px]">
-                            {conn.relationship}
+                            {conn.relationship.length > 20 
+                              ? conn.relationship.slice(0, 20) + "..." 
+                              : conn.relationship}
                           </Badge>
                         </div>
                       );
