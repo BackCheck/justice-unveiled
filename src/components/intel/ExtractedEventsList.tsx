@@ -8,14 +8,21 @@ import {
   Trash2, 
   ExternalLink,
   AlertCircle,
-  CheckCircle2
+  CheckCircle2,
+  Lock
 } from "lucide-react";
 import { 
   useExtractedEvents, 
   useDeleteExtractedEvent,
   ExtractedEvent 
 } from "@/hooks/useExtractedEvents";
+import { useUserRole } from "@/hooks/useUserRole";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const categoryColors: Record<string, string> = {
   "Business Interference": "bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/30",
@@ -32,6 +39,10 @@ interface ExtractedEventsListProps {
 export const ExtractedEventsList = ({ limit, showActions = true }: ExtractedEventsListProps) => {
   const { data: events, isLoading, error } = useExtractedEvents();
   const deleteEvent = useDeleteExtractedEvent();
+  const { canDelete, canEdit, isAuthenticated } = useUserRole();
+
+  // Only show action buttons if the user has permission
+  const effectiveShowActions = showActions && canDelete;
 
   if (isLoading) {
     return (
@@ -105,7 +116,7 @@ export const ExtractedEventsList = ({ limit, showActions = true }: ExtractedEven
             <ExtractedEventCard 
               key={event.id} 
               event={event} 
-              showActions={showActions}
+              showActions={effectiveShowActions}
               onDelete={() => deleteEvent.mutate(event.id)}
               isDeleting={deleteEvent.isPending}
             />
@@ -198,15 +209,22 @@ const ExtractedEventCard = ({
         </div>
         
         {showActions && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="shrink-0 text-muted-foreground hover:text-destructive"
-            onClick={onDelete}
-            disabled={isDeleting}
-          >
-            <Trash2 className="w-4 h-4" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="shrink-0 text-muted-foreground hover:text-destructive"
+                onClick={onDelete}
+                disabled={isDeleting}
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Delete event (Admin only)</p>
+            </TooltipContent>
+          </Tooltip>
         )}
       </div>
     </div>
