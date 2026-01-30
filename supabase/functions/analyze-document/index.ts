@@ -64,16 +64,18 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Create or update analysis job
+    // Create analysis job (use insert instead of upsert since uploadId may not exist in evidence_uploads)
     const { data: job, error: jobError } = await supabase
       .from("document_analysis_jobs")
-      .upsert({
-        upload_id: uploadId,
+      .insert({
+        upload_id: null, // Set to null for pasted documents without a file upload
         status: "processing",
         started_at: new Date().toISOString(),
-      }, { onConflict: "upload_id" })
+      })
       .select()
       .single();
+
+    const jobId = job?.id;
 
     if (jobError) {
       console.error("Job creation error:", jobError);
@@ -242,10 +244,10 @@ Be thorough but accurate. Only extract information explicitly stated or clearly 
     const extraction: ExtractionResult = JSON.parse(toolCall.function.arguments);
     console.log(`Extracted: ${extraction.events.length} events, ${extraction.entities.length} entities, ${extraction.discrepancies.length} discrepancies`);
 
-    // Insert extracted events
+    // Insert extracted events (set source_upload_id to null for pasted documents)
     if (extraction.events.length > 0) {
       const eventRows = extraction.events.map(event => ({
-        source_upload_id: uploadId,
+        source_upload_id: null, // Null for pasted documents without file upload
         date: event.date,
         category: event.category,
         description: event.description,
@@ -268,10 +270,10 @@ Be thorough but accurate. Only extract information explicitly stated or clearly 
       }
     }
 
-    // Insert extracted entities
+    // Insert extracted entities (set source_upload_id to null for pasted documents)
     if (extraction.entities.length > 0) {
       const entityRows = extraction.entities.map(entity => ({
-        source_upload_id: uploadId,
+        source_upload_id: null, // Null for pasted documents without file upload
         name: entity.name,
         entity_type: entity.entityType,
         role: entity.role,
@@ -287,10 +289,10 @@ Be thorough but accurate. Only extract information explicitly stated or clearly 
       }
     }
 
-    // Insert extracted discrepancies
+    // Insert extracted discrepancies (set source_upload_id to null for pasted documents)
     if (extraction.discrepancies.length > 0) {
       const discrepancyRows = extraction.discrepancies.map(d => ({
-        source_upload_id: uploadId,
+        source_upload_id: null, // Null for pasted documents without file upload
         discrepancy_type: d.discrepancyType,
         title: d.title,
         description: d.description,
@@ -308,17 +310,19 @@ Be thorough but accurate. Only extract information explicitly stated or clearly 
       }
     }
 
-    // Update job status
-    await supabase
-      .from("document_analysis_jobs")
-      .update({
-        status: "completed",
-        events_extracted: extraction.events.length,
-        entities_extracted: extraction.entities.length,
-        discrepancies_extracted: extraction.discrepancies.length,
-        completed_at: new Date().toISOString()
-      })
-      .eq("upload_id", uploadId);
+    // Update job status using job ID
+    if (jobId) {
+      await supabase
+        .from("document_analysis_jobs")
+        .update({
+          status: "completed",
+          events_extracted: extraction.events.length,
+          entities_extracted: extraction.entities.length,
+          discrepancies_extracted: extraction.discrepancies.length,
+          completed_at: new Date().toISOString()
+        })
+        .eq("id", jobId);
+    }
 
     return new Response(
       JSON.stringify({
