@@ -414,72 +414,76 @@ export const intelligenceBriefing: BriefingSection[] = [
     id: "compliance-audit-report",
     title: "Compliance Audit: Procedural Failures (Criminal Appeal No. 16/2024)",
     icon: ClipboardCheck,
-    summary: "Comprehensive audit of statutory violations and procedural failures in digital evidence handling that led to systemic evidentiary nullity and total exoneration.",
+    summary: "Based on 123 sources: In high-stakes cybercrime litigation, statutory compliance is the strategic foundation of sustainable prosecution. When PECA 2016 protocols are bypassed, the resulting 'investigative collapse' renders the entire state case an evidentiary nullity.",
     keyPoints: [
-      "Section 33 PECA 2016: Mandatory search warrant NOT obtained for March 2019 raid",
-      "No Gazetted Officer present—violation of Section 10 proviso",
+      "Section 33 PECA 2016: Mandatory search warrant NOT obtained for March 22, 2019 raid at Flat No. B-2, Clifton Garden 1",
+      "No Gazetted Officer present—violation of Section 10 proviso for warrantless entries",
       "No 24-hour judicial notice after seizure—no court record of notification",
-      "No independent private witnesses in residential setting—violates CrPC Section 103",
-      "No Roznamcha (departure) entries—cuts case 'from its roots'",
-      "Chain of custody breakdown: 16 devices seized but 21 items received by forensics",
-      "3-year delay in forensic reports with no chain of custody documentation",
-      "Section 342 CrPC violation: Accused not questioned about specific seized items"
+      "No independent private witnesses in 'densely populated' residential setting—violates CrPC 103 and Daim vs. The State precedent",
+      "No Roznamcha (departure/daily diary) entries produced—'cuts case from its roots'",
+      "Inventory discrepancy: 16 devices seized but 21 items received by forensics (3 on April 10 + 18 on May 20, 2019)",
+      "Devices 'not in a sealed condition' when handed to forensics—physical and logical integrity compromised",
+      "3-year delay in forensic reports with no chain of custody form included",
+      "Section 342 CrPC violation: Accused not questioned about specific seized items during statement",
+      "Victim PW-07 admitted she 'never provided her mobile phone or laptop to FIA'—systemic evidentiary nullity"
     ],
     details: [
       {
-        heading: "Statutory Framework: Section 33 PECA 2016",
-        content: "Under Section 33 of PECA 2016, FIA must obtain a search warrant from competent court to enter specified places and seize digital systems. PW-01 Inspector Shagufta Ahmed admitted: 'No search warrant was available at time of raid.' Operation conducted without Gazetted Officer (Section 10 proviso violation) and FIA failed to notify court within statutory 24-hour window.",
-        evidence: "PW-01 Testimony (Exh-03), Daim vs. The State (2021 PCrLJ 1061)"
+        heading: "1. Statutory Compliance Framework: Section 33 PECA 2016",
+        content: "Under Section 33 of PECA 2016, the Federal Investigation Agency (FIA) is mandated to obtain a search warrant from a competent court to enter a specified place and seize digital systems. The testimony of PW-01 Inspector Shagufta Ahmed (Exh-03) admitted that no search warrant was available at the time of the raid on March 22, 2019 at Flat No. B-2, Clifton Garden 1. The operation was conducted without a Gazetted Officer—a violation of the Section 10 proviso for warrantless entries—and the FIA failed to notify the court within the statutory 24-hour window. Despite the 'densely populated' nature of the Clifton Garden complex, the raiding team failed to associate independent private witnesses, a fatal omission cited under the judicial precedent of Daim vs. The State (2021 PCrLJ 1061, Karachi High Court Sindh).",
+        evidence: "PW-01 Admission (Exh-03); PECA Sec 33(1); CrPC 103; Daim vs. The State (2021 PCrLJ 1061)"
       },
       {
         heading: "Procedural Deficiency Matrix",
-        content: "FAIL: Mandatory Search Warrant (raid conducted without authorization). FAIL: Gazetted Officer Presence (Inspector-led, no Gazetted Officer). FAIL: 24-Hour Judicial Notice (no court notification record). FAIL: Independent Witness Protocol (no private witnesses in residential area). FAIL: Documentation of Departure (no Roznamcha entries produced). Court characterized actions as 'mockery of legal procedure.'",
-        evidence: "Case Diary, CrPC 103, PECA Section 33(1)"
+        content: "FAIL: Mandatory Search Warrant—raid conducted without judicial authorization (Contravention of PECA Sec 33(1)). FAIL: Gazetted Officer Presence—operation led by Inspector, no Gazetted Officer present (Violation of Sec 10 Proviso). FAIL: 24-Hour Judicial Notice—no record of court being informed post-seizure (Absence of record in Case Diary). FAIL: Independent Witness Protocol—no private witnesses associated in residential setting (Violation of CrPC 103 / Daim vs. The State). FAIL: Documentation of Departure—failure to produce Roznamcha (daily diary) entries (PW-01 Admission; 'cuts case from its roots'). The appellate court accurately characterized these actions as a 'mockery of legal procedure.' These jurisdictional errors created a 'fruit of the poisonous tree' effect, where the infra-legal nature of the initial search vitiated all subsequent recoveries.",
+        evidence: "Case Diary, PW-01 Cross-examination, CrPC 103"
       },
       {
-        heading: "Inventory Discrepancy Analysis",
-        content: "IO PW-08 SI Imran Saad recorded seizure of 16 digital devices on March 22, 2019. Forensic expert PW-06 Nauman Ali testified receiving: 3 items on April 10, 2019 (Samsung, iPhone, Tablet); 18 items on May 20, 2019. Total reaching 21 items despite only 16 seized—systemic anomaly prosecution failed to explain.",
-        evidence: "Seizure records vs. Forensic intake records"
+        heading: "2. Forensic Chain of Custody and Evidence Integrity",
+        content: "The integrity of digital devices depends entirely on a continuous, documented chain of custody. Any 'dark period' in the custodial timeline justifies an adverse inference regarding evidence tampering. In this matter, the breakdown of custody was not merely a lapse but suggested malicious diversion of case property. The IO PW-08 SI Imran Saad recorded seizure of 16 digital devices on March 22, 2019. However, forensic expert PW-06 Nauman Ali testified to an inexplicable intake timeline: April 10, 2019 received 3 items (Samsung mobile, iPhone, Tablet); May 20, 2019 received 18 items. The submission of three items before the bulk batch—and total count reaching 21 items despite only 16 seized—remains a systemic anomaly the prosecution failed to resolve.",
+        evidence: "Seizure records vs. Forensic intake records, PW-08/PW-06 testimony discrepancy"
       },
       {
         heading: "Custodial Breakdown and Third-Party Influence",
-        content: "Defense asserted 16 seized devices were never placed in official Malkhana but unlawfully handed to Col. Saqib Mumtaz (Signal Corps officer with technical training). Corroborated by prosecution's failure to: produce Malkhana in-charge as witness, present Register No. XIX entries, document interim custody between March seizure and May forensic submission.",
-        evidence: "Missing Malkhana records, Defense pleadings"
+        content: "The audit identifies a critical 'mystery of disappeared articles.' The defense asserted that the 16 seized devices were never placed in the official Malkhana but were unlawfully handed over to the complainant's son, Col. Saqib Mumtaz (a Signal Corps officer with technical training). This allegation is corroborated by the prosecution's failure to: (1) Produce the Malkhana in-charge as a witness; (2) Present Register No. XIX entries to prove safe storage; (3) Document the interim custody between March seizure and May forensic submission. PW-04 Tariq Hussain Arbab admitted the digital gadgets were 'not in a sealed condition' when handed to him. In absence of on-site sealing in a residential complex, the physical and logical integrity of the devices was compromised. This custodial vacuum renders any subsequent data extraction legally moot.",
+        evidence: "Missing Malkhana records, PW-04 Cross-examination, Defense pleadings"
       },
       {
-        heading: "Physical Integrity Assessment",
-        content: "PW-04 Tariq Hussain Arbab admitted digital gadgets were 'not in a sealed condition' when handed to him. In absence of on-site sealing in residential complex, physical and logical integrity of devices was compromised. Custodial vacuum renders any subsequent data extraction legally moot—court cannot exclude possibility data was planted or modified.",
-        evidence: "PW-04 Cross-examination testimony"
-      },
-      {
-        heading: "Technical Forensic Findings",
-        content: "Forensic reports (Exh 7/A, 8/A, 8/B) and expert testimonies confirmed: Lack of Hacking Evidence (no unauthorized access proven), Absence of Spyware (contradicting FIR allegations), Unproven Identity Creation (no link to 'Maya Ali' or 'Kazim Khan' profiles). Final report submitted after 3-year delay. PW-05 admitted no chain of custody form was included.",
-        evidence: "Forensic Reports, Expert testimony"
+        heading: "3. Technical Forensic Analysis and Expert Testimony",
+        content: "To meet the 'beyond reasonable doubt' standard, forensic experts must provide an empirical link between the accused and the digital actus reus. The forensic reports (Exh 7/A, 8/A, 8/B) and testimonies of PW-06 Nauman Ali and PW-05 Muhammad Amir Zaib confirmed: (1) Lack of Hacking Evidence—experts admitted no proof of unauthorized access to victim's email or social media; (2) Absence of Spyware—no surveillance software detected on seized devices, directly contradicting FIR allegations; (3) Unproven Identity Creation—no technical link established between appellant and 'Maya Ali' or 'Kazim Khan' Facebook profiles. The final forensic report was submitted after a three-year delay, violating the requirement for 'expeditious disposal' of digital evidence. PW-05 admitted no chain of custody form was included in the report.",
+        evidence: "Forensic Reports Exh 7/A, 8/A, 8/B; PW-06/PW-05 testimony"
       },
       {
         heading: "Systemic Evidentiary Nullity",
-        content: "Critical contradiction: IO (PW-08) claimed to seize victim's Samsung J7 via memo (Exh-9/B), but victim (PW-07) explicitly admitted she 'never provided her mobile phone or laptop to FIA for analysis.' If victim never provided source device, forensic reports regarding her WhatsApp and Email are effectively fraudulent or based on foisted hardware.",
-        evidence: "PW-07 vs. PW-08 testimony contradiction"
+        content: "A material contradiction emerged regarding source devices. While the IO (PW-08) claimed to have seized the victim's Samsung J7 via memo (Exh-9/B), the victim (PW-07) explicitly admitted she 'never provided her mobile phone or laptop to FIA for analysis.' This creates a 'Systemic Evidentiary Nullity': if the victim never provided the source device, the forensic reports regarding her WhatsApp and Email are effectively fraudulent or based on foisted hardware.",
+        evidence: "PW-07 vs. PW-08 testimony contradiction, Exh-9/B"
       },
       {
-        heading: "Trial Court Errors",
-        content: "During trial, actual gadgets were never properly exhibited. A 'khaki box' was produced by PW-08 but individual items were not marked, listed, or shown to witnesses. Trial court committed procedural nullity by failing to question accused about specific seized items during Section 342 CrPC statement—mandatory requirement essential for accused to explain incriminating evidence.",
-        evidence: "Trial record, Section 342 CrPC violation"
+        heading: "4. Judicial Review and 'Falsus in Uno, Falsus in Omnibus' Application",
+        content: "The appellate court identified fatal failures in treatment of case property. During trial, actual gadgets were never properly exhibited. A 'khaki box' was produced by PW-08 SI Imran Saad, but individual items were not marked, listed, or shown to witnesses. Furthermore, the trial court committed a procedural nullity by failing to question the accused about specific seized items during the Section 342 CrPC statement—this mandatory requirement is essential to allow the accused to explain incriminating evidence; its omission vitiates the entire trial. Applying the doctrine of Saghir Ahmad vs. The State (2023 SCMR 241), the appellate court ruled 'a single doubt' is sufficient for acquittal. The cumulative effect of warrantless raid, broken chain of custody involving Col. Saqib Mumtaz, and forensic contradictions established a mountain of reasonable doubt.",
+        evidence: "Trial record, Section 342 CrPC violation, Saghir Ahmad vs. The State (2023 SCMR 241)"
       },
       {
-        heading: "Judicial Application: Falsus in Uno, Falsus in Omnibus",
-        content: "Applying Saghir Ahmad vs. The State (2023 SCMR 241), appellate court ruled 'a single doubt' is sufficient for acquittal. Cumulative effect of warrantless raid, broken chain of custody involving Col. Saqib, and forensic contradictions established mountain of reasonable doubt. Total exoneration was inevitable result of investigation that was not merely failed, but 'maliciously structured.'",
-        evidence: "Criminal Appeal No. 16/2024 Judgment"
+        heading: "5. Remedial Recommendations for Professional Standards",
+        content: "This case serves as a benchmark for institutional learning regarding prevention of 'process as punishment.' Strategic Takeaways: (1) Warrant-First Protocols—residential raids must strictly adhere to Section 33 PECA; warrantless entries must result in disciplinary action; (2) Chain-of-Custody Digital Ledger—implement automated, tamper-proof digital log for Malkhana; (3) Mandatory On-Site Sealing—all digital media must be sealed in tamper-evident packaging at point of recovery with independent witness signatures; (4) Anti-Influence Protocols—independent audit wing must review cases where complainants hold high-ranking official positions; (5) Technical Pre-Trial Audit—forensic reports and testimonies must be audited for consistency prior to trial.",
+        evidence: "Professional standards recommendations based on case analysis"
+      },
+      {
+        heading: "Conclusion: Total Exoneration",
+        content: "The total exoneration of the appellant in Criminal Appeal No. 16 of 2024 was the inevitable result of an investigation that was not merely failed, but maliciously structured. In the digital domain, technical evidence is only as strong as the procedural integrity of its handling. Procedural discipline remains the only safeguard against institutional abuse and the prerequisite for digital justice.",
+        evidence: "Criminal Appeal No. 16/2024 Judgment dated May 22, 2025"
       }
     ],
     connections: [
-      "Warrantless raid → 'Fruit of the poisonous tree' effect vitiating all recoveries",
-      "Broken chain of custody → Evidence tampering justified by adverse inference",
+      "Warrantless raid → 'Fruit of the poisonous tree' effect vitiating all subsequent recoveries",
+      "No Roznamcha entries → Lack of legal authorization for raiding party's movement",
+      "Broken chain of custody → Evidence tampering cannot be excluded",
       "Device discrepancy (16 seized vs. 21 analyzed) → Unexplained systemic anomaly",
+      "Unsealed devices to Col. Saqib → Enabled data theft and financial sabotage",
       "Section 342 CrPC violation → Trial nullified for failure to question accused",
-      "Total exoneration → Procedural discipline is only safeguard against institutional abuse"
+      "Falsus in Uno, Falsus in Omnibus → Total rejection of prosecution's core evidence"
     ],
-    sources: "Criminal Appeal No. 16/2024, PECA 2016 Section 33, CrPC Sections 103, 342, 249-A, 265-K, Saghir Ahmad vs. The State (2023 SCMR 241), Daim vs. The State (2021 PCrLJ 1061)"
+    sources: "Based on 123 sources: Criminal Appeal No. 16/2024, PECA 2016 Section 33, CrPC Sections 103, 342, 249-A, 265-K, Saghir Ahmad vs. The State (2023 SCMR 241), Daim vs. The State (2021 PCrLJ 1061, Karachi High Court Sindh)"
   },
   {
     id: "financial-sabotage",
