@@ -14,7 +14,8 @@ import {
   Settings,
   LogOut,
   ChevronUp,
-  LogIn
+  LogIn,
+  Shield
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -184,6 +185,10 @@ export function AppSidebar() {
               {systemNavItems.map((item) => (
                 <NavItem key={item.path} item={item} />
               ))}
+              {/* Admin Panel - only visible to admins */}
+              {isAdmin && (
+                <NavItem item={{ path: "/admin", label: "Admin Panel", icon: Shield }} />
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
