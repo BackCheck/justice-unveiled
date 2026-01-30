@@ -16,6 +16,8 @@ import InternationalAnalysis from "./pages/InternationalAnalysis";
 import Auth from "./pages/Auth";
 import AdminPanel from "./pages/AdminPanel";
 import Analyze from "./pages/Analyze";
+import CasesList from "./pages/CasesList";
+import CaseProfile from "./pages/CaseProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +32,8 @@ const App = () => (
           <Routes>
             <Route path="/auth" element={<Auth />} />
             <Route path="/" element={<Landing />} />
+            <Route path="/cases" element={<CasesList />} />
+            <Route path="/cases/:caseId" element={<CaseProfile />} />
             <Route path="/timeline" element={<Index />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/network" element={<NetworkPage />} />
