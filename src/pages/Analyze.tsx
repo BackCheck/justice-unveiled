@@ -1,52 +1,43 @@
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
 import { DocumentAnalyzer } from "@/components/intel/DocumentAnalyzer";
-import { ExtractedEventsList } from "@/components/intel/ExtractedEventsList";
-import { ProceduralFailuresTimeline } from "@/components/intel/ProceduralFailuresTimeline";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Brain, List, AlertTriangle } from "lucide-react";
+import { AnalyzedDataSummary } from "@/components/intel/AnalyzedDataSummary";
+import { Brain, Sparkles } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 const Analyze = () => {
   return (
     <PlatformLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
+        {/* Header */}
         <div>
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
             <Brain className="w-8 h-8 text-primary" />
             AI Document Analyzer
+            <Badge variant="secondary" className="ml-2">
+              <Sparkles className="w-3 h-3 mr-1" />
+              Gemini Powered
+            </Badge>
           </h1>
           <p className="text-muted-foreground mt-2">
             Extract intelligence from legal documents, testimonies, and evidence files using AI-powered analysis
           </p>
         </div>
 
-        <Tabs defaultValue="analyze" className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-3">
-            <TabsTrigger value="analyze" className="flex items-center gap-2">
-              <Brain className="w-4 h-4" />
-              Analyze
-            </TabsTrigger>
-            <TabsTrigger value="events" className="flex items-center gap-2">
-              <List className="w-4 h-4" />
-              Events
-            </TabsTrigger>
-            <TabsTrigger value="discrepancies" className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4" />
-              Discrepancies
-            </TabsTrigger>
-          </TabsList>
+        {/* Document Analyzer Form */}
+        <DocumentAnalyzer />
 
-          <TabsContent value="analyze">
-            <DocumentAnalyzer />
-          </TabsContent>
+        {/* Separator */}
+        <Separator />
 
-          <TabsContent value="events">
-            <ExtractedEventsList />
-          </TabsContent>
-
-          <TabsContent value="discrepancies">
-            <ProceduralFailuresTimeline />
-          </TabsContent>
-        </Tabs>
+        {/* Analyzed Data Summary */}
+        <div>
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-primary" />
+            All AI-Analyzed Intelligence
+          </h2>
+          <AnalyzedDataSummary />
+        </div>
       </div>
     </PlatformLayout>
   );
