@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
   Clock, 
   BarChart3, 
@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Sidebar,
   SidebarContent,
@@ -39,6 +40,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 
 const mainNavItems = [
   { path: "/", label: "Timeline", icon: Clock },
@@ -59,10 +61,30 @@ const systemNavItems = [
 
 export function AppSidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { state } = useSidebar();
+  const { user, profile, signOut } = useAuth();
   const collapsed = state === "collapsed";
 
   const isActive = (path: string) => location.pathname === path;
+
+  // Get user display info
+  const displayName = profile?.display_name || user?.email?.split("@")[0] || "User";
+  const userRole = profile?.role || "Investigator";
+  const userEmail = user?.email || "";
+  const avatarUrl = profile?.avatar_url || "";
+  const initials = displayName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("Signed out successfully");
+    navigate("/auth");
+  };
 
   const NavItem = ({ item }: { item: { path: string; label: string; icon: React.ComponentType<{ className?: string }> } }) => {
     const Icon = item.icon;
@@ -184,19 +206,19 @@ export function AppSidebar() {
               )}
             >
               <Avatar className="h-9 w-9 shrink-0 border-2 border-primary/20">
-                <AvatarImage src="" alt="User avatar" />
+                <AvatarImage src={avatarUrl} alt="User avatar" />
                 <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
-                  JD
+                  {initials}
                 </AvatarFallback>
               </Avatar>
               {!collapsed && (
                 <>
                   <div className="flex flex-col items-start min-w-0 flex-1">
                     <span className="text-sm font-medium text-foreground truncate w-full">
-                      Jane Doe
+                      {displayName}
                     </span>
                     <span className="text-xs text-muted-foreground truncate w-full">
-                      Investigator
+                      {userRole}
                     </span>
                   </div>
                   <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -210,8 +232,8 @@ export function AppSidebar() {
             className="w-56 mb-2"
           >
             <div className="px-2 py-1.5">
-              <p className="text-sm font-medium">Jane Doe</p>
-              <p className="text-xs text-muted-foreground">jane.doe@hrpm.org</p>
+              <p className="text-sm font-medium">{displayName}</p>
+              <p className="text-xs text-muted-foreground">{userEmail}</p>
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer">
@@ -223,7 +245,10 @@ export function AppSidebar() {
               Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive">
+            <DropdownMenuItem 
+              className="cursor-pointer text-destructive focus:text-destructive"
+              onClick={handleSignOut}
+            >
               <LogOut className="mr-2 h-4 w-4" />
               Sign out
             </DropdownMenuItem>
