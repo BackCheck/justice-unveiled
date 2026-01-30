@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Upload, FileAudio, FileText, File, X, CheckCircle, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { EventSelector } from "./EventSelector";
@@ -43,6 +44,7 @@ interface UploadState {
 }
 
 export const EvidenceUploader = ({ onUploadComplete }: { onUploadComplete?: () => void }) => {
+  const { user } = useAuth();
   const [uploads, setUploads] = useState<UploadState[]>([]);
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("general");
@@ -134,6 +136,7 @@ export const EvidenceUploader = ({ onUploadComplete }: { onUploadComplete?: () =
             description: description || null,
             category,
             related_event_ids: selectedEventIds.length > 0 ? selectedEventIds : null,
+            uploaded_by: user?.id || null,
           });
 
         if (dbError) throw dbError;

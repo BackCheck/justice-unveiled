@@ -19,6 +19,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserRole } from "@/hooks/useUserRole";
 import {
   Sidebar,
   SidebarContent,
@@ -65,13 +66,14 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const { state } = useSidebar();
   const { user, profile, signOut } = useAuth();
+  const { role, canEdit, canUpload, isAdmin } = useUserRole();
   const collapsed = state === "collapsed";
 
   const isActive = (path: string) => location.pathname === path;
 
   // Get user display info
   const displayName = profile?.display_name || user?.email?.split("@")[0] || "User";
-  const userRole = profile?.role || "Investigator";
+  const userRoleDisplay = role ? role.charAt(0).toUpperCase() + role.slice(1) : "Analyst";
   const userEmail = user?.email || "";
   const avatarUrl = profile?.avatar_url || "";
   const initials = displayName
@@ -220,7 +222,7 @@ export function AppSidebar() {
                         {displayName}
                       </span>
                       <span className="text-xs text-muted-foreground truncate w-full">
-                        {userRole}
+                        {userRoleDisplay}
                       </span>
                     </div>
                     <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0" />
