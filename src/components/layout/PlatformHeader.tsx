@@ -10,13 +10,13 @@ import {
   X,
   Upload,
   BookOpen,
-  Globe,
   Scale,
   Info
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import hrpmLogo from "@/assets/hrpm-logo-gold.png";
 
 const navItems = [
   { path: "/", label: "Timeline", icon: Clock },
@@ -41,8 +41,8 @@ export const PlatformHeader = () => {
           <Link to="/" className="flex items-center gap-4 group">
             <div className="flex items-center gap-3">
               {/* Logo with professional styling */}
-              <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-professional transition-all duration-300 group-hover:shadow-professional-lg">
-                <Globe className="w-7 h-7 text-primary-foreground" />
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shadow-professional transition-all duration-300 group-hover:shadow-professional-lg overflow-hidden">
+                <img src={hrpmLogo} alt="HRPM Logo" className="w-10 h-10 object-contain transition-transform duration-300 group-hover:scale-110" />
               </div>
               <div className="flex flex-col">
                 <span className="text-2xl font-bold text-primary tracking-tight leading-none">HRPM</span>

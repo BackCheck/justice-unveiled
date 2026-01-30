@@ -8,7 +8,6 @@ import {
   Scale, 
   Upload, 
   Info,
-  Globe,
   Search,
   User,
   Settings,
@@ -21,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
+import hrpmLogo from "@/assets/hrpm-logo-gold.png";
 import {
   Sidebar,
   SidebarContent,
@@ -126,12 +126,12 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r border-border/50">
       <SidebarHeader className="border-b border-border/50 p-4">
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-professional transition-all duration-300 group-hover:shadow-professional-lg group-hover:scale-105 shrink-0">
-            <Globe className="w-6 h-6 text-primary-foreground transition-transform duration-500 group-hover:rotate-12" />
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shadow-professional transition-all duration-300 group-hover:shadow-professional-lg group-hover:scale-105 shrink-0 overflow-hidden">
+            <img src={hrpmLogo} alt="HRPM Logo" className="w-8 h-8 object-contain transition-transform duration-500 group-hover:scale-110" />
           </div>
           {!collapsed && (
             <div className="flex flex-col min-w-0 overflow-hidden">
-              <span className="text-xl font-bold text-primary tracking-tight leading-none text-gradient-animate">HRPM</span>
+              <span className="text-xl font-bold text-primary tracking-tight leading-none">HRPM</span>
               <span className="text-[10px] font-medium text-muted-foreground tracking-wide uppercase mt-0.5 truncate">
                 Human Rights Protection
               </span>
