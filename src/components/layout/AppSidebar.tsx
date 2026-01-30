@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
-import hrpmLogo from "@/assets/hrpm-logo-gold.png";
+import hrpmLogo from "@/assets/human-rights-logo.svg";
 import {
   Sidebar,
   SidebarContent,
