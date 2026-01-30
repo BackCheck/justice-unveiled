@@ -19,125 +19,119 @@
 
 @layer base {
   :root {
-    /* Warm cream/off-white background - elegant, refined */
-    --background: 45 30% 96%;
-    --foreground: 220 15% 18%;
+    /* Clean light background - professional, crisp */
+    --background: 200 20% 97%;
+    --foreground: 200 25% 15%;
 
-    /* Pure white cards with subtle shadow-ready surface */
+    /* Pure white cards for clean separation */
     --card: 0 0% 100%;
-    --card-foreground: 220 15% 18%;
+    --card-foreground: 200 25% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 18%;
+    --popover-foreground: 200 25% 15%;
 
-    /* Dark yellow/gold primary - authoritative, impactful */
-    --primary: 45 90% 38%;
+    /* Human Rights Logo Blue - #0087C1 = hsl(199, 100%, 38%) */
+    --primary: 199 100% 38%;
     --primary-foreground: 0 0% 100%;
 
-    /* Soft warm gray secondary */
-    --secondary: 45 15% 92%;
-    --secondary-foreground: 220 15% 25%;
+    /* Soft blue-tinted secondary */
+    --secondary: 199 25% 93%;
+    --secondary-foreground: 199 40% 25%;
 
-    /* Warm muted tones */
-    --muted: 45 10% 94%;
-    --muted-foreground: 220 10% 45%;
+    /* Cool muted tones */
+    --muted: 200 15% 94%;
+    --muted-foreground: 200 15% 40%;
 
-    /* Gold-tinted accent - cohesive with primary */
-    --accent: 45 60% 88%;
-    --accent-foreground: 45 90% 25%;
+    /* Blue-tinted accent - cohesive with primary */
+    --accent: 199 50% 90%;
+    --accent-foreground: 199 100% 30%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Refined warm borders */
-    --border: 45 15% 85%;
-    --input: 45 15% 88%;
-    --ring: 45 90% 40%;
+    /* Refined cool borders */
+    --border: 200 20% 85%;
+    --input: 200 20% 88%;
+    --ring: 199 100% 40%;
 
     --radius: 0.75rem;
 
-    /* Chart colors - professional warm palette */
-    --chart-1: 45 90% 38%;
-    --chart-2: 160 45% 40%;
+    /* Chart colors - professional palette with blue primary */
+    --chart-1: 199 100% 38%;
+    --chart-2: 160 50% 40%;
     --chart-3: 0 65% 50%;
-    --chart-4: 280 40% 55%;
-    --chart-5: 200 60% 45%;
+    --chart-4: 280 45% 55%;
+    --chart-5: 45 80% 50%;
 
-    /* Dark sidebar for contrast in light mode too */
-    --sidebar-background: 220 15% 14%;
-    --sidebar-foreground: 45 20% 92%;
-    --sidebar-primary: 45 90% 50%;
-    --sidebar-primary-foreground: 220 15% 12%;
-    --sidebar-accent: 220 12% 22%;
-    --sidebar-accent-foreground: 45 20% 95%;
-    --sidebar-border: 220 12% 22%;
-    --sidebar-ring: 45 90% 55%;
+    /* Dark sidebar for contrast in light mode */
+    --sidebar-background: 200 30% 12%;
+    --sidebar-foreground: 199 30% 92%;
+    --sidebar-primary: 199 100% 50%;
+    --sidebar-primary-foreground: 200 30% 10%;
+    --sidebar-accent: 200 25% 20%;
+    --sidebar-accent-foreground: 199 30% 95%;
+    --sidebar-border: 200 25% 20%;
+    --sidebar-ring: 199 100% 55%;
 
     /* Professional tokens */
-    --justice-olive: 45 90% 38%;
-    --authority-charcoal: 220 15% 18%;
-    --sage-green: 45 30% 96%;
+    --justice-olive: 199 100% 38%;
+    --authority-charcoal: 200 25% 15%;
+    --sage-green: 200 20% 97%;
   }
 
   .dark {
-    /* Deep charcoal background - serious, professional */
-    --background: 180 10% 8%;
-    --foreground: 100 12% 90%;
+    /* Deep charcoal background - serious, investigative */
+    --background: 200 25% 8%;
+    --foreground: 199 25% 92%;
 
-    /* Elevated dark card surfaces */
-    --card: 180 10% 12%;
-    --card-foreground: 100 12% 90%;
+    /* Slightly elevated card surfaces */
+    --card: 200 25% 12%;
+    --card-foreground: 199 25% 92%;
 
-    /* Popovers with depth */
-    --popover: 180 10% 14%;
-    --popover-foreground: 100 12% 90%;
+    --popover: 200 25% 14%;
+    --popover-foreground: 199 25% 92%;
 
-    /* Dark yellow/gold primary - refined, authoritative */
-    --primary: 45 85% 50%;
-    --primary-foreground: 180 10% 8%;
+    /* Human Rights Logo Blue - slightly brightened for dark mode */
+    --primary: 199 100% 50%;
+    --primary-foreground: 200 25% 8%;
 
-    /* Darker secondary surfaces */
-    --secondary: 180 8% 16%;
-    --secondary-foreground: 100 12% 85%;
+    --secondary: 200 20% 18%;
+    --secondary-foreground: 199 25% 85%;
 
-    /* Muted tones */
-    --muted: 180 8% 15%;
-    --muted-foreground: 100 10% 55%;
+    --muted: 200 20% 16%;
+    --muted-foreground: 199 15% 55%;
 
-    /* Sage accent */
-    --accent: 100 25% 45%;
-    --accent-foreground: 180 10% 8%;
+    /* Blue accent */
+    --accent: 199 60% 25%;
+    --accent-foreground: 199 25% 92%;
 
-    /* Destructive with gravity */
-    --destructive: 0 60% 50%;
+    --destructive: 0 65% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Subtle borders */
-    --border: 180 8% 20%;
-    --input: 180 8% 18%;
-    --ring: 45 85% 50%;
+    --border: 200 20% 20%;
+    --input: 200 20% 18%;
+    --ring: 199 100% 50%;
 
-    /* Chart colors - professional dark palette with gold */
-    --chart-1: 45 85% 50%;
-    --chart-2: 100 25% 45%;
-    --chart-3: 0 55% 50%;
-    --chart-4: 270 40% 55%;
-    --chart-5: 160 35% 45%;
+    /* Chart colors - blue-anchored palette */
+    --chart-1: 199 100% 50%;
+    --chart-2: 160 45% 45%;
+    --chart-3: 0 55% 55%;
+    --chart-4: 280 40% 55%;
+    --chart-5: 45 75% 55%;
 
-    /* Sidebar with depth */
-    --sidebar-background: 180 10% 6%;
-    --sidebar-foreground: 100 12% 85%;
-    --sidebar-primary: 45 85% 50%;
-    --sidebar-primary-foreground: 180 10% 8%;
-    --sidebar-accent: 180 8% 14%;
-    --sidebar-accent-foreground: 100 12% 90%;
-    --sidebar-border: 180 8% 18%;
-    --sidebar-ring: 45 85% 55%;
+    --sidebar-background: 200 30% 6%;
+    --sidebar-foreground: 199 25% 85%;
+    --sidebar-primary: 199 100% 55%;
+    --sidebar-primary-foreground: 200 30% 6%;
+    --sidebar-accent: 200 25% 16%;
+    --sidebar-accent-foreground: 199 25% 90%;
+    --sidebar-border: 200 25% 16%;
+    --sidebar-ring: 199 100% 55%;
 
     /* Professional tokens */
-    --justice-olive: 45 85% 50%;
-    --authority-charcoal: 180 10% 12%;
-    --sage-green: 100 25% 45%;
+    --justice-olive: 199 60% 25%;
+    --authority-charcoal: 200 25% 8%;
+    --sage-green: 199 30% 20%;
   }
 }
 

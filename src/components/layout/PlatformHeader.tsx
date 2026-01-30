@@ -16,7 +16,7 @@ import {
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import hrpmLogo from "@/assets/hrpm-logo-gold.png";
+import hrpmLogo from "@/assets/human-rights-logo.svg";
 
 const navItems = [
   { path: "/", label: "Timeline", icon: Clock },
