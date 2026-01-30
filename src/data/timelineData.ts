@@ -263,15 +263,15 @@ export const timelineData: TimelineEvent[] = [
 ];
 
 export const categoryColors: Record<TimelineEvent["category"], string> = {
-  "Business Interference": "bg-amber-500",
-  "Harassment": "bg-red-500",
-  "Legal Proceeding": "bg-blue-500",
-  "Criminal Allegation": "bg-purple-500"
+  "Business Interference": "bg-chart-1",
+  "Harassment": "bg-chart-4",
+  "Legal Proceeding": "bg-chart-2",
+  "Criminal Allegation": "bg-chart-3"
 };
 
 export const categoryBorderColors: Record<TimelineEvent["category"], string> = {
-  "Business Interference": "border-amber-500",
-  "Harassment": "border-red-500",
-  "Legal Proceeding": "border-blue-500",
-  "Criminal Allegation": "border-purple-500"
+  "Business Interference": "border-chart-1",
+  "Harassment": "border-chart-4",
+  "Legal Proceeding": "border-chart-2",
+  "Criminal Allegation": "border-chart-3"
 };

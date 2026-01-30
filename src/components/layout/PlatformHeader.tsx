@@ -30,18 +30,19 @@ export const PlatformHeader = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-card border-b border-border sticky top-0 z-50">
+    <header className="bg-card/80 backdrop-blur-xl border-b border-border/50 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4">
         {/* Top bar */}
-        <div className="flex items-center justify-between py-4 border-b border-border">
-          <Link to="/" className="flex items-center gap-3">
+        <div className="flex items-center justify-between py-4 border-b border-border/50">
+          <Link to="/" className="flex items-center gap-3 group">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+              {/* Logo with Web3 glow effect */}
+              <div className="w-11 h-11 rounded-xl bg-primary flex items-center justify-center glow-primary transition-all duration-300 group-hover:scale-105">
                 <Globe className="w-6 h-6 text-primary-foreground" />
               </div>
-              <span className="text-lg font-bold text-primary tracking-tight">HRPM</span>
+              <span className="text-xl font-bold gradient-text tracking-tight">HRPM</span>
             </div>
-            <div className="hidden sm:block border-l border-border pl-3">
+            <div className="hidden sm:block border-l border-border/50 pl-3">
               <p className="text-sm font-medium text-foreground">Human Rights Protection Movement</p>
             </div>
           </Link>
@@ -57,11 +58,11 @@ export const PlatformHeader = () => {
                     variant="ghost"
                     size="sm"
                     className={cn(
-                      "text-muted-foreground hover:text-foreground hover:bg-accent",
-                      isActive && "bg-accent text-foreground"
+                      "text-muted-foreground hover:text-foreground hover:bg-accent/20 transition-all duration-200",
+                      isActive && "bg-primary/10 text-primary border border-primary/20"
                     )}
                   >
-                    <Icon className="w-4 h-4 mr-2" />
+                    <Icon className={cn("w-4 h-4 mr-2", isActive && "text-primary")} />
                     {item.label}
                   </Button>
                 </Link>
@@ -74,7 +75,7 @@ export const PlatformHeader = () => {
             <Button 
               variant="outline" 
               size="sm" 
-              className="hidden sm:flex"
+              className="hidden sm:flex border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all duration-200"
             >
               <Search className="w-4 h-4 mr-2" />
               Search Intel
@@ -105,11 +106,11 @@ export const PlatformHeader = () => {
                 >
                   <div
                     className={cn(
-                      "flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors",
-                      isActive && "bg-accent text-foreground"
+                      "flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/20 transition-all duration-200",
+                      isActive && "bg-primary/10 text-primary border border-primary/20"
                     )}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon className={cn("w-5 h-5", isActive && "text-primary")} />
                     {item.label}
                   </div>
                 </Link>
