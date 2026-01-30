@@ -10,8 +10,7 @@ import {
   X,
   Upload,
   BookOpen,
-  Scale,
-  Shield
+  Globe
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -38,7 +37,7 @@ export const PlatformHeader = () => {
           <Link to="/" className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-                <Shield className="w-6 h-6 text-primary-foreground" />
+                <Globe className="w-6 h-6 text-primary-foreground" />
               </div>
               <span className="text-lg font-bold text-primary tracking-tight">HRPM</span>
             </div>
