@@ -86,7 +86,10 @@ const Landing = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background overflow-hidden">
+    <div className="min-h-screen bg-background overflow-hidden relative">
+      {/* Mouse-following spotlight - entire page */}
+      <SpotlightEffect size={500} intensity={0.2} />
+      
       {/* Particle Background */}
       <ParticleField />
 
@@ -125,9 +128,6 @@ const Landing = () => {
 
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center">
-        {/* Mouse-following spotlight */}
-        <SpotlightEffect size={500} intensity={0.2} />
-        
         {/* Animated background orbs */}
         <GlowingOrb color="primary" size="xl" className="top-20 -left-32" delay={0} />
         <GlowingOrb color="accent" size="lg" className="bottom-20 -right-20" delay={1} />
