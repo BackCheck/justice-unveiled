@@ -2,9 +2,13 @@ import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import { useCombinedEntities, CombinedEntity, CombinedConnection } from "@/hooks/useCombinedEntities";
+import { useEntityClusters, EntityCluster } from "@/hooks/useEntityClusters";
 import { categoryColors } from "@/data/entitiesData";
-import { Users, Building2, Shield, Scale, Filter, ZoomIn, ZoomOut, Sparkles, Loader2 } from "lucide-react";
+import { Users, Building2, Shield, Scale, Filter, ZoomIn, ZoomOut, Sparkles, Loader2, Network, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NetworkNodeProps {
@@ -12,9 +16,11 @@ interface NetworkNodeProps {
   isSelected: boolean;
   onClick: () => void;
   position: { x: number; y: number };
+  clusterColor?: string;
+  isHighlightedCluster?: boolean;
 }
 
-const NetworkNode = ({ entity, isSelected, onClick, position }: NetworkNodeProps) => {
+const NetworkNode = ({ entity, isSelected, onClick, position, clusterColor, isHighlightedCluster }: NetworkNodeProps) => {
   const getIcon = () => {
     switch (entity.type) {
       case "person": return Users;
@@ -32,6 +38,17 @@ const NetworkNode = ({ entity, isSelected, onClick, position }: NetworkNodeProps
       onClick={onClick}
       className="cursor-pointer"
     >
+      {/* Cluster highlight ring */}
+      {isHighlightedCluster && clusterColor && (
+        <circle
+          r={42}
+          fill="none"
+          stroke={clusterColor}
+          strokeWidth={3}
+          opacity={0.8}
+          className="animate-pulse"
+        />
+      )}
       {/* AI Extracted glow effect */}
       {entity.isAIExtracted && (
         <circle
@@ -46,12 +63,12 @@ const NetworkNode = ({ entity, isSelected, onClick, position }: NetworkNodeProps
       )}
       <circle
         r={isSelected ? 35 : 28}
-        fill={categoryColors[entity.category || "neutral"]}
+        fill={isHighlightedCluster && clusterColor ? clusterColor : categoryColors[entity.category || "neutral"]}
         className={cn(
           "transition-all duration-200",
           isSelected ? "stroke-primary stroke-[3]" : "stroke-background stroke-2"
         )}
-        opacity={0.9}
+        opacity={isHighlightedCluster ? 1 : 0.9}
       />
       <foreignObject x={-12} y={-12} width={24} height={24}>
         <div className="flex items-center justify-center w-full h-full">
@@ -79,7 +96,10 @@ const NetworkNode = ({ entity, isSelected, onClick, position }: NetworkNodeProps
 
 export const EntityNetwork = () => {
   const { entities, connections, isLoading, aiEntityCount, inferredConnectionCount } = useCombinedEntities();
+  const clusters = useEntityClusters(entities, connections);
   const [selectedEntity, setSelectedEntity] = useState<CombinedEntity | null>(null);
+  const [selectedCluster, setSelectedCluster] = useState<EntityCluster | null>(null);
+  const [showClusters, setShowClusters] = useState(true);
   const [filterType, setFilterType] = useState<string | null>(null);
   const [showAIOnly, setShowAIOnly] = useState(false);
   const [zoom, setZoom] = useState(1);
@@ -145,6 +165,28 @@ export const EntityNetwork = () => {
     );
   }, [selectedEntity, connections]);
 
+  // Get cluster for entity
+  const getEntityCluster = (entityId: string): EntityCluster | undefined => {
+    return clusters.find(c => c.entities.includes(entityId));
+  };
+
+  // Check if entity is in selected cluster
+  const isInSelectedCluster = (entityId: string): boolean => {
+    if (!selectedCluster) return false;
+    return selectedCluster.entities.includes(entityId);
+  };
+
+  // Get cluster color for connection
+  const getClusterConnectionColor = (conn: CombinedConnection): string | null => {
+    if (!showClusters || !selectedCluster) return null;
+    const sourceInCluster = selectedCluster.entities.includes(conn.source);
+    const targetInCluster = selectedCluster.entities.includes(conn.target);
+    if (sourceInCluster && targetInCluster) {
+      return selectedCluster.color;
+    }
+    return null;
+  };
+
   if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -202,40 +244,98 @@ export const EntityNetwork = () => {
             </div>
           </CardHeader>
           <CardContent>
-            {/* Filter buttons */}
-            <div className="flex flex-wrap gap-2 mb-4">
-              <Button
-                variant={filterType === null && !showAIOnly ? "default" : "outline"}
-                size="sm"
-                onClick={() => { setFilterType(null); setShowAIOnly(false); }}
-              >
-                <Filter className="w-4 h-4 mr-1" />
-                All ({entities.length})
-              </Button>
-              <Button
-                variant={showAIOnly ? "default" : "outline"}
-                size="sm"
-                onClick={() => setShowAIOnly(!showAIOnly)}
-                className={showAIOnly ? "bg-amber-500 hover:bg-amber-600" : ""}
-              >
-                <Sparkles className="w-4 h-4 mr-1" />
-                AI Extracted ({aiEntityCount})
-              </Button>
-              {["protagonist", "antagonist", "official", "neutral"].map(cat => (
+            {/* Cluster Toggle & Filter Controls */}
+            <div className="flex flex-wrap items-center gap-4 mb-4">
+              <div className="flex items-center gap-2">
+                <Switch
+                  id="cluster-mode"
+                  checked={showClusters}
+                  onCheckedChange={setShowClusters}
+                />
+                <Label htmlFor="cluster-mode" className="flex items-center gap-1.5 text-sm cursor-pointer">
+                  <Layers className="w-4 h-4" />
+                  Cluster Detection
+                </Label>
+              </div>
+              
+              <Separator orientation="vertical" className="h-6" />
+              
+              <div className="flex flex-wrap gap-2">
                 <Button
-                  key={cat}
-                  variant={filterType === cat ? "default" : "outline"}
+                  variant={filterType === null && !showAIOnly ? "default" : "outline"}
                   size="sm"
-                  onClick={() => { setFilterType(filterType === cat ? null : cat); setShowAIOnly(false); }}
-                  style={{
-                    backgroundColor: filterType === cat ? categoryColors[cat] : undefined,
-                    borderColor: categoryColors[cat]
-                  }}
+                  onClick={() => { setFilterType(null); setShowAIOnly(false); setSelectedCluster(null); }}
                 >
-                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  <Filter className="w-4 h-4 mr-1" />
+                  All ({entities.length})
                 </Button>
-              ))}
+                <Button
+                  variant={showAIOnly ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => { setShowAIOnly(!showAIOnly); setSelectedCluster(null); }}
+                  className={showAIOnly ? "bg-amber-500 hover:bg-amber-600" : ""}
+                >
+                  <Sparkles className="w-4 h-4 mr-1" />
+                  AI Extracted ({aiEntityCount})
+                </Button>
+                {["protagonist", "antagonist", "official", "neutral"].map(cat => (
+                  <Button
+                    key={cat}
+                    variant={filterType === cat ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => { setFilterType(filterType === cat ? null : cat); setShowAIOnly(false); setSelectedCluster(null); }}
+                    style={{
+                      backgroundColor: filterType === cat ? categoryColors[cat] : undefined,
+                      borderColor: categoryColors[cat]
+                    }}
+                  >
+                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  </Button>
+                ))}
+              </div>
             </div>
+
+            {/* Cluster Selection Chips */}
+            {showClusters && clusters.length > 0 && (
+              <div className="mb-4 p-3 rounded-lg bg-accent/30 border">
+                <div className="flex items-center gap-2 mb-2">
+                  <Network className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium">Detected Clusters ({clusters.length})</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {clusters.map((cluster) => (
+                    <Button
+                      key={cluster.id}
+                      variant={selectedCluster?.id === cluster.id ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedCluster(selectedCluster?.id === cluster.id ? null : cluster)}
+                      style={{
+                        backgroundColor: selectedCluster?.id === cluster.id ? cluster.color : undefined,
+                        borderColor: cluster.color,
+                        color: selectedCluster?.id === cluster.id ? "white" : undefined
+                      }}
+                      className="transition-all"
+                    >
+                      <span
+                        className="w-2 h-2 rounded-full mr-1.5"
+                        style={{ backgroundColor: cluster.color }}
+                      />
+                      {cluster.name} ({cluster.entities.length})
+                    </Button>
+                  ))}
+                </div>
+                {selectedCluster && (
+                  <div className="mt-2 text-xs text-muted-foreground flex items-center gap-2">
+                    <Badge variant="outline" style={{ borderColor: selectedCluster.color }}>
+                      Density: {selectedCluster.density}%
+                    </Badge>
+                    <span>
+                      Key entity: {entities.find(e => e.id === selectedCluster.keyEntity)?.name}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* SVG Network */}
             <div className="overflow-auto border rounded-lg bg-muted/30">
@@ -245,6 +345,55 @@ export const EntityNetwork = () => {
                 viewBox="0 0 800 600"
                 className="mx-auto"
               >
+                {/* Cluster background hulls */}
+                {showClusters && clusters.map((cluster) => {
+                  const clusterPositions = cluster.entities
+                    .map(id => nodePositions[id])
+                    .filter(Boolean);
+                  
+                  if (clusterPositions.length < 2) return null;
+                  
+                  // Calculate convex hull-like bounding for cluster
+                  const xs = clusterPositions.map(p => p!.x);
+                  const ys = clusterPositions.map(p => p!.y);
+                  const centerX = xs.reduce((a, b) => a + b, 0) / xs.length;
+                  const centerY = ys.reduce((a, b) => a + b, 0) / ys.length;
+                  const maxDist = Math.max(
+                    ...clusterPositions.map(p => 
+                      Math.sqrt((p!.x - centerX) ** 2 + (p!.y - centerY) ** 2)
+                    )
+                  );
+                  
+                  const isActive = selectedCluster?.id === cluster.id;
+                  
+                  return (
+                    <g key={cluster.id}>
+                      <circle
+                        cx={centerX}
+                        cy={centerY}
+                        r={maxDist + 50}
+                        fill={cluster.color}
+                        fillOpacity={isActive ? 0.15 : 0.05}
+                        stroke={cluster.color}
+                        strokeWidth={isActive ? 2 : 1}
+                        strokeOpacity={isActive ? 0.6 : 0.2}
+                        strokeDasharray={isActive ? undefined : "8,4"}
+                        className={isActive ? "animate-pulse" : ""}
+                      />
+                      <text
+                        x={centerX}
+                        y={centerY - maxDist - 60}
+                        textAnchor="middle"
+                        className="text-[11px] font-medium"
+                        fill={cluster.color}
+                        opacity={isActive ? 1 : 0.6}
+                      >
+                        {cluster.name}
+                      </text>
+                    </g>
+                  );
+                })}
+
                 {/* Connection lines */}
                 {visibleConnections.map((conn, i) => {
                   const source = nodePositions[conn.source];
@@ -254,6 +403,9 @@ export const EntityNetwork = () => {
                   const isHighlighted = selectedEntity && 
                     (conn.source === selectedEntity.id || conn.target === selectedEntity.id);
                   
+                  const clusterColor = getClusterConnectionColor(conn);
+                  const isClusterConnection = clusterColor !== null;
+                  
                   return (
                     <line
                       key={i}
@@ -261,9 +413,9 @@ export const EntityNetwork = () => {
                       y1={source.y}
                       x2={target.x}
                       y2={target.y}
-                      stroke={getConnectionColor(conn)}
-                      strokeWidth={isHighlighted ? 3 : conn.isInferred ? 1 : 1.5}
-                      strokeOpacity={isHighlighted ? 1 : 0.4}
+                      stroke={clusterColor || getConnectionColor(conn)}
+                      strokeWidth={isClusterConnection ? 3 : isHighlighted ? 3 : conn.isInferred ? 1 : 1.5}
+                      strokeOpacity={isClusterConnection ? 0.8 : isHighlighted ? 1 : 0.4}
                       strokeDasharray={conn.type === "adversarial" ? "5,3" : conn.isInferred ? "3,3" : undefined}
                     />
                   );
@@ -274,12 +426,17 @@ export const EntityNetwork = () => {
                   const pos = nodePositions[entity.id];
                   if (!pos) return null;
                   
+                  const entityCluster = showClusters ? getEntityCluster(entity.id) : undefined;
+                  const inSelectedCluster = isInSelectedCluster(entity.id);
+                  
                   return (
                     <NetworkNode
                       key={entity.id}
                       entity={entity}
                       position={pos}
                       isSelected={selectedEntity?.id === entity.id}
+                      clusterColor={entityCluster?.color}
+                      isHighlightedCluster={inSelectedCluster}
                       onClick={() => setSelectedEntity(
                         selectedEntity?.id === entity.id ? null : entity
                       )}
