@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      cases: {
+        Row: {
+          case_number: string
+          category: string | null
+          cover_image_url: string | null
+          created_at: string
+          date_closed: string | null
+          date_opened: string | null
+          description: string | null
+          id: string
+          lead_investigator: string | null
+          location: string | null
+          severity: string | null
+          status: string
+          title: string
+          total_entities: number | null
+          total_events: number | null
+          total_sources: number | null
+          updated_at: string
+        }
+        Insert: {
+          case_number: string
+          category?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          date_closed?: string | null
+          date_opened?: string | null
+          description?: string | null
+          id?: string
+          lead_investigator?: string | null
+          location?: string | null
+          severity?: string | null
+          status?: string
+          title: string
+          total_entities?: number | null
+          total_events?: number | null
+          total_sources?: number | null
+          updated_at?: string
+        }
+        Update: {
+          case_number?: string
+          category?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          date_closed?: string | null
+          date_opened?: string | null
+          description?: string | null
+          id?: string
+          lead_investigator?: string | null
+          location?: string | null
+          severity?: string | null
+          status?: string
+          title?: string
+          total_entities?: number | null
+          total_events?: number | null
+          total_sources?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       document_analysis_jobs: {
         Row: {
           completed_at: string | null
@@ -63,6 +123,7 @@ export type Database = {
       }
       evidence_uploads: {
         Row: {
+          case_id: string | null
           category: string | null
           created_at: string
           description: string | null
@@ -76,6 +137,7 @@ export type Database = {
           uploaded_by: string | null
         }
         Insert: {
+          case_id?: string | null
           category?: string | null
           created_at?: string
           description?: string | null
@@ -89,6 +151,7 @@ export type Database = {
           uploaded_by?: string | null
         }
         Update: {
+          case_id?: string | null
           category?: string | null
           created_at?: string
           description?: string | null
@@ -101,10 +164,19 @@ export type Database = {
           storage_path?: string
           uploaded_by?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "evidence_uploads_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       extracted_discrepancies: {
         Row: {
+          case_id: string | null
           created_at: string
           description: string
           discrepancy_type: string
@@ -116,6 +188,7 @@ export type Database = {
           title: string
         }
         Insert: {
+          case_id?: string | null
           created_at?: string
           description: string
           discrepancy_type: string
@@ -127,6 +200,7 @@ export type Database = {
           title: string
         }
         Update: {
+          case_id?: string | null
           created_at?: string
           description?: string
           discrepancy_type?: string
@@ -139,6 +213,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "extracted_discrepancies_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "extracted_discrepancies_source_upload_id_fkey"
             columns: ["source_upload_id"]
             isOneToOne: false
@@ -149,6 +230,7 @@ export type Database = {
       }
       extracted_entities: {
         Row: {
+          case_id: string | null
           created_at: string
           description: string | null
           entity_type: string
@@ -159,6 +241,7 @@ export type Database = {
           source_upload_id: string | null
         }
         Insert: {
+          case_id?: string | null
           created_at?: string
           description?: string | null
           entity_type: string
@@ -169,6 +252,7 @@ export type Database = {
           source_upload_id?: string | null
         }
         Update: {
+          case_id?: string | null
           created_at?: string
           description?: string | null
           entity_type?: string
@@ -180,6 +264,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "extracted_entities_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "extracted_entities_source_upload_id_fkey"
             columns: ["source_upload_id"]
             isOneToOne: false
@@ -190,6 +281,7 @@ export type Database = {
       }
       extracted_events: {
         Row: {
+          case_id: string | null
           category: string
           confidence_score: number | null
           created_at: string
@@ -207,6 +299,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          case_id?: string | null
           category: string
           confidence_score?: number | null
           created_at?: string
@@ -224,6 +317,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          case_id?: string | null
           category?: string
           confidence_score?: number | null
           created_at?: string
@@ -241,6 +335,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "extracted_events_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "extracted_events_source_upload_id_fkey"
             columns: ["source_upload_id"]

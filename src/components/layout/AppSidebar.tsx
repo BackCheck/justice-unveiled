@@ -16,7 +16,8 @@ import {
   LogIn,
   Shield,
   Home,
-  Brain
+  Brain,
+  FolderOpen
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -49,6 +50,7 @@ import { toast } from "sonner";
 
 const mainNavItems = [
   { path: "/", label: "Home", icon: Home },
+  { path: "/cases", label: "Case Files", icon: FolderOpen },
   { path: "/timeline", label: "Timeline", icon: Clock },
   { path: "/dashboard", label: "Intel Dashboard", icon: BarChart3 },
   { path: "/intel-briefing", label: "Briefing", icon: BookOpen },
