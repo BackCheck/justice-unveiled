@@ -18,6 +18,7 @@ import { sources } from "@/data/sourcesData";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { IntelBriefingCard } from "./IntelBriefingCard";
+import { CaseProfileBadges } from "./CaseProfileBadges";
 
 export const IntelDashboard = () => {
   const stats = useMemo(() => {
@@ -150,6 +151,9 @@ export const IntelDashboard = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Case Profile Badges */}
+      <CaseProfileBadges />
 
       {/* Intel Briefing Card */}
       <IntelBriefingCard />
