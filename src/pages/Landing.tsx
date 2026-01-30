@@ -28,6 +28,8 @@ import GlowingOrb from "@/components/landing/GlowingOrb";
 import FloatingIcon from "@/components/landing/FloatingIcon";
 import ScrollReveal from "@/components/landing/ScrollReveal";
 import GradientText from "@/components/landing/GradientText";
+import TypingText from "@/components/landing/TypingText";
+import SpotlightEffect from "@/components/landing/SpotlightEffect";
 
 const Landing = () => {
   const features = [
@@ -123,6 +125,9 @@ const Landing = () => {
 
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center">
+        {/* Mouse-following spotlight */}
+        <SpotlightEffect size={500} intensity={0.2} />
+        
         {/* Animated background orbs */}
         <GlowingOrb color="primary" size="xl" className="top-20 -left-32" delay={0} />
         <GlowingOrb color="accent" size="lg" className="bottom-20 -right-20" delay={1} />
@@ -151,11 +156,16 @@ const Landing = () => {
               </Badge>
             </ScrollReveal>
 
-            {/* Main Headline */}
+            {/* Main Headline with Typing Effect */}
             <ScrollReveal delay={200}>
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
                 <span className="text-foreground">Documenting </span>
-                <GradientText>Justice</GradientText>
+                <TypingText 
+                  words={["Justice", "Truth", "Rights", "Freedom"]} 
+                  typingSpeed={120}
+                  deletingSpeed={80}
+                  pauseDuration={2500}
+                />
                 <br />
                 <span className="text-foreground">Demanding </span>
                 <span className="text-primary relative">
