@@ -1,0 +1,18 @@
+/* TEAM */
+Organization: Human Rights Protection Movement (HRPM)
+Site: https://hrpm.org
+Location: Global
+
+/* MISSION */
+Documenting injustice, demanding accountability.
+Exposing human rights violations through investigative intelligence.
+
+/* TECHNOLOGY */
+Frontend: React, TypeScript, Tailwind CSS
+Backend: Supabase, Edge Functions
+AI: Gemini-powered document analysis
+Hosting: Lovable Cloud
+
+/* CONTACT */
+General: contact@hrpm.org
+Security: security@hrpm.org

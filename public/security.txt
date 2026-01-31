@@ -1,0 +1,10 @@
+# HRPM.org Security Contact
+# Human Rights Protection Movement
+
+Contact: mailto:security@hrpm.org
+Expires: 2027-12-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://hrpm.org/.well-known/security.txt
+
+# This platform documents human rights violations
+# Please report any security vulnerabilities responsibly

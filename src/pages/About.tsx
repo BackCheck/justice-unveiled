@@ -10,8 +10,15 @@ import {
   Target,
   CheckCircle
 } from "lucide-react";
+import { SocialShareButtons } from "@/components/sharing";
+import { useSEO } from "@/hooks/useSEO";
 
 const About = () => {
+  useSEO({
+    title: "About HRPM",
+    description: "Human Rights Protection Movement - A non-profit organization dedicated to documenting cases of human rights abuse, legal persecution, and institutional failures.",
+    type: "website",
+  });
   const values = [
     {
       icon: Scale,
@@ -50,16 +57,24 @@ const About = () => {
         {/* Hero Section */}
         <section className="bg-gradient-to-b from-primary/5 to-background border-b border-border">
           <div className="max-w-5xl mx-auto px-4 py-16 md:py-24">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center">
-                <Globe className="w-9 h-9 text-primary-foreground" />
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center">
+                  <Globe className="w-9 h-9 text-primary-foreground" />
+                </div>
+                <div>
+                  <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                    Human Rights Protection Movement
+                  </h1>
+                  <p className="text-muted-foreground font-medium">Non-profit investigative platform</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                  Human Rights Protection Movement
-                </h1>
-                <p className="text-muted-foreground font-medium">Non-profit investigative platform</p>
-              </div>
+              <SocialShareButtons
+                title="About HRPM - Human Rights Protection Movement"
+                description="A non-profit organization dedicated to documenting cases of human rights abuse and institutional failures."
+                hashtags={["HumanRights", "HRPM", "Justice", "NonProfit"]}
+                variant="compact"
+              />
             </div>
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl leading-relaxed">
               We are a non-profit organization dedicated to documenting cases of human rights abuse, 
