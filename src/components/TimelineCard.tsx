@@ -23,7 +23,19 @@ export const TimelineCard = ({ event, index, forceExpanded = false }: TimelineCa
   const isExtracted = 'isExtracted' in event && event.isExtracted;
   const confidenceScore = 'confidenceScore' in event ? event.confidenceScore : undefined;
 
-  const formattedDate = format(parseISO(event.date), "MMMM d, yyyy");
+  // Safely parse and format date, handling invalid formats
+  const getFormattedDate = () => {
+    try {
+      const parsed = parseISO(event.date);
+      if (isNaN(parsed.getTime())) {
+        return event.date; // Return raw date string if invalid
+      }
+      return format(parsed, "MMMM d, yyyy");
+    } catch {
+      return event.date; // Fallback to raw date string on error
+    }
+  };
+  const formattedDate = getFormattedDate();
 
   return (
     <div className="relative flex gap-6 pb-8 last:pb-0 group">
