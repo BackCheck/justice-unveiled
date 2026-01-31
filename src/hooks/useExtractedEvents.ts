@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -57,6 +58,32 @@ export interface AnalysisJob {
 }
 
 export const useExtractedEvents = () => {
+  const queryClient = useQueryClient();
+
+  // Subscribe to realtime changes
+  useEffect(() => {
+    const channel = supabase
+      .channel('extracted-events-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'extracted_events'
+        },
+        (payload) => {
+          console.log('Realtime event received:', payload);
+          // Invalidate the query to refetch data
+          queryClient.invalidateQueries({ queryKey: ["extracted-events"] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
   return useQuery({
     queryKey: ["extracted-events"],
     queryFn: async () => {
