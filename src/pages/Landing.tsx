@@ -114,15 +114,13 @@ const Landing = () => {
             <Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">About</Link>
             <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">Dashboard</Link>
             <Link to="/intel-briefing" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">Intelligence</Link>
-            <Link to="/auth">
-              <Button size="sm" variant="outline" className="border-primary/50 hover:bg-primary hover:text-primary-foreground transition-all duration-300">
-                Sign In
-              </Button>
-            </Link>
+            <Button size="sm" variant="outline" className="border-primary/50 hover:bg-primary hover:text-primary-foreground transition-all duration-300" asChild>
+              <Link to="/auth">Sign In</Link>
+            </Button>
           </nav>
-          <Link to="/" className="md:hidden">
-            <Button size="sm" className="animate-pulse-glow">Explore</Button>
-          </Link>
+          <Button size="sm" className="animate-pulse-glow md:hidden" asChild>
+            <Link to="/">Explore</Link>
+          </Button>
         </div>
       </header>
 
@@ -495,19 +493,17 @@ const Landing = () => {
           
           <ScrollReveal delay={300}>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link to="/timeline">
-                <Button size="lg" className="group hover-lift relative overflow-hidden">
+              <Button size="lg" className="group hover-lift relative overflow-hidden" asChild>
+                <Link to="/timeline">
                   <span className="relative z-10 flex items-center">
                     Start Exploring
                     <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                   </span>
-                </Button>
-              </Link>
-              <Link to="/auth">
-                <Button size="lg" variant="outline" className="hover-lift hover:border-primary/50 hover:bg-primary/5">
-                  Create Account
-                </Button>
-              </Link>
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" className="hover-lift hover:border-primary/50 hover:bg-primary/5" asChild>
+                <Link to="/auth">Create Account</Link>
+              </Button>
             </div>
           </ScrollReveal>
         </div>
