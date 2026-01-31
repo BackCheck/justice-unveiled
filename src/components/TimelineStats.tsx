@@ -1,16 +1,22 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Briefcase, AlertOctagon, Scale, FileWarning } from "lucide-react";
-import { timelineData, TimelineEvent } from "@/data/timelineData";
 import { cn } from "@/lib/utils";
 
-export const TimelineStats = () => {
-  const getCategoryCount = (category: TimelineEvent["category"]) => 
-    timelineData.filter(e => e.category === category).length;
+interface TimelineStatsProps {
+  byCategory: {
+    "Business Interference": number;
+    "Harassment": number;
+    "Legal Proceeding": number;
+    "Criminal Allegation": number;
+  };
+}
+
+export const TimelineStats = ({ byCategory }: TimelineStatsProps) => {
 
   const stats = [
     {
       label: "Business Interference",
-      count: getCategoryCount("Business Interference"),
+      count: byCategory["Business Interference"],
       icon: Briefcase,
       color: "text-chart-1",
       bgColor: "bg-chart-1/10",
@@ -18,7 +24,7 @@ export const TimelineStats = () => {
     },
     {
       label: "Harassment",
-      count: getCategoryCount("Harassment"),
+      count: byCategory["Harassment"],
       icon: AlertOctagon,
       color: "text-chart-4",
       bgColor: "bg-chart-4/10",
@@ -26,7 +32,7 @@ export const TimelineStats = () => {
     },
     {
       label: "Legal Proceedings",
-      count: getCategoryCount("Legal Proceeding"),
+      count: byCategory["Legal Proceeding"],
       icon: Scale,
       color: "text-chart-2",
       bgColor: "bg-chart-2/10",
@@ -34,7 +40,7 @@ export const TimelineStats = () => {
     },
     {
       label: "Criminal Allegations",
-      count: getCategoryCount("Criminal Allegation"),
+      count: byCategory["Criminal Allegation"],
       icon: FileWarning,
       color: "text-chart-3",
       bgColor: "bg-chart-3/10",
