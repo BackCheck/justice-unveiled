@@ -40,6 +40,48 @@ interface ExtractionResult {
   discrepancies: ExtractedDiscrepancy[];
 }
 
+// Validate and normalize date to YYYY-MM-DD format
+function normalizeDate(dateStr: string): string | null {
+  if (!dateStr || typeof dateStr !== 'string') return null;
+  
+  // Clean up the date string
+  const cleaned = dateStr.trim().replace(/\.$/, ''); // Remove trailing period
+  
+  // Check if already valid YYYY-MM-DD format
+  const validFormat = /^\d{4}-\d{2}-\d{2}$/;
+  if (validFormat.test(cleaned)) {
+    const [year, month, day] = cleaned.split('-').map(Number);
+    if (month >= 1 && month <= 12 && day >= 1 && day <= 31 && year >= 1900 && year <= 2100) {
+      return cleaned;
+    }
+  }
+  
+  // Try to extract first valid date from malformed strings like "2024-11-2024-11-21"
+  const dateMatch = cleaned.match(/(\d{4})-(\d{2})-(\d{2})/);
+  if (dateMatch) {
+    const [, year, month, day] = dateMatch;
+    const y = parseInt(year), m = parseInt(month), d = parseInt(day);
+    if (m >= 1 && m <= 12 && d >= 1 && d <= 31 && y >= 1900 && y <= 2100) {
+      return `${year}-${month}-${day}`;
+    }
+  }
+  
+  // Try parsing date range format like "2024-10-16-2024-11-07" - use first date
+  const rangeMatch = cleaned.match(/^(\d{4}-\d{2}-\d{2})-\d{4}-\d{2}-\d{2}$/);
+  if (rangeMatch) {
+    return rangeMatch[1];
+  }
+  
+  // Remove timezone suffixes and retry
+  const withoutTz = cleaned.replace(/\s+[A-Za-z_\/]+$/, '');
+  if (withoutTz !== cleaned && validFormat.test(withoutTz)) {
+    return withoutTz;
+  }
+  
+  console.warn(`Invalid date format, skipping: "${dateStr}"`);
+  return null;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -244,29 +286,45 @@ Be thorough but accurate. Only extract information explicitly stated or clearly 
     const extraction: ExtractionResult = JSON.parse(toolCall.function.arguments);
     console.log(`Extracted: ${extraction.events.length} events, ${extraction.entities.length} entities, ${extraction.discrepancies.length} discrepancies`);
 
-    // Insert extracted events (set source_upload_id to null for pasted documents)
+    // Insert extracted events with validated dates (set source_upload_id to null for pasted documents)
     if (extraction.events.length > 0) {
-      const eventRows = extraction.events.map(event => ({
-        source_upload_id: null, // Null for pasted documents without file upload
-        date: event.date,
-        category: event.category,
-        description: event.description,
-        individuals: event.individuals,
-        legal_action: event.legalAction,
-        outcome: event.outcome,
-        evidence_discrepancy: event.evidenceDiscrepancy,
-        sources: event.sources,
-        confidence_score: event.confidenceScore,
-        is_approved: true,
-        extraction_method: "ai_analysis"
-      }));
+      const eventRows = extraction.events
+        .map(event => {
+          const normalizedDate = normalizeDate(event.date);
+          if (!normalizedDate) {
+            console.warn(`Skipping event with invalid date: "${event.date}" - ${event.description.substring(0, 50)}...`);
+            return null;
+          }
+          return {
+            source_upload_id: null, // Null for pasted documents without file upload
+            date: normalizedDate,
+            category: event.category,
+            description: event.description,
+            individuals: event.individuals,
+            legal_action: event.legalAction,
+            outcome: event.outcome,
+            evidence_discrepancy: event.evidenceDiscrepancy,
+            sources: event.sources,
+            confidence_score: event.confidenceScore,
+            is_approved: true,
+            extraction_method: "ai_analysis"
+          };
+        })
+        .filter((row): row is NonNullable<typeof row> => row !== null);
 
-      const { error: eventsError } = await supabase
-        .from("extracted_events")
-        .insert(eventRows);
+      if (eventRows.length > 0) {
+        const { error: eventsError } = await supabase
+          .from("extracted_events")
+          .insert(eventRows);
 
-      if (eventsError) {
-        console.error("Events insert error:", eventsError);
+        if (eventsError) {
+          console.error("Events insert error:", eventsError);
+        }
+      }
+      
+      const skipped = extraction.events.length - eventRows.length;
+      if (skipped > 0) {
+        console.log(`Skipped ${skipped} events due to invalid dates`);
       }
     }
 
