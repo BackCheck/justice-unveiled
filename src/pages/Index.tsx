@@ -9,6 +9,8 @@ import { Printer, Sparkles } from "lucide-react";
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
 import { useCombinedTimeline } from "@/hooks/useCombinedTimeline";
 import { cn } from "@/lib/utils";
+import { SocialShareButtons } from "@/components/sharing";
+import { useSEO } from "@/hooks/useSEO";
 
 const Index = () => {
   const [selectedCategories, setSelectedCategories] = useState<TimelineEvent["category"][]>([
@@ -21,6 +23,15 @@ const Index = () => {
 
   // Use combined timeline (static + AI-extracted events)
   const { events: allEvents, stats, isLoading } = useCombinedTimeline();
+
+  // SEO
+  useSEO({
+    title: "Case Timeline - Danish Thanvi vs State Agencies",
+    description: `${stats.total} documented events from 117 verified sources. Comprehensive timeline of human rights violations in Pakistan, 2015-2025.`,
+    type: "article",
+    section: "Investigation",
+    tags: ["Timeline", "Human Rights", "Pakistan", "Investigation"],
+  });
 
   const handlePrint = () => {
     setIsPrintMode(true);
@@ -92,17 +103,25 @@ const Index = () => {
                 <span className="text-primary">Pakistan, 2015–2025</span>
               </p>
             </div>
-            <Button
-              onClick={handlePrint}
-              variant="outline"
-              className={cn(
-                "hover-lift icon-bounce opacity-0 animate-fade-in-right"
-              )}
-              style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}
-            >
-              <Printer className="w-4 h-4 mr-2" />
-              Export PDF
-            </Button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <SocialShareButtons
+                title="Case Timeline: Danish Thanvi vs State Agencies"
+                description={`${stats.total} documented events from verified sources. Human rights investigation timeline.`}
+                hashtags={["HumanRights", "HRPM", "Justice", "Pakistan"]}
+                variant="compact"
+              />
+              <Button
+                onClick={handlePrint}
+                variant="outline"
+                className={cn(
+                  "hover-lift icon-bounce opacity-0 animate-fade-in-right"
+                )}
+                style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}
+              >
+                <Printer className="w-4 h-4 mr-2" />
+                Export PDF
+              </Button>
+            </div>
           </div>
         </div>
       </div>

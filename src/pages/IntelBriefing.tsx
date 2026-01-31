@@ -24,6 +24,7 @@ import { Link } from "react-router-dom";
 import { ProceduralFailuresTimeline } from "@/components/intel/ProceduralFailuresTimeline";
 import { DocumentAnalyzer } from "@/components/intel/DocumentAnalyzer";
 import { ExtractedEventsList } from "@/components/intel/ExtractedEventsList";
+import { SocialShareButtons } from "@/components/sharing";
 
 const IntelBriefing = () => {
   const [expandedSection, setExpandedSection] = useState<string | undefined>("forensic-digital-evidence");
@@ -52,15 +53,23 @@ const IntelBriefing = () => {
                 spanning {briefingStats.yearsDocumented}.
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <SocialShareButtons
+                title="Intelligence Briefing - HRPM"
+                description="Comprehensive analysis of forensic evidence, witness statements, and state surveillance misuse patterns."
+                hashtags={["HumanRights", "HRPM", "Justice", "Investigation"]}
+                variant="compact"
+              />
               <Button variant="outline" size="sm">
                 <Download className="w-4 h-4 mr-2" />
                 Export PDF
               </Button>
               <Link to="/evidence">
-                <Button variant="outline" size="sm">
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  Evidence Matrix
+                <Button variant="outline" size="sm" asChild>
+                  <span>
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Evidence Matrix
+                  </span>
                 </Button>
               </Link>
             </div>
