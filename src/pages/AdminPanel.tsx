@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -39,13 +40,15 @@ import {
   Eye,
   Loader2,
   ArrowLeft,
-  AlertTriangle
+  AlertTriangle,
+  ScrollText
 } from "lucide-react";
 import { useUserRole, AppRole } from "@/hooks/useUserRole";
 import { useAllUserRoles, useUpdateUserRole } from "@/hooks/useAdminRoles";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { AuditLogViewer } from "@/components/admin/AuditLogViewer";
 
 const roleConfig: Record<AppRole, { label: string; icon: typeof Crown; color: string; description: string }> = {
   admin: {
@@ -168,153 +171,172 @@ const AdminPanel = () => {
 
       {/* Content */}
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
-        {/* Role Legend */}
-        <div className="grid md:grid-cols-3 gap-4">
-          {(Object.entries(roleConfig) as [AppRole, typeof roleConfig.admin][]).map(([role, config]) => {
-            const Icon = config.icon;
-            return (
-              <Card key={role} className="glass-card">
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${config.color}`}>
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold">{config.label}</h3>
-                      <p className="text-xs text-muted-foreground">{config.description}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-
-        {/* Users Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5" />
+        <Tabs defaultValue="users" className="w-full">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="users" className="flex items-center gap-2">
+              <Users className="w-4 h-4" />
               User Management
-            </CardTitle>
-            <CardDescription>
-              {users?.length || 0} registered user{users?.length !== 1 ? "s" : ""}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {usersLoading || roleLoading ? (
-              <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <Skeleton className="h-10 w-10 rounded-full" />
-                    <div className="space-y-2 flex-1">
-                      <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-3 w-48" />
-                    </div>
-                    <Skeleton className="h-9 w-28" />
-                  </div>
-                ))}
-              </div>
-            ) : error ? (
-              <div className="text-center py-8 text-destructive">
-                <AlertTriangle className="w-8 h-8 mx-auto mb-2" />
-                <p>Failed to load users</p>
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>User</TableHead>
-                    <TableHead>Current Role</TableHead>
-                    <TableHead>Joined</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {users?.map((userItem) => {
-                    const config = roleConfig[userItem.role];
-                    const Icon = config.icon;
-                    const isCurrentUser = userItem.user_id === user?.id;
+            </TabsTrigger>
+            <TabsTrigger value="audit" className="flex items-center gap-2">
+              <ScrollText className="w-4 h-4" />
+              Audit Trail
+            </TabsTrigger>
+          </TabsList>
 
-                    return (
-                      <TableRow key={userItem.user_id}>
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-9 w-9 border-2 border-primary/20">
-                              <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
-                                {getInitials(userItem.display_name, userItem.user_id)}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <p className="font-medium">
-                                {userItem.display_name || "Unknown User"}
-                                {isCurrentUser && (
-                                  <Badge variant="outline" className="ml-2 text-xs">
-                                    You
-                                  </Badge>
-                                )}
-                              </p>
-                              <p className="text-xs text-muted-foreground font-mono">
-                                {userItem.user_id.slice(0, 8)}...
-                              </p>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={`${config.color} border`}>
-                            <Icon className="w-3 h-3 mr-1" />
-                            {config.label}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground text-sm">
-                          {format(new Date(userItem.created_at), "MMM d, yyyy")}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Select
-                            value={userItem.role}
-                            onValueChange={(value: AppRole) =>
-                              handleRoleChange(
-                                userItem.user_id,
-                                userItem.display_name || "User",
-                                userItem.role,
-                                value
-                              )
-                            }
-                            disabled={updateRole.isPending}
-                          >
-                            <SelectTrigger className="w-32">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="admin">
-                                <div className="flex items-center gap-2">
-                                  <Crown className="w-3 h-3" />
-                                  Admin
-                                </div>
-                              </SelectItem>
-                              <SelectItem value="editor">
-                                <div className="flex items-center gap-2">
-                                  <Pencil className="w-3 h-3" />
-                                  Editor
-                                </div>
-                              </SelectItem>
-                              <SelectItem value="analyst">
-                                <div className="flex items-center gap-2">
-                                  <Eye className="w-3 h-3" />
-                                  Analyst
-                                </div>
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
+          <TabsContent value="users" className="mt-6 space-y-6">
+            {/* Role Legend */}
+            <div className="grid md:grid-cols-3 gap-4">
+              {(Object.entries(roleConfig) as [AppRole, typeof roleConfig.admin][]).map(([role, config]) => {
+                const Icon = config.icon;
+                return (
+                  <Card key={role} className="glass-card">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg ${config.color}`}>
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold">{config.label}</h3>
+                          <p className="text-xs text-muted-foreground">{config.description}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+
+            {/* Users Table */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  User Management
+                </CardTitle>
+                <CardDescription>
+                  {users?.length || 0} registered user{users?.length !== 1 ? "s" : ""}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {usersLoading || roleLoading ? (
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="flex items-center gap-4">
+                        <Skeleton className="h-10 w-10 rounded-full" />
+                        <div className="space-y-2 flex-1">
+                          <Skeleton className="h-4 w-32" />
+                          <Skeleton className="h-3 w-48" />
+                        </div>
+                        <Skeleton className="h-9 w-28" />
+                      </div>
+                    ))}
+                  </div>
+                ) : error ? (
+                  <div className="text-center py-8 text-destructive">
+                    <AlertTriangle className="w-8 h-8 mx-auto mb-2" />
+                    <p>Failed to load users</p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>User</TableHead>
+                        <TableHead>Current Role</TableHead>
+                        <TableHead>Joined</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
+                    </TableHeader>
+                    <TableBody>
+                      {users?.map((userItem) => {
+                        const config = roleConfig[userItem.role];
+                        const Icon = config.icon;
+                        const isCurrentUser = userItem.user_id === user?.id;
+
+                        return (
+                          <TableRow key={userItem.user_id}>
+                            <TableCell>
+                              <div className="flex items-center gap-3">
+                                <Avatar className="h-9 w-9 border-2 border-primary/20">
+                                  <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
+                                    {getInitials(userItem.display_name, userItem.user_id)}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <p className="font-medium">
+                                    {userItem.display_name || "Unknown User"}
+                                    {isCurrentUser && (
+                                      <Badge variant="outline" className="ml-2 text-xs">
+                                        You
+                                      </Badge>
+                                    )}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground font-mono">
+                                    {userItem.user_id.slice(0, 8)}...
+                                  </p>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge className={`${config.color} border`}>
+                                <Icon className="w-3 h-3 mr-1" />
+                                {config.label}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-muted-foreground text-sm">
+                              {format(new Date(userItem.created_at), "MMM d, yyyy")}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Select
+                                value={userItem.role}
+                                onValueChange={(value: AppRole) =>
+                                  handleRoleChange(
+                                    userItem.user_id,
+                                    userItem.display_name || "User",
+                                    userItem.role,
+                                    value
+                                  )
+                                }
+                                disabled={updateRole.isPending}
+                              >
+                                <SelectTrigger className="w-32">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="admin">
+                                    <div className="flex items-center gap-2">
+                                      <Crown className="w-3 h-3" />
+                                      Admin
+                                    </div>
+                                  </SelectItem>
+                                  <SelectItem value="editor">
+                                    <div className="flex items-center gap-2">
+                                      <Pencil className="w-3 h-3" />
+                                      Editor
+                                    </div>
+                                  </SelectItem>
+                                  <SelectItem value="analyst">
+                                    <div className="flex items-center gap-2">
+                                      <Eye className="w-3 h-3" />
+                                      Analyst
+                                    </div>
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="audit" className="mt-6">
+            <AuditLogViewer />
+          </TabsContent>
+        </Tabs>
       </main>
 
       {/* Confirmation Dialog */}
