@@ -111,7 +111,7 @@ const Index = () => {
       <main className="max-w-5xl mx-auto px-4 py-8">
         {/* Stats */}
         <div className="no-print">
-          <TimelineStats />
+          <TimelineStats byCategory={stats.byCategory} />
         </div>
 
         {/* Filters */}
