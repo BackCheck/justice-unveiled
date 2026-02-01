@@ -1,10 +1,10 @@
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
-import { EntityNetwork } from "@/components/network/EntityNetworkNew";
+import { IntelGraph } from "@/components/network/IntelGraph";
 
 const NetworkPage = () => {
   return (
     <PlatformLayout>
-      <EntityNetwork />
+      <IntelGraph />
     </PlatformLayout>
   );
 };
