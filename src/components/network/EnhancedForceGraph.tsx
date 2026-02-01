@@ -2,7 +2,9 @@ import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { forceSimulation, forceLink, forceManyBody, forceCenter, forceCollide, SimulationNodeDatum, SimulationLinkDatum } from "d3-force";
 import { GraphNode, GraphLink, NodeType, RiskLevel } from "@/hooks/useGraphData";
 import { cn } from "@/lib/utils";
-import { Users, Building2, Calendar, AlertTriangle, MapPin, Sparkles } from "lucide-react";
+import { Users, Building2, Calendar, AlertTriangle, MapPin, Sparkles, Link2 } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 
 interface ForceNode extends SimulationNodeDatum {
   id: string;
@@ -62,6 +64,30 @@ export const EnhancedForceGraph = ({
   const [simLinks, setSimLinks] = useState<ForceLink[]>([]);
   const [dragging, setDragging] = useState<string | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
+
+  // Get connections for a node
+  const getNodeConnections = useCallback((nodeId: string) => {
+    return links
+      .filter(l => l.source === nodeId || l.target === nodeId)
+      .map(l => {
+        const connectedId = l.source === nodeId ? l.target : l.source;
+        const connectedNode = nodes.find(n => n.id === connectedId);
+        return connectedNode ? { node: connectedNode, type: l.type } : null;
+      })
+      .filter(Boolean)
+      .slice(0, 5); // Limit to top 5 connections
+  }, [links, nodes]);
+
+  const hoveredNodeData = useMemo(() => {
+    if (!hoveredNode) return null;
+    const node = nodes.find(n => n.id === hoveredNode);
+    if (!node) return null;
+    return {
+      node,
+      connections: getNodeConnections(hoveredNode)
+    };
+  }, [hoveredNode, nodes, getNodeConnections]);
   const simulationRef = useRef<ReturnType<typeof forceSimulation<ForceNode>> | null>(null);
 
   // Filter nodes based on active layers and risk levels
@@ -178,20 +204,39 @@ export const EnhancedForceGraph = ({
     );
   };
 
+  const handleNodeHover = useCallback((nodeId: string | null, event?: React.MouseEvent) => {
+    setHoveredNode(nodeId);
+    if (event && nodeId) {
+      const rect = svgRef.current?.getBoundingClientRect();
+      if (rect) {
+        setTooltipPos({
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top
+        });
+      }
+    } else {
+      setTooltipPos(null);
+    }
+  }, []);
+
   return (
-    <svg
-      ref={svgRef}
-      width={width * zoom}
-      height={height * zoom}
-      viewBox={`0 0 ${width} ${height}`}
-      className="cursor-grab active:cursor-grabbing"
-      onMouseMove={handleDrag}
-      onMouseUp={handleDragEnd}
-      onMouseLeave={handleDragEnd}
-    >
-      {/* Background gradient */}
-      <defs>
-        <radialGradient id="bg-gradient" cx="50%" cy="50%" r="50%">
+    <div className="relative">
+      <svg
+        ref={svgRef}
+        width={width * zoom}
+        height={height * zoom}
+        viewBox={`0 0 ${width} ${height}`}
+        className="cursor-grab active:cursor-grabbing"
+        onMouseMove={handleDrag}
+        onMouseUp={handleDragEnd}
+        onMouseLeave={() => {
+          handleDragEnd();
+          handleNodeHover(null);
+        }}
+      >
+        {/* Background gradient */}
+        <defs>
+          <radialGradient id="bg-gradient" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="hsl(var(--muted))" stopOpacity="0.3" />
           <stop offset="100%" stopColor="hsl(var(--background))" stopOpacity="0" />
         </radialGradient>
@@ -255,8 +300,8 @@ export const EnhancedForceGraph = ({
               transform={`translate(${simNode.x}, ${simNode.y})`}
               onClick={() => onSelectNode(isSelected ? null : node)}
               onMouseDown={(e) => handleDragStart(e, node.id)}
-              onMouseEnter={() => setHoveredNode(node.id)}
-              onMouseLeave={() => setHoveredNode(null)}
+              onMouseEnter={(e) => handleNodeHover(node.id, e)}
+              onMouseLeave={() => handleNodeHover(null)}
               className="cursor-pointer"
               style={{ transition: dragging === node.id ? 'none' : 'transform 0.1s ease-out' }}
             >
@@ -337,6 +382,84 @@ export const EnhancedForceGraph = ({
           );
         })}
       </g>
-    </svg>
+      </svg>
+
+      {/* Hover Tooltip */}
+      {hoveredNodeData && tooltipPos && !dragging && (
+        <div
+          className="absolute z-50 pointer-events-none animate-fade-in"
+          style={{
+            left: tooltipPos.x + 15,
+            top: tooltipPos.y - 10,
+            maxWidth: 280,
+          }}
+        >
+          <div className="bg-popover/95 backdrop-blur-xl border border-border/50 rounded-lg shadow-xl p-3 space-y-2">
+            {/* Header */}
+            <div className="flex items-start gap-2">
+              <div 
+                className="w-3 h-3 rounded-full mt-1 shrink-0"
+                style={{ backgroundColor: riskColors[hoveredNodeData.node.riskLevel] }}
+              />
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-sm text-foreground truncate">
+                  {hoveredNodeData.node.name}
+                </h4>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 capitalize">
+                    {hoveredNodeData.node.type}
+                  </Badge>
+                  <Badge 
+                    className="text-[10px] px-1.5 py-0 capitalize"
+                    style={{ 
+                      backgroundColor: `${riskColors[hoveredNodeData.node.riskLevel]}20`,
+                      color: riskColors[hoveredNodeData.node.riskLevel],
+                      borderColor: riskColors[hoveredNodeData.node.riskLevel]
+                    }}
+                  >
+                    {hoveredNodeData.node.riskLevel} risk
+                  </Badge>
+                </div>
+              </div>
+            </div>
+
+            {/* Role/Description */}
+            {(hoveredNodeData.node.metadata?.role || hoveredNodeData.node.description) && (
+              <p className="text-xs text-muted-foreground line-clamp-2">
+                {hoveredNodeData.node.metadata?.role || hoveredNodeData.node.description}
+              </p>
+            )}
+
+            {/* Connections */}
+            {hoveredNodeData.connections.length > 0 && (
+              <div className="pt-1 border-t border-border/50">
+                <div className="flex items-center gap-1 text-[10px] text-muted-foreground mb-1">
+                  <Link2 className="w-3 h-3" />
+                  <span>{hoveredNodeData.node.connections} connections</span>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {hoveredNodeData.connections.map((conn: any, i: number) => (
+                    <span 
+                      key={i}
+                      className="text-[10px] px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground truncate max-w-[120px]"
+                    >
+                      {conn.node.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* AI Badge */}
+            {hoveredNodeData.node.isAIExtracted && (
+              <div className="flex items-center gap-1 text-[10px] text-amber-500">
+                <Sparkles className="w-3 h-3" />
+                <span>AI Extracted</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
