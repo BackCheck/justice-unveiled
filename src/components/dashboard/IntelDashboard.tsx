@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -13,12 +12,10 @@ import {
   Target,
   BarChart3,
   MessageSquare,
-  FileText
+  FileText,
+  Sparkles
 } from "lucide-react";
-import { timelineData } from "@/data/timelineData";
-import { entities } from "@/data/entitiesData";
 import { keyFindings, severityColors, findingCategoryColors } from "@/data/keyFindingsData";
-import { sources } from "@/data/sourcesData";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { IntelBriefingCard } from "./IntelBriefingCard";
@@ -26,28 +23,36 @@ import { CaseProfileBadges } from "./CaseProfileBadges";
 import { EntityCharts } from "./EntityCharts";
 import { IntelChat } from "./IntelChat";
 import { IntelReports } from "./IntelReports";
+import { usePlatformStats } from "@/hooks/usePlatformStats";
 
 export const IntelDashboard = () => {
-  const stats = useMemo(() => {
-    const categories = timelineData.reduce((acc, event) => {
-      acc[event.category] = (acc[event.category] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+  const { stats: platformStats, isLoading } = usePlatformStats();
 
-    const years = [...new Set(timelineData.map(e => e.date.split('-')[0]))];
-    
-    return {
-      totalEvents: timelineData.length,
-      categories,
-      yearsSpan: `${Math.min(...years.map(Number))} - ${Math.max(...years.map(Number))}`,
-      entities: entities.length,
-      sources: sources.length,
-      criticalFindings: keyFindings.filter(f => f.severity === "critical").length
-    };
-  }, []);
+  // Derive dashboard-specific stats from platform stats
+  const stats = {
+    totalEvents: platformStats.totalEvents,
+    categories: platformStats.eventsByCategory,
+    yearsSpan: `2015 - 2025`,
+    entities: platformStats.totalEntities,
+    sources: platformStats.totalSources,
+    criticalFindings: keyFindings.filter(f => f.severity === "critical").length,
+    aiExtractedEvents: platformStats.aiExtractedEvents,
+    aiExtractedEntities: platformStats.aiExtractedEntities,
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+      {/* AI Stats Banner */}
+      {(stats.aiExtractedEvents > 0 || stats.aiExtractedEntities > 0) && (
+        <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center gap-2 opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
+          <Sparkles className="w-5 h-5 text-amber-500" />
+          <span className="text-sm">
+            <strong>{stats.aiExtractedEvents}</strong> AI-extracted events and{" "}
+            <strong>{stats.aiExtractedEntities}</strong> entities enriching the intelligence database
+          </span>
+        </div>
+      )}
+
       {/* Hero Stats - Pill-shaped indicators with hover effects */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="glass-card stat-card border-primary/20 opacity-0 animate-fade-in-up" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
@@ -93,16 +98,16 @@ export const IntelDashboard = () => {
               <div>
                 <div className="flex items-center gap-2">
                   <p className="text-2xl font-bold text-chart-2 stat-number">{stats.entities}</p>
-                  <span className="pill-stat h-2 w-10 bg-chart-2/60 transition-all duration-500 group-hover:w-14" />
+                  {stats.aiExtractedEntities > 0 && (
+                    <Badge variant="outline" className="text-[10px] bg-amber-500/10 text-amber-600 border-amber-500/30">
+                      <Sparkles className="w-3 h-3 mr-0.5" />
+                      +{stats.aiExtractedEntities}
+                    </Badge>
+                  )}
                 </div>
                 <p className="text-xs text-muted-foreground">Entities Mapped</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card className="glass-card stat-card border-chart-4/20 opacity-0 animate-fade-in-up group" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
-          <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-full bg-chart-4/10 stat-icon transition-all duration-300 group-hover:bg-chart-4/20">
                 <FileCheck className="w-5 h-5 text-chart-4" />

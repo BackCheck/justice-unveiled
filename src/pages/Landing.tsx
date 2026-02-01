@@ -18,7 +18,8 @@ import {
   ExternalLink,
   Zap,
   Target,
-  Eye
+  Eye,
+  Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import hrpmLogo from "@/assets/human-rights-logo.svg";
@@ -30,8 +31,11 @@ import ScrollReveal from "@/components/landing/ScrollReveal";
 import GradientText from "@/components/landing/GradientText";
 import TypingText from "@/components/landing/TypingText";
 import SpotlightEffect from "@/components/landing/SpotlightEffect";
+import { useLandingStats } from "@/hooks/usePlatformStats";
 
 const Landing = () => {
+  const { stats, fullStats, isLoading: statsLoading } = useLandingStats();
+
   const features = [
     {
       icon: Brain,
@@ -69,13 +73,6 @@ const Landing = () => {
       bgColor: "bg-chart-3/10",
       glowColor: "group-hover:shadow-[0_0_40px_hsl(var(--chart-3)/0.3)]"
     }
-  ];
-
-  const stats = [
-    { value: 117, label: "Verified Sources", suffix: "+" },
-    { value: 10, label: "Years Documented", suffix: "+" },
-    { value: 50, label: "Timeline Events", suffix: "+" },
-    { value: 6, label: "Int'l Frameworks", suffix: "" }
   ];
 
   const values = [
@@ -205,22 +202,35 @@ const Landing = () => {
           {/* Stats Row */}
           <ScrollReveal delay={500}>
             <div className="mt-16 md:mt-24 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-3xl mx-auto">
-              {stats.map((stat, index) => (
-                <div 
-                  key={stat.label} 
-                  className={cn(
-                    "text-center p-4 rounded-xl bg-card/50 backdrop-blur border border-border/50",
-                    "stat-card group cursor-default"
-                  )}
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <p className="text-3xl md:text-4xl font-bold text-primary mb-1">
-                    <AnimatedCounter end={stat.value} suffix={stat.suffix} />
-                  </p>
-                  <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">{stat.label}</p>
+              {statsLoading ? (
+                <div className="col-span-4 text-center py-8">
+                  <Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" />
                 </div>
-              ))}
+              ) : (
+                stats.map((stat, index) => (
+                  <div 
+                    key={stat.label} 
+                    className={cn(
+                      "text-center p-4 rounded-xl bg-card/50 backdrop-blur border border-border/50",
+                      "stat-card group cursor-default hover:border-primary/30 transition-all"
+                    )}
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    <p className="text-3xl md:text-4xl font-bold text-primary mb-1">
+                      <AnimatedCounter end={stat.value} suffix={stat.suffix} />
+                    </p>
+                    <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">{stat.label}</p>
+                  </div>
+                ))
+              )}
             </div>
+            {/* AI enhancement indicator */}
+            {!statsLoading && fullStats.aiExtractedEvents > 0 && (
+              <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                <Sparkles className="w-4 h-4 text-amber-500" />
+                <span>Including {fullStats.aiExtractedEvents} AI-extracted events from {fullStats.documentsAnalyzed} analyzed documents</span>
+              </div>
+            )}
           </ScrollReveal>
 
           {/* Scroll indicator */}
@@ -311,10 +321,10 @@ const Landing = () => {
               
               <ul className="space-y-3 mb-8">
                 {[
-                  "117 verified sources analyzed",
-                  "AI-extracted events with confidence scoring",
-                  "Entity relationship mapping",
-                  "International rights framework audit"
+                  `${fullStats.totalSources}+ verified sources analyzed`,
+                  `${fullStats.totalEvents}+ timeline events documented`,
+                  `${fullStats.totalEntities}+ entities mapped with relationships`,
+                  "International rights framework audit (6 frameworks)"
                 ].map((item, index) => (
                   <li 
                     key={item} 
