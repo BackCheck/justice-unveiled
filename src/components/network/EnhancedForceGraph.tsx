@@ -30,6 +30,7 @@ interface EnhancedForceGraphProps {
   zoom: number;
   width?: number;
   height?: number;
+  highlightedNodeId?: string | null;
 }
 
 const riskColors: Record<RiskLevel, string> = {
@@ -58,6 +59,7 @@ export const EnhancedForceGraph = ({
   zoom,
   width = 900,
   height = 600,
+  highlightedNodeId,
 }: EnhancedForceGraphProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [simNodes, setSimNodes] = useState<ForceNode[]>([]);
@@ -289,6 +291,7 @@ export const EnhancedForceGraph = ({
           const isSelected = selectedNode?.id === node.id;
           const isConnected = isConnectedToSelected(node.id);
           const isHovered = hoveredNode === node.id;
+          const isHighlighted = highlightedNodeId === node.id;
           const onWatchlist = watchlist.has(node.id);
           const radius = getNodeRadius(node);
           const color = riskColors[node.riskLevel];
@@ -305,12 +308,23 @@ export const EnhancedForceGraph = ({
               className="cursor-pointer"
               style={{ transition: dragging === node.id ? 'none' : 'transform 0.1s ease-out' }}
             >
-              {/* Selection glow */}
-              {(isSelected || isConnected) && (
+              {/* Selection/Highlight glow */}
+              {(isSelected || isConnected || isHighlighted) && (
                 <circle
-                  r={radius + 10}
-                  fill={color}
-                  opacity={0.2}
+                  r={radius + (isHighlighted ? 14 : 10)}
+                  fill={isHighlighted ? "hsl(var(--primary))" : color}
+                  opacity={isHighlighted ? 0.4 : 0.2}
+                  className="animate-pulse"
+                />
+              )}
+              
+              {/* Search highlight ring */}
+              {isHighlighted && (
+                <circle
+                  r={radius + 8}
+                  fill="none"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth={3}
                   className="animate-pulse"
                 />
               )}
@@ -330,11 +344,11 @@ export const EnhancedForceGraph = ({
               <circle
                 r={radius}
                 fill={color}
-                stroke={isSelected ? "white" : "hsl(var(--background))"}
-                strokeWidth={isSelected ? 3 : 1.5}
-                filter={isSelected || isHovered ? "url(#glow-filter)" : undefined}
+                stroke={isHighlighted ? "hsl(var(--primary))" : isSelected ? "white" : "hsl(var(--background))"}
+                strokeWidth={isHighlighted ? 4 : isSelected ? 3 : 1.5}
+                filter={isSelected || isHovered || isHighlighted ? "url(#glow-filter)" : undefined}
                 className="transition-all duration-200"
-                opacity={isSelected || isConnected || isHovered ? 1 : 0.85}
+                opacity={isSelected || isConnected || isHovered || isHighlighted ? 1 : 0.85}
               />
 
               {/* Icon */}
@@ -366,11 +380,14 @@ export const EnhancedForceGraph = ({
               )}
 
               {/* Label */}
-              {(isSelected || isHovered || isConnected) && (
+              {(isSelected || isHovered || isConnected || isHighlighted) && (
                 <text
-                  y={radius + 12}
+                  y={radius + 14}
                   textAnchor="middle"
-                  className="fill-foreground text-[10px] font-medium pointer-events-none select-none"
+                  className={cn(
+                    "text-[10px] font-medium pointer-events-none select-none",
+                    isHighlighted ? "fill-primary font-semibold text-[11px]" : "fill-foreground"
+                  )}
                   style={{
                     textShadow: "0 1px 3px hsl(var(--background)), 0 -1px 3px hsl(var(--background))"
                   }}

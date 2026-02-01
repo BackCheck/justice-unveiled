@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { useGraphData, GraphNode, NodeType, RiskLevel } from "@/hooks/useGraphData";
 import { useEntityClusters } from "@/hooks/useEntityClusters";
 import { useCombinedEntities } from "@/hooks/useCombinedEntities";
@@ -12,10 +11,11 @@ import { GraphMinimap } from "./GraphMinimap";
 import { GraphLegend } from "./GraphLegend";
 import { GraphControls } from "./GraphControls";
 import { GraphStatsBar } from "./GraphStatsBar";
+import { EntitySearchBar } from "./EntitySearchBar";
 import { toast } from "sonner";
 import { 
-  Network, Users, Building2, Calendar, AlertTriangle, Sparkles, 
-  Bookmark, Loader2, ExternalLink, ChevronRight 
+  Network, AlertTriangle, Sparkles, 
+  Bookmark, Loader2, ChevronRight 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +42,7 @@ export const IntelGraph = () => {
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
   const [activeTab, setActiveTab] = useState<"clusters" | "watchlist">("clusters");
   const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
+  const [highlightedNodeId, setHighlightedNodeId] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
   
   // Layer and risk filters
@@ -92,10 +93,19 @@ export const IntelGraph = () => {
 
   const handleReset = useCallback(() => {
     setSelectedNode(null);
+    setHighlightedNodeId(null);
     setZoom(1);
     setActiveLayers(new Set(["person", "organization", "event", "violation"]));
     setActiveRiskLevels(new Set(["critical", "high", "medium", "low"]));
     toast.success("Graph reset");
+  }, []);
+
+  const handleSearchSelect = useCallback((node: GraphNode) => {
+    setHighlightedNodeId(node.id);
+    setSelectedNode(node);
+    toast.success(`Found: ${node.name}`);
+    // Clear highlight after 5 seconds
+    setTimeout(() => setHighlightedNodeId(null), 5000);
   }, []);
 
   const watchlistNodes = useMemo(() => {
@@ -161,6 +171,15 @@ export const IntelGraph = () => {
               watchlistCount={watchlist.size}
             />
 
+            {/* Search Bar */}
+            <div className="absolute left-4 top-16 z-20">
+              <EntitySearchBar 
+                nodes={nodes}
+                onSelectNode={handleSearchSelect}
+                highlightedNodeId={highlightedNodeId}
+              />
+            </div>
+
             {/* Legend */}
             <GraphLegend
               activeLayers={activeLayers}
@@ -183,7 +202,7 @@ export const IntelGraph = () => {
             />
 
             {/* Graph */}
-            <div className="overflow-auto pt-16 pb-4 px-4">
+            <div className="overflow-auto pt-28 pb-4 px-4">
               <EnhancedForceGraph
                 nodes={nodes}
                 links={links}
@@ -195,6 +214,7 @@ export const IntelGraph = () => {
                 zoom={zoom}
                 width={850}
                 height={550}
+                highlightedNodeId={highlightedNodeId}
               />
             </div>
           </CardContent>
