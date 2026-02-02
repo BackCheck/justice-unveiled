@@ -1,0 +1,103 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { 
+  AlertTriangle, 
+  AlertCircle,
+  Info,
+  Clock,
+  ChevronRight 
+} from "lucide-react";
+import { keyFindings } from "@/data/keyFindingsData";
+import { useExtractedDiscrepancies } from "@/hooks/useExtractedEvents";
+import { formatDistanceToNow } from "date-fns";
+
+const severityConfig = {
+  critical: { icon: AlertTriangle, color: "text-destructive", bg: "bg-destructive/10", border: "border-destructive/30" },
+  high: { icon: AlertCircle, color: "text-orange-500", bg: "bg-orange-500/10", border: "border-orange-500/30" },
+  medium: { icon: Info, color: "text-yellow-500", bg: "bg-yellow-500/10", border: "border-yellow-500/30" },
+  low: { icon: Info, color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/30" },
+};
+
+export const CriticalAlertsPanel = () => {
+  const { data: discrepancies } = useExtractedDiscrepancies();
+
+  // Combine static findings with dynamic discrepancies
+  const alerts = [
+    ...keyFindings
+      .filter(f => f.severity === "critical" || f.severity === "high")
+      .slice(0, 3)
+      .map(f => ({
+        id: f.id,
+        title: f.title,
+        severity: f.severity as "critical" | "high" | "medium" | "low",
+        source: "Static Intel",
+        time: "Case File",
+      })),
+    ...(discrepancies || [])
+      .filter(d => d.severity === "critical" || d.severity === "high")
+      .slice(0, 3)
+      .map(d => ({
+        id: d.id,
+        title: d.title,
+        severity: d.severity as "critical" | "high" | "medium" | "low",
+        source: "AI Analysis",
+        time: formatDistanceToNow(new Date(d.created_at), { addSuffix: true }),
+      })),
+  ].slice(0, 6);
+
+  return (
+    <Card className="glass-card border-destructive/20">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-destructive" />
+            Critical Alerts
+          </CardTitle>
+          <Badge variant="destructive" className="text-[10px]">
+            {alerts.filter(a => a.severity === "critical").length} CRITICAL
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="p-0">
+        <ScrollArea className="h-[280px]">
+          <div className="px-4 pb-4 space-y-2">
+            {alerts.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground text-sm">
+                No critical alerts
+              </div>
+            ) : (
+              alerts.map((alert) => {
+                const config = severityConfig[alert.severity];
+                const Icon = config.icon;
+                return (
+                  <div
+                    key={alert.id}
+                    className={`p-3 rounded-lg border ${config.border} ${config.bg} hover:brightness-110 transition-all cursor-pointer group`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <Icon className={`w-4 h-4 ${config.color} mt-0.5 flex-shrink-0`} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium line-clamp-2">{alert.title}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Badge variant="secondary" className="text-[9px] px-1.5">
+                            {alert.severity.toUpperCase()}
+                          </Badge>
+                          <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {alert.time}
+                          </span>
+                        </div>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </ScrollArea>
+      </CardContent>
+    </Card>
+  );
+};
