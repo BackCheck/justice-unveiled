@@ -149,19 +149,6 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent className="px-2 py-4">
-        {/* Search */}
-        {!collapsed && (
-          <div className="px-2 mb-4">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="w-full justify-start border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all duration-200"
-            >
-              <Search className="w-4 h-4 mr-2" />
-              Search Intel
-            </Button>
-          </div>
-        )}
 
         {/* Main Navigation */}
         <SidebarGroup>
