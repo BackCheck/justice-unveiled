@@ -88,7 +88,7 @@ serve(async (req) => {
   }
 
   try {
-    const { uploadId, documentContent, fileName, documentType } = await req.json();
+    const { uploadId, documentContent, fileName, documentType, caseId } = await req.json();
 
     if (!uploadId || !documentContent) {
       return new Response(
@@ -96,6 +96,8 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    console.log(`Analyzing document for case: ${caseId || 'no case specified'}`);
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
@@ -297,6 +299,7 @@ Be thorough but accurate. Only extract information explicitly stated or clearly 
           }
           return {
             source_upload_id: null, // Null for pasted documents without file upload
+            case_id: caseId || null, // Associate with case if provided
             date: normalizedDate,
             category: event.category,
             description: event.description,
@@ -332,6 +335,7 @@ Be thorough but accurate. Only extract information explicitly stated or clearly 
     if (extraction.entities.length > 0) {
       const entityRows = extraction.entities.map(entity => ({
         source_upload_id: null, // Null for pasted documents without file upload
+        case_id: caseId || null, // Associate with case if provided
         name: entity.name,
         entity_type: entity.entityType,
         role: entity.role,
@@ -351,6 +355,7 @@ Be thorough but accurate. Only extract information explicitly stated or clearly 
     if (extraction.discrepancies.length > 0) {
       const discrepancyRows = extraction.discrepancies.map(d => ({
         source_upload_id: null, // Null for pasted documents without file upload
+        case_id: caseId || null, // Associate with case if provided
         discrepancy_type: d.discrepancyType,
         title: d.title,
         description: d.description,

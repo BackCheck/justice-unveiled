@@ -153,15 +153,17 @@ export const useAnalyzeDocument = () => {
       uploadId, 
       documentContent, 
       fileName, 
-      documentType 
+      documentType,
+      caseId
     }: { 
       uploadId: string; 
       documentContent: string; 
       fileName: string;
       documentType: string;
+      caseId?: string;
     }) => {
       const { data, error } = await supabase.functions.invoke("analyze-document", {
-        body: { uploadId, documentContent, fileName, documentType }
+        body: { uploadId, documentContent, fileName, documentType, caseId }
       });
 
       if (error) throw error;

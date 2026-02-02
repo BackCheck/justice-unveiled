@@ -19,9 +19,11 @@ import {
   AlertCircle,
   Loader2,
   Files,
-  Sparkles
+  Sparkles,
+  FolderOpen
 } from "lucide-react";
 import { useAnalyzeDocument } from "@/hooks/useExtractedEvents";
+import { useCases } from "@/hooks/useCases";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -48,10 +50,12 @@ interface BatchDocumentUploaderProps {
 export const BatchDocumentUploader = ({ onBatchComplete }: BatchDocumentUploaderProps) => {
   const [uploads, setUploads] = useState<FileUploadState[]>([]);
   const [documentType, setDocumentType] = useState("legal");
+  const [selectedCaseId, setSelectedCaseId] = useState<string>("none");
   const [isDragOver, setIsDragOver] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const analyzeDocument = useAnalyzeDocument();
+  const { data: cases, isLoading: casesLoading } = useCases();
 
   const isValidFile = (file: File): boolean => {
     const ext = "." + file.name.split(".").pop()?.toLowerCase();
@@ -159,6 +163,7 @@ export const BatchDocumentUploader = ({ onBatchComplete }: BatchDocumentUploader
           documentContent: content,
           fileName: upload.file.name,
           documentType,
+          caseId: selectedCaseId === "none" ? undefined : selectedCaseId,
         });
 
         updateUploadState(i, { 
@@ -254,23 +259,62 @@ export const BatchDocumentUploader = ({ onBatchComplete }: BatchDocumentUploader
           />
         </div>
 
-        {/* Document Type Selection */}
+        {/* Case Selection and Document Type */}
         {pendingCount > 0 && (
-          <div className="space-y-2">
-            <Label htmlFor="batchDocType">Document Type (applies to all)</Label>
-            <Select value={documentType} onValueChange={setDocumentType}>
-              <SelectTrigger id="batchDocType">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="legal">Legal Document (Court Orders, Judgments)</SelectItem>
-                <SelectItem value="communication">Communication (Emails, Messages)</SelectItem>
-                <SelectItem value="financial">Financial Record (Statements, Invoices)</SelectItem>
-                <SelectItem value="testimony">Witness Statement / Testimony</SelectItem>
-                <SelectItem value="investigation">Investigation Report</SelectItem>
-                <SelectItem value="other">Other Document</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="space-y-4">
+            {/* Case Selection */}
+            <div className="p-4 bg-muted/50 rounded-lg border border-primary/20">
+              <Label htmlFor="batchCaseSelect" className="flex items-center gap-2 mb-2">
+                <FolderOpen className="w-4 h-4 text-primary" />
+                Associate with Case (applies to all)
+              </Label>
+              <Select value={selectedCaseId} onValueChange={setSelectedCaseId}>
+                <SelectTrigger id="batchCaseSelect" className="bg-background">
+                  <SelectValue placeholder="Select a case..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">
+                    <span className="text-muted-foreground">No specific case (general intelligence)</span>
+                  </SelectItem>
+                  {casesLoading ? (
+                    <SelectItem value="loading" disabled>Loading cases...</SelectItem>
+                  ) : (
+                    cases?.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-xs">{c.case_number}</Badge>
+                          <span>{c.title}</span>
+                        </div>
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground mt-2">
+                {selectedCaseId !== "none" 
+                  ? "All extracted intelligence will be linked to the selected case" 
+                  : "Intelligence will be available globally but not linked to a specific case"}
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="batchDocType">Document Type (applies to all)</Label>
+              <Select value={documentType} onValueChange={setDocumentType}>
+                <SelectTrigger id="batchDocType">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="legal">Legal Document (Court Orders, Judgments)</SelectItem>
+                  <SelectItem value="communication">Communication (Emails, Messages)</SelectItem>
+                  <SelectItem value="financial">Financial Record (Statements, Invoices)</SelectItem>
+                  <SelectItem value="testimony">Witness Statement / Testimony</SelectItem>
+                  <SelectItem value="investigation">Investigation Report</SelectItem>
+                  <SelectItem value="news">News Article / Media Report</SelectItem>
+                  <SelectItem value="regulatory">Regulatory Filing (SECP, NADRA, etc.)</SelectItem>
+                  <SelectItem value="other">Other Document</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         )}
 
