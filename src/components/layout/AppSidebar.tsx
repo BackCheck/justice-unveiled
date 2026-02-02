@@ -8,11 +8,12 @@ import {
   Scale, 
   Upload, 
   Info,
-  Search,
   User,
   Settings,
   LogOut,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
   LogIn,
   Shield,
   Home,
@@ -48,6 +49,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const mainNavItems = [
   { path: "/", label: "Home", icon: Home },
@@ -73,7 +75,7 @@ const systemNavItems = [
 export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { state } = useSidebar();
+  const { state, toggleSidebar } = useSidebar();
   const { user, profile, signOut } = useAuth();
   const { role, canEdit, canUpload, isAdmin } = useUserRole();
   const collapsed = state === "collapsed";
@@ -133,19 +135,43 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r border-border/30 glass-sidebar">
       <SidebarHeader className="border-b border-border/30 p-4">
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shadow-professional transition-all duration-300 group-hover:shadow-professional-lg group-hover:scale-105 shrink-0 overflow-hidden">
-            <img src={hrpmLogo} alt="HRPM Logo" className="w-8 h-8 object-contain transition-transform duration-500 group-hover:scale-110" />
-          </div>
-          {!collapsed && (
-            <div className="flex flex-col min-w-0 overflow-hidden">
-              <span className="text-xl font-bold text-primary tracking-tight leading-none">HRPM</span>
-              <span className="text-[10px] font-medium text-muted-foreground tracking-wide uppercase mt-0.5 truncate">
-                Human Rights Protection
-              </span>
+        <div className="flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-3 group flex-1 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shadow-professional transition-all duration-300 group-hover:shadow-professional-lg group-hover:scale-105 shrink-0 overflow-hidden">
+              <img src={hrpmLogo} alt="HRPM Logo" className="w-8 h-8 object-contain transition-transform duration-500 group-hover:scale-110" />
             </div>
-          )}
-        </Link>
+            {!collapsed && (
+              <div className="flex flex-col min-w-0 overflow-hidden">
+                <span className="text-xl font-bold text-primary tracking-tight leading-none">HRPM</span>
+                <span className="text-[10px] font-medium text-muted-foreground tracking-wide uppercase mt-0.5 truncate">
+                  Human Rights Protection
+                </span>
+              </div>
+            )}
+          </Link>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleSidebar}
+                className={cn(
+                  "h-8 w-8 shrink-0 transition-all duration-200 hover:bg-accent/50",
+                  collapsed && "mx-auto"
+                )}
+              >
+                {collapsed ? (
+                  <ChevronRight className="h-4 w-4" />
+                ) : (
+                  <ChevronLeft className="h-4 w-4" />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              {collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            </TooltipContent>
+          </Tooltip>
+        </div>
       </SidebarHeader>
 
       <SidebarContent className="px-2 py-4">
