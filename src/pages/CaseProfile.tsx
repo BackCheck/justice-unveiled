@@ -23,9 +23,11 @@ import {
   Scale,
   TrendingUp,
   FileWarning,
-  ChevronRight
+  ChevronRight,
+  Upload
 } from "lucide-react";
 import { useCase, useCaseEvents, useCaseEntities, useCaseDiscrepancies, useCaseEvidence } from "@/hooks/useCases";
+import { EvidenceRepositoryCard } from "@/components/evidence/EvidenceRepositoryCard";
 import { format } from "date-fns";
 
 const severityColors: Record<string, string> = {
@@ -488,56 +490,88 @@ const CaseProfile = () => {
 
           {/* Evidence Tab */}
           <TabsContent value="evidence" className="space-y-6">
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-primary" />
-                  Evidence Repository
-                </CardTitle>
-                <CardDescription>
-                  Documents and files associated with this case
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {evidenceLoading ? (
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {[1, 2].map((i) => (
-                      <Skeleton key={i} className="h-24 w-full" />
-                    ))}
+            {/* Repository Header */}
+            <Card className="glass-card bg-gradient-to-r from-primary/5 to-transparent border-primary/20">
+              <CardContent className="py-5">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <FileText className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">Evidence Repository</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {evidence?.length || 0} documents and files • Click to view or download with HRPM coverpage
+                      </p>
+                    </div>
                   </div>
-                ) : evidence?.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <FileText className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                    <p>No evidence files uploaded for this case yet</p>
-                  </div>
-                ) : (
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {evidence?.map((file) => (
-                      <Card key={file.id} className="glass-card hover-glow-primary">
-                        <CardContent className="p-4">
-                          <div className="flex items-start gap-3">
-                            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                              <FileText className="w-5 h-5 text-primary" />
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <p className="font-medium truncate">{file.file_name}</p>
-                              <p className="text-xs text-muted-foreground">
-                                {(file.file_size / 1024).toFixed(1)} KB • {file.file_type}
-                              </p>
-                              {file.category && (
-                                <Badge variant="secondary" className="mt-2 text-xs">
-                                  {file.category}
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                )}
+                  <Button asChild variant="outline" size="sm">
+                    <Link to="/uploads">
+                      <Upload className="w-4 h-4 mr-2" />
+                      Upload Evidence
+                    </Link>
+                  </Button>
+                </div>
               </CardContent>
             </Card>
+
+            {/* Evidence Files Grid */}
+            {evidenceLoading ? (
+              <div className="grid md:grid-cols-2 gap-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <Skeleton key={i} className="h-40 w-full" />
+                ))}
+              </div>
+            ) : evidence?.length === 0 ? (
+              <Card className="glass-card">
+                <CardContent className="py-12">
+                  <div className="text-center text-muted-foreground">
+                    <FileText className="w-16 h-16 mx-auto mb-4 opacity-30" />
+                    <h4 className="font-medium text-lg mb-1">No Evidence Files Yet</h4>
+                    <p className="text-sm max-w-md mx-auto">
+                      Upload documents, audio files, or other evidence to link them to this case.
+                    </p>
+                    <Button asChild className="mt-4">
+                      <Link to="/uploads">
+                        <Upload className="w-4 h-4 mr-2" />
+                        Upload First File
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid md:grid-cols-2 gap-4">
+                {evidence?.map((file) => (
+                  <EvidenceRepositoryCard 
+                    key={file.id} 
+                    file={file}
+                    caseNumber={caseData.case_number}
+                    caseTitle={caseData.title}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Info Card */}
+            {evidence && evidence.length > 0 && (
+              <Card className="glass-card border-dashed">
+                <CardContent className="py-4">
+                  <div className="flex items-start gap-3">
+                    <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                      <FileText className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      <p className="font-medium text-foreground">Branded Downloads Available</p>
+                      <p>
+                        Click the document icon button on any file to generate a printable coverpage 
+                        with HRPM branding and case reference information.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
         </Tabs>
       </main>
