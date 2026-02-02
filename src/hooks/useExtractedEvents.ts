@@ -29,6 +29,7 @@ export interface ExtractedEntity {
   role: string | null;
   description: string | null;
   related_event_ids: string[] | null;
+  category: "protagonist" | "antagonist" | "neutral" | "official" | null;
   created_at: string;
 }
 

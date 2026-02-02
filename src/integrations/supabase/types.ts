@@ -276,6 +276,7 @@ export type Database = {
       extracted_entities: {
         Row: {
           case_id: string | null
+          category: string | null
           created_at: string
           description: string | null
           entity_type: string
@@ -287,6 +288,7 @@ export type Database = {
         }
         Insert: {
           case_id?: string | null
+          category?: string | null
           created_at?: string
           description?: string | null
           entity_type: string
@@ -298,6 +300,7 @@ export type Database = {
         }
         Update: {
           case_id?: string | null
+          category?: string | null
           created_at?: string
           description?: string | null
           entity_type?: string

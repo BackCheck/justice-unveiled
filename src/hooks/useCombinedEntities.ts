@@ -23,14 +23,20 @@ const mapEntityType = (type: string): EntityType => {
   }
 };
 
-// Infer category based on role and description
-const inferCategory = (entity: ExtractedEntity): "protagonist" | "antagonist" | "neutral" | "official" => {
+// Get category from database or infer based on role and description
+const getCategory = (entity: ExtractedEntity): "protagonist" | "antagonist" | "neutral" | "official" => {
+  // Use database category if set
+  if (entity.category && entity.category !== 'neutral') {
+    return entity.category;
+  }
+  
+  // Fallback to inference
   const text = `${entity.role || ""} ${entity.description || ""}`.toLowerCase();
   
   if (text.includes("victim") || text.includes("acquit") || text.includes("target")) {
     return "protagonist";
   }
-  if (text.includes("accus") || text.includes("compla") || text.includes("corrupt") || text.includes("illeg")) {
+  if (text.includes("accus") || text.includes("compla") || text.includes("corrupt") || text.includes("illeg") || text.includes("threat") || text.includes("intimidat") || text.includes("forged")) {
     return "antagonist";
   }
   if (text.includes("judge") || text.includes("court") || text.includes("fir") || text.includes("agency")) {
@@ -66,7 +72,7 @@ export const useCombinedEntities = () => {
           role: extracted.role || "Unknown Role",
           description: extracted.description || "AI-extracted entity",
           connections: [],
-          category: inferCategory(extracted),
+          category: getCategory(extracted),
           isAIExtracted: true,
           sourceUploadId: extracted.source_upload_id,
           relatedEventIds: extracted.related_event_ids || []
