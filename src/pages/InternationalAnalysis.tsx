@@ -14,11 +14,20 @@ import {
   Shield,
   Users,
   Building2,
-  BookOpen
+  BookOpen,
+  Gavel
 } from "lucide-react";
 import { timelineData } from "@/data/timelineData";
+import { violationStats } from "@/data/violationsData";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import {
+  ViolationStatsHeader,
+  LocalViolationsTable,
+  InternationalViolationsTable,
+  IncidentViolationTimeline,
+  FrameworkBreakdown
+} from "@/components/international";
 
 interface ViolationFramework {
   framework: string;
@@ -89,8 +98,11 @@ const categoryIcons: Record<string, typeof Scale> = {
 const InternationalAnalysis = () => {
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("documented");
   const { toast } = useToast();
+
+  const totalViolations = violationStats.local.total + violationStats.international.total;
+  const totalCritical = violationStats.local.critical + violationStats.international.critical;
 
   const runAnalysis = async () => {
     setIsLoading(true);
@@ -103,6 +115,7 @@ const InternationalAnalysis = () => {
 
       if (data.analysis) {
         setAnalysis(data.analysis);
+        setActiveTab("ai-analysis");
         toast({
           title: "Analysis Complete",
           description: `Identified ${data.analysis.total_violations_identified || 0} potential violations`,
@@ -125,235 +138,294 @@ const InternationalAnalysis = () => {
       <div className="min-h-screen">
         {/* Hero Section */}
         <section className="bg-gradient-to-b from-primary/5 to-background border-b border-border">
-          <div className="max-w-6xl mx-auto px-4 py-12">
-            <div className="flex items-center gap-3 mb-4">
-              <Scale className="w-8 h-8 text-primary" />
-              <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-                International Human Rights Analysis
-              </h1>
+          <div className="max-w-7xl mx-auto px-4 py-8">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <Scale className="w-8 h-8 text-primary" />
+                  <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+                    Human Rights Violations Registry
+                  </h1>
+                </div>
+                <p className="text-muted-foreground max-w-2xl">
+                  Comprehensive mapping of documented incidents against local Pakistani laws and 
+                  international human rights frameworks (UN, OIC, EU, Regional).
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <div className="text-3xl font-bold text-destructive">{totalViolations}</div>
+                  <div className="text-xs text-muted-foreground">Total Violations</div>
+                </div>
+                <div className="w-px h-12 bg-border" />
+                <div className="text-right">
+                  <div className="text-3xl font-bold text-amber-600">{totalCritical}</div>
+                  <div className="text-xs text-muted-foreground">Critical Issues</div>
+                </div>
+              </div>
             </div>
-            <p className="text-muted-foreground max-w-3xl mb-6">
-              Analyzing documented facts against international human rights frameworks including 
-              the United Nations, Organisation of Islamic Cooperation, European Union, and regional instruments.
-            </p>
-            <Button 
-              onClick={runAnalysis} 
-              disabled={isLoading}
-              size="lg"
-              className="gap-2"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Analyzing...
-                </>
-              ) : (
-                <>
-                  <Globe className="w-4 h-4" />
-                  Run AI Analysis
-                </>
-              )}
-            </Button>
+            
+            {/* Stats Header */}
+            <ViolationStatsHeader />
           </div>
         </section>
 
-        {/* Framework Reference */}
-        <section className="py-8 border-b border-border">
-          <div className="max-w-6xl mx-auto px-4">
-            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-primary" />
-              International Frameworks Referenced
-            </h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {frameworkInfo.map((framework) => (
-                <Card key={framework.name} className="border-border">
-                  <CardContent className="pt-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <framework.icon className="w-5 h-5 text-primary" />
-                      <h3 className="font-medium text-foreground text-sm">{framework.name}</h3>
-                    </div>
-                    <p className="text-xs text-muted-foreground mb-2">{framework.description}</p>
-                    <div className="flex flex-wrap gap-1">
-                      {framework.instruments.map((inst) => (
-                        <Badge key={inst} variant="secondary" className="text-xs">
-                          {inst}
-                        </Badge>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Analysis Results */}
-        {analysis && (
-          <section className="py-8">
-            <div className="max-w-6xl mx-auto px-4">
-              <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="mb-6">
-                  <TabsTrigger value="overview">Overview</TabsTrigger>
-                  <TabsTrigger value="violations">Violations ({analysis.violations?.length || 0})</TabsTrigger>
-                  <TabsTrigger value="patterns">Patterns & Recommendations</TabsTrigger>
+        {/* Main Content */}
+        <section className="py-6">
+          <div className="max-w-7xl mx-auto px-4">
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <TabsList>
+                  <TabsTrigger value="documented" className="gap-2">
+                    <FileText className="w-4 h-4" />
+                    Documented Violations
+                  </TabsTrigger>
+                  <TabsTrigger value="local" className="gap-2">
+                    <Gavel className="w-4 h-4" />
+                    Local Laws
+                  </TabsTrigger>
+                  <TabsTrigger value="international" className="gap-2">
+                    <Globe className="w-4 h-4" />
+                    International
+                  </TabsTrigger>
+                  <TabsTrigger value="ai-analysis" className="gap-2">
+                    <AlertTriangle className="w-4 h-4" />
+                    AI Analysis
+                  </TabsTrigger>
                 </TabsList>
+                
+                <Button 
+                  onClick={runAnalysis} 
+                  disabled={isLoading}
+                  className="gap-2"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Analyzing...
+                    </>
+                  ) : (
+                    <>
+                      <Globe className="w-4 h-4" />
+                      Run AI Analysis
+                    </>
+                  )}
+                </Button>
+              </div>
 
-                <TabsContent value="overview">
-                  <div className="grid md:grid-cols-3 gap-6 mb-8">
-                    <Card className="border-border">
-                      <CardContent className="pt-6">
-                        <div className="text-3xl font-bold text-primary mb-1">
-                          {analysis.total_violations_identified || 0}
+              {/* Documented Violations Tab */}
+              <TabsContent value="documented" className="space-y-6">
+                {/* Framework Reference */}
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {frameworkInfo.map((framework) => (
+                    <Card key={framework.name} className="border-border">
+                      <CardContent className="pt-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <framework.icon className="w-5 h-5 text-primary" />
+                          <h3 className="font-medium text-foreground text-sm">{framework.name}</h3>
                         </div>
-                        <p className="text-sm text-muted-foreground">Violations Identified</p>
+                        <p className="text-xs text-muted-foreground mb-2">{framework.description}</p>
+                        <div className="flex flex-wrap gap-1">
+                          {framework.instruments.map((inst) => (
+                            <Badge key={inst} variant="secondary" className="text-xs">
+                              {inst}
+                            </Badge>
+                          ))}
+                        </div>
                       </CardContent>
                     </Card>
+                  ))}
+                </div>
+
+                {/* Framework Breakdown */}
+                <FrameworkBreakdown />
+
+                {/* Incident Timeline */}
+                <IncidentViolationTimeline />
+              </TabsContent>
+
+              {/* Local Laws Tab */}
+              <TabsContent value="local" className="space-y-6">
+                <LocalViolationsTable />
+              </TabsContent>
+
+              {/* International Tab */}
+              <TabsContent value="international" className="space-y-6">
+                <InternationalViolationsTable />
+              </TabsContent>
+
+              {/* AI Analysis Tab */}
+              <TabsContent value="ai-analysis">
+                {analysis ? (
+                  <div className="space-y-6">
+                    {/* Overview Stats */}
+                    <div className="grid md:grid-cols-3 gap-6">
+                      <Card className="border-border">
+                        <CardContent className="pt-6">
+                          <div className="text-3xl font-bold text-primary mb-1">
+                            {analysis.total_violations_identified || 0}
+                          </div>
+                          <p className="text-sm text-muted-foreground">AI-Identified Violations</p>
+                        </CardContent>
+                      </Card>
+                      <Card className="border-border">
+                        <CardContent className="pt-6">
+                          <div className="text-3xl font-bold text-destructive mb-1">
+                            {analysis.violations?.filter(v => v.severity === "Critical").length || 0}
+                          </div>
+                          <p className="text-sm text-muted-foreground">Critical Severity</p>
+                        </CardContent>
+                      </Card>
+                      <Card className="border-border">
+                        <CardContent className="pt-6">
+                          <div className="text-3xl font-bold text-chart-2 mb-1">
+                            {analysis.patterns?.length || 0}
+                          </div>
+                          <p className="text-sm text-muted-foreground">Patterns Detected</p>
+                        </CardContent>
+                      </Card>
+                    </div>
+
+                    {/* Executive Summary */}
                     <Card className="border-border">
-                      <CardContent className="pt-6">
-                        <div className="text-3xl font-bold text-destructive mb-1">
-                          {analysis.violations?.filter(v => v.severity === "Critical").length || 0}
-                        </div>
-                        <p className="text-sm text-muted-foreground">Critical Severity</p>
+                      <CardHeader>
+                        <CardTitle className="text-lg">Executive Summary</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-muted-foreground leading-relaxed">{analysis.summary}</p>
                       </CardContent>
                     </Card>
+
+                    {/* Violations List */}
                     <Card className="border-border">
-                      <CardContent className="pt-6">
-                        <div className="text-3xl font-bold text-chart-2 mb-1">
-                          {analysis.patterns?.length || 0}
-                        </div>
-                        <p className="text-sm text-muted-foreground">Patterns Detected</p>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  <Card className="border-border">
-                    <CardHeader>
-                      <CardTitle className="text-lg">Executive Summary</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground leading-relaxed">{analysis.summary}</p>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="violations">
-                  <div className="space-y-4">
-                    {analysis.violations?.map((violation, index) => {
-                      const Icon = categoryIcons[violation.category] || AlertTriangle;
-                      return (
-                        <Card key={index} className="border-border">
-                          <CardHeader className="pb-3">
-                            <div className="flex items-start justify-between gap-4">
-                              <div className="flex items-start gap-3">
-                                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                                  <Icon className="w-5 h-5 text-primary" />
-                                </div>
-                                <div>
-                                  <CardTitle className="text-base">{violation.title}</CardTitle>
-                                  <CardDescription className="mt-1">
-                                    {violation.category} • {violation.date_range}
-                                  </CardDescription>
-                                </div>
-                              </div>
-                              <Badge className={severityColors[violation.severity]}>
-                                {violation.severity}
-                              </Badge>
-                            </div>
-                          </CardHeader>
-                          <CardContent className="space-y-4">
-                            <div>
-                              <h4 className="text-sm font-medium text-foreground mb-2">Evidence from Case</h4>
-                              <p className="text-sm text-muted-foreground">{violation.evidence_from_case}</p>
-                            </div>
-                            
-                            <div>
-                              <h4 className="text-sm font-medium text-foreground mb-2">International Frameworks Violated</h4>
-                              <div className="space-y-3">
-                                {violation.frameworks_violated?.map((fw, fwIndex) => (
-                                  <div key={fwIndex} className="bg-muted/50 rounded-lg p-3">
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <Badge variant="outline" className="text-xs">{fw.framework}</Badge>
-                                      <div className="flex gap-1 flex-wrap">
-                                        {fw.articles?.map((art, artIndex) => (
-                                          <span key={artIndex} className="text-xs text-primary font-medium">
-                                            {art}{artIndex < fw.articles.length - 1 ? "," : ""}
-                                          </span>
-                                        ))}
-                                      </div>
-                                    </div>
-                                    <p className="text-xs text-muted-foreground">{fw.explanation}</p>
+                      <CardHeader>
+                        <CardTitle className="text-lg">Identified Violations</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {analysis.violations?.map((violation, index) => {
+                          const Icon = categoryIcons[violation.category] || AlertTriangle;
+                          return (
+                            <div key={index} className="border border-border rounded-lg p-4">
+                              <div className="flex items-start justify-between gap-4 mb-3">
+                                <div className="flex items-start gap-3">
+                                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                    <Icon className="w-5 h-5 text-primary" />
                                   </div>
-                                ))}
+                                  <div>
+                                    <h4 className="font-medium">{violation.title}</h4>
+                                    <p className="text-sm text-muted-foreground">
+                                      {violation.category} • {violation.date_range}
+                                    </p>
+                                  </div>
+                                </div>
+                                <Badge className={severityColors[violation.severity]}>
+                                  {violation.severity}
+                                </Badge>
+                              </div>
+                              
+                              <div className="space-y-3">
+                                <div>
+                                  <h5 className="text-sm font-medium mb-1">Evidence from Case</h5>
+                                  <p className="text-sm text-muted-foreground">{violation.evidence_from_case}</p>
+                                </div>
+                                
+                                <div>
+                                  <h5 className="text-sm font-medium mb-2">Frameworks Violated</h5>
+                                  <div className="space-y-2">
+                                    {violation.frameworks_violated?.map((fw, fwIndex) => (
+                                      <div key={fwIndex} className="bg-muted/50 rounded-lg p-3">
+                                        <div className="flex items-center gap-2 mb-1">
+                                          <Badge variant="outline" className="text-xs">{fw.framework}</Badge>
+                                          <div className="flex gap-1 flex-wrap">
+                                            {fw.articles?.map((art, artIndex) => (
+                                              <span key={artIndex} className="text-xs text-primary font-medium">
+                                                {art}{artIndex < fw.articles.length - 1 ? "," : ""}
+                                              </span>
+                                            ))}
+                                          </div>
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">{fw.explanation}</p>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
                               </div>
                             </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="patterns">
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <Card className="border-border">
-                      <CardHeader>
-                        <CardTitle className="text-lg flex items-center gap-2">
-                          <AlertTriangle className="w-5 h-5 text-chart-1" />
-                          Patterns Identified
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ul className="space-y-3">
-                          {analysis.patterns?.map((pattern, index) => (
-                            <li key={index} className="flex items-start gap-2">
-                              <div className="w-1.5 h-1.5 rounded-full bg-chart-1 mt-2 flex-shrink-0" />
-                              <span className="text-sm text-muted-foreground">{pattern}</span>
-                            </li>
-                          ))}
-                        </ul>
+                          );
+                        })}
                       </CardContent>
                     </Card>
 
-                    <Card className="border-border">
-                      <CardHeader>
-                        <CardTitle className="text-lg flex items-center gap-2">
-                          <CheckCircle className="w-5 h-5 text-chart-5" />
-                          Recommendations
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ul className="space-y-3">
-                          {analysis.recommendations?.map((rec, index) => (
-                            <li key={index} className="flex items-start gap-2">
-                              <div className="w-1.5 h-1.5 rounded-full bg-chart-5 mt-2 flex-shrink-0" />
-                              <span className="text-sm text-muted-foreground">{rec}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </div>
-          </section>
-        )}
+                    {/* Patterns and Recommendations */}
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <Card className="border-border">
+                        <CardHeader>
+                          <CardTitle className="text-lg flex items-center gap-2">
+                            <AlertTriangle className="w-5 h-5 text-chart-1" />
+                            Patterns Identified
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <ul className="space-y-3">
+                            {analysis.patterns?.map((pattern, index) => (
+                              <li key={index} className="flex items-start gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-chart-1 mt-2 flex-shrink-0" />
+                                <span className="text-sm text-muted-foreground">{pattern}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </CardContent>
+                      </Card>
 
-        {/* Empty State */}
-        {!analysis && !isLoading && (
-          <section className="py-16">
-            <div className="max-w-2xl mx-auto px-4 text-center">
-              <Scale className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-foreground mb-2">
-                Ready for International Rights Analysis
-              </h3>
-              <p className="text-muted-foreground mb-6">
-                Click "Run AI Analysis" to examine documented events against international 
-                human rights frameworks and identify potential violations.
-              </p>
-            </div>
-          </section>
-        )}
+                      <Card className="border-border">
+                        <CardHeader>
+                          <CardTitle className="text-lg flex items-center gap-2">
+                            <CheckCircle className="w-5 h-5 text-chart-5" />
+                            Recommendations
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <ul className="space-y-3">
+                            {analysis.recommendations?.map((rec, index) => (
+                              <li key={index} className="flex items-start gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-chart-5 mt-2 flex-shrink-0" />
+                                <span className="text-sm text-muted-foreground">{rec}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="py-16 text-center">
+                    <Scale className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-foreground mb-2">
+                      Run AI Analysis for Deep Insights
+                    </h3>
+                    <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                      Click "Run AI Analysis" to examine documented events against international 
+                      human rights frameworks and identify additional violations and patterns.
+                    </p>
+                    <Button onClick={runAnalysis} disabled={isLoading} className="gap-2">
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Analyzing...
+                        </>
+                      ) : (
+                        <>
+                          <Globe className="w-4 h-4" />
+                          Run AI Analysis
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          </div>
+        </section>
       </div>
     </PlatformLayout>
   );
