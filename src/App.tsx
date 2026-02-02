@@ -20,6 +20,9 @@ import CasesList from "./pages/CasesList";
 import CaseProfile from "./pages/CaseProfile";
 import Investigations from "./pages/Investigations";
 import NotFound from "./pages/NotFound";
+import EventDetail from "./pages/EventDetail";
+import ViolationDetail from "./pages/ViolationDetail";
+import Watchlist from "./pages/Watchlist";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +49,9 @@ const App = () => (
             <Route path="/analyze" element={<Analyze />} />
             <Route path="/investigations" element={<Investigations />} />
             <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/events/:eventId" element={<EventDetail />} />
+            <Route path="/violations/:type/:violationId" element={<ViolationDetail />} />
+            <Route path="/watchlist" element={<Watchlist />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

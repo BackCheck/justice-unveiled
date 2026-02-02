@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { internationalViolations, InternationalViolation, violationStats } from "@/data/violationsData";
-import { Globe, ChevronDown, ChevronRight, Calendar, Shield, Building2, Users } from "lucide-react";
+import { Globe, ChevronDown, ChevronRight, Calendar, Shield, Building2, Users, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 
 const severityStyles = {
@@ -35,6 +36,7 @@ const frameworkColors: Record<string, { bg: string; text: string; icon: typeof G
 
 const ViolationRow = ({ violation }: { violation: InternationalViolation }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
   const Icon = violation.icon;
   const framework = frameworkColors[violation.framework];
 
@@ -91,14 +93,24 @@ const ViolationRow = ({ violation }: { violation: InternationalViolation }) => {
                   ))}
                 </ul>
               </div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Calendar className="w-3 h-3" />
-                <span>Dates: </span>
-                {violation.eventDates.map((date, idx) => (
-                  <Badge key={idx} variant="secondary" className="text-xs">
-                    {format(new Date(date), "MMM d, yyyy")}
-                  </Badge>
-                ))}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Calendar className="w-3 h-3" />
+                  <span>Dates: </span>
+                  {violation.eventDates.map((date, idx) => (
+                    <Badge key={idx} variant="secondary" className="text-xs">
+                      {format(new Date(date), "MMM d, yyyy")}
+                    </Badge>
+                  ))}
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => navigate(`/violations/international/${violation.id}`)}
+                >
+                  <ExternalLink className="w-3 h-3 mr-1" />
+                  View Full Details
+                </Button>
               </div>
             </div>
           </TableCell>

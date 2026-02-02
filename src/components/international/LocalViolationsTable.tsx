@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { localViolations, LocalViolation } from "@/data/violationsData";
-import { Gavel, ChevronDown, ChevronRight, Calendar } from "lucide-react";
+import { Gavel, ChevronDown, ChevronRight, Calendar, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 
 const severityStyles = {
@@ -27,6 +28,7 @@ const severityStyles = {
 
 const ViolationRow = ({ violation }: { violation: LocalViolation }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
   const Icon = violation.icon;
 
   return (
@@ -82,14 +84,24 @@ const ViolationRow = ({ violation }: { violation: LocalViolation }) => {
                   ))}
                 </ul>
               </div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Calendar className="w-3 h-3" />
-                <span>Dates: </span>
-                {violation.eventDates.map((date, idx) => (
-                  <Badge key={idx} variant="secondary" className="text-xs">
-                    {format(new Date(date), "MMM d, yyyy")}
-                  </Badge>
-                ))}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Calendar className="w-3 h-3" />
+                  <span>Dates: </span>
+                  {violation.eventDates.map((date, idx) => (
+                    <Badge key={idx} variant="secondary" className="text-xs">
+                      {format(new Date(date), "MMM d, yyyy")}
+                    </Badge>
+                  ))}
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => navigate(`/violations/local/${violation.id}`)}
+                >
+                  <ExternalLink className="w-3 h-3 mr-1" />
+                  View Full Details
+                </Button>
               </div>
             </div>
           </TableCell>
