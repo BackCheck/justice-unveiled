@@ -5,75 +5,33 @@ import { Badge } from "@/components/ui/badge";
 import { 
   ArrowRight, 
   Shield, 
-  Network, 
   FileSearch, 
-  Brain, 
   Scale, 
-  Globe, 
   Users,
   FileText,
   Sparkles,
   CheckCircle,
-  ChevronRight,
   ExternalLink,
   Zap,
   Target,
-  Eye,
-  Loader2
+  Eye
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import hrpmLogo from "@/assets/human-rights-logo.svg";
 import ParticleField from "@/components/landing/ParticleField";
-import AnimatedCounter from "@/components/landing/AnimatedCounter";
 import GlowingOrb from "@/components/landing/GlowingOrb";
 import FloatingIcon from "@/components/landing/FloatingIcon";
 import ScrollReveal from "@/components/landing/ScrollReveal";
 import GradientText from "@/components/landing/GradientText";
 import TypingText from "@/components/landing/TypingText";
 import SpotlightEffect from "@/components/landing/SpotlightEffect";
-import { useLandingStats } from "@/hooks/usePlatformStats";
+import HeroStats from "@/components/landing/HeroStats";
+import FeatureShowcase from "@/components/landing/FeatureShowcase";
+import LiveMetricsSection from "@/components/landing/LiveMetricsSection";
+import { usePlatformStats } from "@/hooks/usePlatformStats";
 
 const Landing = () => {
-  const { stats, fullStats, isLoading: statsLoading } = useLandingStats();
-
-  const features = [
-    {
-      icon: Brain,
-      title: "AI-Powered Analysis",
-      description: "Extract events, entities, and violations from raw documents using advanced AI intelligence.",
-      link: "/uploads",
-      color: "text-chart-1",
-      bgColor: "bg-chart-1/10",
-      glowColor: "group-hover:shadow-[0_0_40px_hsl(var(--chart-1)/0.3)]"
-    },
-    {
-      icon: Network,
-      title: "Entity Network",
-      description: "Visualize relationships between individuals, organizations, and institutions with interactive graphs.",
-      link: "/network",
-      color: "text-chart-2",
-      bgColor: "bg-chart-2/10",
-      glowColor: "group-hover:shadow-[0_0_40px_hsl(var(--chart-2)/0.3)]"
-    },
-    {
-      icon: FileSearch,
-      title: "Evidence Matrix",
-      description: "Cross-reference sources and map documents to events with reliability tracking.",
-      link: "/evidence",
-      color: "text-chart-4",
-      bgColor: "bg-chart-4/10",
-      glowColor: "group-hover:shadow-[0_0_40px_hsl(var(--chart-4)/0.3)]"
-    },
-    {
-      icon: Globe,
-      title: "International Rights Audit",
-      description: "Map violations against UN UDHR, ICCPR, CAT, and other global human rights frameworks.",
-      link: "/international",
-      color: "text-chart-3",
-      bgColor: "bg-chart-3/10",
-      glowColor: "group-hover:shadow-[0_0_40px_hsl(var(--chart-3)/0.3)]"
-    }
-  ];
+  const { stats: fullStats } = usePlatformStats();
 
   const values = [
     { icon: Scale, title: "Justice", description: "Fair treatment under the law for everyone." },
@@ -109,6 +67,7 @@ const Landing = () => {
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             <Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">About</Link>
+            <Link to="/cases" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">Cases</Link>
             <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">Dashboard</Link>
             <Link to="/intel-briefing" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">Intelligence</Link>
             <Button size="sm" variant="outline" className="border-primary/50 hover:bg-primary hover:text-primary-foreground transition-all duration-300" asChild>
@@ -116,7 +75,7 @@ const Landing = () => {
             </Button>
           </nav>
           <Button size="sm" className="animate-pulse-glow md:hidden" asChild>
-            <Link to="/">Explore</Link>
+            <Link to="/cases">Explore</Link>
           </Button>
         </div>
       </header>
@@ -134,7 +93,7 @@ const Landing = () => {
         <FloatingIcon icon={Target} className="bottom-32 left-[8%] hidden lg:block" delay={1} />
         <FloatingIcon icon={Zap} className="bottom-48 right-[18%] hidden lg:block" delay={1.5} />
 
-        <div className="relative max-w-7xl mx-auto px-4 py-20 md:py-32 z-10">
+        <div className="relative max-w-7xl mx-auto px-4 py-20 md:py-28 z-10">
           <div className="text-center max-w-4xl mx-auto">
             {/* Badge */}
             <ScrollReveal delay={100}>
@@ -181,10 +140,10 @@ const Landing = () => {
             {/* CTA Buttons */}
             <ScrollReveal delay={400}>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link to="/timeline">
+                <Link to="/cases">
                   <Button size="lg" className="group relative overflow-hidden hover-lift">
                     <span className="relative z-10 flex items-center">
-                      Explore Case File #001
+                      Explore Case Files
                       <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                     </span>
                     <div className="absolute inset-0 bg-gradient-to-r from-primary via-chart-2 to-primary bg-[length:200%_auto] animate-gradient-shift opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -199,38 +158,9 @@ const Landing = () => {
             </ScrollReveal>
           </div>
 
-          {/* Stats Row */}
+          {/* Hero Stats - Using new component */}
           <ScrollReveal delay={500}>
-            <div className="mt-16 md:mt-24 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-3xl mx-auto">
-              {statsLoading ? (
-                <div className="col-span-4 text-center py-8">
-                  <Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" />
-                </div>
-              ) : (
-                stats.map((stat, index) => (
-                  <div 
-                    key={stat.label} 
-                    className={cn(
-                      "text-center p-4 rounded-xl bg-card/50 backdrop-blur border border-border/50",
-                      "stat-card group cursor-default hover:border-primary/30 transition-all"
-                    )}
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
-                    <p className="text-3xl md:text-4xl font-bold text-primary mb-1">
-                      <AnimatedCounter end={stat.value} suffix={stat.suffix} />
-                    </p>
-                    <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">{stat.label}</p>
-                  </div>
-                ))
-              )}
-            </div>
-            {/* AI enhancement indicator */}
-            {!statsLoading && fullStats.aiExtractedEvents > 0 && (
-              <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                <Sparkles className="w-4 h-4 text-amber-500" />
-                <span>Including {fullStats.aiExtractedEvents} AI-extracted events from {fullStats.documentsAnalyzed} analyzed documents</span>
-              </div>
-            )}
+            <HeroStats />
           </ScrollReveal>
 
           {/* Scroll indicator */}
@@ -242,63 +172,11 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 md:py-32 bg-gradient-to-b from-secondary/20 via-background to-background relative">
-        {/* Background decoration */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-primary/20 to-transparent" />
-          <div className="absolute top-0 right-1/4 w-px h-full bg-gradient-to-b from-transparent via-primary/20 to-transparent" />
-        </div>
+      {/* Features Section - Using new component */}
+      <FeatureShowcase />
 
-        <div className="max-w-7xl mx-auto px-4 relative z-10">
-          <ScrollReveal>
-            <div className="text-center mb-16">
-              <Badge variant="outline" className="mb-4 bg-background animate-pulse-glow">PLATFORM CAPABILITIES</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Intelligence-Grade <GradientText>Investigation Tools</GradientText>
-              </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Purpose-built modules to synthesize raw evidence into structured, actionable insights.
-              </p>
-            </div>
-          </ScrollReveal>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
-              <ScrollReveal key={feature.title} delay={index * 100} direction="up">
-                <Link to={feature.link}>
-                  <Card 
-                    className={cn(
-                      "h-full border-border/50 bg-card/80 backdrop-blur cursor-pointer group",
-                      "transition-all duration-500 hover:-translate-y-2",
-                      feature.glowColor
-                    )}
-                  >
-                    <CardContent className="p-6">
-                      <div className={cn(
-                        "w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-all duration-300",
-                        feature.bgColor,
-                        "group-hover:scale-110 group-hover:rotate-3"
-                      )}>
-                        <feature.icon className={cn("w-6 h-6 transition-all duration-300", feature.color)} />
-                      </div>
-                      <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
-                        {feature.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        {feature.description}
-                      </p>
-                      <span className="text-sm text-primary flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                        Explore <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                      </span>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Live Metrics Section - Using new component */}
+      <LiveMetricsSection />
 
       {/* Case File Preview */}
       <section className="py-20 md:py-32 relative">
@@ -504,7 +382,7 @@ const Landing = () => {
           <ScrollReveal delay={300}>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button size="lg" className="group hover-lift relative overflow-hidden" asChild>
-                <Link to="/timeline">
+                <Link to="/cases">
                   <span className="relative z-10 flex items-center">
                     Start Exploring
                     <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
@@ -536,6 +414,7 @@ const Landing = () => {
             </div>
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
               <Link to="/about" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">About</Link>
+              <Link to="/cases" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">Cases</Link>
               <Link to="/dashboard" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">Dashboard</Link>
               <Link to="/intel-briefing" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">Intelligence</Link>
               <Link to="/auth" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">Sign In</Link>
