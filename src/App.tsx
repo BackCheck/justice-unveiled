@@ -18,6 +18,7 @@ import AdminPanel from "./pages/AdminPanel";
 import Analyze from "./pages/Analyze";
 import CasesList from "./pages/CasesList";
 import CaseProfile from "./pages/CaseProfile";
+import Investigations from "./pages/Investigations";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/international" element={<InternationalAnalysis />} />
             <Route path="/analyze" element={<Analyze />} />
+            <Route path="/investigations" element={<Investigations />} />
             <Route path="/admin" element={<AdminPanel />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

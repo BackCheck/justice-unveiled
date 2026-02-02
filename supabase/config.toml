@@ -1,1 +1,19 @@
 project_id = "ccdyqmjvzzoftzbzbqlu"
+
+[functions.analyze-document]
+verify_jwt = false
+
+[functions.analyze-rights-violations]
+verify_jwt = false
+
+[functions.intel-chat]
+verify_jwt = false
+
+[functions.threat-profiler]
+verify_jwt = false
+
+[functions.generate-report]
+verify_jwt = false
+
+[functions.pattern-detector]
+verify_jwt = false
