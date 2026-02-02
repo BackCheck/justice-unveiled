@@ -1,12 +1,48 @@
 import { ReactNode } from "react";
+import { useLocation } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
+import { Breadcrumbs } from "./Breadcrumbs";
+import { QuickActions } from "./QuickActions";
+import { GlobalSearch } from "./GlobalSearch";
+import { Badge } from "@/components/ui/badge";
+import { Bell, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface PlatformLayoutProps {
   children: ReactNode;
 }
 
+// Page titles for header context
+const pageTitles: Record<string, { title: string; subtitle?: string; isAI?: boolean }> = {
+  "/": { title: "Home" },
+  "/timeline": { title: "Investigative Timeline", subtitle: "Chronological event documentation" },
+  "/dashboard": { title: "Intel Dashboard", subtitle: "Analytics & key findings" },
+  "/intel-briefing": { title: "Intelligence Briefing", subtitle: "Synthesized case intelligence" },
+  "/network": { title: "Entity Network", subtitle: "Relationship mapping" },
+  "/investigations": { title: "Investigation Hub", subtitle: "AI-powered analysis tools", isAI: true },
+  "/cases": { title: "Case Files", subtitle: "Investigation directory" },
+  "/analyze": { title: "AI Document Analyzer", subtitle: "Extract intelligence from evidence", isAI: true },
+  "/evidence": { title: "Evidence Matrix", subtitle: "Source cross-reference system" },
+  "/international": { title: "International Rights Audit", subtitle: "UN framework compliance" },
+  "/uploads": { title: "Document Uploads", subtitle: "Evidence management" },
+  "/about": { title: "About HRPM", subtitle: "Mission & values" },
+  "/admin": { title: "Admin Panel", subtitle: "System administration" },
+  "/auth": { title: "Authentication", subtitle: "Sign in or create account" },
+};
+
 export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const pageInfo = pageTitles[currentPath] || { title: "HRPM" };
+  const isHomePage = currentPath === "/" || currentPath === "";
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background relative">
@@ -19,13 +55,64 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
         
         <AppSidebar />
         <div className="flex-1 flex flex-col min-w-0 relative z-10">
-          {/* Top bar with sidebar trigger - glass effect */}
-          <header className="sticky top-0 z-40 glass-header px-4 py-3">
-            <div className="flex items-center gap-4">
-              <SidebarTrigger className="h-8 w-8 hover-glow-primary rounded-lg" />
+          {/* Enhanced Header with breadcrumbs, search, and quick actions */}
+          <header className="sticky top-0 z-40 glass-header border-b border-border/30">
+            {/* Main Header Row */}
+            <div className="px-4 py-3 flex items-center gap-4">
+              <SidebarTrigger className="h-8 w-8 hover-glow-primary rounded-lg shrink-0" />
+              
+              {/* Page Title - Desktop */}
+              {!isHomePage && (
+                <div className="hidden md:flex items-center gap-3 min-w-0">
+                  <div className="flex flex-col min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h1 className="font-semibold text-foreground truncate">{pageInfo.title}</h1>
+                      {pageInfo.isAI && (
+                        <Badge variant="secondary" className="gap-1 h-5 px-1.5 text-[10px] shrink-0">
+                          <Sparkles className="w-3 h-3" />
+                          AI
+                        </Badge>
+                      )}
+                    </div>
+                    {pageInfo.subtitle && (
+                      <span className="text-xs text-muted-foreground truncate">{pageInfo.subtitle}</span>
+                    )}
+                  </div>
+                </div>
+              )}
+
               <div className="flex-1" />
+
+              {/* Right Side Actions */}
+              <div className="flex items-center gap-2">
+                <GlobalSearch />
+                <QuickActions />
+                
+                {/* Notifications - Placeholder */}
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 relative">
+                        <Bell className="w-4 h-4" />
+                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-primary rounded-full animate-pulse" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Notifications</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </div>
+
+            {/* Breadcrumb Row - Only on inner pages */}
+            {!isHomePage && (
+              <div className="px-4 pb-2 pt-0">
+                <Breadcrumbs />
+              </div>
+            )}
           </header>
+
           <main className="flex-1">{children}</main>
         </div>
       </div>
