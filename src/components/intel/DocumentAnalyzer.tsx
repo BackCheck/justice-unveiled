@@ -20,9 +20,11 @@ import {
   Calendar,
   Users,
   AlertTriangle,
-  CheckCircle
+  CheckCircle,
+  FolderOpen
 } from "lucide-react";
 import { useAnalyzeDocument } from "@/hooks/useExtractedEvents";
+import { useCases } from "@/hooks/useCases";
 import { cn } from "@/lib/utils";
 
 interface DocumentAnalyzerProps {
@@ -34,9 +36,11 @@ export const DocumentAnalyzer = ({ uploadId, onAnalysisComplete }: DocumentAnaly
   const [documentContent, setDocumentContent] = useState("");
   const [fileName, setFileName] = useState("");
   const [documentType, setDocumentType] = useState("legal");
+  const [selectedCaseId, setSelectedCaseId] = useState<string>("none");
   const [localUploadId, setLocalUploadId] = useState(uploadId || crypto.randomUUID());
 
   const analyzeDocument = useAnalyzeDocument();
+  const { data: cases, isLoading: casesLoading } = useCases();
 
   const handleAnalyze = async () => {
     if (!documentContent.trim()) return;
@@ -46,6 +50,7 @@ export const DocumentAnalyzer = ({ uploadId, onAnalysisComplete }: DocumentAnaly
       documentContent,
       fileName: fileName || "Pasted Document",
       documentType,
+      caseId: selectedCaseId === "none" ? undefined : selectedCaseId,
     });
 
     onAnalysisComplete?.();
@@ -67,6 +72,41 @@ export const DocumentAnalyzer = ({ uploadId, onAnalysisComplete }: DocumentAnaly
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Case Selection */}
+        <div className="p-4 bg-muted/50 rounded-lg border border-primary/20">
+          <Label htmlFor="caseSelect" className="flex items-center gap-2 mb-2">
+            <FolderOpen className="w-4 h-4 text-primary" />
+            Associate with Case
+          </Label>
+          <Select value={selectedCaseId} onValueChange={setSelectedCaseId}>
+            <SelectTrigger id="caseSelect" className="bg-background">
+              <SelectValue placeholder="Select a case..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">
+                <span className="text-muted-foreground">No specific case (general intelligence)</span>
+              </SelectItem>
+              {casesLoading ? (
+                <SelectItem value="loading" disabled>Loading cases...</SelectItem>
+              ) : (
+                cases?.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">{c.case_number}</Badge>
+                      <span>{c.title}</span>
+                    </div>
+                  </SelectItem>
+                ))
+              )}
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground mt-2">
+            {selectedCaseId !== "none" 
+              ? "Extracted intelligence will be linked to the selected case" 
+              : "Intelligence will be available globally but not linked to a specific case"}
+          </p>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="fileName">Document Name</Label>
@@ -89,6 +129,8 @@ export const DocumentAnalyzer = ({ uploadId, onAnalysisComplete }: DocumentAnaly
                 <SelectItem value="financial">Financial Record (Statements, Invoices)</SelectItem>
                 <SelectItem value="testimony">Witness Statement / Testimony</SelectItem>
                 <SelectItem value="investigation">Investigation Report</SelectItem>
+                <SelectItem value="news">News Article / Media Report</SelectItem>
+                <SelectItem value="regulatory">Regulatory Filing (SECP, NADRA, etc.)</SelectItem>
                 <SelectItem value="other">Other Document</SelectItem>
               </SelectContent>
             </Select>
