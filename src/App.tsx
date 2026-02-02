@@ -23,6 +23,7 @@ import NotFound from "./pages/NotFound";
 import EventDetail from "./pages/EventDetail";
 import ViolationDetail from "./pages/ViolationDetail";
 import Watchlist from "./pages/Watchlist";
+import EntityDetail from "./pages/EntityDetail";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/events/:eventId" element={<EventDetail />} />
             <Route path="/violations/:type/:violationId" element={<ViolationDetail />} />
             <Route path="/watchlist" element={<Watchlist />} />
+            <Route path="/entities/:entityId" element={<EntityDetail />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

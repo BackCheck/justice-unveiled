@@ -40,7 +40,7 @@ export default function Watchlist() {
       case 'event': return `/events/${item.item_id}`;
       case 'local_violation': return `/violations/local/${item.item_id}`;
       case 'international_violation': return `/violations/international/${item.item_id}`;
-      case 'entity': return `/network?entity=${item.item_id}`;
+      case 'entity': return `/entities/${item.item_id}`;
     }
   };
 
