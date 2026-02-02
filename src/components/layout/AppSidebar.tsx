@@ -19,7 +19,8 @@ import {
   Home,
   Brain,
   FolderOpen,
-  Target
+  Target,
+  Eye
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -59,6 +60,7 @@ const mainNavItems = [
   { path: "/dashboard", label: "Intel Dashboard", icon: BarChart3 },
   { path: "/intel-briefing", label: "Briefing", icon: BookOpen },
   { path: "/network", label: "Entity Network", icon: Network },
+  { path: "/watchlist", label: "My Watchlist", icon: Eye },
 ];
 
 const analysisNavItems = [

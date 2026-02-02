@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp, Calendar, Users, Scale, AlertTriangle, FileText, Sparkles } from "lucide-react";
+import { ChevronDown, ChevronUp, Calendar, Users, Scale, AlertTriangle, FileText, Sparkles, ExternalLink } from "lucide-react";
 import { TimelineEvent, categoryColors, categoryBorderColors } from "@/data/timelineData";
 import { format, parseISO } from "date-fns";
 import { LinkedEvidence } from "@/components/timeline/LinkedEvidence";
@@ -17,11 +18,17 @@ interface TimelineCardProps {
 
 export const TimelineCard = ({ event, index, forceExpanded = false }: TimelineCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const navigate = useNavigate();
   const showDetails = forceExpanded || isExpanded;
   
-  // Check if this is an AI-extracted event
+  // Check if this is an AI-extracted event with an ID
   const isExtracted = 'isExtracted' in event && event.isExtracted;
+  const eventId = 'id' in event ? event.id : String(index);
   const confidenceScore = 'confidenceScore' in event ? event.confidenceScore : undefined;
+
+  const handleViewDetails = () => {
+    navigate(`/events/${eventId}`);
+  };
 
   // Safely parse and format date, handling invalid formats
   const getFormattedDate = () => {
@@ -88,26 +95,37 @@ export const TimelineCard = ({ event, index, forceExpanded = false }: TimelineCa
         </CardHeader>
 
         <CardContent className="pt-0">
-          {!forceExpanded && (
+          <div className="flex flex-wrap gap-2 mb-3 no-print">
+            {!forceExpanded && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                {isExpanded ? (
+                  <>
+                    <ChevronUp className="w-4 h-4 mr-1" />
+                    Hide Details
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="w-4 h-4 mr-1" />
+                    Show Details
+                  </>
+                )}
+              </Button>
+            )}
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="mb-3 text-muted-foreground hover:text-foreground no-print"
+              onClick={handleViewDetails}
+              className="text-primary hover:text-primary"
             >
-              {isExpanded ? (
-                <>
-                  <ChevronUp className="w-4 h-4 mr-1" />
-                  Hide Details
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="w-4 h-4 mr-1" />
-                  Show Details
-                </>
-              )}
+              <ExternalLink className="w-4 h-4 mr-1" />
+              View Full Details
             </Button>
-          )}
+          </div>
 
           {showDetails && (
             <div className="space-y-4 animate-in slide-in-from-top-2 duration-200">
