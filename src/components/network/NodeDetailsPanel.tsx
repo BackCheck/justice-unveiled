@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -7,7 +8,7 @@ import { GraphNode, GraphLink, NodeType, RiskLevel } from "@/hooks/useGraphData"
 import { 
   X, Sparkles, Bookmark, ChevronRight, 
   Users, Building2, Calendar, AlertTriangle, MapPin,
-  Link2, Info
+  Link2, Info, ExternalLink
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -53,6 +54,8 @@ export const NodeDetailsPanel = ({
   onSelectNode,
   onToggleWatchlist
 }: NodeDetailsPanelProps) => {
+  const navigate = useNavigate();
+  
   const selectedConnections = useMemo(() => {
     if (!selectedNode) return [];
     return links.filter(
@@ -70,6 +73,19 @@ export const NodeDetailsPanel = ({
       })
       .filter(Boolean) as { node: GraphNode; type: string }[];
   }, [selectedNode, selectedConnections, nodes]);
+
+  const handleViewDetails = () => {
+    if (!selectedNode) return;
+    // Map node type to detail page route
+    if (selectedNode.type === 'person' || selectedNode.type === 'organization') {
+      navigate(`/entities/${selectedNode.id}`);
+    } else if (selectedNode.type === 'event') {
+      navigate(`/events/${selectedNode.id}`);
+    } else if (selectedNode.type === 'violation') {
+      // Violations need type prefix - default to local
+      navigate(`/violations/local/${selectedNode.id}`);
+    }
+  };
 
   if (!selectedNode) return null;
 
@@ -216,9 +232,18 @@ export const NodeDetailsPanel = ({
           </ScrollArea>
 
           {/* Footer Actions */}
-          <div className="p-4 border-t border-border/50 bg-muted/30">
+          <div className="p-4 border-t border-border/50 bg-muted/30 space-y-2">
             <Button
-              variant={watchlist.has(selectedNode.id) ? "default" : "outline"}
+              variant="default"
+              size="sm"
+              className="w-full"
+              onClick={handleViewDetails}
+            >
+              <ExternalLink className="w-4 h-4 mr-2" />
+              View Full Details
+            </Button>
+            <Button
+              variant={watchlist.has(selectedNode.id) ? "secondary" : "outline"}
               size="sm"
               className="w-full"
               onClick={() => onToggleWatchlist(selectedNode.id)}
