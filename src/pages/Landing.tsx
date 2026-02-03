@@ -172,14 +172,8 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Features Section - Using new component */}
-      <FeatureShowcase />
-
-      {/* Live Metrics Section - Using new component */}
-      <LiveMetricsSection />
-
-      {/* Case File Preview */}
-      <section className="py-20 md:py-32 relative">
+      {/* Case File Preview - Featured Investigation */}
+      <section className="py-20 md:py-28 relative">
         <GlowingOrb color="primary" size="lg" className="-left-48 top-1/4" delay={0} />
         
         <div className="max-w-7xl mx-auto px-4">
@@ -286,6 +280,12 @@ const Landing = () => {
           </div>
         </div>
       </section>
+
+      {/* Features Section - Using new component */}
+      <FeatureShowcase />
+
+      {/* Live Metrics Section - Using new component */}
+      <LiveMetricsSection />
 
       {/* Values Section */}
       <section className="py-20 md:py-32 bg-gradient-to-b from-background via-secondary/30 to-background relative overflow-hidden">
