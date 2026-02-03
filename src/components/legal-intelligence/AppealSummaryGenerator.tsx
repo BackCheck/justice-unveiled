@@ -29,7 +29,7 @@ import {
 import { useAppealSummaries, useAddAppealSummary, useUpdateAppealSummary } from "@/hooks/useLegalIntelligence";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import type { AppealSummary, CitedSources, SummaryCitation } from "@/types/legal-intelligence";
+import type { AppealSummary, CitedSources, SummaryCitation, SourcesJson } from "@/types/legal-intelligence";
 
 interface AppealSummaryGeneratorProps {
   caseId: string;
@@ -39,6 +39,7 @@ interface AppealSummaryGeneratorProps {
 interface GenerationResult {
   content: string;
   sourcesUsed?: CitedSources;
+  sourcesJson?: SourcesJson;
   unverifiedPrecedentsCount?: number;
 }
 
@@ -80,10 +81,12 @@ export const AppealSummaryGenerator = ({ caseId, caseTitle }: AppealSummaryGener
         setLastGenerationResult({
           content: data.content,
           sourcesUsed: data.sourcesUsed,
+          sourcesJson: data.sourcesJson,
           unverifiedPrecedentsCount: data.unverifiedPrecedentsCount,
         });
         setShowSourcesPanel(true);
 
+        // Save to database WITH sources_json for audit trail
         addSummary.mutate(
           {
             case_id: caseId,
@@ -91,13 +94,14 @@ export const AppealSummaryGenerator = ({ caseId, caseTitle }: AppealSummaryGener
             summary_type: type,
             content: data.content,
             ai_generated: true,
+            sources_json: data.sourcesJson,
           },
           {
             onSuccess: () => {
               const warningMsg = data.unverifiedPrecedentsCount > 0 
                 ? ` (${data.unverifiedPrecedentsCount} unverified precedents excluded)`
                 : "";
-              toast.success(`AI summary generated with citations${warningMsg}`);
+              toast.success(`AI summary generated with citation audit trail${warningMsg}`);
             },
           }
         );
