@@ -66,6 +66,7 @@ const mainNavItems = [
 
 const analysisNavItems = [
   { path: "/reconstruction", label: "Reconstruction", icon: GitBranch },
+  { path: "/correlation", label: "Claim Correlation", icon: Scale },
   { path: "/analyze", label: "AI Analyzer", icon: Brain },
   { path: "/evidence", label: "Evidence Matrix", icon: FileText },
   { path: "/international", label: "International Rights", icon: Scale },
