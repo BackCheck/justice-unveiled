@@ -14,7 +14,10 @@ import {
   ExternalLink,
   Zap,
   Target,
-  Eye
+  Eye,
+  Phone,
+  Mail,
+  MapPin
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import hrpmLogo from "@/assets/human-rights-logo.svg";
@@ -400,35 +403,87 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border/50 py-12 bg-card/30 backdrop-blur">
+      <footer className="border-t border-border/50 py-16 bg-card/30 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-3 group">
-              <img 
-                src={hrpmLogo} 
-                alt="HRPM Logo" 
-                className="w-8 h-8 transition-transform group-hover:scale-110" 
-              />
-              <div>
-                <p className="font-semibold text-foreground">HRPM.org</p>
-                <p className="text-xs text-muted-foreground">Human Rights Protection Movement</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+            {/* Brand */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 group">
+                <img 
+                  src={hrpmLogo} 
+                  alt="HRPM Logo" 
+                  className="w-10 h-10 transition-transform group-hover:scale-110" 
+                />
+                <div>
+                  <p className="font-semibold text-foreground text-lg">HRPM.org</p>
+                  <p className="text-xs text-muted-foreground">Human Rights Protection Movement</p>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Documenting injustice. Demanding accountability.
+              </p>
+            </div>
+
+            {/* Quick Links */}
+            <div className="space-y-4">
+              <h4 className="font-semibold text-foreground">Quick Links</h4>
+              <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+                <Link to="/about" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">About Us</Link>
+                <Link to="/contact" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">Contact</Link>
+                <Link to="/cases" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">Case Files</Link>
+                <Link to="/dashboard" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">Dashboard</Link>
+                <Link to="/auth" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">Sign In</Link>
               </div>
             </div>
-            <div className="flex items-center gap-6 text-sm text-muted-foreground">
-              <Link to="/about" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">About</Link>
-              <Link to="/cases" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">Cases</Link>
-              <Link to="/dashboard" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">Dashboard</Link>
-              <Link to="/intel-briefing" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">Intelligence</Link>
-              <Link to="/auth" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">Sign In</Link>
+
+            {/* Contact Info */}
+            <div className="space-y-4">
+              <h4 className="font-semibold text-foreground">Contact</h4>
+              <div className="flex flex-col gap-3 text-sm text-muted-foreground">
+                <div className="flex items-start gap-2">
+                  <Phone className="w-4 h-4 mt-0.5 text-primary shrink-0" />
+                  <div>
+                    <p>+65 31 290 390</p>
+                    <p>+92-21-35891281-83</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-primary shrink-0" />
+                  <a href="mailto:info@hrpm.org" className="hover:text-primary transition-colors">info@hrpm.org</a>
+                </div>
+              </div>
+            </div>
+
+            {/* Offices */}
+            <div className="space-y-4">
+              <h4 className="font-semibold text-foreground">Offices</h4>
+              <div className="flex flex-col gap-4 text-sm text-muted-foreground">
+                <div className="flex items-start gap-2">
+                  <MapPin className="w-4 h-4 mt-0.5 text-primary shrink-0" />
+                  <div>
+                    <p className="font-medium text-foreground/80">Singapore (Head Office)</p>
+                    <p>36 Robinson Road, #20-01 City House, Singapore 068877</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <MapPin className="w-4 h-4 mt-0.5 text-primary shrink-0" />
+                  <div>
+                    <p className="font-medium text-foreground/80">Karachi Office</p>
+                    <p>Ground Floor, Zamzam Tower, Building # 1-C, 16th Commercial Street, DHA Phase 2 Extension, Karachi 75500</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-border/50 text-center">
-            <p className="text-sm text-muted-foreground">
-              Documenting injustice. Demanding accountability.
+
+          <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-muted-foreground">
+              © {new Date().getFullYear()} Human Rights Protection Movement. All rights reserved.
             </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              © {new Date().getFullYear()} HRPM. All rights reserved.
-            </p>
+            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+              <Link to="/about" className="hover:text-primary transition-colors">Privacy Policy</Link>
+              <Link to="/about" className="hover:text-primary transition-colors">Terms of Service</Link>
+            </div>
           </div>
         </div>
       </footer>
