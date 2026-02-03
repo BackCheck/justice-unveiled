@@ -1,0 +1,144 @@
+{
+  "common": {
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "explore": "Explore",
+    "learnMore": "Learn More",
+    "readMore": "Read More",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "search": "Search",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "all": "All",
+    "none": "None",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact",
+    "cases": "Cases",
+    "dashboard": "Dashboard",
+    "intelligence": "Intelligence",
+    "timeline": "Timeline",
+    "network": "Network",
+    "evidence": "Evidence",
+    "investigations": "Investigation Hub",
+    "watchlist": "My Watchlist",
+    "uploads": "Uploads",
+    "analysis": "Analysis",
+    "international": "International Rights",
+    "reconstruction": "Reconstruction",
+    "correlation": "Claim Correlation",
+    "compliance": "Compliance",
+    "harm": "Economic Harm",
+    "legal": "Legal Intelligence",
+    "admin": "Admin Panel",
+    "settings": "Settings"
+  },
+  "landing": {
+    "hero": {
+      "badge": "Intelligence Platform",
+      "title": "Human Rights Protection Movement",
+      "subtitle": "Documenting injustice. Demanding accountability.",
+      "description": "A litigation-grade investigative platform transforming documented facts into court-ready intelligence with verified case law mapping and automated compliance tracking.",
+      "cta": "Enter Case Files",
+      "secondaryCta": "View Dashboard"
+    },
+    "stats": {
+      "activeCases": "Active Cases",
+      "entities": "Entities Tracked",
+      "events": "Timeline Events",
+      "sources": "Verified Sources",
+      "precedents": "Verified Precedents",
+      "statutes": "Legal Statutes"
+    },
+    "values": {
+      "justice": "Justice",
+      "justiceDesc": "Fair treatment under the law for everyone.",
+      "protection": "Protection",
+      "protectionDesc": "Safeguarding fundamental human rights.",
+      "transparency": "Transparency",
+      "transparencyDesc": "Bringing procedural failures to light.",
+      "solidarity": "Solidarity",
+      "solidarityDesc": "Standing with those facing injustice."
+    },
+    "casePreview": {
+      "title": "Case File #001",
+      "subtitle": "Danish Thanvi Investigation",
+      "description": "A comprehensive investigation into wrongful detention, procedural violations, and coordinated institutional misconduct.",
+      "cta": "Open Case File"
+    }
+  },
+  "footer": {
+    "tagline": "Documenting injustice. Demanding accountability.",
+    "description": "A platform dedicated to exposing human rights violations through investigative intelligence and verified evidence.",
+    "quickLinks": "Quick Links",
+    "contact": "Contact",
+    "offices": "Offices",
+    "headOffice": "Singapore (Head Office)",
+    "karachiOffice": "Karachi Office",
+    "copyright": "All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "about": {
+    "title": "About HRPM",
+    "mission": "Our Mission",
+    "missionText": "To protect and advocate for fundamental human rights through investigative intelligence and verified documentation.",
+    "vision": "Our Vision",
+    "visionText": "A world where justice is accessible to all and human rights violations are exposed and addressed."
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Get in touch with our team",
+    "form": {
+      "name": "Full Name",
+      "email": "Email Address",
+      "subject": "Subject",
+      "message": "Message",
+      "submit": "Send Message"
+    },
+    "success": "Thank you for your message. We will get back to you soon."
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "overview": "Overview",
+    "recentActivity": "Recent Activity",
+    "quickActions": "Quick Actions",
+    "alerts": "Critical Alerts",
+    "findings": "Key Findings"
+  },
+  "cases": {
+    "title": "Case Files",
+    "active": "Active",
+    "closed": "Closed",
+    "pending": "Pending",
+    "newCase": "New Case",
+    "viewAll": "View All Cases"
+  },
+  "language": {
+    "select": "Language",
+    "en": "English",
+    "ur": "اردو",
+    "ar": "العربية",
+    "zh": "中文"
+  }
+}

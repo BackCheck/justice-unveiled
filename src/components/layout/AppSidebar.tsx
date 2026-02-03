@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { 
   Clock, 
   BarChart3, 
@@ -28,6 +29,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
 import hrpmLogo from "@/assets/human-rights-logo.svg";
@@ -235,12 +237,15 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="border-t border-border/30 p-2">
-        {/* Theme Toggle */}
-        <div className={cn("flex items-center px-2 py-1", collapsed ? "justify-center" : "justify-between")}>
+        {/* Language & Theme Toggle */}
+        <div className={cn("flex items-center gap-2 px-2 py-1", collapsed ? "justify-center flex-col" : "justify-between")}>
           {!collapsed && (
-            <span className="text-xs text-muted-foreground">Theme</span>
+            <span className="text-xs text-muted-foreground">Settings</span>
           )}
-          <ThemeToggle />
+          <div className="flex items-center gap-1">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
         </div>
 
         {/* User Profile Section - Show Sign In for guests */}

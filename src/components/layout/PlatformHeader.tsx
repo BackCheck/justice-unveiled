@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { 
   Search, 
@@ -16,6 +17,7 @@ import {
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import hrpmLogo from "@/assets/human-rights-logo.svg";
 
 const navItems = [
@@ -76,7 +78,7 @@ export const PlatformHeader = () => {
             })}
           </nav>
 
-          {/* Search, Theme & Mobile menu */}
+          {/* Search, Language, Theme & Mobile menu */}
           <div className="flex items-center gap-2">
             <Button 
               variant="outline" 
@@ -86,6 +88,7 @@ export const PlatformHeader = () => {
               <Search className="w-4 h-4 mr-2" />
               Search Intel
             </Button>
+            <LanguageSwitcher />
             <ThemeToggle />
             <Button
               variant="ghost"
