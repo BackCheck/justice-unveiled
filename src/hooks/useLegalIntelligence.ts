@@ -456,3 +456,45 @@ export const useUpdateAppealSummary = () => {
     },
   });
 };
+
+// Verify a case law precedent
+export const useVerifyPrecedent = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      precedentId,
+      sourceUrl,
+      notes,
+    }: {
+      precedentId: string;
+      sourceUrl?: string;
+      notes?: string;
+    }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      const { data, error } = await supabase
+        .from("case_law_precedents")
+        .update({
+          verified: true,
+          verified_by: user?.id || null,
+          verified_at: new Date().toISOString(),
+          source_url: sourceUrl || null,
+          notes: notes || null,
+        })
+        .eq("id", precedentId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["case-law-precedents"] });
+      toast.success("Precedent verified successfully");
+    },
+    onError: () => {
+      toast.error("Failed to verify precedent");
+    },
+  });
+};
