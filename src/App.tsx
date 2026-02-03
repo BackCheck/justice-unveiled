@@ -25,6 +25,7 @@ import ViolationDetail from "./pages/ViolationDetail";
 import Watchlist from "./pages/Watchlist";
 import EntityDetail from "./pages/EntityDetail";
 import Reconstruction from "./pages/Reconstruction";
+import Correlation from "./pages/Correlation";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => (
             <Route path="/analyze" element={<Analyze />} />
             <Route path="/investigations" element={<Investigations />} />
             <Route path="/reconstruction" element={<Reconstruction />} />
+            <Route path="/correlation" element={<Correlation />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/events/:eventId" element={<EventDetail />} />
             <Route path="/violations/:type/:violationId" element={<ViolationDetail />} />

@@ -119,6 +119,67 @@ export type Database = {
         }
         Relationships: []
       }
+      claim_evidence_links: {
+        Row: {
+          claim_id: string
+          created_at: string
+          evidence_upload_id: string | null
+          exhibit_number: string | null
+          extracted_event_id: string | null
+          id: string
+          link_type: string
+          linked_by: string | null
+          notes: string | null
+          relevance_score: number | null
+        }
+        Insert: {
+          claim_id: string
+          created_at?: string
+          evidence_upload_id?: string | null
+          exhibit_number?: string | null
+          extracted_event_id?: string | null
+          id?: string
+          link_type: string
+          linked_by?: string | null
+          notes?: string | null
+          relevance_score?: number | null
+        }
+        Update: {
+          claim_id?: string
+          created_at?: string
+          evidence_upload_id?: string | null
+          exhibit_number?: string | null
+          extracted_event_id?: string | null
+          id?: string
+          link_type?: string
+          linked_by?: string | null
+          notes?: string | null
+          relevance_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "claim_evidence_links_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "legal_claims"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "claim_evidence_links_evidence_upload_id_fkey"
+            columns: ["evidence_upload_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_uploads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "claim_evidence_links_extracted_event_id_fkey"
+            columns: ["extracted_event_id"]
+            isOneToOne: false
+            referencedRelation: "extracted_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       document_analysis_jobs: {
         Row: {
           completed_at: string | null
@@ -257,6 +318,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      evidence_requirements: {
+        Row: {
+          created_at: string
+          evidence_type: string | null
+          id: string
+          is_mandatory: boolean | null
+          legal_framework: string
+          legal_section: string
+          requirement_description: string | null
+          requirement_name: string
+          statutory_reference: string | null
+        }
+        Insert: {
+          created_at?: string
+          evidence_type?: string | null
+          id?: string
+          is_mandatory?: boolean | null
+          legal_framework: string
+          legal_section: string
+          requirement_description?: string | null
+          requirement_name: string
+          statutory_reference?: string | null
+        }
+        Update: {
+          created_at?: string
+          evidence_type?: string | null
+          id?: string
+          is_mandatory?: boolean | null
+          legal_framework?: string
+          legal_section?: string
+          requirement_description?: string | null
+          requirement_name?: string
+          statutory_reference?: string | null
+        }
+        Relationships: []
       }
       evidence_uploads: {
         Row: {
@@ -518,6 +615,75 @@ export type Database = {
           },
         ]
       }
+      legal_claims: {
+        Row: {
+          allegation_text: string
+          alleged_against: string | null
+          alleged_by: string | null
+          case_id: string | null
+          claim_type: string
+          created_at: string
+          date_alleged: string | null
+          id: string
+          legal_framework: string
+          legal_section: string
+          source_document: string | null
+          source_upload_id: string | null
+          status: string | null
+          support_score: number | null
+          updated_at: string
+        }
+        Insert: {
+          allegation_text: string
+          alleged_against?: string | null
+          alleged_by?: string | null
+          case_id?: string | null
+          claim_type: string
+          created_at?: string
+          date_alleged?: string | null
+          id?: string
+          legal_framework: string
+          legal_section: string
+          source_document?: string | null
+          source_upload_id?: string | null
+          status?: string | null
+          support_score?: number | null
+          updated_at?: string
+        }
+        Update: {
+          allegation_text?: string
+          alleged_against?: string | null
+          alleged_by?: string | null
+          case_id?: string | null
+          claim_type?: string
+          created_at?: string
+          date_alleged?: string | null
+          id?: string
+          legal_framework?: string
+          legal_section?: string
+          source_document?: string | null
+          source_upload_id?: string | null
+          status?: string | null
+          support_score?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_claims_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_claims_source_upload_id_fkey"
+            columns: ["source_upload_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_uploads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -547,6 +713,61 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      requirement_fulfillment: {
+        Row: {
+          claim_id: string
+          created_at: string
+          evidence_upload_id: string | null
+          fulfillment_notes: string | null
+          id: string
+          is_fulfilled: boolean | null
+          requirement_id: string
+          verified_by: string | null
+        }
+        Insert: {
+          claim_id: string
+          created_at?: string
+          evidence_upload_id?: string | null
+          fulfillment_notes?: string | null
+          id?: string
+          is_fulfilled?: boolean | null
+          requirement_id: string
+          verified_by?: string | null
+        }
+        Update: {
+          claim_id?: string
+          created_at?: string
+          evidence_upload_id?: string | null
+          fulfillment_notes?: string | null
+          id?: string
+          is_fulfilled?: boolean | null
+          requirement_id?: string
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "requirement_fulfillment_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "legal_claims"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "requirement_fulfillment_evidence_upload_id_fkey"
+            columns: ["evidence_upload_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_uploads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "requirement_fulfillment_requirement_id_fkey"
+            columns: ["requirement_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_requirements"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

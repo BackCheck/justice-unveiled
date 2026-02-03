@@ -30,6 +30,7 @@ import {
 import { useCase, useCaseEvents, useCaseEntities, useCaseDiscrepancies, useCaseEvidence } from "@/hooks/useCases";
 import { EvidenceRepositoryCard } from "@/components/evidence/EvidenceRepositoryCard";
 import { CaseReconstructionTab } from "@/components/reconstruction/CaseReconstructionTab";
+import { CaseCorrelationTab } from "@/components/correlation/CaseCorrelationTab";
 import { format } from "date-fns";
 
 const severityColors: Record<string, string> = {
@@ -213,6 +214,10 @@ const CaseProfile = () => {
               <GitBranch className="w-4 h-4" />
               Reconstruction
             </TabsTrigger>
+            <TabsTrigger value="correlation" className="gap-2">
+              <Scale className="w-4 h-4" />
+              Claim Correlation
+            </TabsTrigger>
             <TabsTrigger value="entities" className="gap-2">
               <Network className="w-4 h-4" />
               Entities
@@ -313,6 +318,11 @@ const CaseProfile = () => {
           {/* Reconstruction Tab */}
           <TabsContent value="reconstruction" className="space-y-6">
             {caseId && <CaseReconstructionTab caseId={caseId} />}
+          </TabsContent>
+
+          {/* Claim Correlation Tab */}
+          <TabsContent value="correlation" className="space-y-6">
+            {caseId && <CaseCorrelationTab caseId={caseId} />}
           </TabsContent>
 
           {/* Entities Tab */}
