@@ -6,13 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { 
   ArrowRight, 
   Shield, 
-  FileSearch, 
   Scale, 
   Users,
   FileText,
   Sparkles,
-  CheckCircle,
-  ExternalLink,
   Zap,
   Target,
   Eye,
@@ -27,17 +24,15 @@ import GlowingOrb from "@/components/landing/GlowingOrb";
 import FloatingIcon from "@/components/landing/FloatingIcon";
 import ScrollReveal from "@/components/landing/ScrollReveal";
 import GradientText from "@/components/landing/GradientText";
-import TypingText from "@/components/landing/TypingText";
 import SpotlightEffect from "@/components/landing/SpotlightEffect";
-import HeroStats from "@/components/landing/HeroStats";
-import FeatureShowcase from "@/components/landing/FeatureShowcase";
-import LiveMetricsSection from "@/components/landing/LiveMetricsSection";
+import TrustMetrics from "@/components/landing/TrustMetrics";
+import FeaturedCaseSection from "@/components/landing/FeaturedCaseSection";
+import CapabilitiesSection from "@/components/landing/CapabilitiesSection";
+import BottomCTA from "@/components/landing/BottomCTA";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-import { usePlatformStats } from "@/hooks/usePlatformStats";
 
 const Landing = () => {
   const { t } = useTranslation();
-  const { stats: fullStats } = usePlatformStats();
 
   const values = [
     { icon: Scale, title: t('landing.values.justice'), description: t('landing.values.justiceDesc') },
@@ -55,7 +50,7 @@ const Landing = () => {
       <ParticleField />
 
       {/* Navigation */}
-      <header className="sticky top-0 z-50 bg-background/60 backdrop-blur-xl border-b border-border/30">
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/30">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
@@ -68,14 +63,14 @@ const Landing = () => {
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-lg text-foreground tracking-tight">HRPM</span>
-              <span className="text-[10px] text-muted-foreground leading-tight">Human Rights Protection Movement</span>
+              <span className="text-[10px] text-foreground/60 leading-tight">Human Rights Protection Movement</span>
             </div>
           </Link>
           <nav className="hidden md:flex items-center gap-4">
-            <Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">{t('nav.about')}</Link>
-            <Link to="/cases" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">{t('nav.cases')}</Link>
-            <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">{t('nav.dashboard')}</Link>
-            <Link to="/intel-briefing" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">{t('nav.intelligence')}</Link>
+            <Link to="/about" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">{t('nav.about')}</Link>
+            <Link to="/cases" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">{t('nav.cases')}</Link>
+            <Link to="/dashboard" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">{t('nav.dashboard')}</Link>
+            <Link to="/contact" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">{t('nav.contact')}</Link>
             <LanguageSwitcher />
             <Button size="sm" variant="outline" className="border-primary/50 hover:bg-primary hover:text-primary-foreground transition-all duration-300" asChild>
               <Link to="/auth">{t('common.signIn')}</Link>
@@ -83,7 +78,7 @@ const Landing = () => {
           </nav>
           <div className="flex items-center gap-2 md:hidden">
             <LanguageSwitcher />
-            <Button size="sm" className="animate-pulse-glow" asChild>
+            <Button size="sm" asChild>
               <Link to="/cases">{t('common.explore')}</Link>
             </Button>
           </div>
@@ -91,7 +86,7 @@ const Landing = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center">
+      <section className="relative min-h-[85vh] flex items-center">
         {/* Animated background orbs */}
         <GlowingOrb color="primary" size="xl" className="top-20 -left-32" delay={0} />
         <GlowingOrb color="accent" size="lg" className="bottom-20 -right-20" delay={1} />
@@ -103,7 +98,7 @@ const Landing = () => {
         <FloatingIcon icon={Target} className="bottom-32 left-[8%] hidden lg:block" delay={1} />
         <FloatingIcon icon={Zap} className="bottom-48 right-[18%] hidden lg:block" delay={1.5} />
 
-        <div className="relative max-w-7xl mx-auto px-4 py-20 md:py-28 z-10">
+        <div className="relative max-w-7xl mx-auto px-4 py-16 md:py-24 z-10">
           <div className="text-center max-w-4xl mx-auto">
             {/* Badge */}
             <ScrollReveal delay={100}>
@@ -111,66 +106,58 @@ const Landing = () => {
                 variant="outline" 
                 className={cn(
                   "mb-6 px-4 py-2 bg-primary/10 text-primary border-primary/30",
-                  "hover:bg-primary/20 transition-all duration-300 cursor-default",
-                  "animate-bounce-soft"
+                  "hover:bg-primary/20 transition-all duration-300 cursor-default"
                 )}
               >
-                <Sparkles className="w-3.5 h-3.5 mr-2 animate-spin-slow" />
-                Investigative Intelligence Platform
+                <Sparkles className="w-3.5 h-3.5 mr-2" />
+                Open-Source Investigative Platform
               </Badge>
             </ScrollReveal>
 
-            {/* Main Headline with Typing Effect */}
+            {/* Main Headline */}
             <ScrollReveal delay={200}>
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-                <span className="text-foreground">Documenting </span>
-                <TypingText 
-                  words={["Justice", "Truth", "Rights", "Freedom"]} 
-                  typingSpeed={120}
-                  deletingSpeed={80}
-                  pauseDuration={2500}
-                />
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                <span className="text-foreground">Documenting Truth.</span>
                 <br />
                 <span className="text-foreground">Demanding </span>
                 <span className="text-primary relative">
                   Accountability
-                  <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent animate-pulse" />
+                  <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
                 </span>
               </h1>
             </ScrollReveal>
 
-            {/* Subtitle */}
+            {/* Plain-language Subtitle */}
             <ScrollReveal delay={300}>
-              <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-                A litigation-grade investigative platform with AI-powered analysis, verified case law mapping, 
-                and court-ready audit trails for human rights monitoring and anti-corruption efforts.
+              <p className="text-base md:text-lg text-foreground/80 mb-8 max-w-2xl mx-auto leading-relaxed">
+                An open-source investigative platform for documenting human rights abuse, 
+                corruption, and procedural injustice using verified evidence and transparent methodology.
               </p>
             </ScrollReveal>
 
             {/* CTA Buttons */}
             <ScrollReveal delay={400}>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link to="/cases">
-                  <Button size="lg" className="group relative overflow-hidden hover-lift">
+                <Button size="lg" className="group relative overflow-hidden" asChild>
+                  <Link to="/cases">
                     <span className="relative z-10 flex items-center">
                       Explore Case Files
                       <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                     </span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary via-chart-2 to-primary bg-[length:200%_auto] animate-gradient-shift opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Button>
-                </Link>
-                <Link to="/dashboard">
-                  <Button size="lg" variant="outline" className="hover-lift border-border/50 hover:border-primary/50 hover:bg-primary/5">
-                    View Intel Dashboard
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
+                <Button size="lg" variant="outline" className="border-border/50 hover:border-primary/50 hover:bg-primary/5" asChild>
+                  <Link to="/dashboard">View Intelligence Dashboard</Link>
+                </Button>
               </div>
             </ScrollReveal>
           </div>
 
-          {/* Hero Stats - Using new component */}
+          {/* Trust Metrics - Moved higher */}
           <ScrollReveal delay={500}>
-            <HeroStats />
+            <div className="mt-16 md:mt-20 max-w-4xl mx-auto">
+              <TrustMetrics />
+            </div>
           </ScrollReveal>
 
           {/* Scroll indicator */}
@@ -182,125 +169,14 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Case File Preview - Featured Investigation */}
-      <section className="py-20 md:py-28 relative">
-        <GlowingOrb color="primary" size="lg" className="-left-48 top-1/4" delay={0} />
-        
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <ScrollReveal direction="left">
-              <Badge variant="outline" className="mb-4 bg-primary/10 text-primary border-primary/30 animate-pulse">
-                FEATURED INVESTIGATION
-              </Badge>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Case File #001: <GradientText>Danish Thanvi</GradientText>
-              </h2>
-              <p className="text-muted-foreground mb-6 leading-relaxed">
-                A comprehensive investigation into documented cases of business interference, harassment, 
-                and procedural failures spanning 2015–2025 in Pakistan. This case study demonstrates 
-                HRPM's methodology for evidence-based human rights documentation.
-              </p>
-              
-              <ul className="space-y-3 mb-8">
-                {[
-                  `${fullStats.totalSources}+ verified sources with audit trails`,
-                  `${fullStats.totalEvents}+ timeline events documented`,
-                  `${fullStats.totalEntities}+ entities mapped with relationships`,
-                  `${fullStats.verifiedPrecedents} verified case law precedents`,
-                  "Litigation-grade AI summaries with cite-checking"
-                ].map((item, index) => (
-                  <li 
-                    key={item} 
-                    className="flex items-center gap-3 opacity-0 animate-fade-in-left"
-                    style={{ animationDelay: `${index * 0.15}s`, animationFillMode: 'forwards' }}
-                  >
-                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
-                      <CheckCircle className="w-4 h-4 text-primary" />
-                    </div>
-                    <span className="text-muted-foreground hover:text-foreground transition-colors">{item}</span>
-                  </li>
-                ))}
-              </ul>
+      {/* Featured Case Section */}
+      <FeaturedCaseSection />
 
-              <Link to="/timeline">
-                <Button className="group hover-lift">
-                  View Full Timeline
-                  <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </Link>
-            </ScrollReveal>
-
-            <ScrollReveal direction="right" delay={200}>
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-2xl blur-xl animate-pulse" />
-                <Card className="relative border-border/50 bg-card/90 backdrop-blur overflow-hidden group hover:border-primary/30 transition-colors duration-500">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-chart-2 to-primary bg-[length:200%_auto] animate-gradient-shift" />
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <FileSearch className="w-6 h-6 text-primary animate-pulse" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold">Legal Intelligence Suite</h4>
-                        <p className="text-sm text-muted-foreground">Litigation-grade with full audit trails</p>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      {[
-                        { label: "Verified Case Law", severity: "verified" },
-                        { label: "Cite-Check System", severity: "active" },
-                        { label: "Forensic Evidence", severity: "critical" },
-                        { label: "Procedural Violations", severity: "high" }
-                      ].map((item, index) => (
-                        <div 
-                          key={item.label} 
-                          className={cn(
-                            "flex items-center justify-between p-3 rounded-lg bg-muted/50",
-                            "hover:bg-muted transition-all duration-300 cursor-default",
-                            "opacity-0 animate-fade-in-up"
-                          )}
-                          style={{ animationDelay: `${0.5 + index * 0.1}s`, animationFillMode: 'forwards' }}
-                        >
-                          <span className="text-sm font-medium">{item.label}</span>
-                          <Badge 
-                            variant="outline" 
-                            className={cn(
-                              "text-xs transition-all duration-300 hover:scale-105",
-                              item.severity === "critical" && "bg-destructive/10 text-destructive border-destructive/30 animate-pulse",
-                              item.severity === "high" && "bg-chart-4/10 text-chart-4 border-chart-4/30",
-                              item.severity === "verified" && "bg-chart-2/10 text-chart-2 border-chart-2/30",
-                              item.severity === "active" && "bg-primary/10 text-primary border-primary/30"
-                            )}
-                          >
-                            {item.severity}
-                          </Badge>
-                        </div>
-                      ))}
-                    </div>
-
-                    <Link to="/intel-briefing" className="block mt-6">
-                      <Button variant="outline" className="w-full group hover:bg-primary/5 hover:border-primary/50 transition-all duration-300">
-                        Read Full Briefing
-                        <ExternalLink className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              </div>
-            </ScrollReveal>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section - Using new component */}
-      <FeatureShowcase />
-
-      {/* Live Metrics Section - Using new component */}
-      <LiveMetricsSection />
+      {/* Capabilities Section - Grouped into 3 clusters */}
+      <CapabilitiesSection />
 
       {/* Values Section */}
-      <section className="py-20 md:py-32 bg-gradient-to-b from-background via-secondary/30 to-background relative overflow-hidden">
+      <section className="py-20 md:py-28 bg-gradient-to-b from-background via-secondary/20 to-background relative overflow-hidden">
         {/* Animated grid background */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0" style={{
@@ -311,12 +187,12 @@ const Landing = () => {
 
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <ScrollReveal>
-            <div className="text-center mb-16">
-              <Badge variant="outline" className="mb-4 bg-background">OUR MISSION</Badge>
+            <div className="text-center mb-12">
+              <Badge variant="outline" className="mb-4 bg-background border-border/50">OUR MISSION</Badge>
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
                 Standing for <GradientText>Human Rights</GradientText>
               </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-foreground/70 max-w-2xl mx-auto text-base leading-relaxed">
                 HRPM is a non-profit organization dedicated to documenting human rights abuse and supporting 
                 those whose fundamental rights have been violated.
               </p>
@@ -339,10 +215,10 @@ const Landing = () => {
                       "group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300",
                       "group-hover:shadow-[0_0_30px_hsl(var(--primary)/0.3)]"
                     )}>
-                      <value.icon className="w-7 h-7 text-primary group-hover:animate-bounce-soft" />
+                      <value.icon className="w-7 h-7 text-primary" />
                     </div>
-                    <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">{value.title}</h3>
-                    <p className="text-sm text-muted-foreground">{value.description}</p>
+                    <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors text-foreground">{value.title}</h3>
+                    <p className="text-sm text-foreground/60">{value.description}</p>
                   </CardContent>
                 </Card>
               </ScrollReveal>
@@ -350,9 +226,9 @@ const Landing = () => {
           </div>
 
           <ScrollReveal delay={400}>
-            <div className="text-center mt-12">
+            <div className="text-center mt-10">
               <Link to="/about">
-                <Button variant="outline" className="group hover-lift hover:border-primary/50">
+                <Button variant="outline" className="group hover:border-primary/50">
                   Learn More About Us
                   <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                 </Button>
@@ -362,52 +238,8 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 md:py-32 relative overflow-hidden">
-        <GlowingOrb color="primary" size="xl" className="left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
-        
-        <div className="relative max-w-4xl mx-auto px-4 text-center z-10">
-          <ScrollReveal>
-            <div className="relative inline-block mb-8">
-              <img 
-                src={hrpmLogo} 
-                alt="HRPM" 
-                className="w-20 h-20 mx-auto animate-float drop-shadow-[0_0_20px_hsl(var(--primary)/0.3)]" 
-              />
-              <div className="absolute inset-0 bg-primary/20 rounded-full blur-2xl animate-pulse" />
-            </div>
-          </ScrollReveal>
-          
-          <ScrollReveal delay={100}>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Ready to <GradientText>Explore</GradientText> the Platform?
-            </h2>
-          </ScrollReveal>
-          
-          <ScrollReveal delay={200}>
-            <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-              Dive into our case files, explore entity networks, and see how we transform raw evidence 
-              into structured intelligence.
-            </p>
-          </ScrollReveal>
-          
-          <ScrollReveal delay={300}>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="group hover-lift relative overflow-hidden" asChild>
-                <Link to="/cases">
-                  <span className="relative z-10 flex items-center">
-                    Start Exploring
-                    <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-                  </span>
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" className="hover-lift hover:border-primary/50 hover:bg-primary/5" asChild>
-                <Link to="/auth">Create Account</Link>
-              </Button>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
+      {/* Bottom CTA Section */}
+      <BottomCTA />
 
       {/* Footer */}
       <footer className="border-t border-border/50 py-16 bg-card/30 backdrop-blur">
@@ -423,10 +255,10 @@ const Landing = () => {
                 />
                 <div>
                   <p className="font-semibold text-foreground text-lg">HRPM.org</p>
-                  <p className="text-xs text-muted-foreground">Human Rights Protection Movement</p>
+                  <p className="text-xs text-foreground/60">Human Rights Protection Movement</p>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-foreground/70 leading-relaxed">
                 <span className="block font-medium text-foreground/80">Documenting injustice. Demanding accountability.</span>
                 A platform dedicated to exposing human rights violations through investigative intelligence and verified evidence.
               </p>
@@ -435,19 +267,19 @@ const Landing = () => {
             {/* Quick Links */}
             <div className="space-y-4">
               <h4 className="font-semibold text-foreground">Quick Links</h4>
-              <div className="flex flex-col gap-2 text-sm text-muted-foreground">
-                <Link to="/about" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">About Us</Link>
-                <Link to="/contact" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">Contact</Link>
-                <Link to="/cases" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">Case Files</Link>
-                <Link to="/dashboard" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">Dashboard</Link>
-                <Link to="/auth" className="hover:text-primary transition-all duration-300 hover:translate-x-0.5">Sign In</Link>
+              <div className="flex flex-col gap-2 text-sm text-foreground/70">
+                <Link to="/about" className="hover:text-primary transition-all duration-300">About Us</Link>
+                <Link to="/contact" className="hover:text-primary transition-all duration-300">Contact</Link>
+                <Link to="/cases" className="hover:text-primary transition-all duration-300">Case Files</Link>
+                <Link to="/dashboard" className="hover:text-primary transition-all duration-300">Dashboard</Link>
+                <Link to="/auth" className="hover:text-primary transition-all duration-300">Sign In</Link>
               </div>
             </div>
 
             {/* Contact Info */}
             <div className="space-y-4">
               <h4 className="font-semibold text-foreground">Contact</h4>
-              <div className="flex flex-col gap-3 text-sm text-muted-foreground">
+              <div className="flex flex-col gap-3 text-sm text-foreground/70">
                 <div className="flex items-start gap-2">
                   <Phone className="w-4 h-4 mt-0.5 text-primary shrink-0" />
                   <div>
@@ -465,7 +297,7 @@ const Landing = () => {
             {/* Offices */}
             <div className="space-y-4">
               <h4 className="font-semibold text-foreground">Offices</h4>
-              <div className="flex flex-col gap-4 text-sm text-muted-foreground">
+              <div className="flex flex-col gap-4 text-sm text-foreground/70">
                 <div className="flex items-start gap-2">
                   <MapPin className="w-4 h-4 mt-0.5 text-primary shrink-0" />
                   <div>
@@ -485,10 +317,10 @@ const Landing = () => {
           </div>
 
           <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-foreground/50">
               © {new Date().getFullYear()} Human Rights Protection Movement. All rights reserved.
             </p>
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <div className="flex items-center gap-4 text-xs text-foreground/50">
               <Link to="/about" className="hover:text-primary transition-colors">Privacy Policy</Link>
               <Link to="/about" className="hover:text-primary transition-colors">Terms of Service</Link>
             </div>
