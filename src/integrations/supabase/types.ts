@@ -767,6 +767,226 @@ export type Database = {
           },
         ]
       }
+      financial_affidavits: {
+        Row: {
+          affidavit_date: string | null
+          case_id: string | null
+          created_at: string
+          description: string | null
+          document_type: string
+          file_name: string
+          file_size: number
+          file_type: string
+          id: string
+          incident_id: string | null
+          loss_id: string | null
+          notarized: boolean | null
+          public_url: string
+          storage_path: string
+          sworn_before: string | null
+          title: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          affidavit_date?: string | null
+          case_id?: string | null
+          created_at?: string
+          description?: string | null
+          document_type: string
+          file_name: string
+          file_size: number
+          file_type: string
+          id?: string
+          incident_id?: string | null
+          loss_id?: string | null
+          notarized?: boolean | null
+          public_url: string
+          storage_path: string
+          sworn_before?: string | null
+          title: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          affidavit_date?: string | null
+          case_id?: string | null
+          created_at?: string
+          description?: string | null
+          document_type?: string
+          file_name?: string
+          file_size?: number
+          file_type?: string
+          id?: string
+          incident_id?: string | null
+          loss_id?: string | null
+          notarized?: boolean | null
+          public_url?: string
+          storage_path?: string
+          sworn_before?: string | null
+          title?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_affidavits_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_affidavits_incident_id_fkey"
+            columns: ["incident_id"]
+            isOneToOne: false
+            referencedRelation: "regulatory_harm_incidents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_affidavits_loss_id_fkey"
+            columns: ["loss_id"]
+            isOneToOne: false
+            referencedRelation: "financial_losses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financial_losses: {
+        Row: {
+          amount: number
+          case_id: string | null
+          created_at: string
+          currency: string | null
+          description: string
+          end_date: string | null
+          hourly_rate: number | null
+          id: string
+          incident_id: string
+          is_documented: boolean | null
+          is_estimated: boolean | null
+          is_recurring: boolean | null
+          loss_category: string
+          loss_subcategory: string | null
+          recurring_frequency: string | null
+          start_date: string | null
+          time_spent_hours: number | null
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          case_id?: string | null
+          created_at?: string
+          currency?: string | null
+          description: string
+          end_date?: string | null
+          hourly_rate?: number | null
+          id?: string
+          incident_id: string
+          is_documented?: boolean | null
+          is_estimated?: boolean | null
+          is_recurring?: boolean | null
+          loss_category: string
+          loss_subcategory?: string | null
+          recurring_frequency?: string | null
+          start_date?: string | null
+          time_spent_hours?: number | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          case_id?: string | null
+          created_at?: string
+          currency?: string | null
+          description?: string
+          end_date?: string | null
+          hourly_rate?: number | null
+          id?: string
+          incident_id?: string
+          is_documented?: boolean | null
+          is_estimated?: boolean | null
+          is_recurring?: boolean | null
+          loss_category?: string
+          loss_subcategory?: string | null
+          recurring_frequency?: string | null
+          start_date?: string | null
+          time_spent_hours?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_losses_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_losses_incident_id_fkey"
+            columns: ["incident_id"]
+            isOneToOne: false
+            referencedRelation: "regulatory_harm_incidents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      harm_time_tracking: {
+        Row: {
+          activity_type: string
+          case_id: string | null
+          created_at: string
+          date: string
+          description: string | null
+          hourly_rate: number | null
+          hours_spent: number
+          id: string
+          incident_id: string | null
+          person_name: string | null
+          person_role: string | null
+          total_cost: number | null
+        }
+        Insert: {
+          activity_type: string
+          case_id?: string | null
+          created_at?: string
+          date: string
+          description?: string | null
+          hourly_rate?: number | null
+          hours_spent?: number
+          id?: string
+          incident_id?: string | null
+          person_name?: string | null
+          person_role?: string | null
+          total_cost?: number | null
+        }
+        Update: {
+          activity_type?: string
+          case_id?: string | null
+          created_at?: string
+          date?: string
+          description?: string | null
+          hourly_rate?: number | null
+          hours_spent?: number
+          id?: string
+          incident_id?: string | null
+          person_name?: string | null
+          person_role?: string | null
+          total_cost?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "harm_time_tracking_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "harm_time_tracking_incident_id_fkey"
+            columns: ["incident_id"]
+            isOneToOne: false
+            referencedRelation: "regulatory_harm_incidents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       legal_claims: {
         Row: {
           allegation_text: string
@@ -904,6 +1124,81 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      regulatory_harm_incidents: {
+        Row: {
+          case_id: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          incident_date: string
+          incident_subtype: string | null
+          incident_type: string
+          institution_name: string | null
+          institution_type: string | null
+          linked_event_id: string | null
+          reference_number: string | null
+          resolution_date: string | null
+          severity: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          case_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          incident_date: string
+          incident_subtype?: string | null
+          incident_type: string
+          institution_name?: string | null
+          institution_type?: string | null
+          linked_event_id?: string | null
+          reference_number?: string | null
+          resolution_date?: string | null
+          severity?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          case_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          incident_date?: string
+          incident_subtype?: string | null
+          incident_type?: string
+          institution_name?: string | null
+          institution_type?: string | null
+          linked_event_id?: string | null
+          reference_number?: string | null
+          resolution_date?: string | null
+          severity?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "regulatory_harm_incidents_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "regulatory_harm_incidents_linked_event_id_fkey"
+            columns: ["linked_event_id"]
+            isOneToOne: false
+            referencedRelation: "extracted_events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       requirement_fulfillment: {
         Row: {
