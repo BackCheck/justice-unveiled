@@ -24,6 +24,7 @@ import EventDetail from "./pages/EventDetail";
 import ViolationDetail from "./pages/ViolationDetail";
 import Watchlist from "./pages/Watchlist";
 import EntityDetail from "./pages/EntityDetail";
+import Reconstruction from "./pages/Reconstruction";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="/international" element={<InternationalAnalysis />} />
             <Route path="/analyze" element={<Analyze />} />
             <Route path="/investigations" element={<Investigations />} />
+            <Route path="/reconstruction" element={<Reconstruction />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/events/:eventId" element={<EventDetail />} />
             <Route path="/violations/:type/:violationId" element={<ViolationDetail />} />

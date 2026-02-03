@@ -24,10 +24,12 @@ import {
   TrendingUp,
   FileWarning,
   ChevronRight,
-  Upload
+  Upload,
+  GitBranch
 } from "lucide-react";
 import { useCase, useCaseEvents, useCaseEntities, useCaseDiscrepancies, useCaseEvidence } from "@/hooks/useCases";
 import { EvidenceRepositoryCard } from "@/components/evidence/EvidenceRepositoryCard";
+import { CaseReconstructionTab } from "@/components/reconstruction/CaseReconstructionTab";
 import { format } from "date-fns";
 
 const severityColors: Record<string, string> = {
@@ -207,6 +209,10 @@ const CaseProfile = () => {
               <Clock className="w-4 h-4" />
               Timeline
             </TabsTrigger>
+            <TabsTrigger value="reconstruction" className="gap-2">
+              <GitBranch className="w-4 h-4" />
+              Reconstruction
+            </TabsTrigger>
             <TabsTrigger value="entities" className="gap-2">
               <Network className="w-4 h-4" />
               Entities
@@ -302,6 +308,11 @@ const CaseProfile = () => {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Reconstruction Tab */}
+          <TabsContent value="reconstruction" className="space-y-6">
+            {caseId && <CaseReconstructionTab caseId={caseId} />}
           </TabsContent>
 
           {/* Entities Tab */}
