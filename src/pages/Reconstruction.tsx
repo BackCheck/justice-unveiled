@@ -118,14 +118,14 @@ const Reconstruction = () => {
             {/* Controls */}
             <div className="flex items-center gap-3 flex-wrap">
               {/* Case Filter */}
-              <Select value={selectedCaseId} onValueChange={setSelectedCaseId}>
+              <Select value={selectedCaseId || "all"} onValueChange={(val) => setSelectedCaseId(val === "all" ? "" : val)}>
                 <SelectTrigger className="w-[200px] glass-card">
                   <Filter className="w-4 h-4 mr-2" />
                   <SelectValue placeholder="All Cases" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Cases</SelectItem>
-                  {cases?.map(c => (
+                  <SelectItem value="all">All Cases</SelectItem>
+                  {cases?.filter(c => c.id && c.id.trim() !== "").map(c => (
                     <SelectItem key={c.id} value={c.id}>
                       {c.case_number} - {c.title.substring(0, 20)}...
                     </SelectItem>
