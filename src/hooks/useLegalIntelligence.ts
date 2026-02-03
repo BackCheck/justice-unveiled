@@ -464,22 +464,35 @@ export const useVerifyPrecedent = () => {
   return useMutation({
     mutationFn: async ({
       precedentId,
+      court,
+      year,
+      citation,
       sourceUrl,
       notes,
     }: {
       precedentId: string;
-      sourceUrl?: string;
+      court: string;
+      year: number;
+      citation: string;
+      sourceUrl: string;
       notes?: string;
     }) => {
       const { data: { user } } = await supabase.auth.getUser();
       
+      if (!user) {
+        throw new Error("You must be logged in to verify precedents");
+      }
+      
       const { data, error } = await supabase
         .from("case_law_precedents")
         .update({
+          court,
+          year,
+          citation,
+          source_url: sourceUrl,
           verified: true,
-          verified_by: user?.id || null,
+          verified_by: user.id,
           verified_at: new Date().toISOString(),
-          source_url: sourceUrl || null,
           notes: notes || null,
         })
         .eq("id", precedentId)
@@ -493,8 +506,8 @@ export const useVerifyPrecedent = () => {
       queryClient.invalidateQueries({ queryKey: ["case-law-precedents"] });
       toast.success("Precedent verified successfully");
     },
-    onError: () => {
-      toast.error("Failed to verify precedent");
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to verify precedent");
     },
   });
 };
