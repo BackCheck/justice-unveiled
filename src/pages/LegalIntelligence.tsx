@@ -63,16 +63,18 @@ const LegalIntelligence = () => {
                     Loading cases...
                   </SelectItem>
                 ) : cases && cases.length > 0 ? (
-                  cases.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs text-muted-foreground">
-                          {c.case_number}
-                        </span>
-                        <span>{c.title}</span>
-                      </div>
-                    </SelectItem>
-                  ))
+                  cases
+                    .filter((c) => c.id && c.id.trim() !== "")
+                    .map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs text-muted-foreground">
+                            {c.case_number}
+                          </span>
+                          <span>{c.title}</span>
+                        </div>
+                      </SelectItem>
+                    ))
                 ) : (
                   <SelectItem value="none" disabled>
                     No cases found
