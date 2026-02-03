@@ -101,13 +101,48 @@ export interface AppealSummary {
   ai_generated: boolean;
   is_finalized: boolean;
   version: number;
+  sources_json: SourcesJson | null;
   created_by: string | null;
   reviewed_by: string | null;
   created_at: string;
   updated_at: string;
 }
 
-// Citation tracking for AI-generated summaries
+// Machine-readable source trail for audit (stored in DB)
+export interface SourcesJson {
+  statutes: Array<{
+    provision_id: string;
+    ref: string;
+    title: string;
+  }>;
+  precedents: Array<{
+    precedent_id: string;
+    citation: string;
+    case_name: string;
+    verified: boolean;
+    court?: string;
+    year?: number;
+  }>;
+  facts: Array<{
+    event_id: string;
+    date: string;
+    description: string;
+    category: string;
+  }>;
+  violations: Array<{
+    violation_id: string;
+    title: string;
+    severity: string;
+  }>;
+  generation_metadata: {
+    generated_at: string;
+    model: string;
+    summary_type: string;
+    unverified_precedents_excluded: number;
+  };
+}
+
+// Citation tracking for AI-generated summaries (human-readable display)
 export interface SummaryCitation {
   type: 'statute' | 'precedent' | 'event' | 'violation';
   id: string;

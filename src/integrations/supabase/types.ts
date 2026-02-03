@@ -24,6 +24,7 @@ export type Database = {
           id: string
           is_finalized: boolean | null
           reviewed_by: string | null
+          sources_json: Json | null
           summary_type: string
           title: string
           updated_at: string
@@ -38,6 +39,7 @@ export type Database = {
           id?: string
           is_finalized?: boolean | null
           reviewed_by?: string | null
+          sources_json?: Json | null
           summary_type: string
           title: string
           updated_at?: string
@@ -52,6 +54,7 @@ export type Database = {
           id?: string
           is_finalized?: boolean | null
           reviewed_by?: string | null
+          sources_json?: Json | null
           summary_type?: string
           title?: string
           updated_at?: string

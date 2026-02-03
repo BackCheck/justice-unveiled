@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import type { Json } from "@/integrations/supabase/types";
 import type {
   LegalStatute,
   CaseLawPrecedent,
@@ -11,6 +12,7 @@ import type {
   LegalIssue,
   AppealSummary,
   LegalIntelligenceStats,
+  SourcesJson,
 } from "@/types/legal-intelligence";
 
 // Fetch all statutes
@@ -167,7 +169,12 @@ export const useAppealSummaries = (caseId: string | undefined) => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as AppealSummary[];
+      
+      // Map the data to handle sources_json typing
+      return (data || []).map((item) => ({
+        ...item,
+        sources_json: item.sources_json as unknown as AppealSummary['sources_json'],
+      })) as AppealSummary[];
     },
     enabled: !!caseId,
   });
@@ -398,6 +405,7 @@ export const useAddAppealSummary = () => {
       summary_type: string;
       content: string;
       ai_generated?: boolean;
+      sources_json?: SourcesJson;
     }) => {
       const { data, error } = await supabase
         .from("appeal_summaries")
@@ -407,6 +415,7 @@ export const useAddAppealSummary = () => {
           summary_type: summary.summary_type,
           content: summary.content,
           ai_generated: summary.ai_generated || false,
+          sources_json: summary.sources_json as unknown as Json,
         })
         .select()
         .single();
@@ -435,11 +444,20 @@ export const useUpdateAppealSummary = () => {
     }: {
       id: string;
       caseId: string;
-      updates: Partial<AppealSummary>;
+      updates: {
+        content?: string;
+        is_finalized?: boolean;
+        sources_json?: SourcesJson;
+      };
     }) => {
+      const updateData: Record<string, unknown> = {};
+      if (updates.content !== undefined) updateData.content = updates.content;
+      if (updates.is_finalized !== undefined) updateData.is_finalized = updates.is_finalized;
+      if (updates.sources_json !== undefined) updateData.sources_json = updates.sources_json as unknown as Json;
+
       const { data, error } = await supabase
         .from("appeal_summaries")
-        .update(updates)
+        .update(updateData)
         .eq("id", id)
         .select()
         .single();
@@ -456,7 +474,6 @@ export const useUpdateAppealSummary = () => {
     },
   });
 };
-
 // Verify a case law precedent
 export const useVerifyPrecedent = () => {
   const queryClient = useQueryClient();

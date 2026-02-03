@@ -7,6 +7,41 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// Machine-readable source structure for audit trail
+interface SourcesJson {
+  statutes: Array<{
+    provision_id: string;
+    ref: string;
+    title: string;
+  }>;
+  precedents: Array<{
+    precedent_id: string;
+    citation: string;
+    case_name: string;
+    verified: boolean;
+    court?: string;
+    year?: number;
+  }>;
+  facts: Array<{
+    event_id: string;
+    date: string;
+    description: string;
+    category: string;
+  }>;
+  violations: Array<{
+    violation_id: string;
+    title: string;
+    severity: string;
+  }>;
+  generation_metadata: {
+    generated_at: string;
+    model: string;
+    summary_type: string;
+    unverified_precedents_excluded: number;
+  };
+}
+
+// Human-readable source for display
 interface CitedSource {
   type: "statute" | "precedent" | "event" | "violation";
   id: string;
@@ -50,12 +85,25 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Track sources used for citation
+    // Track sources for both human-readable and machine-readable output
     const sourcesUsed: SourcesUsed = {
       statutes: [],
       precedents: [],
       events: [],
       violations: [],
+    };
+
+    const sourcesJson: SourcesJson = {
+      statutes: [],
+      precedents: [],
+      facts: [],
+      violations: [],
+      generation_metadata: {
+        generated_at: new Date().toISOString(),
+        model: "google/gemini-3-flash-preview",
+        summary_type: summaryType,
+        unverified_precedents_excluded: 0,
+      },
     };
 
     // Fetch case data
@@ -107,53 +155,92 @@ serve(async (req) => {
 
     // Process events with IDs for citation
     if (events && events.length > 0) {
-      contextParts.push("\n## Timeline Events (cite by EVENT_ID):");
-      events.slice(0, 20).forEach((e) => {
-        contextParts.push(`- [EVENT:${e.id}] ${e.date}: ${e.description} (${e.category})`);
+      contextParts.push("\n## AVAILABLE TIMELINE EVENTS");
+      contextParts.push("Use [EVENT:id] format when citing these. These are the ONLY facts you may reference.");
+      
+      events.slice(0, 30).forEach((e) => {
+        contextParts.push(`\n[EVENT:${e.id}]`);
+        contextParts.push(`  Date: ${e.date}`);
+        contextParts.push(`  Category: ${e.category}`);
+        contextParts.push(`  Description: ${e.description}`);
+        if (e.individuals) contextParts.push(`  Individuals: ${e.individuals}`);
+        if (e.legal_action) contextParts.push(`  Legal Action: ${e.legal_action}`);
+        
         sourcesUsed.events.push({
           type: "event",
           id: e.id,
           reference: `Event ${e.date}`,
           description: e.description.slice(0, 100),
         });
+        
+        sourcesJson.facts.push({
+          event_id: e.id,
+          date: e.date,
+          description: e.description.slice(0, 200),
+          category: e.category,
+        });
       });
     }
 
     // Process statutes with citations
     if (statuteLinks && statuteLinks.length > 0) {
-      contextParts.push("\n## Linked Statutes (cite by STATUTE_ID):");
+      contextParts.push("\n## AVAILABLE STATUTES / LEGAL PROVISIONS");
+      contextParts.push("Use [STATUTE:id] format when citing these. These are the ONLY provisions you may reference.");
+      
       statuteLinks.forEach((link: any) => {
         if (link.statute) {
-          const citation = `${link.statute.statute_code} §${link.statute.section}`;
-          contextParts.push(`- [STATUTE:${link.statute.id}] ${citation}: ${link.statute.title}`);
+          const ref = `${link.statute.statute_code} §${link.statute.section || ""}`.trim();
+          contextParts.push(`\n[STATUTE:${link.statute.id}]`);
+          contextParts.push(`  Reference: ${ref}`);
+          contextParts.push(`  Title: ${link.statute.title}`);
           if (link.statute.summary) {
             contextParts.push(`  Summary: ${link.statute.summary}`);
           }
+          if (link.relevance_notes) {
+            contextParts.push(`  Relevance: ${link.relevance_notes}`);
+          }
+          
           sourcesUsed.statutes.push({
             type: "statute",
             id: link.statute.id,
-            reference: citation,
+            reference: ref,
             description: link.statute.title,
+          });
+          
+          sourcesJson.statutes.push({
+            provision_id: link.statute.id,
+            ref: ref,
+            title: link.statute.title,
           });
         }
       });
     }
 
-    // Process precedents with verification status
+    // Process precedents - CRITICAL: Only allow verified precedents for citation
+    let unverifiedCount = 0;
     if (precedentLinks && precedentLinks.length > 0) {
-      contextParts.push("\n## Linked Case Law Precedents (cite by PRECEDENT_ID):");
-      contextParts.push("⚠️ IMPORTANT: Only cite precedents marked as VERIFIED=true for formal legal documents.");
+      contextParts.push("\n## AVAILABLE CASE LAW PRECEDENTS");
+      contextParts.push("⚠️ CRITICAL: You may ONLY cite precedents marked VERIFIED=true as authoritative legal support.");
+      contextParts.push("Unverified precedents are shown for context but MUST NOT be cited in formal arguments.");
       
       precedentLinks.forEach((link: any) => {
         if (link.precedent) {
           const isVerified = link.precedent.verified === true;
           
-          // Skip unverified unless explicitly requested
-          if (!isVerified && !includeUnverifiedPrecedents) {
-            contextParts.push(`- [PRECEDENT:${link.precedent.id}] ${link.precedent.citation}: ${link.precedent.case_name} ⚠️ UNVERIFIED - DO NOT CITE`);
+          if (!isVerified) {
+            unverifiedCount++;
+            if (!includeUnverifiedPrecedents) {
+              contextParts.push(`\n[PRECEDENT:${link.precedent.id}] ⛔ UNVERIFIED - DO NOT CITE`);
+              contextParts.push(`  Citation: ${link.precedent.citation}`);
+              contextParts.push(`  Case: ${link.precedent.case_name}`);
+              contextParts.push(`  ⚠️ This precedent has not been verified and MUST NOT be cited.`);
+            }
           } else {
-            const verifiedTag = isVerified ? "✓ VERIFIED" : "⚠️ UNVERIFIED";
-            contextParts.push(`- [PRECEDENT:${link.precedent.id}] ${link.precedent.citation}: ${link.precedent.case_name} [${verifiedTag}]`);
+            contextParts.push(`\n[PRECEDENT:${link.precedent.id}] ✓ VERIFIED - SAFE TO CITE`);
+            contextParts.push(`  Citation: ${link.precedent.citation}`);
+            contextParts.push(`  Case: ${link.precedent.case_name}`);
+            contextParts.push(`  Court: ${link.precedent.court}`);
+            contextParts.push(`  Year: ${link.precedent.year}`);
             if (link.precedent.summary) {
               contextParts.push(`  Holding: ${link.precedent.summary}`);
             }
@@ -162,118 +249,161 @@ serve(async (req) => {
             }
           }
           
-          sourcesUsed.precedents.push({
-            type: "precedent",
-            id: link.precedent.id,
-            reference: link.precedent.citation,
-            description: link.precedent.case_name,
-            verified: isVerified,
-          });
+          // Only add verified precedents to sourcesUsed for citation
+          if (isVerified) {
+            sourcesUsed.precedents.push({
+              type: "precedent",
+              id: link.precedent.id,
+              reference: link.precedent.citation,
+              description: link.precedent.case_name,
+              verified: true,
+            });
+            
+            sourcesJson.precedents.push({
+              precedent_id: link.precedent.id,
+              citation: link.precedent.citation,
+              case_name: link.precedent.case_name,
+              verified: true,
+              court: link.precedent.court,
+              year: link.precedent.year,
+            });
+          }
         }
       });
     }
 
+    sourcesJson.generation_metadata.unverified_precedents_excluded = unverifiedCount;
+
     if (legalIssues && legalIssues.length > 0) {
-      contextParts.push("\n## Legal Issues:");
+      contextParts.push("\n## IDENTIFIED LEGAL ISSUES");
       legalIssues.forEach((issue: any) => {
-        contextParts.push(`- [${issue.issue_type}] ${issue.issue_title}: ${issue.issue_description || ""}`);
+        contextParts.push(`- [${issue.issue_type.toUpperCase()}] ${issue.issue_title}`);
+        if (issue.issue_description) contextParts.push(`  ${issue.issue_description}`);
       });
     }
 
     // Process violations with IDs
     if (violations && violations.length > 0) {
-      contextParts.push("\n## Procedural Violations (cite by VIOLATION_ID):");
+      contextParts.push("\n## PROCEDURAL VIOLATIONS");
+      contextParts.push("Use [VIOLATION:id] format when citing these.");
+      
       violations.forEach((v: any) => {
-        contextParts.push(`- [VIOLATION:${v.id}] ${v.title}: ${v.description} (Severity: ${v.severity})`);
+        contextParts.push(`\n[VIOLATION:${v.id}]`);
+        contextParts.push(`  Title: ${v.title}`);
+        contextParts.push(`  Type: ${v.violation_type}`);
+        contextParts.push(`  Severity: ${v.severity}`);
+        contextParts.push(`  Description: ${v.description}`);
+        if (v.legal_consequence) contextParts.push(`  Legal Consequence: ${v.legal_consequence}`);
+        
         sourcesUsed.violations.push({
           type: "violation",
           id: v.id,
           reference: `Violation: ${v.title}`,
           description: v.description.slice(0, 100),
         });
+        
+        sourcesJson.violations.push({
+          violation_id: v.id,
+          title: v.title,
+          severity: v.severity,
+        });
       });
     }
 
     const caseContext = contextParts.join("\n");
 
-    // Enhanced prompts that require citations
+    // Enhanced prompts that enforce strict citation requirements
     const prompts: Record<string, string> = {
-      factual: `Based on the following case information, generate a comprehensive FACTUAL SUMMARY suitable for legal proceedings. 
+      factual: `Generate a FACTUAL SUMMARY for legal proceedings.
 
-CRITICAL REQUIREMENTS:
-1. Every factual assertion MUST reference its source using [EVENT:id], [STATUTE:id], [PRECEDENT:id], or [VIOLATION:id] tags
-2. Include a "SOURCES USED" section at the end listing all cited sources
-3. Focus on chronological sequence of events with specific dates
-4. Be objective, precise, and avoid legal conclusions
-5. Only cite VERIFIED precedents unless explicitly requested
+STRICT REQUIREMENTS:
+1. ONLY reference events provided in the AVAILABLE TIMELINE EVENTS section
+2. Every factual claim MUST include [EVENT:id] citation
+3. Do NOT invent any facts not in the provided data
+4. End with a SOURCES USED section listing all cited events
 
-Format example:
-"On [date], the accused was arrested [EVENT:xyz123] without following proper procedure under [STATUTE:abc456]..."`,
+FORMAT:
+- Chronological narrative with inline citations
+- Each paragraph must cite at least one [EVENT:id]
+- Conclude with: "## SOURCES USED" section`,
 
-      legal: `Based on the following case information, generate a LEGAL ANALYSIS SUMMARY.
+      legal: `Generate a LEGAL ANALYSIS SUMMARY.
 
-CRITICAL REQUIREMENTS:
-1. Every legal assertion MUST cite its source using [STATUTE:id] or [PRECEDENT:id] tags
-2. Only cite precedents marked as VERIFIED=true for authoritative support
-3. Include a "SOURCES USED" section at the end
-4. Analyze how each statute applies with specific section references
-5. Connect precedents to the current case facts
+STRICT REQUIREMENTS:
+1. ONLY cite statutes from AVAILABLE STATUTES section using [STATUTE:id]
+2. ONLY cite precedents marked "VERIFIED - SAFE TO CITE" using [PRECEDENT:id]
+3. NEVER cite unverified precedents as legal authority
+4. Do NOT reference any law or case not provided in the input
+5. End with a SOURCES USED section
 
-Sections required:
-- Applicable Statutory Framework (with citations)
-- Case Law Analysis (verified precedents only)
-- Legal Strengths and Weaknesses`,
+SECTIONS REQUIRED:
+1. Applicable Legal Framework - with [STATUTE:id] citations
+2. Case Law Authority - ONLY verified [PRECEDENT:id] citations
+3. Application to Facts - linking law to [EVENT:id]
+4. SOURCES USED - complete list`,
 
-      procedural: `Based on the following case information, generate a PROCEDURAL ISSUES SUMMARY.
+      procedural: `Generate a PROCEDURAL ISSUES SUMMARY.
 
-CRITICAL REQUIREMENTS:
-1. Every procedural violation MUST reference [VIOLATION:id] or [EVENT:id]
-2. Cite specific statutory requirements using [STATUTE:id]
-3. Include a "SOURCES USED" section at the end
-4. Reference timeline events showing procedural failures
+STRICT REQUIREMENTS:
+1. Reference violations using [VIOLATION:id] format
+2. Link violations to timeline events using [EVENT:id]
+3. Cite applicable procedures using [STATUTE:id]
+4. Do NOT invent any violations not in the data
+5. End with SOURCES USED section
 
-Focus areas:
-- Timeline compliance failures with dates
-- Due process violations with statutory references
-- Remedial actions with legal basis`,
+FOCUS AREAS:
+- Due process failures with dates and citations
+- Statutory timeline violations
+- Remedial recommendations with legal basis`,
 
-      full_appeal: `Based on the following case information, generate a FULL APPEAL-READY SUMMARY.
+      full_appeal: `Generate a COMPREHENSIVE APPEAL BRIEF.
 
-CRITICAL REQUIREMENTS:
-1. Every factual and legal assertion MUST include source citations
-2. Use format [EVENT:id], [STATUTE:id], [PRECEDENT:id], [VIOLATION:id]
-3. ONLY cite verified precedents for legal authority
-4. End with a comprehensive "SOURCES USED" section
+STRICT REQUIREMENTS:
+1. Every factual assertion must cite [EVENT:id]
+2. Every legal claim must cite [STATUTE:id] and/or verified [PRECEDENT:id]
+3. Every procedural violation must cite [VIOLATION:id]
+4. NEVER cite unverified precedents as legal authority
+5. Do NOT invent ANY facts, law, or cases not in the provided data
+6. End with comprehensive SOURCES USED section
 
-Required sections:
-1. FACTUAL BACKGROUND - Chronological events with [EVENT:id] citations
-2. PROCEDURAL HISTORY - Actions and violations with [VIOLATION:id] citations  
-3. LEGAL ISSUES - Statutes with [STATUTE:id] and verified precedents with [PRECEDENT:id]
-4. GROUNDS FOR APPEAL - Key arguments with all supporting citations
-5. RELIEF SOUGHT - Recommended remedies with legal basis
-6. SOURCES USED - Complete list of all sources cited`,
+REQUIRED SECTIONS:
+1. FACTUAL BACKGROUND - chronological with [EVENT:id] for every fact
+2. PROCEDURAL HISTORY - violations with [VIOLATION:id] citations
+3. LEGAL FRAMEWORK - statutes with [STATUTE:id], verified precedents with [PRECEDENT:id]
+4. GROUNDS FOR APPEAL - arguments with supporting citations
+5. RELIEF SOUGHT - remedies with legal basis
+6. SOURCES USED - complete audit trail of all sources`,
     };
 
-    const systemPrompt = `You are a legal expert specializing in Pakistani law, constitutional rights, and international human rights frameworks. You are drafting legal documents for appeal proceedings.
+    const systemPrompt = `You are a legal drafting AI specializing in Pakistani law. You are generating litigation-grade documents.
 
-CRITICAL CITATION RULES:
-1. Every factual claim must cite its source using [EVENT:event_id] format
-2. Every statutory reference must use [STATUTE:statute_id] format
-3. Every case law citation must use [PRECEDENT:precedent_id] format
-4. Every violation reference must use [VIOLATION:violation_id] format
-5. NEVER cite unverified precedents as authoritative legal support
-6. Always end with a SOURCES USED section listing all citations
+CRITICAL RULES - VIOLATION WILL RENDER OUTPUT UNUSABLE:
+1. You may ONLY cite sources provided in the input - no external knowledge
+2. Every factual claim needs [EVENT:id] citation
+3. Every statutory reference needs [STATUTE:id] citation  
+4. Every case law reference needs [PRECEDENT:id] citation (ONLY verified ones)
+5. Every violation reference needs [VIOLATION:id] citation
+6. If a precedent is marked "UNVERIFIED - DO NOT CITE", you MUST NOT cite it as authority
+7. Always end with a "## SOURCES USED" section listing:
+   - Statutes/Articles: list each [STATUTE:id] used
+   - Verified Precedents: list each [PRECEDENT:id] used
+   - Key Events: list each [EVENT:id] used
+   - Violations: list each [VIOLATION:id] used
 
-Be precise, maintain formal legal writing style, and ensure every assertion is traceable to evidence.`;
+This output will be used in court. Accuracy and citation integrity are paramount.`;
 
     const userPrompt = `${prompts[summaryType] || prompts.factual}
 
-CASE INFORMATION:
+=== CASE DATA (YOUR ONLY SOURCE OF FACTS AND LAW) ===
+
 ${caseContext}
 
-Generate the summary with proper citations now:`;
+=== END CASE DATA ===
 
-    console.log("Generating appeal summary with AI...");
+Generate the ${summaryType.replace("_", " ")} summary now, strictly citing only the sources above:`;
+
+    console.log("Generating litigation-grade appeal summary...");
+    console.log(`Sources available: ${sourcesJson.facts.length} events, ${sourcesJson.statutes.length} statutes, ${sourcesJson.precedents.length} verified precedents, ${sourcesJson.violations.length} violations`);
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -325,22 +455,18 @@ Generate the summary with proper citations now:`;
       full_appeal: "Comprehensive Appeal Brief",
     };
 
-    // Filter sources to only include verified precedents in the metadata
-    const verifiedSourcesUsed: SourcesUsed = {
-      ...sourcesUsed,
-      precedents: sourcesUsed.precedents.filter(p => p.verified === true),
-    };
-
-    console.log("Successfully generated appeal summary");
+    console.log("Successfully generated litigation-grade summary with citation audit trail");
 
     return new Response(
       JSON.stringify({
         title: titles[summaryType] || "Legal Summary",
         content,
         summaryType,
-        sourcesUsed: verifiedSourcesUsed,
-        allSourcesAvailable: sourcesUsed, // Include all for reference
-        unverifiedPrecedentsCount: sourcesUsed.precedents.filter(p => !p.verified).length,
+        // Human-readable sources for UI display
+        sourcesUsed,
+        // Machine-readable JSON for database storage and audit
+        sourcesJson,
+        unverifiedPrecedentsCount: unverifiedCount,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
