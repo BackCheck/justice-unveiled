@@ -14,6 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      appeal_summaries: {
+        Row: {
+          ai_generated: boolean | null
+          case_id: string | null
+          content: string
+          created_at: string
+          created_by: string | null
+          id: string
+          is_finalized: boolean | null
+          reviewed_by: string | null
+          summary_type: string
+          title: string
+          updated_at: string
+          version: number | null
+        }
+        Insert: {
+          ai_generated?: boolean | null
+          case_id?: string | null
+          content: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_finalized?: boolean | null
+          reviewed_by?: string | null
+          summary_type: string
+          title: string
+          updated_at?: string
+          version?: number | null
+        }
+        Update: {
+          ai_generated?: boolean | null
+          case_id?: string | null
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_finalized?: boolean | null
+          reviewed_by?: string | null
+          summary_type?: string
+          title?: string
+          updated_at?: string
+          version?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appeal_summaries_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -58,6 +111,177 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      case_doctrine_links: {
+        Row: {
+          application_notes: string | null
+          case_id: string | null
+          created_at: string
+          doctrine_id: string | null
+          id: string
+          linked_by: string | null
+          supporting_evidence: string[] | null
+        }
+        Insert: {
+          application_notes?: string | null
+          case_id?: string | null
+          created_at?: string
+          doctrine_id?: string | null
+          id?: string
+          linked_by?: string | null
+          supporting_evidence?: string[] | null
+        }
+        Update: {
+          application_notes?: string | null
+          case_id?: string | null
+          created_at?: string
+          doctrine_id?: string | null
+          id?: string
+          linked_by?: string | null
+          supporting_evidence?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_doctrine_links_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "case_doctrine_links_doctrine_id_fkey"
+            columns: ["doctrine_id"]
+            isOneToOne: false
+            referencedRelation: "legal_doctrines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_law_precedents: {
+        Row: {
+          case_name: string
+          citation: string
+          court: string
+          created_at: string
+          id: string
+          is_landmark: boolean | null
+          jurisdiction: string
+          key_principles: string[] | null
+          related_statutes: string[] | null
+          summary: string | null
+          year: number | null
+        }
+        Insert: {
+          case_name: string
+          citation: string
+          court: string
+          created_at?: string
+          id?: string
+          is_landmark?: boolean | null
+          jurisdiction: string
+          key_principles?: string[] | null
+          related_statutes?: string[] | null
+          summary?: string | null
+          year?: number | null
+        }
+        Update: {
+          case_name?: string
+          citation?: string
+          court?: string
+          created_at?: string
+          id?: string
+          is_landmark?: boolean | null
+          jurisdiction?: string
+          key_principles?: string[] | null
+          related_statutes?: string[] | null
+          summary?: string | null
+          year?: number | null
+        }
+        Relationships: []
+      }
+      case_precedent_links: {
+        Row: {
+          application_notes: string | null
+          case_id: string | null
+          created_at: string
+          id: string
+          linked_by: string | null
+          precedent_id: string | null
+        }
+        Insert: {
+          application_notes?: string | null
+          case_id?: string | null
+          created_at?: string
+          id?: string
+          linked_by?: string | null
+          precedent_id?: string | null
+        }
+        Update: {
+          application_notes?: string | null
+          case_id?: string | null
+          created_at?: string
+          id?: string
+          linked_by?: string | null
+          precedent_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_precedent_links_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "case_precedent_links_precedent_id_fkey"
+            columns: ["precedent_id"]
+            isOneToOne: false
+            referencedRelation: "case_law_precedents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_statute_links: {
+        Row: {
+          case_id: string | null
+          created_at: string
+          id: string
+          linked_by: string | null
+          relevance_notes: string | null
+          statute_id: string | null
+        }
+        Insert: {
+          case_id?: string | null
+          created_at?: string
+          id?: string
+          linked_by?: string | null
+          relevance_notes?: string | null
+          statute_id?: string | null
+        }
+        Update: {
+          case_id?: string | null
+          created_at?: string
+          id?: string
+          linked_by?: string | null
+          relevance_notes?: string | null
+          statute_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_statute_links_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "case_statute_links_statute_id_fkey"
+            columns: ["statute_id"]
+            isOneToOne: false
+            referencedRelation: "legal_statutes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       cases: {
         Row: {
@@ -1055,6 +1279,143 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      legal_doctrines: {
+        Row: {
+          application_context: string | null
+          created_at: string
+          description: string
+          doctrine_name: string
+          example_cases: string[] | null
+          id: string
+          latin_name: string | null
+          related_statutes: string[] | null
+        }
+        Insert: {
+          application_context?: string | null
+          created_at?: string
+          description: string
+          doctrine_name: string
+          example_cases?: string[] | null
+          id?: string
+          latin_name?: string | null
+          related_statutes?: string[] | null
+        }
+        Update: {
+          application_context?: string | null
+          created_at?: string
+          description?: string
+          doctrine_name?: string
+          example_cases?: string[] | null
+          id?: string
+          latin_name?: string | null
+          related_statutes?: string[] | null
+        }
+        Relationships: []
+      }
+      legal_issues: {
+        Row: {
+          ai_generated: boolean | null
+          case_id: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          is_resolved: boolean | null
+          issue_description: string | null
+          issue_title: string
+          issue_type: string
+          related_doctrine_ids: string[] | null
+          related_precedent_ids: string[] | null
+          related_statute_ids: string[] | null
+          resolution_notes: string | null
+          severity: string | null
+          updated_at: string
+        }
+        Insert: {
+          ai_generated?: boolean | null
+          case_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_resolved?: boolean | null
+          issue_description?: string | null
+          issue_title: string
+          issue_type: string
+          related_doctrine_ids?: string[] | null
+          related_precedent_ids?: string[] | null
+          related_statute_ids?: string[] | null
+          resolution_notes?: string | null
+          severity?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ai_generated?: boolean | null
+          case_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_resolved?: boolean | null
+          issue_description?: string | null
+          issue_title?: string
+          issue_type?: string
+          related_doctrine_ids?: string[] | null
+          related_precedent_ids?: string[] | null
+          related_statute_ids?: string[] | null
+          resolution_notes?: string | null
+          severity?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_issues_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legal_statutes: {
+        Row: {
+          created_at: string
+          framework: string
+          full_text: string | null
+          id: string
+          is_active: boolean | null
+          keywords: string[] | null
+          section: string | null
+          statute_code: string
+          statute_name: string
+          summary: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          framework: string
+          full_text?: string | null
+          id?: string
+          is_active?: boolean | null
+          keywords?: string[] | null
+          section?: string | null
+          statute_code: string
+          statute_name: string
+          summary?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          framework?: string
+          full_text?: string | null
+          id?: string
+          is_active?: boolean | null
+          keywords?: string[] | null
+          section?: string | null
+          statute_code?: string
+          statute_name?: string
+          summary?: string | null
+          title?: string
+        }
+        Relationships: []
       }
       procedural_requirements: {
         Row: {

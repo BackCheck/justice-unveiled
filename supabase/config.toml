@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.pattern-detector]
 verify_jwt = false
+
+[functions.generate-appeal-summary]
+verify_jwt = false
