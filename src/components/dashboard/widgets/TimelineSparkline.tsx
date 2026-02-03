@@ -58,40 +58,41 @@ export const TimelineSparkline = () => {
 
   return (
     <Card className="glass-card">
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Calendar className="w-4 h-4 text-primary" />
             Event Timeline
           </CardTitle>
           {peakYear && (
-            <Badge variant="secondary" className="text-[10px] gap-1">
+            <Badge variant="secondary" className="text-[10px] gap-1 font-medium">
               <TrendingUp className="w-3 h-3" />
-              Peak: {peakYear.year} ({peakYear.events})
+              Peak: {peakYear.year}
             </Badge>
           )}
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="h-[180px]">
+      <CardContent className="pt-0">
+        <div className="h-[160px]">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
               <defs>
                 <linearGradient id="eventGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.35} />
                   <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <XAxis 
                 dataKey="year" 
-                tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+                tick={{ fontSize: 10, fill: "hsl(var(--foreground) / 0.5)" }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis 
-                tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+                tick={{ fontSize: 10, fill: "hsl(var(--foreground) / 0.5)" }}
                 axisLine={false}
                 tickLine={false}
+                width={30}
               />
               <Tooltip
                 contentStyle={{
@@ -100,7 +101,7 @@ export const TimelineSparkline = () => {
                   borderRadius: "8px",
                   fontSize: "12px",
                 }}
-                labelStyle={{ fontWeight: "bold" }}
+                labelStyle={{ fontWeight: "600", color: "hsl(var(--foreground))" }}
               />
               <Area
                 type="monotone"
@@ -113,23 +114,23 @@ export const TimelineSparkline = () => {
           </ResponsiveContainer>
         </div>
         
-        {/* Category Legend */}
-        <div className="flex flex-wrap gap-2 mt-3 justify-center">
+        {/* Category Legend - More compact */}
+        <div className="flex flex-wrap gap-3 mt-3 justify-center pt-2 border-t border-border/30">
           <div className="flex items-center gap-1.5 text-[10px]">
             <span className="w-2 h-2 rounded-full bg-red-500" />
-            <span className="text-muted-foreground">Harassment</span>
+            <span className="text-foreground/60">Harassment</span>
           </div>
           <div className="flex items-center gap-1.5 text-[10px]">
             <span className="w-2 h-2 rounded-full bg-blue-500" />
-            <span className="text-muted-foreground">Legal</span>
+            <span className="text-foreground/60">Legal</span>
           </div>
           <div className="flex items-center gap-1.5 text-[10px]">
             <span className="w-2 h-2 rounded-full bg-amber-500" />
-            <span className="text-muted-foreground">Business</span>
+            <span className="text-foreground/60">Business</span>
           </div>
           <div className="flex items-center gap-1.5 text-[10px]">
             <span className="w-2 h-2 rounded-full bg-purple-500" />
-            <span className="text-muted-foreground">Criminal</span>
+            <span className="text-foreground/60">Criminal</span>
           </div>
         </div>
       </CardContent>

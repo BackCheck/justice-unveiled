@@ -46,6 +46,8 @@ export const CriticalAlertsPanel = () => {
       })),
   ].slice(0, 6);
 
+  const criticalCount = alerts.filter(a => a.severity === "critical").length;
+
   return (
     <Card className="glass-card border-destructive/20">
       <CardHeader className="pb-3">
@@ -54,33 +56,36 @@ export const CriticalAlertsPanel = () => {
             <AlertTriangle className="w-4 h-4 text-destructive" />
             Critical Alerts
           </CardTitle>
-          <Badge variant="destructive" className="text-[10px]">
-            {alerts.filter(a => a.severity === "critical").length} CRITICAL
-          </Badge>
+          {criticalCount > 0 && (
+            <Badge variant="destructive" className="text-[10px] font-medium">
+              {criticalCount} CRITICAL
+            </Badge>
+          )}
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <ScrollArea className="h-[280px]">
-          <div className="px-4 pb-4 space-y-2">
+        <ScrollArea className="h-[300px]">
+          <div className="px-4 pb-4 space-y-2.5">
             {alerts.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground text-sm">
                 No critical alerts
               </div>
             ) : (
-              alerts.map((alert) => {
+              alerts.map((alert, index) => {
                 const config = severityConfig[alert.severity];
                 const Icon = config.icon;
                 return (
                   <div
                     key={alert.id}
-                    className={`p-3 rounded-lg border ${config.border} ${config.bg} hover:brightness-110 transition-all cursor-pointer group`}
+                    className={`p-3 rounded-lg border ${config.border} ${config.bg} hover:brightness-110 transition-all cursor-pointer group opacity-0 animate-fade-in-up`}
+                    style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'forwards' }}
                   >
                     <div className="flex items-start gap-3">
                       <Icon className={`w-4 h-4 ${config.color} mt-0.5 flex-shrink-0`} />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium line-clamp-2">{alert.title}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Badge variant="secondary" className="text-[9px] px-1.5">
+                        <p className="text-sm font-medium text-foreground/90 line-clamp-2 leading-snug">{alert.title}</p>
+                        <div className="flex items-center gap-2 mt-1.5">
+                          <Badge variant="secondary" className="text-[9px] px-1.5 font-medium">
                             {alert.severity.toUpperCase()}
                           </Badge>
                           <span className="text-[10px] text-muted-foreground flex items-center gap-1">
