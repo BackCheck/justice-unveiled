@@ -419,8 +419,9 @@ const Landing = () => {
                   <p className="text-xs text-muted-foreground">Human Rights Protection Movement</p>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Documenting injustice. Demanding accountability.
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                <span className="block font-medium text-foreground/80">Documenting injustice. Demanding accountability.</span>
+                A platform dedicated to exposing human rights violations through investigative intelligence and verified evidence.
               </p>
             </div>
 
