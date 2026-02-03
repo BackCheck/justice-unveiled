@@ -21,7 +21,8 @@ import {
   FolderOpen,
   Target,
   Eye,
-  GitBranch
+  GitBranch,
+  ClipboardCheck
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -67,6 +68,7 @@ const mainNavItems = [
 const analysisNavItems = [
   { path: "/reconstruction", label: "Reconstruction", icon: GitBranch },
   { path: "/correlation", label: "Claim Correlation", icon: Scale },
+  { path: "/compliance", label: "Compliance Checker", icon: ClipboardCheck },
   { path: "/analyze", label: "AI Analyzer", icon: Brain },
   { path: "/evidence", label: "Evidence Matrix", icon: FileText },
   { path: "/international", label: "International Rights", icon: Scale },
