@@ -72,14 +72,14 @@ const LiveMetricsSection = () => {
     },
     {
       icon: Shield,
-      label: "Critical Issues",
-      value: stats.criticalDiscrepancies,
-      color: "red"
+      label: "Verified Precedents",
+      value: stats.verifiedPrecedents,
+      color: "green"
     },
     {
       icon: Brain,
-      label: "Int'l Frameworks",
-      value: stats.internationalFrameworks,
+      label: "Legal Statutes",
+      value: stats.legalStatutes,
       color: "blue"
     }
   ];
@@ -91,7 +91,7 @@ const LiveMetricsSection = () => {
     "chart-4": "text-chart-4 bg-chart-4/10 border-chart-4/20",
     amber: "text-amber-500 bg-amber-500/10 border-amber-500/20",
     destructive: "text-destructive bg-destructive/10 border-destructive/20",
-    red: "text-red-500 bg-red-500/10 border-red-500/20",
+    green: "text-green-500 bg-green-500/10 border-green-500/20",
     blue: "text-blue-500 bg-blue-500/10 border-blue-500/20"
   };
 

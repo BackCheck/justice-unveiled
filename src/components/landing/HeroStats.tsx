@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Sparkles, TrendingUp } from "lucide-react";
+import { Loader2, Sparkles, TrendingUp, ShieldCheck, Scale } from "lucide-react";
 import { useLandingStats } from "@/hooks/usePlatformStats";
 import AnimatedCounter from "./AnimatedCounter";
 import { cn } from "@/lib/utils";
@@ -48,9 +48,9 @@ const HeroStats = () => {
         ))}
       </div>
 
-      {/* AI Enhancement Badge */}
-      {fullStats.aiExtractedEvents > 0 && (
-        <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+      {/* AI & Legal Intelligence Badges */}
+      <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3 flex-wrap">
+        {fullStats.aiExtractedEvents > 0 && (
           <Badge 
             variant="outline" 
             className="px-4 py-2 bg-gradient-to-r from-chart-5/10 to-primary/10 border-chart-5/30 text-foreground"
@@ -60,18 +60,44 @@ const HeroStats = () => {
               <span className="font-bold text-chart-5">{fullStats.aiExtractedEvents}</span> AI-extracted events
             </span>
           </Badge>
-          
+        )}
+        
+        {fullStats.verifiedPrecedents > 0 && (
           <Badge 
             variant="outline" 
             className="px-4 py-2 bg-gradient-to-r from-chart-2/10 to-primary/10 border-chart-2/30 text-foreground"
           >
-            <TrendingUp className="w-4 h-4 mr-2 text-chart-2" />
+            <ShieldCheck className="w-4 h-4 mr-2 text-chart-2" />
             <span>
-              <span className="font-bold text-chart-2">{fullStats.documentsAnalyzed}</span> documents analyzed
+              <span className="font-bold text-chart-2">{fullStats.verifiedPrecedents}</span> verified precedents
             </span>
           </Badge>
-        </div>
-      )}
+        )}
+
+        {fullStats.legalStatutes > 0 && (
+          <Badge 
+            variant="outline" 
+            className="px-4 py-2 bg-gradient-to-r from-chart-4/10 to-primary/10 border-chart-4/30 text-foreground"
+          >
+            <Scale className="w-4 h-4 mr-2 text-chart-4" />
+            <span>
+              <span className="font-bold text-chart-4">{fullStats.legalStatutes}</span> statutes mapped
+            </span>
+          </Badge>
+        )}
+        
+        {fullStats.documentsAnalyzed > 0 && (
+          <Badge 
+            variant="outline" 
+            className="px-4 py-2 bg-gradient-to-r from-amber-500/10 to-primary/10 border-amber-500/30 text-foreground"
+          >
+            <TrendingUp className="w-4 h-4 mr-2 text-amber-500" />
+            <span>
+              <span className="font-bold text-amber-500">{fullStats.documentsAnalyzed}</span> documents analyzed
+            </span>
+          </Badge>
+        )}
+      </div>
     </div>
   );
 };

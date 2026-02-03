@@ -30,6 +30,13 @@ export interface PlatformStats {
   criticalDiscrepancies: number;
   totalDiscrepancies: number;
   documentsAnalyzed: number;
+  
+  // Legal Intelligence metrics
+  verifiedPrecedents: number;
+  totalPrecedents: number;
+  legalStatutes: number;
+  appealSummaries: number;
+  complianceViolations: number;
 }
 
 export const usePlatformStats = () => {
@@ -82,6 +89,55 @@ export const usePlatformStats = () => {
     staleTime: 1000 * 60 * 5,
   });
 
+  // Legal Intelligence metrics
+  const { data: precedents, isLoading: precedentsLoading } = useQuery({
+    queryKey: ["platform-precedents"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("case_law_precedents")
+        .select("id, verified");
+      if (error) throw error;
+      return data || [];
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const { data: statutes, isLoading: statutesLoading } = useQuery({
+    queryKey: ["platform-statutes"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("legal_statutes")
+        .select("id");
+      if (error) throw error;
+      return data || [];
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const { data: appealSummaries, isLoading: appealsLoading } = useQuery({
+    queryKey: ["platform-appeal-summaries"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("appeal_summaries")
+        .select("id");
+      if (error) throw error;
+      return data || [];
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const { data: complianceViolations, isLoading: complianceLoading } = useQuery({
+    queryKey: ["platform-compliance-violations"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("compliance_violations")
+        .select("id");
+      if (error) throw error;
+      return data || [];
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+
   const stats = useMemo<PlatformStats>(() => {
     // Static data counts
     const staticSourceCount = sources?.length || 123; // Fallback to known value
@@ -125,6 +181,13 @@ export const usePlatformStats = () => {
     const criticalDiscrepancies = discrepancies?.filter(d => d.severity === "critical").length || 0;
     const totalDiscrepancies = discrepancies?.length || 0;
 
+    // Legal intelligence counts
+    const verifiedPrecedents = precedents?.filter(p => p.verified === true).length || 0;
+    const totalPrecedents = precedents?.length || 0;
+    const legalStatutesCount = statutes?.length || 0;
+    const appealSummariesCount = appealSummaries?.length || 0;
+    const complianceViolationsCount = complianceViolations?.length || 0;
+
     return {
       totalSources,
       totalEvents,
@@ -146,12 +209,19 @@ export const usePlatformStats = () => {
       criticalDiscrepancies,
       totalDiscrepancies,
       documentsAnalyzed: aiUploadCount,
+      
+      // Legal Intelligence
+      verifiedPrecedents,
+      totalPrecedents,
+      legalStatutes: legalStatutesCount,
+      appealSummaries: appealSummariesCount,
+      complianceViolations: complianceViolationsCount,
     };
-  }, [extractedEvents, extractedEntities, discrepancies, uploads]);
+  }, [extractedEvents, extractedEntities, discrepancies, uploads, precedents, statutes, appealSummaries, complianceViolations]);
 
   return {
     stats,
-    isLoading: eventsLoading || entitiesLoading || discrepanciesLoading || uploadsLoading,
+    isLoading: eventsLoading || entitiesLoading || discrepanciesLoading || uploadsLoading || precedentsLoading || statutesLoading || appealsLoading || complianceLoading,
   };
 };
 
