@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -31,16 +32,18 @@ import SpotlightEffect from "@/components/landing/SpotlightEffect";
 import HeroStats from "@/components/landing/HeroStats";
 import FeatureShowcase from "@/components/landing/FeatureShowcase";
 import LiveMetricsSection from "@/components/landing/LiveMetricsSection";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { usePlatformStats } from "@/hooks/usePlatformStats";
 
 const Landing = () => {
+  const { t } = useTranslation();
   const { stats: fullStats } = usePlatformStats();
 
   const values = [
-    { icon: Scale, title: "Justice", description: "Fair treatment under the law for everyone." },
-    { icon: Shield, title: "Protection", description: "Safeguarding fundamental human rights." },
-    { icon: FileText, title: "Transparency", description: "Bringing procedural failures to light." },
-    { icon: Users, title: "Solidarity", description: "Standing with those facing injustice." }
+    { icon: Scale, title: t('landing.values.justice'), description: t('landing.values.justiceDesc') },
+    { icon: Shield, title: t('landing.values.protection'), description: t('landing.values.protectionDesc') },
+    { icon: FileText, title: t('landing.values.transparency'), description: t('landing.values.transparencyDesc') },
+    { icon: Users, title: t('landing.values.solidarity'), description: t('landing.values.solidarityDesc') }
   ];
 
   return (
@@ -68,18 +71,22 @@ const Landing = () => {
               <span className="text-[10px] text-muted-foreground leading-tight">Human Rights Protection Movement</span>
             </div>
           </Link>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">About</Link>
-            <Link to="/cases" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">Cases</Link>
-            <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">Dashboard</Link>
-            <Link to="/intel-briefing" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">Intelligence</Link>
+          <nav className="hidden md:flex items-center gap-4">
+            <Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">{t('nav.about')}</Link>
+            <Link to="/cases" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">{t('nav.cases')}</Link>
+            <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">{t('nav.dashboard')}</Link>
+            <Link to="/intel-briefing" className="text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:translate-x-0.5">{t('nav.intelligence')}</Link>
+            <LanguageSwitcher />
             <Button size="sm" variant="outline" className="border-primary/50 hover:bg-primary hover:text-primary-foreground transition-all duration-300" asChild>
-              <Link to="/auth">Sign In</Link>
+              <Link to="/auth">{t('common.signIn')}</Link>
             </Button>
           </nav>
-          <Button size="sm" className="animate-pulse-glow md:hidden" asChild>
-            <Link to="/cases">Explore</Link>
-          </Button>
+          <div className="flex items-center gap-2 md:hidden">
+            <LanguageSwitcher />
+            <Button size="sm" className="animate-pulse-glow" asChild>
+              <Link to="/cases">{t('common.explore')}</Link>
+            </Button>
+          </div>
         </div>
       </header>
 

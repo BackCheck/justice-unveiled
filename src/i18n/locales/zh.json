@@ -1,0 +1,144 @@
+{
+  "common": {
+    "signIn": "登录",
+    "signOut": "登出",
+    "explore": "探索",
+    "learnMore": "了解更多",
+    "readMore": "阅读更多",
+    "submit": "提交",
+    "cancel": "取消",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑",
+    "view": "查看",
+    "search": "搜索",
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "all": "全部",
+    "none": "无",
+    "yes": "是",
+    "no": "否"
+  },
+  "nav": {
+    "home": "首页",
+    "about": "关于我们",
+    "contact": "联系我们",
+    "cases": "案件",
+    "dashboard": "仪表板",
+    "intelligence": "情报",
+    "timeline": "时间线",
+    "network": "网络",
+    "evidence": "证据",
+    "investigations": "调查中心",
+    "watchlist": "我的关注列表",
+    "uploads": "上传",
+    "analysis": "分析",
+    "international": "国际权利",
+    "reconstruction": "重建",
+    "correlation": "索赔关联",
+    "compliance": "合规",
+    "harm": "经济损害",
+    "legal": "法律情报",
+    "admin": "管理面板",
+    "settings": "设置"
+  },
+  "landing": {
+    "hero": {
+      "badge": "情报平台",
+      "title": "人权保护运动",
+      "subtitle": "记录不公正。要求问责。",
+      "description": "一个诉讼级调查平台，将记录的事实转化为可用于法庭的情报，配备经过验证的判例法映射和自动合规跟踪。",
+      "cta": "进入案件档案",
+      "secondaryCta": "查看仪表板"
+    },
+    "stats": {
+      "activeCases": "活跃案件",
+      "entities": "追踪实体",
+      "events": "时间线事件",
+      "sources": "已验证来源",
+      "precedents": "已验证判例",
+      "statutes": "法律法规"
+    },
+    "values": {
+      "justice": "公正",
+      "justiceDesc": "法律面前人人平等。",
+      "protection": "保护",
+      "protectionDesc": "保障基本人权。",
+      "transparency": "透明",
+      "transparencyDesc": "揭示程序失误。",
+      "solidarity": "团结",
+      "solidarityDesc": "与面临不公正待遇的人站在一起。"
+    },
+    "casePreview": {
+      "title": "案件档案 #001",
+      "subtitle": "丹尼什·塔诺维调查",
+      "description": "对非法拘留、程序违规和协调的机构不当行为进行全面调查。",
+      "cta": "打开案件档案"
+    }
+  },
+  "footer": {
+    "tagline": "记录不公正。要求问责。",
+    "description": "致力于通过调查情报和经过验证的证据揭露人权侵犯行为的平台。",
+    "quickLinks": "快速链接",
+    "contact": "联系方式",
+    "offices": "办公室",
+    "headOffice": "新加坡（总部）",
+    "karachiOffice": "卡拉奇办公室",
+    "copyright": "版权所有。",
+    "privacy": "隐私政策",
+    "terms": "服务条款"
+  },
+  "about": {
+    "title": "关于 HRPM",
+    "mission": "我们的使命",
+    "missionText": "通过调查情报和经过验证的文件来保护和倡导基本人权。",
+    "vision": "我们的愿景",
+    "visionText": "一个人人都能获得正义、人权侵犯行为被揭露和解决的世界。"
+  },
+  "contact": {
+    "title": "联系我们",
+    "subtitle": "与我们的团队取得联系",
+    "form": {
+      "name": "全名",
+      "email": "电子邮件地址",
+      "subject": "主题",
+      "message": "消息",
+      "submit": "发送消息"
+    },
+    "success": "感谢您的留言。我们会尽快与您联系。"
+  },
+  "auth": {
+    "signIn": "登录",
+    "signUp": "注册",
+    "email": "电子邮件",
+    "password": "密码",
+    "confirmPassword": "确认密码",
+    "forgotPassword": "忘记密码？",
+    "noAccount": "没有账户？",
+    "hasAccount": "已有账户？"
+  },
+  "dashboard": {
+    "title": "仪表板",
+    "overview": "概览",
+    "recentActivity": "最近活动",
+    "quickActions": "快速操作",
+    "alerts": "关键警报",
+    "findings": "主要发现"
+  },
+  "cases": {
+    "title": "案件档案",
+    "active": "活跃",
+    "closed": "已关闭",
+    "pending": "待处理",
+    "newCase": "新案件",
+    "viewAll": "查看所有案件"
+  },
+  "language": {
+    "select": "语言",
+    "en": "English",
+    "ur": "اردو",
+    "ar": "العربية",
+    "zh": "中文"
+  }
+}
