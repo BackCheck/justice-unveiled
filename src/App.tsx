@@ -28,6 +28,7 @@ import Reconstruction from "./pages/Reconstruction";
 import Correlation from "./pages/Correlation";
 import Compliance from "./pages/Compliance";
 import RegulatoryHarm from "./pages/RegulatoryHarm";
+import LegalIntelligence from "./pages/LegalIntelligence";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,7 @@ const App = () => (
             <Route path="/correlation" element={<Correlation />} />
             <Route path="/compliance" element={<Compliance />} />
             <Route path="/regulatory-harm" element={<RegulatoryHarm />} />
+            <Route path="/legal-intelligence" element={<LegalIntelligence />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/events/:eventId" element={<EventDetail />} />
             <Route path="/violations/:type/:violationId" element={<ViolationDetail />} />

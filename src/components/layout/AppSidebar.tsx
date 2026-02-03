@@ -23,7 +23,8 @@ import {
   Eye,
   GitBranch,
   ClipboardCheck,
-  TrendingDown
+  TrendingDown,
+  Gavel
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -71,6 +72,7 @@ const analysisNavItems = [
   { path: "/correlation", label: "Claim Correlation", icon: Scale },
   { path: "/compliance", label: "Compliance Checker", icon: ClipboardCheck },
   { path: "/regulatory-harm", label: "Economic Harm", icon: TrendingDown },
+  { path: "/legal-intelligence", label: "Legal Intelligence", icon: Gavel },
   { path: "/analyze", label: "AI Analyzer", icon: Brain },
   { path: "/evidence", label: "Evidence Matrix", icon: FileText },
   { path: "/international", label: "International Rights", icon: Scale },
