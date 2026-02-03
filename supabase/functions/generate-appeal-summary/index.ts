@@ -216,12 +216,17 @@ serve(async (req) => {
       });
     }
 
-    // Process precedents - CRITICAL: Only allow verified precedents for citation
+    // Process precedents - CRITICAL: Only allow verified precedents for citation unless explicitly included
     let unverifiedCount = 0;
     if (precedentLinks && precedentLinks.length > 0) {
       contextParts.push("\n## AVAILABLE CASE LAW PRECEDENTS");
-      contextParts.push("⚠️ CRITICAL: You may ONLY cite precedents marked VERIFIED=true as authoritative legal support.");
-      contextParts.push("Unverified precedents are shown for context but MUST NOT be cited in formal arguments.");
+      
+      if (includeUnverifiedPrecedents) {
+        contextParts.push("⚠️ NOTE: This is a DRAFT document. Unverified precedents are included but must be verified before court filing.");
+      } else {
+        contextParts.push("⚠️ CRITICAL: You may ONLY cite precedents marked VERIFIED=true as authoritative legal support.");
+        contextParts.push("Unverified precedents are shown for context but MUST NOT be cited in formal arguments.");
+      }
       
       precedentLinks.forEach((link: any) => {
         if (link.precedent) {
@@ -229,7 +234,36 @@ serve(async (req) => {
           
           if (!isVerified) {
             unverifiedCount++;
-            if (!includeUnverifiedPrecedents) {
+            
+            if (includeUnverifiedPrecedents) {
+              // Include unverified but clearly mark them
+              contextParts.push(`\n[PRECEDENT:${link.precedent.id}] ⚠️ UNVERIFIED`);
+              contextParts.push(`  Citation: ${link.precedent.citation}`);
+              contextParts.push(`  Case: ${link.precedent.case_name}`);
+              if (link.precedent.court) contextParts.push(`  Court: ${link.precedent.court}`);
+              if (link.precedent.year) contextParts.push(`  Year: ${link.precedent.year}`);
+              if (link.precedent.summary) contextParts.push(`  Summary: ${link.precedent.summary}`);
+              contextParts.push(`  ⚠️ UNVERIFIED - Mark as unverified in any citation.`);
+              
+              // Add to sources but mark as unverified
+              sourcesUsed.precedents.push({
+                type: "precedent",
+                id: link.precedent.id,
+                reference: link.precedent.citation,
+                description: `${link.precedent.case_name} (UNVERIFIED)`,
+                verified: false,
+              });
+              
+              sourcesJson.precedents.push({
+                precedent_id: link.precedent.id,
+                citation: link.precedent.citation,
+                case_name: link.precedent.case_name,
+                verified: false,
+                court: link.precedent.court,
+                year: link.precedent.year,
+              });
+            } else {
+              // Exclude but mention it exists
               contextParts.push(`\n[PRECEDENT:${link.precedent.id}] ⛔ UNVERIFIED - DO NOT CITE`);
               contextParts.push(`  Citation: ${link.precedent.citation}`);
               contextParts.push(`  Case: ${link.precedent.case_name}`);
@@ -247,10 +281,7 @@ serve(async (req) => {
             if (link.precedent.key_principles && link.precedent.key_principles.length > 0) {
               contextParts.push(`  Key Principles: ${link.precedent.key_principles.join("; ")}`);
             }
-          }
-          
-          // Only add verified precedents to sourcesUsed for citation
-          if (isVerified) {
+            
             sourcesUsed.precedents.push({
               type: "precedent",
               id: link.precedent.id,

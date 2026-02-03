@@ -5,3 +5,6 @@ export { DoctrineMapper } from "./DoctrineMapper";
 export { LegalIssuesPanel } from "./LegalIssuesPanel";
 export { AppealSummaryGenerator } from "./AppealSummaryGenerator";
 export { CaseLegalTab } from "./CaseLegalTab";
+export { VerifyPrecedentDialog } from "./VerifyPrecedentDialog";
+export { SourcesUsedPanel } from "./SourcesUsedPanel";
+export { UnverifiedWarningDialog } from "./UnverifiedWarningDialog";
