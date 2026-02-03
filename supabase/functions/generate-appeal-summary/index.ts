@@ -343,7 +343,20 @@ serve(async (req) => {
 
     const caseContext = contextParts.join("\n");
 
-    // Enhanced prompts that enforce strict citation requirements
+    // Enhanced prompts that enforce COURT-SAFE output format with strict citation requirements
+    const courtSafeFormat = `
+## MANDATORY COURT-SAFE FORMAT
+Every generated document MUST follow this exact structure:
+
+1. **FACTS (CHRONOLOGY)** - Chronological narrative of events with [EVENT:id] citations
+2. **LEGAL ISSUES** - Key legal questions to be resolved
+3. **APPLICABLE LAW** - Statutes [STATUTE:id] and verified precedents [PRECEDENT:id] 
+4. **APPLICATION TO FACTS** - How the law applies to the cited events
+5. **RELIEF / PRAYER** - Specific remedies requested
+6. **SOURCES USED** - Complete audit trail with all cited sources
+
+This format is mandatory for court filings.`;
+
     const prompts: Record<string, string> = {
       factual: `Generate a FACTUAL SUMMARY for legal proceedings.
 
@@ -351,12 +364,14 @@ STRICT REQUIREMENTS:
 1. ONLY reference events provided in the AVAILABLE TIMELINE EVENTS section
 2. Every factual claim MUST include [EVENT:id] citation
 3. Do NOT invent any facts not in the provided data
-4. End with a SOURCES USED section listing all cited events
+4. Follow the COURT-SAFE FORMAT structure below
 
-FORMAT:
-- Chronological narrative with inline citations
+${courtSafeFormat}
+
+SECTION EMPHASIS:
+- Focus on "FACTS (CHRONOLOGY)" section
 - Each paragraph must cite at least one [EVENT:id]
-- Conclude with: "## SOURCES USED" section`,
+- Brief coverage of other sections`,
 
       legal: `Generate a LEGAL ANALYSIS SUMMARY.
 
@@ -365,13 +380,13 @@ STRICT REQUIREMENTS:
 2. ONLY cite precedents marked "VERIFIED - SAFE TO CITE" using [PRECEDENT:id]
 3. NEVER cite unverified precedents as legal authority
 4. Do NOT reference any law or case not provided in the input
-5. End with a SOURCES USED section
+5. Follow the COURT-SAFE FORMAT structure below
 
-SECTIONS REQUIRED:
-1. Applicable Legal Framework - with [STATUTE:id] citations
-2. Case Law Authority - ONLY verified [PRECEDENT:id] citations
-3. Application to Facts - linking law to [EVENT:id]
-4. SOURCES USED - complete list`,
+${courtSafeFormat}
+
+SECTION EMPHASIS:
+- Focus on "APPLICABLE LAW" and "APPLICATION TO FACTS" sections
+- Every legal point must cite [STATUTE:id] and/or verified [PRECEDENT:id]`,
 
       procedural: `Generate a PROCEDURAL ISSUES SUMMARY.
 
@@ -380,12 +395,13 @@ STRICT REQUIREMENTS:
 2. Link violations to timeline events using [EVENT:id]
 3. Cite applicable procedures using [STATUTE:id]
 4. Do NOT invent any violations not in the data
-5. End with SOURCES USED section
+5. Follow the COURT-SAFE FORMAT structure below
 
-FOCUS AREAS:
-- Due process failures with dates and citations
-- Statutory timeline violations
-- Remedial recommendations with legal basis`,
+${courtSafeFormat}
+
+SECTION EMPHASIS:
+- Focus on procedural failures and statutory timeline violations
+- Emphasize remediation recommendations in "RELIEF / PRAYER"`,
 
       full_appeal: `Generate a COMPREHENSIVE APPEAL BRIEF.
 
@@ -395,15 +411,12 @@ STRICT REQUIREMENTS:
 3. Every procedural violation must cite [VIOLATION:id]
 4. NEVER cite unverified precedents as legal authority
 5. Do NOT invent ANY facts, law, or cases not in the provided data
-6. End with comprehensive SOURCES USED section
+6. Follow the COURT-SAFE FORMAT structure EXACTLY
 
-REQUIRED SECTIONS:
-1. FACTUAL BACKGROUND - chronological with [EVENT:id] for every fact
-2. PROCEDURAL HISTORY - violations with [VIOLATION:id] citations
-3. LEGAL FRAMEWORK - statutes with [STATUTE:id], verified precedents with [PRECEDENT:id]
-4. GROUNDS FOR APPEAL - arguments with supporting citations
-5. RELIEF SOUGHT - remedies with legal basis
-6. SOURCES USED - complete audit trail of all sources`,
+${courtSafeFormat}
+
+ALL SECTIONS ARE MANDATORY AND MUST BE COMPLETE.
+This is a full appeal brief for court submission.`,
     };
 
     const systemPrompt = `You are a legal drafting AI specializing in Pakistani law. You are generating litigation-grade documents.

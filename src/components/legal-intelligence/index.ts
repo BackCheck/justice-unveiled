@@ -8,3 +8,4 @@ export { CaseLegalTab } from "./CaseLegalTab";
 export { VerifyPrecedentDialog } from "./VerifyPrecedentDialog";
 export { SourcesUsedPanel } from "./SourcesUsedPanel";
 export { UnverifiedWarningDialog } from "./UnverifiedWarningDialog";
+export { CiteCheckIndicator } from "./CiteCheckIndicator";
