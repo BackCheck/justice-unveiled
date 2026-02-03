@@ -23,6 +23,12 @@ export interface CaseLawPrecedent {
   key_principles: string[] | null;
   related_statutes: string[] | null;
   is_landmark: boolean;
+  // Verification fields for litigation-grade citations
+  source_url: string | null;
+  verified: boolean;
+  verified_by: string | null;
+  verified_at: string | null;
+  notes: string | null;
   created_at: string;
 }
 
@@ -99,6 +105,22 @@ export interface AppealSummary {
   reviewed_by: string | null;
   created_at: string;
   updated_at: string;
+}
+
+// Citation tracking for AI-generated summaries
+export interface SummaryCitation {
+  type: 'statute' | 'precedent' | 'event' | 'violation';
+  id: string;
+  reference: string; // e.g., "PPC §420" or "2019 SCMR 123"
+  description: string;
+  verified?: boolean; // For precedents
+}
+
+export interface CitedSources {
+  statutes: SummaryCitation[];
+  precedents: SummaryCitation[];
+  events: SummaryCitation[];
+  violations: SummaryCitation[];
 }
 
 export interface LegalIntelligenceStats {

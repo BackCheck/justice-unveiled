@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Gavel, Search, Plus, Check, Star, Calendar } from "lucide-react";
+import { Gavel, Search, Plus, Check, Star, Calendar, AlertTriangle, ExternalLink, ShieldCheck } from "lucide-react";
 import { useCaseLawPrecedents, useLinkPrecedent, useCasePrecedentLinks } from "@/hooks/useLegalIntelligence";
 
 interface CaseLawPanelProps {
@@ -59,7 +59,11 @@ export const CaseLawPanel = ({ caseId }: CaseLawPanelProps) => {
                 return (
                   <div
                     key={precedent.id}
-                    className="p-3 rounded-lg border border-border/50 hover:bg-accent/20 transition-colors space-y-2"
+                    className={`p-3 rounded-lg border transition-colors space-y-2 ${
+                      precedent.verified 
+                        ? "border-green-500/30 bg-green-500/5 hover:bg-green-500/10" 
+                        : "border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10"
+                    }`}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
@@ -69,6 +73,18 @@ export const CaseLawPanel = ({ caseId }: CaseLawPanelProps) => {
                             <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/20 h-5">
                               <Star className="h-3 w-3 mr-1" />
                               Landmark
+                            </Badge>
+                          )}
+                          {/* Verification Badge */}
+                          {precedent.verified ? (
+                            <Badge className="bg-green-500/10 text-green-500 border-green-500/20 h-5">
+                              <ShieldCheck className="h-3 w-3 mr-1" />
+                              Verified
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/20 h-5">
+                              <AlertTriangle className="h-3 w-3 mr-1" />
+                              Unverified – do not cite
                             </Badge>
                           )}
                         </div>
@@ -83,6 +99,20 @@ export const CaseLawPanel = ({ caseId }: CaseLawPanelProps) => {
                                 <Calendar className="h-3 w-3" />
                                 {precedent.year}
                               </span>
+                            </>
+                          )}
+                          {precedent.source_url && (
+                            <>
+                              <span>•</span>
+                              <a 
+                                href={precedent.source_url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1 text-primary hover:underline"
+                              >
+                                <ExternalLink className="h-3 w-3" />
+                                Source
+                              </a>
                             </>
                           )}
                         </div>
@@ -127,6 +157,18 @@ export const CaseLawPanel = ({ caseId }: CaseLawPanelProps) => {
                           </Badge>
                         )}
                       </div>
+                    )}
+
+                    {/* Verification details */}
+                    {precedent.verified && precedent.verified_at && (
+                      <p className="text-xs text-green-500/70">
+                        Verified {new Date(precedent.verified_at).toLocaleDateString()}
+                      </p>
+                    )}
+                    {precedent.notes && (
+                      <p className="text-xs text-muted-foreground italic">
+                        Note: {precedent.notes}
+                      </p>
                     )}
                   </div>
                 );

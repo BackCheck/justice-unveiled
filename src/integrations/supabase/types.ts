@@ -167,8 +167,13 @@ export type Database = {
           is_landmark: boolean | null
           jurisdiction: string
           key_principles: string[] | null
+          notes: string | null
           related_statutes: string[] | null
+          source_url: string | null
           summary: string | null
+          verified: boolean | null
+          verified_at: string | null
+          verified_by: string | null
           year: number | null
         }
         Insert: {
@@ -180,8 +185,13 @@ export type Database = {
           is_landmark?: boolean | null
           jurisdiction: string
           key_principles?: string[] | null
+          notes?: string | null
           related_statutes?: string[] | null
+          source_url?: string | null
           summary?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
+          verified_by?: string | null
           year?: number | null
         }
         Update: {
@@ -193,8 +203,13 @@ export type Database = {
           is_landmark?: boolean | null
           jurisdiction?: string
           key_principles?: string[] | null
+          notes?: string | null
           related_statutes?: string[] | null
+          source_url?: string | null
           summary?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
+          verified_by?: string | null
           year?: number | null
         }
         Relationships: []
