@@ -174,6 +174,8 @@ export type Database = {
           related_statutes: string[] | null
           source_url: string | null
           summary: string | null
+          updated_at: string | null
+          updated_by: string | null
           verified: boolean | null
           verified_at: string | null
           verified_by: string | null
@@ -192,6 +194,8 @@ export type Database = {
           related_statutes?: string[] | null
           source_url?: string | null
           summary?: string | null
+          updated_at?: string | null
+          updated_by?: string | null
           verified?: boolean | null
           verified_at?: string | null
           verified_by?: string | null
@@ -210,6 +214,8 @@ export type Database = {
           related_statutes?: string[] | null
           source_url?: string | null
           summary?: string | null
+          updated_at?: string | null
+          updated_by?: string | null
           verified?: boolean | null
           verified_at?: string | null
           verified_by?: string | null
