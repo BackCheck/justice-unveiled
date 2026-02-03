@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Switch } from "@/components/ui/switch";
 import { 
   FileText, 
   Sparkles, 
@@ -20,16 +20,15 @@ import {
   Save,
   BookOpen,
   AlertTriangle,
-  ChevronDown,
-  Scale,
-  Gavel,
-  Calendar,
-  AlertCircle
+  ShieldCheck,
+  FileWarning
 } from "lucide-react";
 import { useAppealSummaries, useAddAppealSummary, useUpdateAppealSummary } from "@/hooks/useLegalIntelligence";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import type { AppealSummary, CitedSources, SummaryCitation, SourcesJson } from "@/types/legal-intelligence";
+import { SourcesUsedPanel } from "./SourcesUsedPanel";
+import { UnverifiedWarningDialog } from "./UnverifiedWarningDialog";
+import type { AppealSummary, CitedSources, SourcesJson } from "@/types/legal-intelligence";
 
 interface AppealSummaryGeneratorProps {
   caseId: string;
@@ -41,6 +40,7 @@ interface GenerationResult {
   sourcesUsed?: CitedSources;
   sourcesJson?: SourcesJson;
   unverifiedPrecedentsCount?: number;
+  includesUnverified?: boolean;
 }
 
 export const AppealSummaryGenerator = ({ caseId, caseTitle }: AppealSummaryGeneratorProps) => {
@@ -51,6 +51,12 @@ export const AppealSummaryGenerator = ({ caseId, caseTitle }: AppealSummaryGener
   const [showSourcesPanel, setShowSourcesPanel] = useState(false);
   const [editingSummary, setEditingSummary] = useState<AppealSummary | null>(null);
   const [editContent, setEditContent] = useState("");
+  
+  // Verified-only toggle state
+  const [includeUnverified, setIncludeUnverified] = useState(false);
+  const [showUnverifiedWarning, setShowUnverifiedWarning] = useState(false);
+  const [pendingGenerationType, setPendingGenerationType] = useState<AppealSummary["summary_type"] | null>(null);
+  
   const [newSummary, setNewSummary] = useState({
     title: "",
     summary_type: "factual" as AppealSummary["summary_type"],
@@ -64,25 +70,58 @@ export const AppealSummaryGenerator = ({ caseId, caseTitle }: AppealSummaryGener
   const draftSummaries = summaries?.filter((s) => !s.is_finalized) || [];
   const finalizedSummaries = summaries?.filter((s) => s.is_finalized) || [];
 
-  const handleGenerateAI = async (type: AppealSummary["summary_type"]) => {
+  // Handle generation with verified-only check
+  const handleGenerateClick = (type: AppealSummary["summary_type"]) => {
+    if (includeUnverified) {
+      // Show warning dialog before proceeding
+      setPendingGenerationType(type);
+      setShowUnverifiedWarning(true);
+    } else {
+      // Proceed with verified-only generation
+      executeGeneration(type, false);
+    }
+  };
+
+  const handleConfirmUnverified = () => {
+    if (pendingGenerationType) {
+      executeGeneration(pendingGenerationType, true);
+    }
+    setShowUnverifiedWarning(false);
+    setPendingGenerationType(null);
+  };
+
+  const handleCancelUnverified = () => {
+    setShowUnverifiedWarning(false);
+    setPendingGenerationType(null);
+    setIncludeUnverified(false);
+  };
+
+  const executeGeneration = async (type: AppealSummary["summary_type"], withUnverified: boolean) => {
     setIsGenerating(true);
     setGeneratingType(type);
     setLastGenerationResult(null);
     
     try {
       const { data, error } = await supabase.functions.invoke("generate-appeal-summary", {
-        body: { caseId, summaryType: type, caseTitle, includeUnverifiedPrecedents: false },
+        body: { caseId, summaryType: type, caseTitle, includeUnverifiedPrecedents: withUnverified },
       });
 
       if (error) throw error;
 
       if (data?.content) {
+        // Add DRAFT watermark if includes unverified
+        let finalContent = data.content;
+        if (withUnverified) {
+          finalContent = `> ⚠️ **DRAFT – Contains Unverified Authorities (Do Not File)**\n>\n> This summary includes unverified case law precedents and is intended for internal drafting purposes only.\n\n---\n\n${data.content}`;
+        }
+
         // Store generation result for display
         setLastGenerationResult({
-          content: data.content,
+          content: finalContent,
           sourcesUsed: data.sourcesUsed,
           sourcesJson: data.sourcesJson,
           unverifiedPrecedentsCount: data.unverifiedPrecedentsCount,
+          includesUnverified: withUnverified,
         });
         setShowSourcesPanel(true);
 
@@ -90,18 +129,24 @@ export const AppealSummaryGenerator = ({ caseId, caseTitle }: AppealSummaryGener
         addSummary.mutate(
           {
             case_id: caseId,
-            title: data.title || `${type.charAt(0).toUpperCase() + type.slice(1)} Summary`,
+            title: withUnverified 
+              ? `[DRAFT] ${data.title || `${type.charAt(0).toUpperCase() + type.slice(1)} Summary`}`
+              : data.title || `${type.charAt(0).toUpperCase() + type.slice(1)} Summary`,
             summary_type: type,
-            content: data.content,
+            content: finalContent,
             ai_generated: true,
             sources_json: data.sourcesJson,
           },
           {
             onSuccess: () => {
-              const warningMsg = data.unverifiedPrecedentsCount > 0 
-                ? ` (${data.unverifiedPrecedentsCount} unverified precedents excluded)`
-                : "";
-              toast.success(`AI summary generated with citation audit trail${warningMsg}`);
+              if (withUnverified) {
+                toast.warning("DRAFT summary generated with unverified precedents - do not file in court");
+              } else {
+                const warningMsg = data.unverifiedPrecedentsCount > 0 
+                  ? ` (${data.unverifiedPrecedentsCount} unverified precedents excluded)`
+                  : "";
+                toast.success(`AI summary generated with citation audit trail${warningMsg}`);
+              }
             },
           }
         );
@@ -179,48 +224,7 @@ export const AppealSummaryGenerator = ({ caseId, caseTitle }: AppealSummaryGener
     }
   };
 
-  // Component to display sources used
-  const SourcesList = ({ sources, title, icon: Icon }: { 
-    sources: SummaryCitation[]; 
-    title: string;
-    icon: React.ElementType;
-  }) => {
-    if (!sources || sources.length === 0) return null;
-    
-    return (
-      <div className="space-y-2">
-        <h4 className="text-sm font-medium flex items-center gap-2">
-          <Icon className="h-4 w-4" />
-          {title} ({sources.length})
-        </h4>
-        <div className="space-y-1">
-          {sources.map((source, idx) => (
-            <div 
-              key={idx} 
-              className={`text-xs p-2 rounded border ${
-                source.verified === false 
-                  ? "bg-amber-500/10 border-amber-500/30" 
-                  : "bg-muted/50 border-border/50"
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-primary">{source.reference}</span>
-                {source.verified !== undefined && (
-                  <Badge 
-                    variant="outline" 
-                    className={source.verified ? "text-green-500" : "text-amber-500"}
-                  >
-                    {source.verified ? "Verified" : "Unverified"}
-                  </Badge>
-                )}
-              </div>
-              <p className="text-muted-foreground mt-1 line-clamp-1">{source.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
+  // Removed inline SourcesList - now using SourcesUsedPanel component
 
   const SummaryCard = ({ summary }: { summary: AppealSummary }) => (
     <div className="p-4 rounded-lg border border-border/50 space-y-3">
@@ -348,6 +352,34 @@ export const AppealSummaryGenerator = ({ caseId, caseTitle }: AppealSummaryGener
           </div>
         </div>
         
+        {/* Verified-only toggle */}
+        <div className="flex items-center justify-between mt-4 p-3 rounded-lg border border-border/50 bg-muted/30">
+          <div className="flex items-center gap-3">
+            <div className={`p-2 rounded-full ${includeUnverified ? "bg-amber-500/20" : "bg-primary/10"}`}>
+              {includeUnverified ? (
+                <FileWarning className="h-4 w-4 text-amber-500" />
+              ) : (
+                <ShieldCheck className="h-4 w-4 text-primary" />
+              )}
+            </div>
+            <div>
+              <Label htmlFor="include-unverified" className="text-sm font-medium cursor-pointer">
+                {includeUnverified ? "Including unverified precedents" : "Verified precedents only"}
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                {includeUnverified 
+                  ? "Generated summaries will be marked as DRAFT" 
+                  : "Safe for court filing - only verified case law cited"}
+              </p>
+            </div>
+          </div>
+          <Switch
+            id="include-unverified"
+            checked={includeUnverified}
+            onCheckedChange={setIncludeUnverified}
+          />
+        </div>
+        
         {/* AI Generation Buttons */}
         <div className="flex flex-wrap gap-2 mt-4">
           <div className="text-sm text-muted-foreground w-full flex items-center gap-2">
@@ -359,7 +391,7 @@ export const AppealSummaryGenerator = ({ caseId, caseTitle }: AppealSummaryGener
               key={type}
               size="sm"
               variant="outline"
-              onClick={() => handleGenerateAI(type as AppealSummary["summary_type"])}
+              onClick={() => handleGenerateClick(type as AppealSummary["summary_type"])}
               disabled={isGenerating}
               className={getTypeColor(type)}
             >
@@ -373,55 +405,40 @@ export const AppealSummaryGenerator = ({ caseId, caseTitle }: AppealSummaryGener
           ))}
         </div>
 
-        {/* Citation warning */}
-        <div className="mt-3 p-2 rounded bg-amber-500/10 border border-amber-500/30 text-xs text-amber-600 dark:text-amber-400 flex items-start gap-2">
+        {/* Citation warning - changes based on toggle */}
+        <div className={`mt-3 p-2 rounded text-xs flex items-start gap-2 ${
+          includeUnverified 
+            ? "bg-destructive/10 border border-destructive/30 text-destructive" 
+            : "bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400"
+        }`}>
           <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
-          <span>AI summaries only cite <strong>verified precedents</strong>. Unverified case law is excluded to prevent citation errors in court.</span>
+          {includeUnverified ? (
+            <span><strong>Warning:</strong> Summaries will include unverified precedents and be marked as DRAFT. Do not file in court.</span>
+          ) : (
+            <span>AI summaries only cite <strong>verified precedents</strong>. Unverified case law is excluded to prevent citation errors in court.</span>
+          )}
         </div>
 
         {/* Sources Used Panel (shows after generation) */}
         {lastGenerationResult?.sourcesUsed && (
-          <Collapsible open={showSourcesPanel} onOpenChange={setShowSourcesPanel} className="mt-4">
-            <CollapsibleTrigger asChild>
-              <Button variant="outline" size="sm" className="w-full justify-between">
-                <span className="flex items-center gap-2">
-                  <Scale className="h-4 w-4" />
-                  Sources Used in Last Generation
-                </span>
-                <ChevronDown className={`h-4 w-4 transition-transform ${showSourcesPanel ? "rotate-180" : ""}`} />
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="mt-3 p-3 rounded-lg border border-border/50 bg-muted/30 space-y-4">
-              {lastGenerationResult.unverifiedPrecedentsCount && lastGenerationResult.unverifiedPrecedentsCount > 0 && (
-                <div className="p-2 rounded bg-amber-500/10 border border-amber-500/30 text-xs flex items-center gap-2">
-                  <AlertCircle className="h-4 w-4 text-amber-500" />
-                  <span>{lastGenerationResult.unverifiedPrecedentsCount} unverified precedent(s) were excluded from citations</span>
-                </div>
-              )}
-              
-              <SourcesList 
-                sources={lastGenerationResult.sourcesUsed.statutes} 
-                title="Statutes Cited" 
-                icon={Scale}
-              />
-              <SourcesList 
-                sources={lastGenerationResult.sourcesUsed.precedents} 
-                title="Precedents Cited (Verified Only)" 
-                icon={Gavel}
-              />
-              <SourcesList 
-                sources={lastGenerationResult.sourcesUsed.events} 
-                title="Timeline Events Referenced" 
-                icon={Calendar}
-              />
-              <SourcesList 
-                sources={lastGenerationResult.sourcesUsed.violations} 
-                title="Violations Referenced" 
-                icon={AlertTriangle}
-              />
-            </CollapsibleContent>
-          </Collapsible>
+          <SourcesUsedPanel
+            sourcesUsed={lastGenerationResult.sourcesUsed}
+            sourcesJson={lastGenerationResult.sourcesJson}
+            unverifiedPrecedentsCount={lastGenerationResult.unverifiedPrecedentsCount}
+            isOpen={showSourcesPanel}
+            onOpenChange={setShowSourcesPanel}
+            includesUnverified={lastGenerationResult.includesUnverified}
+            caseId={caseId}
+          />
         )}
+
+        {/* Warning dialog for unverified */}
+        <UnverifiedWarningDialog
+          open={showUnverifiedWarning}
+          onOpenChange={setShowUnverifiedWarning}
+          onConfirm={handleConfirmUnverified}
+          onCancel={handleCancelUnverified}
+        />
       </CardHeader>
       <CardContent>
         {isLoading ? (
