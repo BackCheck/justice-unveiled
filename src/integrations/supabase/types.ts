@@ -180,6 +180,158 @@ export type Database = {
           },
         ]
       }
+      compliance_checks: {
+        Row: {
+          actual_action: string | null
+          ai_confidence: number | null
+          ai_detected: boolean | null
+          case_id: string | null
+          checked_at: string | null
+          checked_by: string | null
+          created_at: string
+          expected_action: string | null
+          id: string
+          manual_override: boolean | null
+          notes: string | null
+          requirement_id: string
+          status: string
+          supporting_event_id: string | null
+          supporting_evidence_id: string | null
+          updated_at: string
+          violation_details: string | null
+        }
+        Insert: {
+          actual_action?: string | null
+          ai_confidence?: number | null
+          ai_detected?: boolean | null
+          case_id?: string | null
+          checked_at?: string | null
+          checked_by?: string | null
+          created_at?: string
+          expected_action?: string | null
+          id?: string
+          manual_override?: boolean | null
+          notes?: string | null
+          requirement_id: string
+          status?: string
+          supporting_event_id?: string | null
+          supporting_evidence_id?: string | null
+          updated_at?: string
+          violation_details?: string | null
+        }
+        Update: {
+          actual_action?: string | null
+          ai_confidence?: number | null
+          ai_detected?: boolean | null
+          case_id?: string | null
+          checked_at?: string | null
+          checked_by?: string | null
+          created_at?: string
+          expected_action?: string | null
+          id?: string
+          manual_override?: boolean | null
+          notes?: string | null
+          requirement_id?: string
+          status?: string
+          supporting_event_id?: string | null
+          supporting_evidence_id?: string | null
+          updated_at?: string
+          violation_details?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compliance_checks_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_checks_requirement_id_fkey"
+            columns: ["requirement_id"]
+            isOneToOne: false
+            referencedRelation: "procedural_requirements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_checks_supporting_event_id_fkey"
+            columns: ["supporting_event_id"]
+            isOneToOne: false
+            referencedRelation: "extracted_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_checks_supporting_evidence_id_fkey"
+            columns: ["supporting_evidence_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_uploads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      compliance_violations: {
+        Row: {
+          case_id: string | null
+          compliance_check_id: string | null
+          description: string
+          flagged_at: string
+          flagged_by: string | null
+          id: string
+          legal_consequence: string | null
+          remediation_possible: boolean | null
+          resolution_notes: string | null
+          resolved: boolean | null
+          severity: string
+          title: string
+          violation_type: string
+        }
+        Insert: {
+          case_id?: string | null
+          compliance_check_id?: string | null
+          description: string
+          flagged_at?: string
+          flagged_by?: string | null
+          id?: string
+          legal_consequence?: string | null
+          remediation_possible?: boolean | null
+          resolution_notes?: string | null
+          resolved?: boolean | null
+          severity?: string
+          title: string
+          violation_type: string
+        }
+        Update: {
+          case_id?: string | null
+          compliance_check_id?: string | null
+          description?: string
+          flagged_at?: string
+          flagged_by?: string | null
+          id?: string
+          legal_consequence?: string | null
+          remediation_possible?: boolean | null
+          resolution_notes?: string | null
+          resolved?: boolean | null
+          severity?: string
+          title?: string
+          violation_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compliance_violations_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_violations_compliance_check_id_fkey"
+            columns: ["compliance_check_id"]
+            isOneToOne: false
+            referencedRelation: "compliance_checks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       document_analysis_jobs: {
         Row: {
           completed_at: string | null
@@ -683,6 +835,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      procedural_requirements: {
+        Row: {
+          created_at: string
+          id: string
+          is_mandatory: boolean | null
+          legal_framework: string
+          legal_reference: string
+          requirement_category: string
+          requirement_description: string | null
+          requirement_name: string
+          severity_if_violated: string | null
+          statutory_timeline: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_mandatory?: boolean | null
+          legal_framework: string
+          legal_reference: string
+          requirement_category: string
+          requirement_description?: string | null
+          requirement_name: string
+          severity_if_violated?: string | null
+          statutory_timeline?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_mandatory?: boolean | null
+          legal_framework?: string
+          legal_reference?: string
+          requirement_category?: string
+          requirement_description?: string | null
+          requirement_name?: string
+          severity_if_violated?: string | null
+          statutory_timeline?: string | null
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
