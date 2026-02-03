@@ -1,6 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import {
   Clock,
@@ -8,10 +7,9 @@ import {
   FileSearch,
   Brain,
   Shield,
-  Scale,
-  Upload,
   BarChart3,
   ArrowRight,
+  Compass,
 } from "lucide-react";
 import { usePlatformStats } from "@/hooks/usePlatformStats";
 
@@ -20,35 +18,43 @@ export const QuickNavigationGrid = () => {
 
   const modules = [
     {
-      title: "Interactive Timeline",
-      description: `${stats.totalEvents} documented events`,
+      title: "Timeline",
+      description: `${stats.totalEvents} events`,
       icon: Clock,
       href: "/",
-      color: "text-primary bg-primary/10 group-hover:bg-primary/20",
+      color: "text-primary",
+      bgColor: "bg-primary/10",
+      hoverBg: "group-hover:bg-primary/20",
       badge: null,
     },
     {
-      title: "Entity Network",
-      description: `${stats.totalEntities} entities mapped`,
+      title: "Network",
+      description: `${stats.totalEntities} entities`,
       icon: Network,
       href: "/network",
-      color: "text-chart-2 bg-chart-2/10 group-hover:bg-chart-2/20",
+      color: "text-chart-2",
+      bgColor: "bg-chart-2/10",
+      hoverBg: "group-hover:bg-chart-2/20",
       badge: stats.aiExtractedEntities > 0 ? `+${stats.aiExtractedEntities} AI` : null,
     },
     {
-      title: "Evidence Matrix",
-      description: `${stats.totalSources} verified sources`,
+      title: "Evidence",
+      description: `${stats.totalSources} sources`,
       icon: FileSearch,
       href: "/evidence",
-      color: "text-chart-4 bg-chart-4/10 group-hover:bg-chart-4/20",
+      color: "text-chart-4",
+      bgColor: "bg-chart-4/10",
+      hoverBg: "group-hover:bg-chart-4/20",
       badge: null,
     },
     {
       title: "AI Analyzer",
-      description: `${stats.documentsAnalyzed} docs analyzed`,
+      description: `${stats.documentsAnalyzed} analyzed`,
       icon: Brain,
       href: "/analyze",
-      color: "text-amber-500 bg-amber-500/10 group-hover:bg-amber-500/20",
+      color: "text-amber-500",
+      bgColor: "bg-amber-500/10",
+      hoverBg: "group-hover:bg-amber-500/20",
       badge: "AI",
     },
     {
@@ -56,48 +62,56 @@ export const QuickNavigationGrid = () => {
       description: `${stats.internationalFrameworks} frameworks`,
       icon: Shield,
       href: "/international-analysis",
-      color: "text-orange-500 bg-orange-500/10 group-hover:bg-orange-500/20",
+      color: "text-orange-500",
+      bgColor: "bg-orange-500/10",
+      hoverBg: "group-hover:bg-orange-500/20",
       badge: null,
     },
     {
-      title: "Investigations Hub",
-      description: "Threat analysis tools",
+      title: "Investigations",
+      description: "Analysis tools",
       icon: BarChart3,
       href: "/investigations",
-      color: "text-purple-500 bg-purple-500/10 group-hover:bg-purple-500/20",
+      color: "text-purple-500",
+      bgColor: "bg-purple-500/10",
+      hoverBg: "group-hover:bg-purple-500/20",
       badge: null,
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-      {modules.map((module, index) => {
-        const Icon = module.icon;
-        return (
-          <Link key={module.title} to={module.href}>
-            <Card 
-              className="glass-card card-hover cursor-pointer group h-full opacity-0 animate-fade-in-up"
-              style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'forwards' }}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div className={`p-2 rounded-lg ${module.color} transition-colors`}>
-                    <Icon className="w-4 h-4" />
+    <div>
+      <div className="flex items-center gap-2 mb-4">
+        <Compass className="w-4 h-4 text-muted-foreground" />
+        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Quick Navigation</h2>
+      </div>
+      
+      <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+        {modules.map((module, index) => {
+          const Icon = module.icon;
+          return (
+            <Link key={module.title} to={module.href}>
+              <Card 
+                className="glass-card card-hover cursor-pointer group h-full opacity-0 animate-fade-in-up border-transparent hover:border-primary/20"
+                style={{ animationDelay: `${index * 0.03}s`, animationFillMode: 'forwards' }}
+              >
+                <CardContent className="p-3 flex flex-col items-center text-center">
+                  <div className={`p-2.5 rounded-lg ${module.bgColor} ${module.hoverBg} transition-all mb-2`}>
+                    <Icon className={`w-5 h-5 ${module.color}`} />
                   </div>
+                  <h3 className="text-sm font-medium text-foreground/90 mb-0.5">{module.title}</h3>
+                  <p className="text-[10px] text-muted-foreground">{module.description}</p>
                   {module.badge && (
-                    <Badge variant="secondary" className="text-[9px] px-1.5">
+                    <Badge variant="secondary" className="text-[9px] px-1.5 mt-1.5 bg-amber-500/10 text-amber-600 border-0">
                       {module.badge}
                     </Badge>
                   )}
-                </div>
-                <h3 className="text-sm font-semibold mb-1">{module.title}</h3>
-                <p className="text-[10px] text-muted-foreground line-clamp-1">{module.description}</p>
-                <ArrowRight className="w-3 h-3 mt-2 text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
-              </CardContent>
-            </Card>
-          </Link>
-        );
-      })}
+                </CardContent>
+              </Card>
+            </Link>
+          );
+        })}
+      </div>
     </div>
   );
 };

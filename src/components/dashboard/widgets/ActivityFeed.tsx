@@ -116,14 +116,16 @@ export const ActivityFeed = () => {
             <Activity className="w-4 h-4 text-primary" />
             Recent Activity
           </CardTitle>
-          <Badge variant="secondary" className="text-[10px]">
-            {activities.length} updates
-          </Badge>
+          {activities.length > 0 && (
+            <Badge variant="secondary" className="text-[10px] font-medium">
+              {activities.length} updates
+            </Badge>
+          )}
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <ScrollArea className="h-[280px]">
-          <div className="px-4 pb-4 space-y-1">
+        <ScrollArea className="h-[300px]">
+          <div className="px-4 pb-4 space-y-1.5">
             {activities.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground text-sm">
                 No recent activity
@@ -135,17 +137,17 @@ export const ActivityFeed = () => {
                 return (
                   <div
                     key={activity.id}
-                    className="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors opacity-0 animate-fade-in-up"
-                    style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'forwards' }}
+                    className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-muted/50 transition-colors opacity-0 animate-fade-in-up"
+                    style={{ animationDelay: `${index * 0.04}s`, animationFillMode: 'forwards' }}
                   >
                     <div className={`p-1.5 rounded-lg ${colorClass} flex-shrink-0`}>
-                      <Icon className="w-3 h-3" />
+                      <Icon className="w-3.5 h-3.5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{activity.title}</p>
-                      <p className="text-[10px] text-muted-foreground">{activity.description}</p>
+                      <p className="text-sm font-medium text-foreground/90 truncate">{activity.title}</p>
+                      <p className="text-[11px] text-muted-foreground">{activity.description}</p>
                     </div>
-                    <span className="text-[10px] text-muted-foreground flex-shrink-0">
+                    <span className="text-[10px] text-muted-foreground flex-shrink-0 whitespace-nowrap">
                       {formatDistanceToNow(new Date(activity.time), { addSuffix: true })}
                     </span>
                   </div>
