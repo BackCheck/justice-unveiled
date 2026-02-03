@@ -132,8 +132,8 @@ const Landing = () => {
             {/* Subtitle */}
             <ScrollReveal delay={300}>
               <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-                An open-source investigative platform transforming documented facts into actionable intelligence 
-                for human rights monitoring and anti-corruption efforts.
+                A litigation-grade investigative platform with AI-powered analysis, verified case law mapping, 
+                and court-ready audit trails for human rights monitoring and anti-corruption efforts.
               </p>
             </ScrollReveal>
 
@@ -193,10 +193,11 @@ const Landing = () => {
               
               <ul className="space-y-3 mb-8">
                 {[
-                  `${fullStats.totalSources}+ verified sources analyzed`,
+                  `${fullStats.totalSources}+ verified sources with audit trails`,
                   `${fullStats.totalEvents}+ timeline events documented`,
                   `${fullStats.totalEntities}+ entities mapped with relationships`,
-                  "International rights framework audit (6 frameworks)"
+                  `${fullStats.verifiedPrecedents} verified case law precedents`,
+                  "Litigation-grade AI summaries with cite-checking"
                 ].map((item, index) => (
                   <li 
                     key={item} 
@@ -230,17 +231,17 @@ const Landing = () => {
                         <FileSearch className="w-6 h-6 text-primary animate-pulse" />
                       </div>
                       <div>
-                        <h4 className="font-semibold">X24 Intelligence Briefing</h4>
-                        <p className="text-sm text-muted-foreground">Compiled from 48 verified sources</p>
+                        <h4 className="font-semibold">Legal Intelligence Suite</h4>
+                        <p className="text-sm text-muted-foreground">Litigation-grade with full audit trails</p>
                       </div>
                     </div>
                     
                     <div className="space-y-3">
                       {[
+                        { label: "Verified Case Law", severity: "verified" },
+                        { label: "Cite-Check System", severity: "active" },
                         { label: "Forensic Evidence", severity: "critical" },
-                        { label: "Witness Statements", severity: "high" },
-                        { label: "Financial Sabotage", severity: "critical" },
-                        { label: "State Surveillance", severity: "medium" }
+                        { label: "Procedural Violations", severity: "high" }
                       ].map((item, index) => (
                         <div 
                           key={item.label} 
@@ -258,7 +259,8 @@ const Landing = () => {
                               "text-xs transition-all duration-300 hover:scale-105",
                               item.severity === "critical" && "bg-destructive/10 text-destructive border-destructive/30 animate-pulse",
                               item.severity === "high" && "bg-chart-4/10 text-chart-4 border-chart-4/30",
-                              item.severity === "medium" && "bg-chart-5/10 text-chart-5 border-chart-5/30"
+                              item.severity === "verified" && "bg-chart-2/10 text-chart-2 border-chart-2/30",
+                              item.severity === "active" && "bg-primary/10 text-primary border-primary/30"
                             )}
                           >
                             {item.severity}

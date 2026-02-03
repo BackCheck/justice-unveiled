@@ -10,7 +10,10 @@ import {
   Sparkles,
   Target,
   Scale,
-  Workflow
+  Workflow,
+  ShieldCheck,
+  Gavel,
+  FileCheck
 } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
 import GradientText from "./GradientText";
@@ -28,22 +31,22 @@ const FeatureShowcase = () => {
       stats: ["Events", "Entities", "Discrepancies"]
     },
     {
+      icon: Scale,
+      title: "Legal Intelligence Suite",
+      description: "Litigation-grade case law mapping with verified precedents, statute browser, and AI-generated appeal summaries with full audit trails.",
+      link: "/legal-intelligence",
+      badge: "Court-Ready",
+      color: "chart-2",
+      stats: ["Cite-Check", "Verified Only", "Audit Trail"]
+    },
+    {
       icon: Network,
       title: "Entity Relationship Network",
       description: "Interactive force-directed graphs showing connections between individuals, organizations, and institutions with role analysis.",
       link: "/network",
       badge: "Interactive",
-      color: "chart-2",
-      stats: ["Force Graph", "Clustering", "Path Analysis"]
-    },
-    {
-      icon: FileSearch,
-      title: "Evidence Matrix",
-      description: "Cross-reference sources and documents to timeline events with reliability tracking and verification status.",
-      link: "/evidence",
-      badge: "Verified",
       color: "chart-4",
-      stats: ["Sources", "Documents", "Links"]
+      stats: ["Force Graph", "Clustering", "Path Analysis"]
     },
     {
       icon: Globe,
@@ -58,6 +61,24 @@ const FeatureShowcase = () => {
 
   const additionalFeatures = [
     {
+      icon: ShieldCheck,
+      title: "Verified Precedents",
+      description: "Immutable case law with admin-only verification controls",
+      link: "/legal-intelligence"
+    },
+    {
+      icon: FileCheck,
+      title: "Cite-Check System",
+      description: "Automated validation before export prevents filing errors",
+      link: "/legal-intelligence"
+    },
+    {
+      icon: Gavel,
+      title: "Compliance Tracking",
+      description: "Monitor procedural violations and SOP adherence",
+      link: "/compliance"
+    },
+    {
       icon: Target,
       title: "Threat Profiler",
       description: "Generate adversary profiles and behavioral analysis",
@@ -67,12 +88,6 @@ const FeatureShowcase = () => {
       icon: Workflow,
       title: "Pattern Detection",
       description: "AI-powered pattern recognition across timeline events",
-      link: "/investigations"
-    },
-    {
-      icon: Scale,
-      title: "Risk Assessment",
-      description: "Comprehensive threat and procedural risk scoring",
       link: "/investigations"
     },
     {
@@ -196,7 +211,7 @@ const FeatureShowcase = () => {
 
         {/* Additional Features - Compact row */}
         <ScrollReveal delay={400}>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {additionalFeatures.map((feature, index) => (
               <Link key={feature.title} to={feature.link}>
                 <div className={cn(
