@@ -13,6 +13,7 @@ import { FloatingZoomControls } from "./FloatingZoomControls";
 import { FloatingStatsBar } from "./FloatingStatsBar";
 import { EntitySearchBar } from "./EntitySearchBar";
 import { NodeDetailsPanel } from "./NodeDetailsPanel";
+import { PowerNetworkLegend } from "./PowerNetworkLegend";
 import { toast } from "sonner";
 import { 
   Network, Loader2, Bookmark, X, ChevronRight
@@ -193,16 +194,17 @@ export const IntelGraph = () => {
         </div>
       </div>
 
-      {/* Bottom Bar: Legend + Zoom */}
+      {/* Bottom Bar: Legend + Power Network + Zoom */}
       <div className="absolute bottom-4 left-4 right-4 z-20 flex items-end justify-between gap-4 pointer-events-none">
-        {/* Left: Legend */}
-        <div className="pointer-events-auto">
+        {/* Left: Legends */}
+        <div className="pointer-events-auto flex items-end gap-2">
           <FloatingLegend
             activeLayers={activeLayers}
             activeRiskLevels={activeRiskLevels}
             onToggleLayer={handleToggleLayer}
             onToggleRiskLevel={handleToggleRiskLevel}
           />
+          <PowerNetworkLegend className="hidden xl:block" />
         </div>
 
         {/* Right: Zoom Controls */}
