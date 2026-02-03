@@ -20,7 +20,8 @@ import {
   Brain,
   FolderOpen,
   Target,
-  Eye
+  Eye,
+  GitBranch
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -64,6 +65,7 @@ const mainNavItems = [
 ];
 
 const analysisNavItems = [
+  { path: "/reconstruction", label: "Reconstruction", icon: GitBranch },
   { path: "/analyze", label: "AI Analyzer", icon: Brain },
   { path: "/evidence", label: "Evidence Matrix", icon: FileText },
   { path: "/international", label: "International Rights", icon: Scale },
