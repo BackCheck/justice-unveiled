@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useCombinedEntities, CombinedEntity, CombinedConnection } from "./useCombinedEntities";
 import { useExtractedDiscrepancies, useExtractedEvents, ExtractedDiscrepancy, ExtractedEvent } from "./useExtractedEvents";
+import { useEntityRelationships, EntityRelationship } from "./useEntityProfiles";
 import { timelineData } from "@/data/timelineData";
 
 export type NodeType = "person" | "organization" | "event" | "violation" | "location";
@@ -15,6 +16,8 @@ export interface GraphNode {
   category?: string;
   isAIExtracted?: boolean;
   connections: number;
+  influenceScore?: number;
+  roleTags?: string[];
   metadata?: Record<string, any>;
 }
 
@@ -24,6 +27,9 @@ export interface GraphLink {
   type: string;
   strength: number;
   isInferred?: boolean;
+  influenceDirection?: "source_to_target" | "target_to_source" | "bidirectional" | "unknown";
+  influenceWeight?: number;
+  relationshipDates?: { start?: string; end?: string };
 }
 
 export interface GraphStats {
@@ -70,6 +76,7 @@ export const useGraphData = () => {
   const { entities, connections, isLoading: entitiesLoading, aiEntityCount, inferredConnectionCount } = useCombinedEntities();
   const { data: discrepancies, isLoading: discrepanciesLoading } = useExtractedDiscrepancies();
   const { data: extractedEvents, isLoading: eventsLoading } = useExtractedEvents();
+  const { data: relationships, isLoading: relationshipsLoading } = useEntityRelationships();
 
   const graphData = useMemo(() => {
     const nodes: GraphNode[] = [];
@@ -208,6 +215,42 @@ export const useGraphData = () => {
       });
     });
 
+    // Add influence relationships from database
+    (relationships || []).forEach(rel => {
+      // Check if this link already exists
+      const existingLink = links.find(
+        l => (l.source === rel.source_entity_id && l.target === rel.target_entity_id) ||
+             (l.source === rel.target_entity_id && l.target === rel.source_entity_id)
+      );
+      
+      if (!existingLink) {
+        links.push({
+          source: rel.source_entity_id,
+          target: rel.target_entity_id,
+          type: rel.relationship_type,
+          strength: rel.influence_weight,
+          influenceDirection: rel.influence_direction as any,
+          influenceWeight: rel.influence_weight,
+          relationshipDates: {
+            start: rel.relationship_start_date || undefined,
+            end: rel.relationship_end_date || undefined
+          }
+        });
+        
+        // Update connection counts
+        connectionCount[rel.source_entity_id] = (connectionCount[rel.source_entity_id] || 0) + 1;
+        connectionCount[rel.target_entity_id] = (connectionCount[rel.target_entity_id] || 0) + 1;
+      } else {
+        // Enrich existing link with influence data
+        existingLink.influenceDirection = rel.influence_direction as any;
+        existingLink.influenceWeight = rel.influence_weight;
+        existingLink.relationshipDates = {
+          start: rel.relationship_start_date || undefined,
+          end: rel.relationship_end_date || undefined
+        };
+      }
+    });
+
     // Calculate stats
     const stats: GraphStats = {
       totalNodes: nodes.length,
@@ -224,13 +267,13 @@ export const useGraphData = () => {
     };
 
     return { nodes, links, stats };
-  }, [entities, connections, discrepancies, extractedEvents]);
+  }, [entities, connections, discrepancies, extractedEvents, relationships]);
 
   return {
     nodes: graphData.nodes,
     links: graphData.links,
     stats: graphData.stats,
-    isLoading: entitiesLoading || discrepanciesLoading || eventsLoading,
+    isLoading: entitiesLoading || discrepanciesLoading || eventsLoading || relationshipsLoading,
     aiEntityCount,
     inferredConnectionCount
   };

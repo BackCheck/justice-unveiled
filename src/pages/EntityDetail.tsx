@@ -4,12 +4,19 @@ import { DetailPageHeader } from "@/components/detail/DetailPageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Slider } from "@/components/ui/slider";
 import { 
   Users, Building2, Briefcase, Scale, FileText, 
-  Link2, ArrowRight, Sparkles, Network
+  Link2, ArrowRight, Sparkles, Network, TrendingUp
 } from "lucide-react";
-import { entities, connections, Entity, EntityType, EntityConnection, categoryColors } from "@/data/entitiesData";
+import { EntityType, categoryColors } from "@/data/entitiesData";
 import { useCombinedEntities, CombinedEntity, CombinedConnection } from "@/hooks/useCombinedEntities";
+import { useEnhancedEntities, useUpdateEntityProfile } from "@/hooks/useEntityProfiles";
+import { EntityAliasPanel } from "@/components/network/EntityAliasPanel";
+import { InfluenceNetworkPanel } from "@/components/network/InfluenceNetworkPanel";
+import { RoleTagsEditor } from "@/components/network/RoleTagsEditor";
+import { useUserRole } from "@/hooks/useUserRole";
 
 const typeIcons: Record<EntityType, typeof Users> = {
   person: Users,
@@ -38,9 +45,17 @@ const EntityDetail = () => {
   const { entityId } = useParams<{ entityId: string }>();
   const navigate = useNavigate();
   const { entities: combinedEntities, connections: combinedConnections, isLoading } = useCombinedEntities();
+  const { data: enhancedEntities } = useEnhancedEntities();
+  const updateProfile = useUpdateEntityProfile();
+  const { role } = useUserRole();
+  
+  const canEdit = role === "admin" || role === "editor";
 
   // Find entity from combined entities (includes both static and AI-extracted)
   const entity = combinedEntities.find(e => e.id === entityId);
+  
+  // Find enhanced entity data (from database with new fields)
+  const enhancedEntity = enhancedEntities?.find(e => e.id === entityId || `ai-${e.id}` === entityId);
 
   // Get connections for this entity
   const entityConnections = combinedConnections.filter(
@@ -55,6 +70,15 @@ const EntityDetail = () => {
       return other ? { entity: other, connection: conn } : null;
     })
     .filter(Boolean) as { entity: CombinedEntity; connection: CombinedConnection }[];
+  
+  // Handle influence score update
+  const handleInfluenceChange = (value: number[]) => {
+    if (!enhancedEntity) return;
+    updateProfile.mutate({
+      entityId: enhancedEntity.id,
+      updates: { influence_score: value[0] }
+    });
+  };
 
   if (isLoading) {
     return (
@@ -247,6 +271,65 @@ const EntityDetail = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Influence Score */}
+            {enhancedEntity && (
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-primary" />
+                    Influence Score
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-3xl font-bold">{enhancedEntity.influence_score || 0}</span>
+                    <span className="text-sm text-muted-foreground">/100</span>
+                  </div>
+                  <Progress value={enhancedEntity.influence_score || 0} className="h-2" />
+                  {canEdit && (
+                    <div className="pt-2">
+                      <Slider
+                        value={[enhancedEntity.influence_score || 0]}
+                        max={100}
+                        step={5}
+                        onValueCommit={handleInfluenceChange}
+                        disabled={updateProfile.isPending}
+                      />
+                      <p className="text-[10px] text-muted-foreground mt-2">
+                        Adjust influence based on evidence
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Role Tags */}
+            {enhancedEntity && (
+              <RoleTagsEditor
+                entityId={enhancedEntity.id}
+                currentTags={enhancedEntity.role_tags || []}
+                canEdit={canEdit}
+              />
+            )}
+
+            {/* Entity Aliases */}
+            {enhancedEntity && (
+              <EntityAliasPanel
+                entityId={enhancedEntity.id}
+                entityName={entity.name}
+                canEdit={canEdit}
+              />
+            )}
+
+            {/* Influence Network */}
+            {enhancedEntity && (
+              <InfluenceNetworkPanel
+                entityId={enhancedEntity.id}
+                entityName={entity.name}
+              />
+            )}
+
             {/* Quick Actions */}
             <Card>
               <CardHeader>
@@ -283,8 +366,8 @@ const EntityDetail = () => {
                   })}
                   {entityConnections.filter(c => c.isInferred).length > 0 && (
                     <div className="flex items-center justify-between pt-2 border-t border-border">
-                      <span className="text-sm text-amber-600">AI-Inferred</span>
-                      <Badge variant="outline" className="border-amber-500 text-amber-600">
+                      <span className="text-sm text-accent-foreground">AI-Inferred</span>
+                      <Badge variant="outline" className="border-accent text-accent-foreground">
                         {entityConnections.filter(c => c.isInferred).length}
                       </Badge>
                     </div>

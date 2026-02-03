@@ -166,6 +166,98 @@ export type Database = {
           },
         ]
       }
+      entity_aliases: {
+        Row: {
+          alias_type: string
+          alias_value: string
+          created_at: string | null
+          entity_id: string
+          id: string
+          is_primary: boolean | null
+          source: string | null
+          verified: boolean | null
+        }
+        Insert: {
+          alias_type: string
+          alias_value: string
+          created_at?: string | null
+          entity_id: string
+          id?: string
+          is_primary?: boolean | null
+          source?: string | null
+          verified?: boolean | null
+        }
+        Update: {
+          alias_type?: string
+          alias_value?: string
+          created_at?: string | null
+          entity_id?: string
+          id?: string
+          is_primary?: boolean | null
+          source?: string | null
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
+      entity_relationships: {
+        Row: {
+          case_id: string | null
+          created_at: string | null
+          description: string | null
+          evidence_sources: string[] | null
+          id: string
+          influence_direction: string | null
+          influence_weight: number | null
+          is_verified: boolean | null
+          relationship_end_date: string | null
+          relationship_start_date: string | null
+          relationship_type: string
+          source_entity_id: string
+          target_entity_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          case_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          evidence_sources?: string[] | null
+          id?: string
+          influence_direction?: string | null
+          influence_weight?: number | null
+          is_verified?: boolean | null
+          relationship_end_date?: string | null
+          relationship_start_date?: string | null
+          relationship_type: string
+          source_entity_id: string
+          target_entity_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          case_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          evidence_sources?: string[] | null
+          id?: string
+          influence_direction?: string | null
+          influence_weight?: number | null
+          is_verified?: boolean | null
+          relationship_end_date?: string | null
+          relationship_start_date?: string | null
+          relationship_type?: string
+          source_entity_id?: string
+          target_entity_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entity_relationships_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       evidence_uploads: {
         Row: {
           case_id: string | null
@@ -275,39 +367,66 @@ export type Database = {
       }
       extracted_entities: {
         Row: {
+          aliases: Json | null
           case_id: string | null
           category: string | null
+          contact_info: Json | null
           created_at: string
           description: string | null
           entity_type: string
+          first_seen_date: string | null
           id: string
+          influence_score: number | null
+          last_seen_date: string | null
           name: string
+          organization_affiliation: string | null
+          position_title: string | null
+          profile_image_url: string | null
           related_event_ids: string[] | null
           role: string | null
+          role_tags: string[] | null
           source_upload_id: string | null
         }
         Insert: {
+          aliases?: Json | null
           case_id?: string | null
           category?: string | null
+          contact_info?: Json | null
           created_at?: string
           description?: string | null
           entity_type: string
+          first_seen_date?: string | null
           id?: string
+          influence_score?: number | null
+          last_seen_date?: string | null
           name: string
+          organization_affiliation?: string | null
+          position_title?: string | null
+          profile_image_url?: string | null
           related_event_ids?: string[] | null
           role?: string | null
+          role_tags?: string[] | null
           source_upload_id?: string | null
         }
         Update: {
+          aliases?: Json | null
           case_id?: string | null
           category?: string | null
+          contact_info?: Json | null
           created_at?: string
           description?: string | null
           entity_type?: string
+          first_seen_date?: string | null
           id?: string
+          influence_score?: number | null
+          last_seen_date?: string | null
           name?: string
+          organization_affiliation?: string | null
+          position_title?: string | null
+          profile_image_url?: string | null
           related_event_ids?: string[] | null
           role?: string | null
+          role_tags?: string[] | null
           source_upload_id?: string | null
         }
         Relationships: [
