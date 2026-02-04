@@ -1,8 +1,14 @@
 import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { timelineData, TimelineEvent } from "@/data/timelineData";
 import { useExtractedEvents, useAllExtractedEvents } from "./useExtractedEvents";
 import { useUserRole } from "./useUserRole";
-import { useHiddenStaticEvents, generateEventKey } from "./useStaticEventVisibility";
+import { supabase } from "@/integrations/supabase/client";
+
+// Generate a unique key for a static event based on its properties
+export const generateEventKey = (date: string, category: string, index: number): string => {
+  return `static-${date}-${category}-${index}`;
+};
 
 export interface CombinedTimelineEvent extends TimelineEvent {
   isExtracted?: boolean;
@@ -19,7 +25,19 @@ export const useCombinedTimeline = (includeHidden: boolean = false) => {
   // Use appropriate query based on whether we need all events or just visible ones
   const { data: visibleEvents, isLoading: visibleLoading, error: visibleError } = useExtractedEvents();
   const { data: allEvents, isLoading: allLoading, error: allError } = useAllExtractedEvents();
-  const { data: hiddenStaticEvents, isLoading: hiddenLoading } = useHiddenStaticEvents();
+  
+  // Fetch hidden static events directly here to avoid hook ordering issues
+  const { data: hiddenStaticEvents, isLoading: hiddenLoading } = useQuery({
+    queryKey: ["hidden-static-events"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("hidden_static_events")
+        .select("*");
+
+      if (error) throw error;
+      return data as { id: string; event_key: string; hidden_by: string | null; hidden_at: string; reason: string | null }[];
+    },
+  });
   
   // Admins can optionally see all events including hidden ones
   const shouldShowAllEvents = isAdmin && includeHidden;
