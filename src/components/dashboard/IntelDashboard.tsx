@@ -24,12 +24,16 @@ import {
   CaseOverviewCard,
   KeyFindingsGrid,
 } from "./widgets";
+import { GreetingBanner } from "@/components/GreetingBanner";
 
 export const IntelDashboard = () => {
   const { stats: platformStats, isLoading } = usePlatformStats();
 
   return (
     <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-6 space-y-8">
+      {/* Section 0: Time-based Greeting */}
+      <GreetingBanner />
+
       {/* Section 1: Status Banner - Compact AI notification */}
       {(platformStats.aiExtractedEvents > 0 || platformStats.aiExtractedEntities > 0) && (
         <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center gap-3 opacity-0 animate-fade-in-up" style={{ animationFillMode: 'forwards' }}>
