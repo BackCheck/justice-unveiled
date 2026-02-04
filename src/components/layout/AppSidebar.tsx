@@ -146,7 +146,7 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border/30 glass-sidebar">
+    <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar overflow-hidden">
       <SidebarHeader className="border-b border-border/30 p-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group flex-1 min-w-0">
@@ -187,7 +187,7 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 py-4">
+      <SidebarContent className="px-2 py-4 overflow-y-auto overflow-x-hidden">
 
         {/* Main Navigation */}
         <SidebarGroup>
