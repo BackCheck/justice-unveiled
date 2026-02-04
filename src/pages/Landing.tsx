@@ -30,6 +30,7 @@ import FeaturedCaseSection from "@/components/landing/FeaturedCaseSection";
 import CapabilitiesSection from "@/components/landing/CapabilitiesSection";
 import BottomCTA from "@/components/landing/BottomCTA";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import CookieConsent from "@/components/CookieConsent";
 
 const Landing = () => {
   const { t } = useTranslation();
@@ -327,6 +328,9 @@ const Landing = () => {
           </div>
         </div>
       </footer>
+
+      {/* Cookie Consent Banner */}
+      <CookieConsent />
     </div>
   );
 };
