@@ -16,6 +16,7 @@ export interface ExtractedEvent {
   sources: string;
   confidence_score: number | null;
   is_approved: boolean | null;
+  is_hidden: boolean | null;
   extraction_method: string | null;
   created_at: string;
   updated_at: string;
@@ -96,6 +97,47 @@ export const useExtractedEvents = () => {
 
       if (error) throw error;
       return data as ExtractedEvent[];
+    },
+  });
+};
+
+// Hook for admins to get ALL events including hidden ones
+export const useAllExtractedEvents = () => {
+  return useQuery({
+    queryKey: ["all-extracted-events"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("extracted_events")
+        .select("*")
+        .order("date", { ascending: true });
+
+      if (error) throw error;
+      return data as ExtractedEvent[];
+    },
+  });
+};
+
+// Toggle event visibility (hide/show)
+export const useToggleEventVisibility = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ eventId, isHidden }: { eventId: string; isHidden: boolean }) => {
+      const { error } = await supabase
+        .from("extracted_events")
+        .update({ is_hidden: isHidden })
+        .eq("id", eventId);
+
+      if (error) throw error;
+    },
+    onSuccess: (_, { isHidden }) => {
+      queryClient.invalidateQueries({ queryKey: ["extracted-events"] });
+      queryClient.invalidateQueries({ queryKey: ["all-extracted-events"] });
+      toast.success(isHidden ? "Event hidden from timeline" : "Event restored to timeline");
+    },
+    onError: (error) => {
+      console.error("Toggle visibility error:", error);
+      toast.error("Failed to update event visibility");
     },
   });
 };
