@@ -32,6 +32,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
+import { GreetingBanner } from "@/components/GreetingBanner";
 import hrpmLogo from "@/assets/human-rights-logo.svg";
 import {
   Sidebar,
@@ -188,6 +189,12 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent className="px-2 py-4 overflow-y-auto overflow-x-hidden">
+        {/* Time-based Greeting - Compact version for sidebar */}
+        {!collapsed && (
+          <div className="mb-4 px-2">
+            <GreetingBanner compact showIcon />
+          </div>
+        )}
 
         {/* Main Navigation */}
         <SidebarGroup>
