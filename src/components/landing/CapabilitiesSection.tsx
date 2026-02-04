@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -18,81 +19,83 @@ import GradientText from "./GradientText";
 import { cn } from "@/lib/utils";
 
 const CapabilitiesSection = () => {
+  const { t } = useTranslation();
+
   const clusters = [
     {
       id: "evidence",
-      title: "Evidence & Documents",
-      description: "Collect, verify, and organize source materials with full chain of custody.",
+      titleKey: "landing.capabilities.evidence.title",
+      descriptionKey: "landing.capabilities.evidence.description",
       color: "primary",
       tools: [
         {
           icon: Upload,
-          title: "Document Repository",
-          description: "Secure storage with metadata tagging and version control",
+          titleKey: "landing.capabilities.evidence.tool1.title",
+          descriptionKey: "landing.capabilities.evidence.tool1.description",
           link: "/uploads"
         },
         {
           icon: Brain,
-          title: "AI Extraction",
-          description: "Extract events, entities, and violations from raw documents",
+          titleKey: "landing.capabilities.evidence.tool2.title",
+          descriptionKey: "landing.capabilities.evidence.tool2.description",
           link: "/analyze"
         },
         {
           icon: FileText,
-          title: "Evidence Matrix",
-          description: "Cross-reference documents with timeline events and claims",
+          titleKey: "landing.capabilities.evidence.tool3.title",
+          descriptionKey: "landing.capabilities.evidence.tool3.description",
           link: "/evidence"
         }
       ]
     },
     {
       id: "networks",
-      title: "Networks & Relationships",
-      description: "Map connections between individuals, organizations, and institutions.",
+      titleKey: "landing.capabilities.networks.title",
+      descriptionKey: "landing.capabilities.networks.description",
       color: "chart-4",
       tools: [
         {
           icon: Network,
-          title: "Entity Network",
-          description: "Interactive force-directed graph of all case actors",
+          titleKey: "landing.capabilities.networks.tool1.title",
+          descriptionKey: "landing.capabilities.networks.tool1.description",
           link: "/network"
         },
         {
           icon: Users,
-          title: "Role Analysis",
-          description: "Categorize entities by role, affiliation, and influence",
+          titleKey: "landing.capabilities.networks.tool2.title",
+          descriptionKey: "landing.capabilities.networks.tool2.description",
           link: "/network"
         },
         {
           icon: GitBranch,
-          title: "Timeline Reconstruction",
-          description: "Build parallel timelines to identify contradictions",
+          titleKey: "landing.capabilities.networks.tool3.title",
+          descriptionKey: "landing.capabilities.networks.tool3.description",
           link: "/reconstruction"
         }
       ]
     },
     {
       id: "legal",
-      title: "Legal & Rights Analysis",
-      description: "Map violations against domestic and international legal frameworks.",
+      titleKey: "landing.capabilities.legal.title",
+      descriptionKey: "landing.capabilities.legal.description",
       color: "chart-2",
       tools: [
         {
           icon: Scale,
-          title: "Claim Correlation",
-          description: "Link legal claims to supporting evidence with strength scoring",
+          titleKey: "landing.capabilities.legal.tool1.title",
+          descriptionKey: "landing.capabilities.legal.tool1.description",
           link: "/correlation"
         },
         {
           icon: Globe,
-          title: "International Rights Audit",
-          description: "Map violations against UDHR, ICCPR, CAT, and ECHR",
+          titleKey: "landing.capabilities.legal.tool2.title",
+          descriptionKey: "landing.capabilities.legal.tool2.description",
           link: "/international"
         },
         {
           icon: Gavel,
-          title: "Legal Intelligence",
-          description: "Verified precedents, statutes, and court-ready summaries",
+          titleKey: "landing.capabilities.legal.tool3.title",
+          descriptionKey: "landing.capabilities.legal.tool3.description",
           link: "/legal-intelligence"
         }
       ]
@@ -126,14 +129,13 @@ const CapabilitiesSection = () => {
         <ScrollReveal>
           <div className="text-center mb-16">
             <Badge variant="outline" className="mb-4 bg-background border-border/50">
-              PLATFORM CAPABILITIES
+              {t('landing.capabilities.badge', 'PLATFORM CAPABILITIES')}
             </Badge>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Tools for <GradientText>Investigative Research</GradientText>
+              <GradientText>{t('landing.capabilities.title', 'Tools for Investigative Research')}</GradientText>
             </h2>
             <p className="text-base md:text-lg text-foreground/70 max-w-2xl mx-auto leading-relaxed">
-              Purpose-built modules designed for journalists, researchers, and legal advocates 
-              to transform raw evidence into structured, verifiable intelligence.
+              {t('landing.capabilities.description', 'Purpose-built modules designed for journalists, researchers, and legal advocates to transform raw evidence into structured, verifiable intelligence.')}
             </p>
           </div>
         </ScrollReveal>
@@ -148,10 +150,10 @@ const CapabilitiesSection = () => {
                   {/* Cluster Header */}
                   <div className={cn("p-4 rounded-t-xl border-t border-x", styles.border, styles.bg)}>
                     <h3 className={cn("text-lg font-bold", styles.text)}>
-                      {cluster.title}
+                      {t(cluster.titleKey)}
                     </h3>
                     <p className="text-sm text-foreground/70 mt-1">
-                      {cluster.description}
+                      {t(cluster.descriptionKey)}
                     </p>
                   </div>
 
@@ -159,7 +161,7 @@ const CapabilitiesSection = () => {
                   <div className="space-y-1 border-x border-b border-border/50 rounded-b-xl bg-card/50 backdrop-blur-sm">
                     {cluster.tools.map((tool, toolIndex) => (
                       <Link 
-                        key={tool.title} 
+                        key={tool.titleKey} 
                         to={tool.link}
                         className={cn(
                           "flex items-start gap-4 p-4 group",
@@ -176,12 +178,12 @@ const CapabilitiesSection = () => {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-2">
                             <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                              {tool.title}
+                              {t(tool.titleKey)}
                             </h4>
-                            <ChevronRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5" />
+                            <ChevronRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
                           </div>
                           <p className="text-sm text-foreground/60 mt-0.5 leading-relaxed">
-                            {tool.description}
+                            {t(tool.descriptionKey)}
                           </p>
                         </div>
                       </Link>

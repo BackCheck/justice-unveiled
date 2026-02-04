@@ -45,10 +45,10 @@
   },
   "landing": {
     "hero": {
-      "badge": "Intelligence Platform",
+      "badge": "Open-Source Investigative Platform",
       "title": "Human Rights Protection Movement",
       "subtitle": "Documenting injustice. Demanding accountability.",
-      "description": "A litigation-grade investigative platform transforming documented facts into court-ready intelligence with verified case law mapping and automated compliance tracking.",
+      "description": "An open-source investigative platform for documenting human rights abuse, corruption, and procedural injustice using verified evidence and transparent methodology.",
       "cta": "Enter Case Files",
       "secondaryCta": "View Dashboard"
     },
@@ -59,6 +59,10 @@
       "sources": "Verified Sources",
       "precedents": "Verified Precedents",
       "statutes": "Legal Statutes"
+    },
+    "trustMetrics": {
+      "yearsDocumented": "Years Documented",
+      "frameworks": "International Frameworks"
     },
     "values": {
       "justice": "Justice",
@@ -75,6 +79,85 @@
       "subtitle": "Danish Thanvi Investigation",
       "description": "A comprehensive investigation into wrongful detention, procedural violations, and coordinated institutional misconduct.",
       "cta": "Open Case File"
+    },
+    "featured": {
+      "label": "FEATURED INVESTIGATION",
+      "highlight1": "{{count}}+ verified sources with audit trails",
+      "highlight2": "{{count}}+ timeline events documented",
+      "highlight3": "{{count}}+ entities mapped with relationships",
+      "highlight4": "{{count}} verified case law precedents",
+      "highlight5": "Litigation-grade AI summaries with cite-checking",
+      "viewTimeline": "View Full Timeline",
+      "legalSuite": "Legal Intelligence Suite",
+      "legalSuiteDesc": "Litigation-grade with full audit trails",
+      "verifiedCaseLaw": "Verified Case Law",
+      "citeCheck": "Cite-Check System",
+      "forensicEvidence": "Forensic Evidence",
+      "proceduralViolations": "Procedural Violations",
+      "readBriefing": "Read Full Briefing"
+    },
+    "capabilities": {
+      "badge": "PLATFORM CAPABILITIES",
+      "title": "Tools for Investigative Research",
+      "description": "Purpose-built modules designed for journalists, researchers, and legal advocates to transform raw evidence into structured, verifiable intelligence.",
+      "evidence": {
+        "title": "Evidence & Documents",
+        "description": "Collect, verify, and organize source materials with full chain of custody.",
+        "tool1": {
+          "title": "Document Repository",
+          "description": "Secure storage with metadata tagging and version control"
+        },
+        "tool2": {
+          "title": "AI Extraction",
+          "description": "Extract events, entities, and violations from raw documents"
+        },
+        "tool3": {
+          "title": "Evidence Matrix",
+          "description": "Cross-reference documents with timeline events and claims"
+        }
+      },
+      "networks": {
+        "title": "Networks & Relationships",
+        "description": "Map connections between individuals, organizations, and institutions.",
+        "tool1": {
+          "title": "Entity Network",
+          "description": "Interactive force-directed graph of all case actors"
+        },
+        "tool2": {
+          "title": "Role Analysis",
+          "description": "Categorize entities by role, affiliation, and influence"
+        },
+        "tool3": {
+          "title": "Timeline Reconstruction",
+          "description": "Build parallel timelines to identify contradictions"
+        }
+      },
+      "legal": {
+        "title": "Legal & Rights Analysis",
+        "description": "Map violations against domestic and international legal frameworks.",
+        "tool1": {
+          "title": "Claim Correlation",
+          "description": "Link legal claims to supporting evidence with strength scoring"
+        },
+        "tool2": {
+          "title": "International Rights Audit",
+          "description": "Map violations against UDHR, ICCPR, CAT, and ECHR"
+        },
+        "tool3": {
+          "title": "Legal Intelligence",
+          "description": "Verified precedents, statutes, and court-ready summaries"
+        }
+      }
+    },
+    "cta": {
+      "title": "Ready to Start Investigating?",
+      "description": "Explore documented case files, trace entity networks, and see how verified evidence becomes actionable intelligence for human rights accountability.",
+      "startInvestigating": "Start Investigating",
+      "createAccount": "Create an Account",
+      "whyAccount": "Why create an account?",
+      "benefit1": "Save cases to your personal watchlist",
+      "benefit2": "Follow ongoing investigations",
+      "benefit3": "Contribute verified evidence"
     }
   },
   "footer": {
