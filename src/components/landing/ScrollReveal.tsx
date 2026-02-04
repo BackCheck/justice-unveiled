@@ -5,10 +5,19 @@ interface ScrollRevealProps {
   children: ReactNode;
   className?: string;
   delay?: number;
-  direction?: "up" | "down" | "left" | "right" | "scale";
+  direction?: "up" | "down" | "left" | "right" | "scale" | "fade";
+  duration?: number;
+  distance?: number;
 }
 
-const ScrollReveal = ({ children, className, delay = 0, direction = "up" }: ScrollRevealProps) => {
+const ScrollReveal = ({ 
+  children, 
+  className, 
+  delay = 0, 
+  direction = "up",
+  duration = 700,
+  distance = 30
+}: ScrollRevealProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -29,23 +38,29 @@ const ScrollReveal = ({ children, className, delay = 0, direction = "up" }: Scro
     return () => observer.disconnect();
   }, []);
 
-  const directionClasses = {
-    up: "translate-y-8",
-    down: "-translate-y-8",
-    left: "translate-x-8",
-    right: "-translate-x-8",
-    scale: "scale-95",
+  const getInitialTransform = () => {
+    switch (direction) {
+      case "up": return `translateY(${distance}px)`;
+      case "down": return `translateY(-${distance}px)`;
+      case "left": return `translateX(${distance}px)`;
+      case "right": return `translateX(-${distance}px)`;
+      case "scale": return "scale(0.9)";
+      case "fade": return "none";
+      default: return `translateY(${distance}px)`;
+    }
   };
 
   return (
     <div
       ref={ref}
-      className={cn(
-        "transition-all duration-700 ease-out",
-        isVisible ? "opacity-100 translate-x-0 translate-y-0 scale-100" : `opacity-0 ${directionClasses[direction]}`,
-        className
-      )}
-      style={{ transitionDelay: `${delay}ms` }}
+      className={cn("will-change-transform", className)}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? "none" : getInitialTransform(),
+        filter: isVisible ? "blur(0)" : "blur(4px)",
+        transition: `opacity ${duration}ms cubic-bezier(0.16, 1, 0.3, 1), transform ${duration}ms cubic-bezier(0.16, 1, 0.3, 1), filter ${duration}ms ease-out`,
+        transitionDelay: `${delay}ms`,
+      }}
     >
       {children}
     </div>

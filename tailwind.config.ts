@@ -92,8 +92,8 @@ export default {
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         "fade-in-up": {
-          "0%": { opacity: "0", transform: "translateY(20px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
+          "0%": { opacity: "0", transform: "translateY(20px)", filter: "blur(4px)" },
+          "100%": { opacity: "1", transform: "translateY(0)", filter: "blur(0)" },
         },
         "fade-in-down": {
           "0%": { opacity: "0", transform: "translateY(-20px)" },
@@ -124,16 +124,24 @@ export default {
           "100%": { transform: "translateX(0)" },
         },
         "float": {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-10px)" },
+          "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
+          "25%": { transform: "translateY(-5px) rotate(0.5deg)" },
+          "50%": { transform: "translateY(-10px) rotate(0deg)" },
+          "75%": { transform: "translateY(-5px) rotate(-0.5deg)" },
         },
         "float-slow": {
           "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
           "50%": { transform: "translateY(-6px) rotate(1deg)" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 0 0 hsl(var(--primary) / 0.4)" },
-          "50%": { boxShadow: "0 0 20px 10px hsl(var(--primary) / 0.1)" },
+          "0%, 100%": { 
+            boxShadow: "0 0 0 0 hsl(var(--primary) / 0.4)",
+            opacity: "0.6"
+          },
+          "50%": { 
+            boxShadow: "0 0 30px 15px hsl(var(--primary) / 0.15)",
+            opacity: "0.9"
+          },
         },
         "pulse-ring": {
           "0%": { transform: "scale(0.95)", opacity: "1" },
@@ -181,12 +189,27 @@ export default {
           "0%": { transform: "scale(0)", opacity: "1" },
           "100%": { transform: "scale(4)", opacity: "0" },
         },
+        "blur-in": {
+          "0%": { opacity: "0", filter: "blur(10px)" },
+          "100%": { opacity: "1", filter: "blur(0)" },
+        },
+        "slide-up-fade": {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "scale-up": {
+          "0%": { transform: "scale(0.95)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        "magnetic-hover": {
+          "0%, 100%": { transform: "translate(0, 0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.5s ease-out forwards",
-        "fade-in-up": "fade-in-up 0.6s ease-out forwards",
+        "fade-in-up": "fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards",
         "fade-in-down": "fade-in-down 0.5s ease-out forwards",
         "fade-in-left": "fade-in-left 0.5s ease-out forwards",
         "fade-in-right": "fade-in-right 0.5s ease-out forwards",
@@ -194,20 +217,23 @@ export default {
         "scale-in-center": "scale-in-center 0.4s ease-out forwards",
         "slide-in-bottom": "slide-in-bottom 0.4s ease-out forwards",
         "slide-in-right": "slide-in-right 0.4s ease-out forwards",
-        "float": "float 3s ease-in-out infinite",
+        "float": "float 4s ease-in-out infinite",
         "float-slow": "float-slow 6s ease-in-out infinite",
-        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "pulse-glow": "pulse-glow 3s ease-in-out infinite",
         "pulse-ring": "pulse-ring 2s ease-in-out infinite",
         "shimmer": "shimmer 2s linear infinite",
         "glow": "glow 2s ease-in-out infinite",
         "bounce-soft": "bounce-soft 2s ease-in-out infinite",
         "wiggle": "wiggle 0.3s ease-in-out",
         "spin-slow": "spin-slow 8s linear infinite",
-        "gradient-shift": "gradient-shift 8s ease infinite",
+        "gradient-shift": "gradient-shift 6s ease infinite",
         "border-pulse": "border-pulse 2s ease-in-out infinite",
         "text-reveal": "text-reveal 0.8s ease-out forwards",
         "count-up": "count-up 0.5s ease-out forwards",
         "ripple": "ripple 0.6s linear forwards",
+        "blur-in": "blur-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "slide-up-fade": "slide-up-fade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "scale-up": "scale-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
