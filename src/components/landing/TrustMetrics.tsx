@@ -49,24 +49,34 @@ const TrustMetrics = () => {
         <div 
           key={metric.label}
           className={cn(
-            "relative p-6 md:p-8 rounded-xl",
+            "relative p-6 md:p-8 rounded-xl overflow-hidden",
             "bg-card/60 backdrop-blur-sm border border-border/50",
-            "hover:border-primary/30 transition-all duration-300",
-            "group"
+            "hover:border-primary/40 transition-all duration-500",
+            "hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_hsl(var(--primary)/0.2)]",
+            "group cursor-default"
           )}
           style={{ animationDelay: `${index * 100}ms` }}
         >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
-              <metric.icon className="w-5 h-5 text-primary" />
+          {/* Hover glow background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-3">
+              <div className={cn(
+                "p-2 rounded-lg bg-primary/10 transition-all duration-500",
+                "group-hover:bg-primary/20 group-hover:scale-110",
+                "group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.3)]"
+              )}>
+                <metric.icon className="w-5 h-5 text-primary transition-transform group-hover:scale-110" />
+              </div>
             </div>
+            <p className="text-3xl md:text-4xl font-bold text-primary mb-1 tracking-tight">
+              <AnimatedCounter end={metric.value} suffix={metric.suffix} />
+            </p>
+            <p className="text-sm text-foreground/80 font-medium group-hover:text-foreground transition-colors">
+              {metric.label}
+            </p>
           </div>
-          <p className="text-3xl md:text-4xl font-bold text-primary mb-1 tracking-tight">
-            <AnimatedCounter end={metric.value} suffix={metric.suffix} />
-          </p>
-          <p className="text-sm text-foreground/80 font-medium">
-            {metric.label}
-          </p>
         </div>
       ))}
     </div>
