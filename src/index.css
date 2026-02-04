@@ -623,9 +623,17 @@
 
 /* Print Styles */
 @media print {
-  body {
+  html, body {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Force light theme colors for print */
+  html.print-light-mode,
+  html.print-light-mode body {
+    background-color: #ffffff !important;
+    color: #1a1a1a !important;
   }
 
   .no-print {
@@ -641,7 +649,8 @@
   }
 
   /* Force page breaks appropriately */
-  .timeline-card {
+  .timeline-card,
+  .pdf-timeline-card {
     break-inside: avoid;
     page-break-inside: avoid;
   }
@@ -656,14 +665,58 @@
     print-color-adjust: exact !important;
   }
 
-  /* Remove shadows for cleaner print */
+  /* Remove shadows and animations for cleaner print */
   .shadow-lg,
-  .shadow-sm {
+  .shadow-sm,
+  .shadow-xl {
     box-shadow: none !important;
   }
 
   /* Adjust spacing for print */
   .sticky {
     position: relative !important;
+  }
+
+  /* PDF Export specific styles */
+  #pdf-export-content {
+    display: block !important;
+  }
+
+  #pdf-export-content > div {
+    page-break-after: always;
+  }
+
+  #pdf-export-content > div:last-child {
+    page-break-after: auto;
+  }
+
+  /* Force white backgrounds on cards for print */
+  .card, [class*="Card"] {
+    background-color: #ffffff !important;
+    border-color: #e5e7eb !important;
+  }
+
+  /* Ensure text is readable in print */
+  .text-muted-foreground {
+    color: #6b7280 !important;
+  }
+
+  .text-foreground {
+    color: #1a1a1a !important;
+  }
+
+  /* Badge colors for print */
+  .bg-primary {
+    background-color: #0087C1 !important;
+  }
+
+  /* Page margins */
+  @page {
+    margin: 1cm;
+    size: A4;
+  }
+
+  @page :first {
+    margin-top: 0;
   }
 }

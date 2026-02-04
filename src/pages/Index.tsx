@@ -5,12 +5,13 @@ import { TimelineStats } from "@/components/TimelineStats";
 import { DynamicTimeline } from "@/components/timeline/DynamicTimeline";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Printer, Sparkles } from "lucide-react";
+import { FileDown, Sparkles } from "lucide-react";
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
 import { useCombinedTimeline } from "@/hooks/useCombinedTimeline";
 import { cn } from "@/lib/utils";
 import { SocialShareButtons } from "@/components/sharing";
 import { useSEO } from "@/hooks/useSEO";
+import { PDFTimelineExport } from "@/components/export";
 
 const Index = () => {
   const [selectedCategories, setSelectedCategories] = useState<TimelineEvent["category"][]>([
@@ -33,12 +34,16 @@ const Index = () => {
     tags: ["Timeline", "Human Rights", "Pakistan", "Investigation"],
   });
 
-  const handlePrint = () => {
+  const handleExportPDF = () => {
     setIsPrintMode(true);
+    // Add light theme class for print and show PDF content
+    document.documentElement.classList.add("print-light-mode");
+    
     setTimeout(() => {
       window.print();
+      document.documentElement.classList.remove("print-light-mode");
       setIsPrintMode(false);
-    }, 100);
+    }, 300);
   };
 
   const handleCategoryToggle = (category: TimelineEvent["category"]) => {
@@ -111,15 +116,15 @@ const Index = () => {
                 variant="compact"
               />
               <Button
-                onClick={handlePrint}
+                onClick={handleExportPDF}
                 variant="outline"
                 className={cn(
                   "hover-lift icon-bounce opacity-0 animate-fade-in-right"
                 )}
                 style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}
               >
-                <Printer className="w-4 h-4 mr-2" />
-                Export PDF
+                <FileDown className="w-4 h-4 mr-2" />
+                Export to PDF
               </Button>
             </div>
           </div>
@@ -143,10 +148,16 @@ const Index = () => {
           />
         </div>
 
+        {/* PDF Export Component - Only visible during print */}
+        <PDFTimelineExport events={filteredEvents} stats={stats} />
+
         {/* Dynamic Timeline */}
-        <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
+        <div className={cn(
+          "opacity-0 animate-fade-in-up",
+          isPrintMode && "no-print"
+        )} style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
           <DynamicTimeline 
-            events={filteredEvents} 
+            events={filteredEvents}
             isPrintMode={isPrintMode}
           />
         </div>
