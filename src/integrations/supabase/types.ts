@@ -1238,6 +1238,30 @@ export type Database = {
           },
         ]
       }
+      hidden_static_events: {
+        Row: {
+          event_key: string
+          hidden_at: string
+          hidden_by: string | null
+          id: string
+          reason: string | null
+        }
+        Insert: {
+          event_key: string
+          hidden_at?: string
+          hidden_by?: string | null
+          id?: string
+          reason?: string | null
+        }
+        Update: {
+          event_key?: string
+          hidden_at?: string
+          hidden_by?: string | null
+          id?: string
+          reason?: string | null
+        }
+        Relationships: []
+      }
       legal_claims: {
         Row: {
           allegation_text: string
