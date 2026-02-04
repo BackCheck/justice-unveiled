@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { SocialShareButtons } from "@/components/sharing";
 import { useSEO } from "@/hooks/useSEO";
 import { PDFTimelineExport } from "@/components/export";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Index = () => {
   const [selectedCategories, setSelectedCategories] = useState<TimelineEvent["category"][]>([
@@ -21,6 +22,7 @@ const Index = () => {
     "Criminal Allegation"
   ]);
   const [isPrintMode, setIsPrintMode] = useState(false);
+  const queryClient = useQueryClient();
 
   // Use combined timeline (static + AI-extracted events)
   const { events: allEvents, stats, isLoading } = useCombinedTimeline();
@@ -34,7 +36,15 @@ const Index = () => {
     tags: ["Timeline", "Human Rights", "Pakistan", "Investigation"],
   });
 
-  const handleExportPDF = () => {
+  const handleExportPDF = async () => {
+    // Invalidate and refetch to ensure fresh data (no cached hidden records)
+    await queryClient.invalidateQueries({ queryKey: ["hidden-static-events"] });
+    await queryClient.invalidateQueries({ queryKey: ["extracted-events"] });
+    await queryClient.invalidateQueries({ queryKey: ["all-extracted-events"] });
+    
+    // Small delay to allow React to re-render with fresh data
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
     setIsPrintMode(true);
     // Add light theme class for print and show PDF content
     document.documentElement.classList.add("print-light-mode");
