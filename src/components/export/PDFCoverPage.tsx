@@ -154,6 +154,9 @@ export const PDFCoverPage = ({ totalEvents, dateRange, caseTitle }: PDFCoverPage
           </p>
         </div>
         <div className="text-center pt-4 border-t border-gray-100">
+          <p className="font-semibold text-red-700 mb-2">
+            Strictly Confidential – Only for Advocacy Work
+          </p>
           <p>© {currentDate.getFullYear()} Human Rights Protection Movement. All rights reserved.</p>
           <p className="mt-1" style={{ color: "#0087C1" }}>
             Documenting injustice. Demanding accountability.
