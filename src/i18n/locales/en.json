@@ -89,10 +89,13 @@
     "hero": {
       "badge": "Open-Source Investigative Platform",
       "title": "Human Rights Protection Movement",
+      "headlineMain": "Exposing Injustice.",
+      "headlineHighlight": "Demanding Truth.",
       "subtitle": "Documenting injustice. Demanding accountability.",
       "description": "An open-source investigative platform for documenting human rights abuse, corruption, and procedural injustice using verified evidence and transparent methodology.",
       "cta": "Enter Case Files",
-      "secondaryCta": "View Dashboard"
+      "secondaryCta": "Get Started Free",
+      "socialProof": "Trusted by journalists, legal advocates & human rights researchers worldwide"
     },
     "stats": {
       "activeCases": "Active Cases",
@@ -137,6 +140,75 @@
       "forensicEvidence": "Forensic Evidence",
       "proceduralViolations": "Procedural Violations",
       "readBriefing": "Read Full Briefing"
+    },
+    "howItWorks": {
+      "badge": "HOW IT WORKS",
+      "title": "From Raw Evidence to Actionable Intelligence",
+      "description": "Our platform transforms scattered documents and testimonies into structured, verifiable case files ready for legal action or public accountability.",
+      "step1": {
+        "title": "Upload Documents",
+        "description": "Securely upload legal documents, testimonies, and evidence with full chain of custody tracking."
+      },
+      "step2": {
+        "title": "AI Extraction",
+        "description": "Our AI automatically extracts events, entities, and relationships from your documents."
+      },
+      "step3": {
+        "title": "Map Connections",
+        "description": "Visualize networks of individuals, organizations, and patterns of misconduct."
+      },
+      "step4": {
+        "title": "Generate Reports",
+        "description": "Create court-ready summaries with verified precedents and full citation trails."
+      }
+    },
+    "whySignUp": {
+      "badge": "WHY CREATE AN ACCOUNT",
+      "title": "Join the Movement for Accountability",
+      "description": "Create a free account to access advanced features and become part of a global community working toward justice and transparency.",
+      "benefit1": {
+        "title": "Personal Watchlist",
+        "description": "Save cases and entities to your personal monitoring dashboard."
+      },
+      "benefit2": {
+        "title": "Real-time Alerts",
+        "description": "Get notified when new evidence is added to cases you follow."
+      },
+      "benefit3": {
+        "title": "Contribute Evidence",
+        "description": "Upload and verify documents to strengthen ongoing investigations."
+      },
+      "benefit4": {
+        "title": "Secure & Private",
+        "description": "Your data is encrypted and protected with enterprise-grade security."
+      },
+      "benefit5": {
+        "title": "Community Access",
+        "description": "Connect with researchers, journalists, and advocates worldwide."
+      },
+      "benefit6": {
+        "title": "Export Reports",
+        "description": "Generate PDF briefings and litigation-ready documentation."
+      },
+      "ctaTitle": "Free Forever",
+      "ctaSubtitle": "No credit card required. No hidden fees.",
+      "ctaButton": "Create Free Account",
+      "ctaNote": "By signing up, you agree to our Terms of Service and Privacy Policy.",
+      "fact1": "Full access to all documented case files",
+      "fact2": "Personal watchlist and case tracking",
+      "fact3": "Real-time updates on new evidence",
+      "fact4": "Community-verified intelligence"
+    },
+    "impact": {
+      "badge": "PLATFORM IMPACT",
+      "title": "Real Data. Real Accountability.",
+      "description": "Every number represents documented evidence in our ongoing fight against injustice and institutional abuse.",
+      "sources": "Verified Sources",
+      "entities": "Entities Tracked",
+      "events": "Timeline Events",
+      "frameworks": "Int'l Frameworks",
+      "precedents": "Case Precedents",
+      "violations": "Documented Violations"
     },
     "capabilities": {
       "badge": "PLATFORM CAPABILITIES",

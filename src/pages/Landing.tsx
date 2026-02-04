@@ -9,10 +9,6 @@ import {
   Scale, 
   Users,
   FileText,
-  Sparkles,
-  Zap,
-  Target,
-  Eye,
   Phone,
   Mail,
   MapPin
@@ -20,15 +16,15 @@ import {
 import { cn } from "@/lib/utils";
 import hrpmLogo from "@/assets/human-rights-logo.svg";
 import ParticleField from "@/components/landing/ParticleField";
-import GlowingOrb from "@/components/landing/GlowingOrb";
-import FloatingIcon from "@/components/landing/FloatingIcon";
-import ScrollReveal from "@/components/landing/ScrollReveal";
-import GradientText from "@/components/landing/GradientText";
 import SpotlightEffect from "@/components/landing/SpotlightEffect";
-import TrustMetrics from "@/components/landing/TrustMetrics";
+import HeroSection from "@/components/landing/HeroSection";
+import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import FeaturedCaseSection from "@/components/landing/FeaturedCaseSection";
 import CapabilitiesSection from "@/components/landing/CapabilitiesSection";
+import WhySignUpSection from "@/components/landing/WhySignUpSection";
+import ImpactStatsSection from "@/components/landing/ImpactStatsSection";
 import BottomCTA from "@/components/landing/BottomCTA";
+import ScrollReveal from "@/components/landing/ScrollReveal";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import CookieConsent from "@/components/CookieConsent";
 
@@ -63,7 +59,7 @@ const Landing = () => {
               <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-lg text-foreground tracking-tight">HRPM</span>
+              <span className="font-serif font-bold text-lg text-foreground tracking-tight">HRPM</span>
               <span className="text-[10px] text-foreground/60 leading-tight">Human Rights Protection Movement</span>
             </div>
           </Link>
@@ -87,87 +83,22 @@ const Landing = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="relative min-h-[85vh] flex items-center">
-        {/* Animated background orbs */}
-        <GlowingOrb color="primary" size="xl" className="top-20 -left-32" delay={0} />
-        <GlowingOrb color="accent" size="lg" className="bottom-20 -right-20" delay={1} />
-        <GlowingOrb color="chart-2" size="md" className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" delay={2} />
+      <HeroSection />
 
-        {/* Floating decorative icons */}
-        <FloatingIcon icon={Shield} className="top-32 left-[15%] hidden lg:block" delay={0} />
-        <FloatingIcon icon={Eye} className="top-48 right-[12%] hidden lg:block" delay={0.5} />
-        <FloatingIcon icon={Target} className="bottom-32 left-[8%] hidden lg:block" delay={1} />
-        <FloatingIcon icon={Zap} className="bottom-48 right-[18%] hidden lg:block" delay={1.5} />
-
-        <div className="relative max-w-7xl mx-auto px-4 py-16 md:py-24 z-10">
-          <div className="text-center max-w-4xl mx-auto">
-            {/* Badge */}
-            <ScrollReveal delay={100}>
-              <Badge 
-                variant="outline" 
-                className={cn(
-                  "mb-6 px-4 py-2 bg-primary/10 text-primary border-primary/30",
-                  "hover:bg-primary/20 transition-all duration-300 cursor-default"
-                )}
-              >
-                <Sparkles className="w-3.5 h-3.5 mr-2 rtl:mr-0 rtl:ml-2" />
-                {t('landing.hero.badge')}
-              </Badge>
-            </ScrollReveal>
-
-            {/* Main Headline */}
-            <ScrollReveal delay={200}>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                <span className="text-foreground">{t('landing.hero.subtitle')}</span>
-              </h1>
-            </ScrollReveal>
-
-            {/* Plain-language Subtitle */}
-            <ScrollReveal delay={300}>
-              <p className="text-base md:text-lg text-foreground/80 mb-8 max-w-2xl mx-auto leading-relaxed">
-                {t('landing.hero.description')}
-              </p>
-            </ScrollReveal>
-
-            {/* CTA Buttons */}
-            <ScrollReveal delay={400}>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Button size="lg" className="group relative overflow-hidden" asChild>
-                  <Link to="/cases">
-                    <span className="relative z-10 flex items-center">
-                      {t('landing.hero.cta')}
-                      <ArrowRight className="w-4 h-4 ml-2 rtl:ml-0 rtl:mr-2 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
-                    </span>
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" className="border-border/50 hover:border-primary/50 hover:bg-primary/5" asChild>
-                  <Link to="/dashboard">{t('landing.hero.secondaryCta')}</Link>
-                </Button>
-              </div>
-            </ScrollReveal>
-          </div>
-
-          {/* Trust Metrics - Moved higher */}
-          <ScrollReveal delay={500}>
-            <div className="mt-16 md:mt-20 max-w-4xl mx-auto">
-              <TrustMetrics />
-            </div>
-          </ScrollReveal>
-
-          {/* Scroll indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-            <div className="w-6 h-10 rounded-full border-2 border-primary/30 flex items-start justify-center p-2">
-              <div className="w-1 h-2 bg-primary rounded-full animate-pulse" />
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* How It Works */}
+      <HowItWorksSection />
 
       {/* Featured Case Section */}
       <FeaturedCaseSection />
 
-      {/* Capabilities Section - Grouped into 3 clusters */}
+      {/* Impact Stats */}
+      <ImpactStatsSection />
+
+      {/* Capabilities Section */}
       <CapabilitiesSection />
+
+      {/* Why Sign Up */}
+      <WhySignUpSection />
 
       {/* Values Section */}
       <section className="py-20 md:py-28 bg-gradient-to-b from-background via-secondary/20 to-background relative overflow-hidden">
@@ -183,7 +114,7 @@ const Landing = () => {
           <ScrollReveal>
             <div className="text-center mb-12">
               <Badge variant="outline" className="mb-4 bg-background border-border/50">{t('about.mission').toUpperCase()}</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground">
                 {t('landing.hero.title')}
               </h2>
               <p className="text-foreground/70 max-w-2xl mx-auto text-base leading-relaxed">
@@ -247,7 +178,7 @@ const Landing = () => {
                   className="w-10 h-10 transition-transform group-hover:scale-110" 
                 />
                 <div>
-                  <p className="font-semibold text-foreground text-lg">HRPM.org</p>
+                  <p className="font-serif font-semibold text-foreground text-lg">HRPM.org</p>
                   <p className="text-xs text-foreground/60">{t('landing.hero.title')}</p>
                 </div>
               </div>
