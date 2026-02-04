@@ -59,40 +59,41 @@ import {
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-const mainNavItems = [
-  { path: "/", label: "Home", icon: Home },
-  { path: "/investigations", label: "Investigation Hub", icon: Target },
-  { path: "/cases", label: "Case Files", icon: FolderOpen },
-  { path: "/timeline", label: "Timeline", icon: Clock },
-  { path: "/dashboard", label: "Intel Dashboard", icon: BarChart3 },
-  { path: "/intel-briefing", label: "Briefing", icon: BookOpen },
-  { path: "/network", label: "Entity Network", icon: Network },
-  { path: "/watchlist", label: "My Watchlist", icon: Eye },
-];
-
-const analysisNavItems = [
-  { path: "/reconstruction", label: "Reconstruction", icon: GitBranch },
-  { path: "/correlation", label: "Claim Correlation", icon: Scale },
-  { path: "/compliance", label: "Compliance Checker", icon: ClipboardCheck },
-  { path: "/regulatory-harm", label: "Economic Harm", icon: TrendingDown },
-  { path: "/legal-intelligence", label: "Legal Intelligence", icon: Gavel },
-  { path: "/analyze", label: "AI Analyzer", icon: Brain },
-  { path: "/evidence", label: "Evidence Matrix", icon: FileText },
-  { path: "/international", label: "International Rights", icon: Scale },
-];
-
-const systemNavItems = [
-  { path: "/uploads", label: "Uploads", icon: Upload },
-  { path: "/about", label: "About", icon: Info },
-];
-
 export function AppSidebar() {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const { state, toggleSidebar } = useSidebar();
   const { user, profile, signOut } = useAuth();
   const { role, canEdit, canUpload, isAdmin } = useUserRole();
   const collapsed = state === "collapsed";
+
+  const mainNavItems = [
+    { path: "/", label: t('nav.home'), icon: Home },
+    { path: "/investigations", label: t('nav.investigations'), icon: Target },
+    { path: "/cases", label: t('nav.cases'), icon: FolderOpen },
+    { path: "/timeline", label: t('nav.timeline'), icon: Clock },
+    { path: "/dashboard", label: t('nav.dashboard'), icon: BarChart3 },
+    { path: "/intel-briefing", label: t('nav.briefing'), icon: BookOpen },
+    { path: "/network", label: t('nav.network'), icon: Network },
+    { path: "/watchlist", label: t('nav.watchlist'), icon: Eye },
+  ];
+
+  const analysisNavItems = [
+    { path: "/reconstruction", label: t('nav.reconstruction'), icon: GitBranch },
+    { path: "/correlation", label: t('nav.correlation'), icon: Scale },
+    { path: "/compliance", label: t('nav.compliance'), icon: ClipboardCheck },
+    { path: "/regulatory-harm", label: t('nav.harm'), icon: TrendingDown },
+    { path: "/legal-intelligence", label: t('nav.legal'), icon: Gavel },
+    { path: "/analyze", label: t('nav.aiAnalyzer'), icon: Brain },
+    { path: "/evidence", label: t('nav.evidence'), icon: FileText },
+    { path: "/international", label: t('nav.international'), icon: Scale },
+  ];
+
+  const systemNavItems = [
+    { path: "/uploads", label: t('nav.uploads'), icon: Upload },
+    { path: "/about", label: t('nav.about'), icon: Info },
+  ];
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -110,7 +111,7 @@ export function AppSidebar() {
 
   const handleSignOut = async () => {
     await signOut();
-    toast.success("Signed out successfully");
+    toast.success(t('common.signedOutSuccess'));
     navigate("/auth");
   };
 
@@ -182,7 +183,7 @@ export function AppSidebar() {
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right">
-              {collapsed ? "Expand sidebar" : "Collapse sidebar"}
+              {collapsed ? t('common.expandSidebar') : t('common.collapseSidebar')}
             </TooltipContent>
           </Tooltip>
         </div>
@@ -199,7 +200,7 @@ export function AppSidebar() {
         {/* Main Navigation */}
         <SidebarGroup>
           <SidebarGroupLabel className={cn("text-xs font-semibold text-muted-foreground uppercase tracking-wider", collapsed && "sr-only")}>
-            Main
+            {t('sidebar.main')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -213,7 +214,7 @@ export function AppSidebar() {
         {/* Analysis */}
         <SidebarGroup className="mt-4">
           <SidebarGroupLabel className={cn("text-xs font-semibold text-muted-foreground uppercase tracking-wider", collapsed && "sr-only")}>
-            Analysis
+            {t('sidebar.analysis')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -227,7 +228,7 @@ export function AppSidebar() {
         {/* System */}
         <SidebarGroup className="mt-4">
           <SidebarGroupLabel className={cn("text-xs font-semibold text-muted-foreground uppercase tracking-wider", collapsed && "sr-only")}>
-            System
+            {t('sidebar.system')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -236,7 +237,7 @@ export function AppSidebar() {
               ))}
               {/* Admin Panel - only visible to admins */}
               {isAdmin && (
-                <NavItem item={{ path: "/admin", label: "Admin Panel", icon: Shield }} />
+                <NavItem item={{ path: "/admin", label: t('nav.admin'), icon: Shield }} />
               )}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -247,7 +248,7 @@ export function AppSidebar() {
         {/* Language & Theme Toggle */}
         <div className={cn("flex items-center gap-2 px-2 py-1", collapsed ? "justify-center flex-col" : "justify-between")}>
           {!collapsed && (
-            <span className="text-xs text-muted-foreground">Settings</span>
+            <span className="text-xs text-muted-foreground">{t('sidebar.settings')}</span>
           )}
           <div className="flex items-center gap-1">
             <LanguageSwitcher />
@@ -299,11 +300,11 @@ export function AppSidebar() {
               <DropdownMenuSeparator />
               <DropdownMenuItem className="cursor-pointer">
                 <User className="mr-2 h-4 w-4" />
-                Profile
+                {t('common.profile')}
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer">
                 <Settings className="mr-2 h-4 w-4" />
-                Settings
+                {t('common.settings')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem 
@@ -311,7 +312,7 @@ export function AppSidebar() {
                 onClick={handleSignOut}
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                Sign out
+                {t('common.signOut')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -329,8 +330,8 @@ export function AppSidebar() {
             </div>
             {!collapsed && (
               <div className="flex flex-col items-start min-w-0 flex-1">
-                <span className="text-sm font-medium">Sign In</span>
-                <span className="text-xs text-muted-foreground">Optional</span>
+                <span className="text-sm font-medium">{t('common.signIn')}</span>
+                <span className="text-xs text-muted-foreground">{t('common.optional')}</span>
               </div>
             )}
           </Link>

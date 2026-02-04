@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -37,6 +38,7 @@ const statusColors: Record<string, string> = {
 };
 
 const CasesList = () => {
+  const { t } = useTranslation();
   const { data: cases, isLoading, error } = useCases();
   const { canEdit } = useUserRole();
   const [searchQuery, setSearchQuery] = useState("");
@@ -64,17 +66,17 @@ const CasesList = () => {
               </div>
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-                  Case Files
+                  {t('cases.title')}
                 </h1>
                 <p className="text-muted-foreground">
-                  {cases?.length || 0} investigation{cases?.length !== 1 ? "s" : ""} on record
+                  {t('common.investigationsOnRecord', { count: cases?.length || 0 })}
                 </p>
               </div>
             </div>
             {canEdit && (
               <Button className="glow-primary-sm">
                 <Plus className="w-4 h-4 mr-2" />
-                New Case
+                {t('common.newCase')}
               </Button>
             )}
           </div>
@@ -84,7 +86,7 @@ const CasesList = () => {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search cases..."
+                placeholder={t('common.searchCases')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -114,17 +116,17 @@ const CasesList = () => {
           <Card className="glass-card">
             <CardContent className="py-12 text-center">
               <AlertTriangle className="w-12 h-12 mx-auto text-destructive mb-4" />
-              <p className="text-lg font-medium">Failed to load cases</p>
-              <p className="text-sm text-muted-foreground mt-1">Please try again later</p>
+              <p className="text-lg font-medium">{t('common.failedToLoad')}</p>
+              <p className="text-sm text-muted-foreground mt-1">{t('common.tryAgain')}</p>
             </CardContent>
           </Card>
         ) : filteredCases?.length === 0 ? (
           <Card className="glass-card">
             <CardContent className="py-12 text-center">
               <FolderOpen className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-lg font-medium">No cases found</p>
+              <p className="text-lg font-medium">{t('common.noCasesFound')}</p>
               <p className="text-sm text-muted-foreground mt-1">
-                {searchQuery ? "Try a different search term" : "Create your first case to get started"}
+                {searchQuery ? t('common.tryDifferentSearch') : t('common.createFirstCase')}
               </p>
             </CardContent>
           </Card>
@@ -160,17 +162,17 @@ const CasesList = () => {
                       <div className="text-center p-2 rounded-lg bg-muted/50">
                         <FileText className="w-4 h-4 mx-auto mb-1 text-primary" />
                         <span className="text-sm font-semibold">{caseItem.total_sources}</span>
-                        <p className="text-[10px] text-muted-foreground">Sources</p>
+                        <p className="text-[10px] text-muted-foreground">{t('common.sources')}</p>
                       </div>
                       <div className="text-center p-2 rounded-lg bg-muted/50">
                         <Clock className="w-4 h-4 mx-auto mb-1 text-primary" />
                         <span className="text-sm font-semibold">{caseItem.total_events}</span>
-                        <p className="text-[10px] text-muted-foreground">Events</p>
+                        <p className="text-[10px] text-muted-foreground">{t('common.events')}</p>
                       </div>
                       <div className="text-center p-2 rounded-lg bg-muted/50">
                         <Users className="w-4 h-4 mx-auto mb-1 text-primary" />
                         <span className="text-sm font-semibold">{caseItem.total_entities}</span>
-                        <p className="text-[10px] text-muted-foreground">Entities</p>
+                        <p className="text-[10px] text-muted-foreground">{t('common.entities')}</p>
                       </div>
                     </div>
 
@@ -185,7 +187,7 @@ const CasesList = () => {
                       {caseItem.date_opened && (
                         <div className="flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5" />
-                          <span>Opened {format(new Date(caseItem.date_opened), "MMM d, yyyy")}</span>
+                          <span>{t('common.opened')} {format(new Date(caseItem.date_opened), "MMM d, yyyy")}</span>
                         </div>
                       )}
                       {caseItem.lead_investigator && (
@@ -198,7 +200,7 @@ const CasesList = () => {
 
                     {/* View button */}
                     <div className="mt-4 flex items-center justify-end text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                      View Case <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                      {t('common.viewCase')} <ArrowRight className="w-3.5 h-3.5 ml-1" />
                     </div>
                   </CardContent>
                 </Card>

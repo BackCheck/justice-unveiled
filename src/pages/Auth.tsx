@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +23,7 @@ const authSchema = z.object({
 type AuthFormData = z.infer<typeof authSchema>;
 
 export default function Auth() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, isLoading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,14 +56,14 @@ export default function Auth() {
         
         if (error) {
           if (error.message === "Invalid login credentials") {
-            toast.error("Invalid email or password. Please try again.");
+            toast.error(t('common.invalidCredentials'));
           } else {
             toast.error(error.message);
           }
           return;
         }
         
-        toast.success("Welcome back!");
+        toast.success(t('common.welcomeBack'));
         navigate("/");
       } else {
         const { error } = await supabase.auth.signUp({
@@ -74,7 +76,7 @@ export default function Auth() {
         
         if (error) {
           if (error.message.includes("already registered")) {
-            toast.error("This email is already registered. Please sign in instead.");
+            toast.error(t('common.alreadyRegistered'));
             setActiveTab("login");
           } else {
             toast.error(error.message);
@@ -82,10 +84,10 @@ export default function Auth() {
           return;
         }
         
-        toast.success("Check your email to confirm your account.");
+        toast.success(t('common.checkEmail'));
       }
     } catch (error) {
-      toast.error("An unexpected error occurred. Please try again.");
+      toast.error(t('common.unexpectedError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -103,7 +105,7 @@ export default function Auth() {
         toast.error(error.message || "Failed to sign in with Google");
       }
     } catch (error) {
-      toast.error("An unexpected error occurred. Please try again.");
+      toast.error(t('common.unexpectedError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -125,9 +127,9 @@ export default function Auth() {
             <Globe className="w-9 h-9 text-primary-foreground" />
           </div>
           <div>
-            <CardTitle className="text-2xl font-bold text-primary">HRPM</CardTitle>
+            <CardTitle className="text-2xl font-bold text-primary">{t('auth.title')}</CardTitle>
             <CardDescription className="text-muted-foreground">
-              Human Rights Protection Movement
+              {t('auth.subtitle')}
             </CardDescription>
           </div>
         </CardHeader>
@@ -162,7 +164,7 @@ export default function Auth() {
                 />
               </svg>
             )}
-            Continue with Google
+            {t('common.continueWithGoogle')}
           </Button>
 
           <div className="relative">
@@ -170,15 +172,15 @@ export default function Auth() {
               <span className="w-full border-t border-border/50" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+              <span className="bg-card px-2 text-muted-foreground">{t('common.orContinueWith')}</span>
             </div>
           </div>
 
           {/* Email/Password Tabs */}
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "login" | "signup")}>
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsTrigger value="login">{t('auth.signIn')}</TabsTrigger>
+              <TabsTrigger value="signup">{t('auth.signUp')}</TabsTrigger>
             </TabsList>
             
             <TabsContent value="login" className="space-y-4 mt-4">
@@ -189,7 +191,7 @@ export default function Auth() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>{t('auth.email')}</FormLabel>
                         <FormControl>
                           <Input 
                             type="email" 
@@ -207,7 +209,7 @@ export default function Auth() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel>{t('auth.password')}</FormLabel>
                         <FormControl>
                           <Input 
                             type="password" 
@@ -230,7 +232,7 @@ export default function Auth() {
                     ) : (
                       <Mail className="mr-2 h-5 w-5" />
                     )}
-                    Sign In
+                    {t('auth.signIn')}
                   </Button>
                 </form>
               </Form>
@@ -244,7 +246,7 @@ export default function Auth() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>{t('auth.email')}</FormLabel>
                         <FormControl>
                           <Input 
                             type="email" 
@@ -262,7 +264,7 @@ export default function Auth() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel>{t('auth.password')}</FormLabel>
                         <FormControl>
                           <Input 
                             type="password" 
@@ -285,7 +287,7 @@ export default function Auth() {
                     ) : (
                       <Mail className="mr-2 h-5 w-5" />
                     )}
-                    Create Account
+                    {t('common.createAccount')}
                   </Button>
                 </form>
               </Form>

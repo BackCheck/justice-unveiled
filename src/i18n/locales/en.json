@@ -18,18 +18,50 @@
     "all": "All",
     "none": "None",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "open": "Open",
+    "sources": "Sources",
+    "events": "Events",
+    "entities": "Entities",
+    "newCase": "New Case",
+    "searchCases": "Search cases...",
+    "failedToLoad": "Failed to load",
+    "tryAgain": "Please try again later",
+    "noCasesFound": "No cases found",
+    "tryDifferentSearch": "Try a different search term",
+    "createFirstCase": "Create your first case to get started",
+    "viewCase": "View Case",
+    "opened": "Opened",
+    "investigationsOnRecord": "{{count}} investigation(s) on record",
+    "profile": "Profile",
+    "settings": "Settings",
+    "optional": "Optional",
+    "expandSidebar": "Expand sidebar",
+    "collapseSidebar": "Collapse sidebar",
+    "signedOutSuccess": "Signed out successfully",
+    "continueWithGoogle": "Continue with Google",
+    "orContinueWith": "Or continue with",
+    "createAccount": "Create Account",
+    "welcomeBack": "Welcome back!",
+    "checkEmail": "Check your email to confirm your account.",
+    "invalidCredentials": "Invalid email or password. Please try again.",
+    "alreadyRegistered": "This email is already registered. Please sign in instead.",
+    "unexpectedError": "An unexpected error occurred. Please try again."
   },
   "nav": {
     "home": "Home",
     "about": "About",
     "contact": "Contact",
-    "cases": "Cases",
-    "dashboard": "Dashboard",
+    "cases": "Case Files",
+    "dashboard": "Intel Dashboard",
     "intelligence": "Intelligence",
     "timeline": "Timeline",
-    "network": "Network",
-    "evidence": "Evidence",
+    "network": "Entity Network",
+    "evidence": "Evidence Matrix",
     "investigations": "Investigation Hub",
     "watchlist": "My Watchlist",
     "uploads": "Uploads",
@@ -37,10 +69,20 @@
     "international": "International Rights",
     "reconstruction": "Reconstruction",
     "correlation": "Claim Correlation",
-    "compliance": "Compliance",
+    "compliance": "Compliance Checker",
     "harm": "Economic Harm",
     "legal": "Legal Intelligence",
     "admin": "Admin Panel",
+    "settings": "Settings",
+    "briefing": "Briefing",
+    "aiAnalyzer": "AI Analyzer",
+    "main": "Main",
+    "system": "System"
+  },
+  "sidebar": {
+    "main": "Main",
+    "analysis": "Analysis",
+    "system": "System",
     "settings": "Settings"
   },
   "landing": {
@@ -174,10 +216,52 @@
   },
   "about": {
     "title": "About HRPM",
+    "subtitle": "Non-profit investigative platform",
     "mission": "Our Mission",
+    "missionTitle": "Truth Through Evidence",
     "missionText": "To protect and advocate for fundamental human rights through investigative intelligence and verified documentation.",
+    "missionDesc1": "Many individuals face legal persecution, harassment, and institutional abuse without the resources to fight back. Evidence is scattered, timelines are obscured, and patterns of misconduct remain hidden.",
+    "missionDesc2": "HRPM exists to change that. We build comprehensive case files that synthesize documents, testimonies, and evidence into actionable intelligence—bringing clarity to complex situations and accountability to those who abuse their power.",
     "vision": "Our Vision",
-    "visionText": "A world where justice is accessible to all and human rights violations are exposed and addressed."
+    "visionText": "A world where justice is accessible to all and human rights violations are exposed and addressed.",
+    "whoWeHelp": "Who We Help",
+    "helpList": {
+      "item1": "Individuals facing unjust legal proceedings",
+      "item2": "Families torn apart by institutional failures",
+      "item3": "Whistleblowers facing retaliation",
+      "item4": "Communities affected by systemic abuse",
+      "item5": "Journalists and researchers investigating misconduct"
+    },
+    "values": {
+      "title": "Our Values",
+      "description": "The principles that guide our work and define our commitment to human rights.",
+      "justice": "Justice",
+      "justiceDesc": "We believe every person deserves fair treatment under the law, regardless of their resources or status.",
+      "protection": "Protection",
+      "protectionDesc": "Safeguarding fundamental human rights through documentation, advocacy, and public awareness.",
+      "transparency": "Transparency",
+      "transparencyDesc": "Building comprehensive evidence repositories that bring procedural failures to light.",
+      "solidarity": "Solidarity",
+      "solidarityDesc": "Standing with individuals and families facing institutional abuse and systemic injustice."
+    },
+    "whatWeDo": {
+      "title": "What We Do",
+      "description": "Our platform provides tools and resources to document, analyze, and expose injustice.",
+      "items": {
+        "item1": "Document and analyze cases of human rights violations and legal abuse",
+        "item2": "Build transparent evidence repositories accessible to the public",
+        "item3": "Identify patterns of procedural failures across institutions",
+        "item4": "Support individuals navigating complex legal systems",
+        "item5": "Advocate for systemic reforms to protect fundamental rights",
+        "item6": "Connect victims with resources, legal aid, and support networks"
+      }
+    },
+    "caseFile": {
+      "title": "Case File #001: The Thanvi Investigation",
+      "description": "Our inaugural investigation documents a multi-year pattern of harassment, business interference, and legal abuse targeting an individual and their family in Denmark. Built from 123 sources, this case file demonstrates how institutional failures can devastate lives—and why transparency matters.",
+      "exploreNote": "Explore the timeline, evidence matrix, and entity network above"
+    },
+    "footerNote": "HRPM is a non-profit initiative. We do not provide legal advice. All case documentation is based on primary sources and is presented for public interest, research, and advocacy purposes."
   },
   "contact": {
     "title": "Contact Us",
@@ -199,15 +283,26 @@
     "confirmPassword": "Confirm Password",
     "forgotPassword": "Forgot Password?",
     "noAccount": "Don't have an account?",
-    "hasAccount": "Already have an account?"
+    "hasAccount": "Already have an account?",
+    "title": "HRPM",
+    "subtitle": "Human Rights Protection Movement"
   },
   "dashboard": {
     "title": "Dashboard",
     "overview": "Overview",
+    "platformOverview": "Platform Overview",
     "recentActivity": "Recent Activity",
     "quickActions": "Quick Actions",
     "alerts": "Critical Alerts",
-    "findings": "Key Findings"
+    "findings": "Key Findings",
+    "analyticsHub": "Analytics Hub",
+    "monitoring": "Monitoring",
+    "entityCharts": "Entity Charts",
+    "charts": "Charts",
+    "aiChat": "AI Chat",
+    "chat": "Chat",
+    "reports": "Reports",
+    "aiExtractedNotice": "{{events}} AI-extracted events and {{entities}} entities enriching the intelligence database"
   },
   "cases": {
     "title": "Case Files",
@@ -223,5 +318,17 @@
     "ur": "اردو",
     "ar": "العربية",
     "zh": "中文"
+  },
+  "cookies": {
+    "title": "Cookie Notice",
+    "description": "We use cookies to enhance your browsing experience and analyze site traffic. By continuing to use our site, you consent to our use of cookies.",
+    "accept": "Accept All",
+    "reject": "Reject All",
+    "learnMore": "Learn More"
+  },
+  "greeting": {
+    "morning": "Good Morning",
+    "afternoon": "Good Afternoon",
+    "evening": "Good Evening"
   }
 }
