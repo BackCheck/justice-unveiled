@@ -36,9 +36,10 @@ interface TimelineCardProps {
   forceExpanded?: boolean;
   showAdminControls?: boolean;
   isHidden?: boolean;
+  isPrintMode?: boolean;
 }
 
-export const TimelineCard = ({ event, index, forceExpanded = false, showAdminControls = false, isHidden = false }: TimelineCardProps) => {
+export const TimelineCard = ({ event, index, forceExpanded = false, showAdminControls = false, isHidden = false, isPrintMode = false }: TimelineCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const navigate = useNavigate();
@@ -91,19 +92,39 @@ export const TimelineCard = ({ event, index, forceExpanded = false, showAdminCon
   };
   const formattedDate = getFormattedDate();
 
+  // In print mode, use inline styles for reliable PDF color output
+  const printCategoryColors: Record<string, string> = {
+    "Business Interference": "#f59e0b",
+    "Harassment": "#ef4444",
+    "Legal Proceeding": "#0087C1",
+    "Criminal Allegation": "#8b5cf6",
+  };
+
   return (
-    <div className="relative flex gap-6 pb-8 last:pb-0 group">
+    <div className={cn(
+      "relative flex gap-6 pb-8 last:pb-0",
+      !isPrintMode && "group"
+    )}>
       {/* Timeline line */}
-      <div className="absolute left-[23px] top-12 bottom-0 w-0.5 bg-border last:hidden transition-colors duration-300 group-hover:bg-primary/30" />
+      <div className={cn(
+        "absolute left-[23px] top-12 bottom-0 w-0.5 last:hidden",
+        isPrintMode ? "bg-gray-200" : "bg-border transition-colors duration-300 group-hover:bg-primary/30"
+      )} />
       
       {/* Timeline dot */}
-      <div className={cn(
-        "relative z-10 flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center shadow-lg ring-4 ring-background",
-        "transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl",
-        categoryColors[event.category],
-        isExtracted && "ring-primary/50 glow-pulse"
-      )}>
-        {isExtracted ? (
+      <div 
+        className={cn(
+          "relative z-10 flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center",
+          !isPrintMode && "shadow-lg ring-4 ring-background transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl",
+          !isPrintMode && categoryColors[event.category],
+          !isPrintMode && isExtracted && "ring-primary/50 glow-pulse"
+        )}
+        style={isPrintMode ? { 
+          backgroundColor: printCategoryColors[event.category] || "#0087C1",
+          boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+        } : undefined}
+      >
+        {isExtracted && !isPrintMode ? (
           <Sparkles className="w-5 h-5 text-white animate-pulse" />
         ) : (
           <span className="text-white font-bold text-sm">{index + 1}</span>
@@ -191,37 +212,39 @@ export const TimelineCard = ({ event, index, forceExpanded = false, showAdminCon
         </CardHeader>
 
         <CardContent className="pt-0">
-          <div className="flex flex-wrap gap-2 mb-3 no-print">
-            {!forceExpanded && (
+          {!isPrintMode && (
+            <div className="flex flex-wrap gap-2 mb-3 no-print">
+              {!forceExpanded && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  {isExpanded ? (
+                    <>
+                      <ChevronUp className="w-4 h-4 mr-1" />
+                      Hide Details
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown className="w-4 h-4 mr-1" />
+                      Show Details
+                    </>
+                  )}
+                </Button>
+              )}
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="text-muted-foreground hover:text-foreground"
+                onClick={handleViewDetails}
+                className="text-primary hover:text-primary"
               >
-                {isExpanded ? (
-                  <>
-                    <ChevronUp className="w-4 h-4 mr-1" />
-                    Hide Details
-                  </>
-                ) : (
-                  <>
-                    <ChevronDown className="w-4 h-4 mr-1" />
-                    Show Details
-                  </>
-                )}
+                <ExternalLink className="w-4 h-4 mr-1" />
+                View Full Details
               </Button>
-            )}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleViewDetails}
-              className="text-primary hover:text-primary"
-            >
-              <ExternalLink className="w-4 h-4 mr-1" />
-              View Full Details
-            </Button>
-          </div>
+            </div>
+          )}
 
           {showDetails && (
             <div className="space-y-4 animate-in slide-in-from-top-2 duration-200">
