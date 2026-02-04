@@ -45,10 +45,10 @@
   },
   "landing": {
     "hero": {
-      "badge": "情报平台",
+      "badge": "开源调查平台",
       "title": "人权保护运动",
       "subtitle": "记录不公正。要求问责。",
-      "description": "一个诉讼级调查平台，将记录的事实转化为可用于法庭的情报，配备经过验证的判例法映射和自动合规跟踪。",
+      "description": "一个开源调查平台，用于记录人权侵犯、腐败和程序不公正，使用经过验证的证据和透明的方法论。",
       "cta": "进入案件档案",
       "secondaryCta": "查看仪表板"
     },
@@ -59,6 +59,10 @@
       "sources": "已验证来源",
       "precedents": "已验证判例",
       "statutes": "法律法规"
+    },
+    "trustMetrics": {
+      "yearsDocumented": "记录年数",
+      "frameworks": "国际框架"
     },
     "values": {
       "justice": "公正",
@@ -75,6 +79,85 @@
       "subtitle": "丹尼什·塔诺维调查",
       "description": "对非法拘留、程序违规和协调的机构不当行为进行全面调查。",
       "cta": "打开案件档案"
+    },
+    "featured": {
+      "label": "特色调查",
+      "highlight1": "{{count}}+ 带有审计追踪的已验证来源",
+      "highlight2": "{{count}}+ 已记录的时间线事件",
+      "highlight3": "{{count}}+ 已映射关系的实体",
+      "highlight4": "{{count}} 已验证的判例法先例",
+      "highlight5": "带有引用检查的诉讼级AI摘要",
+      "viewTimeline": "查看完整时间线",
+      "legalSuite": "法律情报套件",
+      "legalSuiteDesc": "诉讼级别，具有完整的审计追踪",
+      "verifiedCaseLaw": "已验证判例法",
+      "citeCheck": "引用检查系统",
+      "forensicEvidence": "法医证据",
+      "proceduralViolations": "程序违规",
+      "readBriefing": "阅读完整简报"
+    },
+    "capabilities": {
+      "badge": "平台功能",
+      "title": "调查研究工具",
+      "description": "专为记者、研究人员和法律倡导者设计的模块，将原始证据转化为结构化、可验证的情报。",
+      "evidence": {
+        "title": "证据和文件",
+        "description": "收集、验证和组织源材料，保持完整的保管链。",
+        "tool1": {
+          "title": "文档库",
+          "description": "带有元数据标记和版本控制的安全存储"
+        },
+        "tool2": {
+          "title": "AI提取",
+          "description": "从原始文档中提取事件、实体和违规行为"
+        },
+        "tool3": {
+          "title": "证据矩阵",
+          "description": "将文档与时间线事件和索赔进行交叉引用"
+        }
+      },
+      "networks": {
+        "title": "网络和关系",
+        "description": "绘制个人、组织和机构之间的联系。",
+        "tool1": {
+          "title": "实体网络",
+          "description": "所有案件参与者的交互式力导向图"
+        },
+        "tool2": {
+          "title": "角色分析",
+          "description": "按角色、隶属关系和影响力对实体进行分类"
+        },
+        "tool3": {
+          "title": "时间线重建",
+          "description": "构建平行时间线以识别矛盾"
+        }
+      },
+      "legal": {
+        "title": "法律和权利分析",
+        "description": "将违规行为映射到国内和国际法律框架。",
+        "tool1": {
+          "title": "索赔关联",
+          "description": "将法律索赔与支持证据联系起来，并进行强度评分"
+        },
+        "tool2": {
+          "title": "国际权利审计",
+          "description": "将违规行为映射到UDHR、ICCPR、CAT和ECHR"
+        },
+        "tool3": {
+          "title": "法律情报",
+          "description": "已验证的判例、法规和法庭就绪摘要"
+        }
+      }
+    },
+    "cta": {
+      "title": "准备开始调查了吗？",
+      "description": "探索已记录的案件档案，追踪实体网络，了解经过验证的证据如何成为人权问责的可操作情报。",
+      "startInvestigating": "开始调查",
+      "createAccount": "创建账户",
+      "whyAccount": "为什么要创建账户？",
+      "benefit1": "将案件保存到您的个人关注列表",
+      "benefit2": "关注正在进行的调查",
+      "benefit3": "贡献已验证的证据"
     }
   },
   "footer": {

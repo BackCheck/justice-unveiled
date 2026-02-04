@@ -1,33 +1,35 @@
+import { useTranslation } from "react-i18next";
 import { useLandingStats } from "@/hooks/usePlatformStats";
 import { Loader2, FileCheck, Calendar, Clock, Globe } from "lucide-react";
 import AnimatedCounter from "./AnimatedCounter";
 import { cn } from "@/lib/utils";
 
 const TrustMetrics = () => {
+  const { t } = useTranslation();
   const { fullStats, isLoading } = useLandingStats();
 
   const metrics = [
     { 
       value: fullStats.totalSources, 
-      label: "Verified Sources",
+      label: t('landing.stats.sources'),
       icon: FileCheck,
       suffix: "+"
     },
     { 
       value: 10, 
-      label: "Years Documented",
+      label: t('landing.trustMetrics.yearsDocumented', 'Years Documented'),
       icon: Calendar,
       suffix: "+"
     },
     { 
       value: fullStats.totalEvents, 
-      label: "Timeline Events",
+      label: t('landing.stats.events'),
       icon: Clock,
       suffix: "+"
     },
     { 
       value: 6, 
-      label: "International Frameworks",
+      label: t('landing.trustMetrics.frameworks', 'International Frameworks'),
       icon: Globe,
       suffix: ""
     }
