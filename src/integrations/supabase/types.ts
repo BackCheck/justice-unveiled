@@ -956,6 +956,7 @@ export type Database = {
           id: string
           individuals: string
           is_approved: boolean | null
+          is_hidden: boolean | null
           legal_action: string
           outcome: string
           source_upload_id: string | null
@@ -974,6 +975,7 @@ export type Database = {
           id?: string
           individuals: string
           is_approved?: boolean | null
+          is_hidden?: boolean | null
           legal_action: string
           outcome: string
           source_upload_id?: string | null
@@ -992,6 +994,7 @@ export type Database = {
           id?: string
           individuals?: string
           is_approved?: boolean | null
+          is_hidden?: boolean | null
           legal_action?: string
           outcome?: string
           source_upload_id?: string | null

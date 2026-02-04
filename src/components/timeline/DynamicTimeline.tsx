@@ -5,9 +5,10 @@ import { TimelineSlider } from "./TimelineSlider";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CombinedTimelineEvent } from "@/hooks/useCombinedTimeline";
 
 interface DynamicTimelineProps {
-  events: TimelineEvent[];
+  events: (TimelineEvent | CombinedTimelineEvent)[];
   isPrintMode?: boolean;
 }
 
@@ -92,15 +93,19 @@ export const DynamicTimeline = ({ events, isPrintMode = false }: DynamicTimeline
     // Print mode: show all events without year navigation
     return (
       <div className="space-y-6">
-        {events.map((event, index) => (
-          <div key={`${event.date}-${index}`} className="timeline-card">
-            <TimelineCard 
-              event={event} 
-              index={index}
-              forceExpanded={true}
-            />
-          </div>
-        ))}
+        {events.map((event, index) => {
+          const isHidden = 'isHidden' in event ? Boolean(event.isHidden) : false;
+          return (
+            <div key={`${event.date}-${index}`} className="timeline-card">
+              <TimelineCard 
+                event={event} 
+                index={index}
+                forceExpanded={true}
+                isHidden={isHidden}
+              />
+            </div>
+          );
+        })}
       </div>
     );
   }
@@ -157,6 +162,7 @@ export const DynamicTimeline = ({ events, isPrintMode = false }: DynamicTimeline
             <div className="space-y-6">
               {eventsByYear[year].map((event, index) => {
                 const globalIndex = events.indexOf(event);
+                const isHidden = 'isHidden' in event ? Boolean(event.isHidden) : false;
                 return (
                   <div 
                     key={`${event.date}-${index}`} 
@@ -166,6 +172,7 @@ export const DynamicTimeline = ({ events, isPrintMode = false }: DynamicTimeline
                     <TimelineCard 
                       event={event} 
                       index={globalIndex}
+                      isHidden={isHidden}
                     />
                   </div>
                 );
