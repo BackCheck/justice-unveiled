@@ -168,6 +168,9 @@ export const PDFTimelineExport = ({ events, stats }: PDFTimelineExportProps) => 
             <p style={{ color: "#0087C1" }}>https://hrpm.lovable.app</p>
           </div>
           <div className="mt-12 pt-8 border-t border-gray-200">
+            <p className="text-sm font-semibold text-red-700 mb-2">
+              Strictly Confidential – Only for Advocacy Work
+            </p>
             <p className="text-xs text-gray-400">
               © {new Date().getFullYear()} Human Rights Protection Movement
             </p>
