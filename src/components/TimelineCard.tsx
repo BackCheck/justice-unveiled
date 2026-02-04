@@ -11,6 +11,7 @@ import { CombinedTimelineEvent } from "@/hooks/useCombinedTimeline";
 import { cn } from "@/lib/utils";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useDeleteExtractedEvent, useToggleEventVisibility } from "@/hooks/useExtractedEvents";
+import { useToggleStaticEventVisibility } from "@/hooks/useStaticEventVisibility";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,14 +44,19 @@ export const TimelineCard = ({ event, index, forceExpanded = false, showAdminCon
   const navigate = useNavigate();
   const { isAdmin } = useUserRole();
   const deleteEvent = useDeleteExtractedEvent();
-  const toggleVisibility = useToggleEventVisibility();
+  const toggleExtractedVisibility = useToggleEventVisibility();
+  const toggleStaticVisibility = useToggleStaticEventVisibility();
   const showDetails = forceExpanded || isExpanded;
   
   // Check if this is an AI-extracted event with an ID
   const isExtracted = 'isExtracted' in event && event.isExtracted;
   const eventId = 'id' in event ? event.id : String(index);
   const extractedId = 'extractedId' in event ? event.extractedId : undefined;
+  const staticEventKey = 'staticEventKey' in event ? event.staticEventKey : undefined;
   const confidenceScore = 'confidenceScore' in event ? event.confidenceScore : undefined;
+
+  // Determine if admin can manage this event
+  const canManageEvent = isAdmin && (isExtracted ? extractedId : staticEventKey);
 
   const handleDelete = () => {
     if (extractedId) {
@@ -60,8 +66,10 @@ export const TimelineCard = ({ event, index, forceExpanded = false, showAdminCon
   };
 
   const handleToggleVisibility = () => {
-    if (extractedId) {
-      toggleVisibility.mutate({ eventId: extractedId, isHidden: !isHidden });
+    if (isExtracted && extractedId) {
+      toggleExtractedVisibility.mutate({ eventId: extractedId, isHidden: !isHidden });
+    } else if (staticEventKey) {
+      toggleStaticVisibility.mutate({ eventKey: staticEventKey, isHidden: !isHidden });
     }
   };
 
@@ -139,8 +147,8 @@ export const TimelineCard = ({ event, index, forceExpanded = false, showAdminCon
               )}
             </div>
             
-            {/* Admin Controls Dropdown */}
-            {isAdmin && isExtracted && extractedId && (
+            {/* Admin Controls Dropdown - works for all events */}
+            {canManageEvent && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0">
@@ -162,14 +170,19 @@ export const TimelineCard = ({ event, index, forceExpanded = false, showAdminCon
                       </>
                     )}
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    onClick={() => setShowDeleteDialog(true)}
-                    className="text-destructive focus:text-destructive"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete Permanently
-                  </DropdownMenuItem>
+                  {/* Only show delete option for AI-extracted events */}
+                  {isExtracted && extractedId && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        onClick={() => setShowDeleteDialog(true)}
+                        className="text-destructive focus:text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete Permanently
+                      </DropdownMenuItem>
+                    </>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
