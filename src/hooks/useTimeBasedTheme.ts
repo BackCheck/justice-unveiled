@@ -9,15 +9,16 @@ interface TimeContext {
   isDaytime: boolean;
 }
 
-export function useTimeBasedTheme(enableAutoTheme: boolean = true) {
+export function useTimeBasedTheme(enableAutoTheme: boolean = false) {
   const { setTheme, theme, resolvedTheme } = useTheme();
   const [timeContext, setTimeContext] = useState<TimeContext>(getTimeContext());
   const [autoThemeEnabled, setAutoThemeEnabled] = useState(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("auto-theme-enabled");
-      return stored !== null ? stored === "true" : enableAutoTheme;
+      // Default to false (manual mode) unless explicitly enabled
+      return stored === "true";
     }
-    return enableAutoTheme;
+    return false;
   });
 
   function getTimeContext(): TimeContext {
