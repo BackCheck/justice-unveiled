@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -27,6 +28,7 @@ import {
 import { GreetingBanner } from "@/components/GreetingBanner";
 
 export const IntelDashboard = () => {
+  const { t } = useTranslation();
   const { stats: platformStats, isLoading } = usePlatformStats();
 
   return (
@@ -41,8 +43,8 @@ export const IntelDashboard = () => {
             <Sparkles className="w-4 h-4 text-amber-500" />
           </div>
           <span className="text-sm text-foreground/80">
-            <strong className="text-foreground">{platformStats.aiExtractedEvents}</strong> AI-extracted events and{" "}
-            <strong className="text-foreground">{platformStats.aiExtractedEntities}</strong> entities enriching the intelligence database
+            <strong className="text-foreground">{platformStats.aiExtractedEvents}</strong> {t('dashboard.aiExtractedNotice', { events: platformStats.aiExtractedEvents, entities: platformStats.aiExtractedEntities }).split(platformStats.aiExtractedEvents.toString())[1]?.split(platformStats.aiExtractedEntities.toString())[0] || 'AI-extracted events and'}{" "}
+            <strong className="text-foreground">{platformStats.aiExtractedEntities}</strong> {t('dashboard.aiExtractedNotice', { events: platformStats.aiExtractedEvents, entities: platformStats.aiExtractedEntities }).split(platformStats.aiExtractedEntities.toString())[1] || 'entities enriching the intelligence database'}
           </span>
         </div>
       )}
@@ -51,7 +53,7 @@ export const IntelDashboard = () => {
       <section>
         <div className="flex items-center gap-2 mb-4">
           <LayoutGrid className="w-4 h-4 text-muted-foreground" />
-          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Platform Overview</h2>
+          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">{t('dashboard.platformOverview')}</h2>
         </div>
         <DashboardStatsHeader />
       </section>
@@ -79,25 +81,25 @@ export const IntelDashboard = () => {
           <section className="space-y-4">
             <div className="flex items-center gap-2">
               <BarChart3 className="w-4 h-4 text-muted-foreground" />
-              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Analytics Hub</h2>
+              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">{t('dashboard.analyticsHub')}</h2>
             </div>
             
             <Tabs defaultValue="charts" className="w-full">
               <TabsList className="grid w-full grid-cols-3 max-w-md bg-muted/50">
                 <TabsTrigger value="charts" className="flex items-center gap-2 data-[state=active]:bg-background">
                   <BarChart3 className="w-4 h-4" />
-                  <span className="hidden sm:inline">Entity Charts</span>
-                  <span className="sm:hidden">Charts</span>
+                  <span className="hidden sm:inline">{t('dashboard.entityCharts')}</span>
+                  <span className="sm:hidden">{t('dashboard.charts')}</span>
                 </TabsTrigger>
                 <TabsTrigger value="chat" className="flex items-center gap-2 data-[state=active]:bg-background">
                   <MessageSquare className="w-4 h-4" />
-                  <span className="hidden sm:inline">AI Chat</span>
-                  <span className="sm:hidden">Chat</span>
+                  <span className="hidden sm:inline">{t('dashboard.aiChat')}</span>
+                  <span className="sm:hidden">{t('dashboard.chat')}</span>
                 </TabsTrigger>
                 <TabsTrigger value="reports" className="flex items-center gap-2 data-[state=active]:bg-background">
                   <FileText className="w-4 h-4" />
-                  <span className="hidden sm:inline">Reports</span>
-                  <span className="sm:hidden">Reports</span>
+                  <span className="hidden sm:inline">{t('dashboard.reports')}</span>
+                  <span className="sm:hidden">{t('dashboard.reports')}</span>
                 </TabsTrigger>
               </TabsList>
               
@@ -132,7 +134,7 @@ export const IntelDashboard = () => {
           <section>
             <div className="flex items-center gap-2 mb-3">
               <AlertCircle className="w-4 h-4 text-destructive" />
-              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Monitoring</h2>
+              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">{t('dashboard.monitoring')}</h2>
             </div>
             <CriticalAlertsPanel />
           </section>
