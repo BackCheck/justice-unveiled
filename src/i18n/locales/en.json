@@ -76,12 +76,16 @@
     "settings": "Settings",
     "briefing": "Briefing",
     "aiAnalyzer": "AI Analyzer",
+    "caseLaw": "Case Law Library",
+    "blog": "Blog & Awareness",
+    "news": "News Hub",
     "main": "Main",
     "system": "System"
   },
   "sidebar": {
     "main": "Main",
     "analysis": "Analysis",
+    "content": "Content & Resources",
     "system": "System",
     "settings": "Settings"
   },

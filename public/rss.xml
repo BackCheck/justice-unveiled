@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Human Rights Progress Monitor - Blog &amp; News</title>
+    <description>Daily awareness posts on human rights laws, weekly global editorials, and latest news on justice and legal developments.</description>
+    <link>https://hrpm.org/blog</link>
+    <atom:link href="https://hrpm.org/rss.xml" rel="self" type="application/rss+xml"/>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 05 Feb 2025 00:00:00 GMT</lastBuildDate>
+    <managingEditor>editorial@hrpm.org (HRPM Editorial)</managingEditor>
+    <webMaster>tech@hrpm.org (HRPM Technical Team)</webMaster>
+    <category>Human Rights</category>
+    <category>Legal</category>
+    <category>News</category>
+    <image>
+      <url>https://hrpm.org/og-image.png</url>
+      <title>Human Rights Progress Monitor</title>
+      <link>https://hrpm.org</link>
+    </image>
+    
+    <!-- Dynamic items will be generated via API -->
+    <item>
+      <title>Welcome to HRPM Blog</title>
+      <description>Stay informed about human rights developments and legal awareness with our daily posts and weekly editorials.</description>
+      <link>https://hrpm.org/blog</link>
+      <guid isPermaLink="true">https://hrpm.org/blog</guid>
+      <pubDate>Thu, 05 Feb 2025 00:00:00 GMT</pubDate>
+      <dc:creator>HRPM Editorial</dc:creator>
+      <category>Awareness</category>
+    </item>
+  </channel>
+</rss>

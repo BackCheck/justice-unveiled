@@ -31,6 +31,10 @@ import Compliance from "./pages/Compliance";
 import RegulatoryHarm from "./pages/RegulatoryHarm";
 import Contact from "./pages/Contact";
 import LegalIntelligence from "./pages/LegalIntelligence";
+import CaseLawLibrary from "./pages/CaseLawLibrary";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import NewsHub from "./pages/NewsHub";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +51,12 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            
+            {/* Public content pages */}
+            <Route path="/case-law" element={<CaseLawLibrary />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/news" element={<NewsHub />} />
             
             {/* Public preview routes - accessible to all, with teaser for non-authenticated */}
             <Route path="/cases" element={<CasesList />} />
