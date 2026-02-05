@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,15 +18,33 @@ import { cn } from "@/lib/utils";
 import { usePlatformStats } from "@/hooks/usePlatformStats";
 
 const FeaturedCaseSection = () => {
+  const { t } = useTranslation();
   const { stats: fullStats } = usePlatformStats();
 
   const caseHighlights = [
-    `${fullStats.totalSources}+ verified sources with audit trails`,
-    `${fullStats.totalEvents}+ timeline events documented`,
-    `${fullStats.totalEntities}+ entities mapped with relationships`,
-    `${fullStats.verifiedPrecedents} verified case law precedents`,
-    "Litigation-grade AI summaries with cite-checking"
+    `${fullStats.totalSources}+ ${t('landing.featuredCase.highlight1')}`,
+    `${fullStats.totalEvents}+ ${t('landing.featuredCase.highlight2')}`,
+    `${fullStats.totalEntities}+ ${t('landing.featuredCase.highlight3')}`,
+    `${fullStats.verifiedPrecedents} ${t('landing.featuredCase.highlight4')}`,
+    t('landing.featuredCase.highlight5')
   ];
+
+  const legalItems = [
+    { label: t('landing.featuredCase.verifiedCaseLaw'), severity: "verified" },
+    { label: t('landing.featuredCase.citeCheck'), severity: "active" },
+    { label: t('landing.featuredCase.forensicEvidence'), severity: "critical" },
+    { label: t('landing.featuredCase.proceduralViolations'), severity: "high" }
+  ];
+
+  const getSeverityLabel = (severity: string) => {
+    switch (severity) {
+      case 'verified': return t('landing.featuredCase.verified');
+      case 'active': return t('landing.featuredCase.active');
+      case 'critical': return t('landing.featuredCase.critical');
+      case 'high': return t('landing.featuredCase.high');
+      default: return severity;
+    }
+  };
 
   return (
     <section className="py-20 md:py-28 relative">
@@ -37,30 +56,27 @@ const FeaturedCaseSection = () => {
             {/* Featured Label */}
             <div className="flex items-center gap-3 mb-4">
               <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
-                FEATURED INVESTIGATION
+                {t('landing.featuredCase.badge')}
               </Badge>
             </div>
 
             {/* Case Title */}
             <h2 className="text-3xl md:text-4xl font-bold mb-3">
-              Case File #001: <GradientText>Danish Thanvi</GradientText>
+              {t('landing.featuredCase.title')} <GradientText>{t('landing.featuredCase.name')}</GradientText>
             </h2>
 
             {/* Why Featured */}
             <p className="text-foreground/70 text-sm mb-4 flex items-center gap-2">
               <Calendar className="w-4 h-4 text-primary" />
-              <span>2015–2025</span>
+              <span>{t('landing.featuredCase.period')}</span>
               <span className="text-border">•</span>
               <MapPin className="w-4 h-4 text-primary" />
-              <span>Pakistan</span>
+              <span>{t('landing.featuredCase.location')}</span>
             </p>
 
             {/* Description */}
             <p className="text-foreground/80 mb-6 leading-relaxed text-base">
-              This case study demonstrates HRPM's methodology for evidence-based human rights 
-              documentation. It includes documented cases of business interference, harassment, 
-              and procedural failures—serving as a reference for how the platform transforms 
-              raw evidence into structured intelligence.
+              {t('landing.featuredCase.description')}
             </p>
             
             {/* Highlights */}
@@ -81,7 +97,7 @@ const FeaturedCaseSection = () => {
 
             <Link to="/timeline">
               <Button className="group">
-                View Full Timeline
+                {t('landing.featuredCase.viewTimeline')}
                 <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
@@ -98,18 +114,13 @@ const FeaturedCaseSection = () => {
                       <FileSearch className="w-6 h-6 text-primary" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-foreground">Legal Intelligence Suite</h4>
-                      <p className="text-sm text-foreground/60">Litigation-grade with full audit trails</p>
+                      <h4 className="font-semibold text-foreground">{t('landing.featuredCase.legalSuiteTitle')}</h4>
+                      <p className="text-sm text-foreground/60">{t('landing.featuredCase.legalSuiteSubtitle')}</p>
                     </div>
                   </div>
                   
                   <div className="space-y-3">
-                    {[
-                      { label: "Verified Case Law", severity: "verified" },
-                      { label: "Cite-Check System", severity: "active" },
-                      { label: "Forensic Evidence", severity: "critical" },
-                      { label: "Procedural Violations", severity: "high" }
-                    ].map((item, index) => (
+                    {legalItems.map((item, index) => (
                       <div 
                         key={item.label} 
                         className={cn(
@@ -130,7 +141,7 @@ const FeaturedCaseSection = () => {
                             item.severity === "active" && "bg-primary/10 text-primary border-primary/30"
                           )}
                         >
-                          {item.severity}
+                          {getSeverityLabel(item.severity)}
                         </Badge>
                       </div>
                     ))}
@@ -138,7 +149,7 @@ const FeaturedCaseSection = () => {
 
                   <Link to="/intel-briefing" className="block mt-6">
                     <Button variant="outline" className="w-full group hover:bg-primary/5 hover:border-primary/50 transition-all duration-300">
-                      Read Full Briefing
+                      {t('landing.featuredCase.readBriefing')}
                       <ExternalLink className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </Button>
                   </Link>

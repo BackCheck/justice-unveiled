@@ -115,6 +115,72 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_posts: {
+        Row: {
+          ai_scheduled_at: string | null
+          author_avatar_url: string | null
+          author_name: string | null
+          category: string | null
+          content: string
+          cover_image_url: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          is_ai_generated: boolean | null
+          is_featured: boolean | null
+          is_published: boolean | null
+          post_type: string
+          published_at: string | null
+          slug: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+          views_count: number | null
+        }
+        Insert: {
+          ai_scheduled_at?: string | null
+          author_avatar_url?: string | null
+          author_name?: string | null
+          category?: string | null
+          content: string
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_ai_generated?: boolean | null
+          is_featured?: boolean | null
+          is_published?: boolean | null
+          post_type?: string
+          published_at?: string | null
+          slug: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          views_count?: number | null
+        }
+        Update: {
+          ai_scheduled_at?: string | null
+          author_avatar_url?: string | null
+          author_name?: string | null
+          category?: string | null
+          content?: string
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_ai_generated?: boolean | null
+          is_featured?: boolean | null
+          is_published?: boolean | null
+          post_type?: string
+          published_at?: string | null
+          slug?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          views_count?: number | null
+        }
+        Relationships: []
+      }
       case_doctrine_links: {
         Row: {
           application_notes: string | null
@@ -1468,6 +1534,69 @@ export type Database = {
         }
         Relationships: []
       }
+      news_articles: {
+        Row: {
+          author: string | null
+          category: string | null
+          content: string | null
+          created_at: string
+          description: string | null
+          external_id: string | null
+          fetched_at: string | null
+          id: string
+          image_url: string | null
+          is_featured: boolean | null
+          is_relevant: boolean | null
+          keywords: string[] | null
+          published_at: string | null
+          sentiment: string | null
+          source_id: string | null
+          source_name: string | null
+          title: string
+          url: string
+        }
+        Insert: {
+          author?: string | null
+          category?: string | null
+          content?: string | null
+          created_at?: string
+          description?: string | null
+          external_id?: string | null
+          fetched_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          is_relevant?: boolean | null
+          keywords?: string[] | null
+          published_at?: string | null
+          sentiment?: string | null
+          source_id?: string | null
+          source_name?: string | null
+          title: string
+          url: string
+        }
+        Update: {
+          author?: string | null
+          category?: string | null
+          content?: string | null
+          created_at?: string
+          description?: string | null
+          external_id?: string | null
+          fetched_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          is_relevant?: boolean | null
+          keywords?: string[] | null
+          published_at?: string | null
+          sentiment?: string | null
+          source_id?: string | null
+          source_name?: string | null
+          title?: string
+          url?: string
+        }
+        Relationships: []
+      }
       procedural_requirements: {
         Row: {
           created_at: string
@@ -1663,6 +1792,53 @@ export type Database = {
             columns: ["requirement_id"]
             isOneToOne: false
             referencedRelation: "evidence_requirements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scheduled_content: {
+        Row: {
+          content_type: string
+          created_at: string
+          error_message: string | null
+          generated_post_id: string | null
+          id: string
+          keywords: string[] | null
+          processed_at: string | null
+          scheduled_for: string
+          status: string | null
+          topic: string | null
+        }
+        Insert: {
+          content_type: string
+          created_at?: string
+          error_message?: string | null
+          generated_post_id?: string | null
+          id?: string
+          keywords?: string[] | null
+          processed_at?: string | null
+          scheduled_for: string
+          status?: string | null
+          topic?: string | null
+        }
+        Update: {
+          content_type?: string
+          created_at?: string
+          error_message?: string | null
+          generated_post_id?: string | null
+          id?: string
+          keywords?: string[] | null
+          processed_at?: string | null
+          scheduled_for?: string
+          status?: string | null
+          topic?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_content_generated_post_id_fkey"
+            columns: ["generated_post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
             referencedColumns: ["id"]
           },
         ]

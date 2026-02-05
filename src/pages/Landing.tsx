@@ -110,18 +110,18 @@ const Landing = () => {
                 )}
               >
                 <Sparkles className="w-3.5 h-3.5 mr-2" />
-                Open-Source Investigative Platform
+                {t('landing.hero.badge')}
               </Badge>
             </ScrollReveal>
 
             {/* Main Headline */}
             <ScrollReveal delay={200}>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                <span className="text-foreground">Documenting Truth.</span>
+                <span className="text-foreground">{t('landing.hero.title1')}</span>
                 <br />
-                <span className="text-foreground">Demanding </span>
+                <span className="text-foreground">{t('landing.hero.title2')} </span>
                 <span className="text-primary relative">
-                  Accountability
+                  {t('landing.hero.title3')}
                   <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
                 </span>
               </h1>
@@ -130,8 +130,7 @@ const Landing = () => {
             {/* Plain-language Subtitle */}
             <ScrollReveal delay={300}>
               <p className="text-base md:text-lg text-foreground/80 mb-8 max-w-2xl mx-auto leading-relaxed">
-                An open-source investigative platform for documenting human rights abuse, 
-                corruption, and procedural injustice using verified evidence and transparent methodology.
+                {t('landing.hero.description')}
               </p>
             </ScrollReveal>
 
@@ -141,13 +140,13 @@ const Landing = () => {
                 <Button size="lg" className="group relative overflow-hidden" asChild>
                   <Link to="/cases">
                     <span className="relative z-10 flex items-center">
-                      Explore Case Files
+                      {t('landing.hero.cta')}
                       <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                     </span>
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" className="border-border/50 hover:border-primary/50 hover:bg-primary/5" asChild>
-                  <Link to="/dashboard">View Intelligence Dashboard</Link>
+                  <Link to="/dashboard">{t('landing.hero.secondaryCta')}</Link>
                 </Button>
               </div>
             </ScrollReveal>
@@ -188,13 +187,12 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <ScrollReveal>
             <div className="text-center mb-12">
-              <Badge variant="outline" className="mb-4 bg-background border-border/50">OUR MISSION</Badge>
+              <Badge variant="outline" className="mb-4 bg-background border-border/50">{t('landing.values.sectionBadge')}</Badge>
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Standing for <GradientText>Human Rights</GradientText>
+                {t('landing.values.sectionTitle')} <GradientText>{t('landing.values.sectionTitleHighlight')}</GradientText>
               </h2>
               <p className="text-foreground/70 max-w-2xl mx-auto text-base leading-relaxed">
-                HRPM is a non-profit organization dedicated to documenting human rights abuse and supporting 
-                those whose fundamental rights have been violated.
+                {t('landing.values.sectionDescription')}
               </p>
             </div>
           </ScrollReveal>
@@ -229,7 +227,7 @@ const Landing = () => {
             <div className="text-center mt-10">
               <Link to="/about">
                 <Button variant="outline" className="group hover:border-primary/50">
-                  Learn More About Us
+                  {t('landing.values.learnMore')}
                   <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
@@ -259,26 +257,26 @@ const Landing = () => {
                 </div>
               </div>
               <p className="text-sm text-foreground/70 leading-relaxed">
-                <span className="block font-medium text-foreground/80">Documenting injustice. Demanding accountability.</span>
-                A platform dedicated to exposing human rights violations through investigative intelligence and verified evidence.
+                <span className="block font-medium text-foreground/80">{t('footer.tagline')}</span>
+                {t('footer.description')}
               </p>
             </div>
 
             {/* Quick Links */}
             <div className="space-y-4">
-              <h4 className="font-semibold text-foreground">Quick Links</h4>
+              <h4 className="font-semibold text-foreground">{t('footer.quickLinks')}</h4>
               <div className="flex flex-col gap-2 text-sm text-foreground/70">
-                <Link to="/about" className="hover:text-primary transition-all duration-300">About Us</Link>
-                <Link to="/contact" className="hover:text-primary transition-all duration-300">Contact</Link>
-                <Link to="/cases" className="hover:text-primary transition-all duration-300">Case Files</Link>
-                <Link to="/dashboard" className="hover:text-primary transition-all duration-300">Dashboard</Link>
-                <Link to="/auth" className="hover:text-primary transition-all duration-300">Sign In</Link>
+                <Link to="/about" className="hover:text-primary transition-all duration-300">{t('nav.about')}</Link>
+                <Link to="/contact" className="hover:text-primary transition-all duration-300">{t('nav.contact')}</Link>
+                <Link to="/cases" className="hover:text-primary transition-all duration-300">{t('cases.title')}</Link>
+                <Link to="/dashboard" className="hover:text-primary transition-all duration-300">{t('nav.dashboard')}</Link>
+                <Link to="/auth" className="hover:text-primary transition-all duration-300">{t('common.signIn')}</Link>
               </div>
             </div>
 
             {/* Contact Info */}
             <div className="space-y-4">
-              <h4 className="font-semibold text-foreground">Contact</h4>
+              <h4 className="font-semibold text-foreground">{t('footer.contact')}</h4>
               <div className="flex flex-col gap-3 text-sm text-foreground/70">
                 <div className="flex items-start gap-2">
                   <Phone className="w-4 h-4 mt-0.5 text-primary shrink-0" />
@@ -296,19 +294,19 @@ const Landing = () => {
 
             {/* Offices */}
             <div className="space-y-4">
-              <h4 className="font-semibold text-foreground">Offices</h4>
+              <h4 className="font-semibold text-foreground">{t('footer.offices')}</h4>
               <div className="flex flex-col gap-4 text-sm text-foreground/70">
                 <div className="flex items-start gap-2">
                   <MapPin className="w-4 h-4 mt-0.5 text-primary shrink-0" />
                   <div>
-                    <p className="font-medium text-foreground/80">Singapore (Head Office)</p>
+                    <p className="font-medium text-foreground/80">{t('footer.headOffice')}</p>
                     <p>36 Robinson Road, #20-01 City House, Singapore 068877</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <MapPin className="w-4 h-4 mt-0.5 text-primary shrink-0" />
                   <div>
-                    <p className="font-medium text-foreground/80">Karachi Office</p>
+                    <p className="font-medium text-foreground/80">{t('footer.karachiOffice')}</p>
                     <p>Ground Floor, Zamzam Tower, Building # 1-C, 16th Commercial Street, DHA Phase 2 Extension, Karachi 75500</p>
                   </div>
                 </div>
@@ -318,11 +316,11 @@ const Landing = () => {
 
           <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-foreground/50">
-              © {new Date().getFullYear()} Human Rights Protection Movement. All rights reserved.
+              © {new Date().getFullYear()} Human Rights Protection Movement. {t('footer.copyright')}
             </p>
             <div className="flex items-center gap-4 text-xs text-foreground/50">
-              <Link to="/about" className="hover:text-primary transition-colors">Privacy Policy</Link>
-              <Link to="/about" className="hover:text-primary transition-colors">Terms of Service</Link>
+              <Link to="/about" className="hover:text-primary transition-colors">{t('footer.privacy')}</Link>
+              <Link to="/about" className="hover:text-primary transition-colors">{t('footer.terms')}</Link>
             </div>
           </div>
         </div>
