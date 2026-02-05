@@ -48,13 +48,15 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             
-            {/* Protected routes - require authentication */}
-            <Route path="/cases" element={<ProtectedRoute><CasesList /></ProtectedRoute>} />
+            {/* Public preview routes - accessible to all, with teaser for non-authenticated */}
+            <Route path="/cases" element={<CasesList />} />
             <Route path="/cases/:caseId" element={<ProtectedRoute><CaseProfile /></ProtectedRoute>} />
-            <Route path="/timeline" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/network" element={<ProtectedRoute><NetworkPage /></ProtectedRoute>} />
-            <Route path="/evidence" element={<ProtectedRoute><EvidencePage /></ProtectedRoute>} />
+            <Route path="/timeline" element={<Index />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/network" element={<NetworkPage />} />
+            <Route path="/evidence" element={<EvidencePage />} />
+            
+            {/* Protected routes - require authentication */}
             <Route path="/uploads" element={<ProtectedRoute><UploadsPage /></ProtectedRoute>} />
             <Route path="/intel-briefing" element={<ProtectedRoute><IntelBriefing /></ProtectedRoute>} />
             <Route path="/international" element={<ProtectedRoute><InternationalAnalysis /></ProtectedRoute>} />

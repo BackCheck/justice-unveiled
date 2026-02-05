@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { TimelineEvent } from "@/data/timelineData";
 import { TimelineFilters } from "@/components/TimelineFilters";
 import { TimelineStats } from "@/components/TimelineStats";
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FileDown, Sparkles } from "lucide-react";
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
+import { TeaserWrapper } from "@/components/TeaserWrapper";
 import { useCombinedTimeline } from "@/hooks/useCombinedTimeline";
 import { cn } from "@/lib/utils";
 import { SocialShareButtons } from "@/components/sharing";
@@ -15,6 +17,7 @@ import { PDFTimelineExport } from "@/components/export";
 import { useQueryClient } from "@tanstack/react-query";
 
 const Index = () => {
+  const { t } = useTranslation();
   const [selectedCategories, setSelectedCategories] = useState<TimelineEvent["category"][]>([
     "Business Interference",
     "Harassment",
@@ -74,6 +77,12 @@ const Index = () => {
 
   return (
     <PlatformLayout>
+      <TeaserWrapper
+        variant="blur"
+        title={t('teaser.timelineTitle', 'Explore the Full Investigation Timeline')}
+        description={t('teaser.timelineDesc', 'Access 200+ documented events with verified sources, AI-extracted intelligence, and legal analysis.')}
+        previewHeight="85vh"
+      >
       {/* Sub-header for Timeline */}
       <div className="bg-secondary border-b border-border py-8 px-4 no-print relative overflow-hidden">
         {/* Animated background elements */}
@@ -187,6 +196,7 @@ const Index = () => {
           </p>
         </footer>
       </main>
+      </TeaserWrapper>
     </PlatformLayout>
   );
 };
