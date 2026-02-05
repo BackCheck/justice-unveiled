@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { 
   FileText, 
@@ -18,81 +18,83 @@ import GradientText from "./GradientText";
 import { cn } from "@/lib/utils";
 
 const CapabilitiesSection = () => {
+  const { t } = useTranslation();
+
   const clusters = [
     {
       id: "evidence",
-      title: "Evidence & Documents",
-      description: "Collect, verify, and organize source materials with full chain of custody.",
+      title: t('landing.capabilities.evidence.title'),
+      description: t('landing.capabilities.evidence.description'),
       color: "primary",
       tools: [
         {
           icon: Upload,
-          title: "Document Repository",
-          description: "Secure storage with metadata tagging and version control",
+          title: t('landing.capabilities.evidence.docRepo'),
+          description: t('landing.capabilities.evidence.docRepoDesc'),
           link: "/uploads"
         },
         {
           icon: Brain,
-          title: "AI Extraction",
-          description: "Extract events, entities, and violations from raw documents",
+          title: t('landing.capabilities.evidence.aiExtraction'),
+          description: t('landing.capabilities.evidence.aiExtractionDesc'),
           link: "/analyze"
         },
         {
           icon: FileText,
-          title: "Evidence Matrix",
-          description: "Cross-reference documents with timeline events and claims",
+          title: t('landing.capabilities.evidence.evidenceMatrix'),
+          description: t('landing.capabilities.evidence.evidenceMatrixDesc'),
           link: "/evidence"
         }
       ]
     },
     {
       id: "networks",
-      title: "Networks & Relationships",
-      description: "Map connections between individuals, organizations, and institutions.",
+      title: t('landing.capabilities.networks.title'),
+      description: t('landing.capabilities.networks.description'),
       color: "chart-4",
       tools: [
         {
           icon: Network,
-          title: "Entity Network",
-          description: "Interactive force-directed graph of all case actors",
+          title: t('landing.capabilities.networks.entityNetwork'),
+          description: t('landing.capabilities.networks.entityNetworkDesc'),
           link: "/network"
         },
         {
           icon: Users,
-          title: "Role Analysis",
-          description: "Categorize entities by role, affiliation, and influence",
+          title: t('landing.capabilities.networks.roleAnalysis'),
+          description: t('landing.capabilities.networks.roleAnalysisDesc'),
           link: "/network"
         },
         {
           icon: GitBranch,
-          title: "Timeline Reconstruction",
-          description: "Build parallel timelines to identify contradictions",
+          title: t('landing.capabilities.networks.timelineReconstruction'),
+          description: t('landing.capabilities.networks.timelineReconstructionDesc'),
           link: "/reconstruction"
         }
       ]
     },
     {
       id: "legal",
-      title: "Legal & Rights Analysis",
-      description: "Map violations against domestic and international legal frameworks.",
+      title: t('landing.capabilities.legal.title'),
+      description: t('landing.capabilities.legal.description'),
       color: "chart-2",
       tools: [
         {
           icon: Scale,
-          title: "Claim Correlation",
-          description: "Link legal claims to supporting evidence with strength scoring",
+          title: t('landing.capabilities.legal.claimCorrelation'),
+          description: t('landing.capabilities.legal.claimCorrelationDesc'),
           link: "/correlation"
         },
         {
           icon: Globe,
-          title: "International Rights Audit",
-          description: "Map violations against UDHR, ICCPR, CAT, and ECHR",
+          title: t('landing.capabilities.legal.internationalRights'),
+          description: t('landing.capabilities.legal.internationalRightsDesc'),
           link: "/international"
         },
         {
           icon: Gavel,
-          title: "Legal Intelligence",
-          description: "Verified precedents, statutes, and court-ready summaries",
+          title: t('landing.capabilities.legal.legalIntelligence'),
+          description: t('landing.capabilities.legal.legalIntelligenceDesc'),
           link: "/legal-intelligence"
         }
       ]
@@ -126,14 +128,13 @@ const CapabilitiesSection = () => {
         <ScrollReveal>
           <div className="text-center mb-16">
             <Badge variant="outline" className="mb-4 bg-background border-border/50">
-              PLATFORM CAPABILITIES
+              {t('landing.capabilities.badge')}
             </Badge>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Tools for <GradientText>Investigative Research</GradientText>
+              {t('landing.capabilities.title')} <GradientText>{t('landing.capabilities.titleHighlight')}</GradientText>
             </h2>
             <p className="text-base md:text-lg text-foreground/70 max-w-2xl mx-auto leading-relaxed">
-              Purpose-built modules designed for journalists, researchers, and legal advocates 
-              to transform raw evidence into structured, verifiable intelligence.
+              {t('landing.capabilities.description')}
             </p>
           </div>
         </ScrollReveal>

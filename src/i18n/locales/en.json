@@ -45,12 +45,13 @@
   },
   "landing": {
     "hero": {
-      "badge": "Intelligence Platform",
-      "title": "Human Rights Protection Movement",
-      "subtitle": "Documenting injustice. Demanding accountability.",
-      "description": "A litigation-grade investigative platform transforming documented facts into court-ready intelligence with verified case law mapping and automated compliance tracking.",
-      "cta": "Enter Case Files",
-      "secondaryCta": "View Dashboard"
+      "badge": "Open-Source Investigative Platform",
+      "title1": "Documenting Truth.",
+      "title2": "Demanding",
+      "title3": "Accountability",
+      "description": "An open-source investigative platform for documenting human rights abuse, corruption, and procedural injustice using verified evidence and transparent methodology.",
+      "cta": "Explore Case Files",
+      "secondaryCta": "View Intelligence Dashboard"
     },
     "stats": {
       "activeCases": "Active Cases",
@@ -58,9 +59,15 @@
       "events": "Timeline Events",
       "sources": "Verified Sources",
       "precedents": "Verified Precedents",
-      "statutes": "Legal Statutes"
+      "statutes": "Legal Statutes",
+      "yearsDocumented": "Years Documented",
+      "internationalFrameworks": "International Frameworks"
     },
     "values": {
+      "sectionBadge": "OUR MISSION",
+      "sectionTitle": "Standing for",
+      "sectionTitleHighlight": "Human Rights",
+      "sectionDescription": "HRPM is a non-profit organization dedicated to documenting human rights abuse and supporting those whose fundamental rights have been violated.",
       "justice": "Justice",
       "justiceDesc": "Fair treatment under the law for everyone.",
       "protection": "Protection",
@@ -68,13 +75,80 @@
       "transparency": "Transparency",
       "transparencyDesc": "Bringing procedural failures to light.",
       "solidarity": "Solidarity",
-      "solidarityDesc": "Standing with those facing injustice."
+      "solidarityDesc": "Standing with those facing injustice.",
+      "learnMore": "Learn More About Us"
     },
-    "casePreview": {
-      "title": "Case File #001",
-      "subtitle": "Danish Thanvi Investigation",
-      "description": "A comprehensive investigation into wrongful detention, procedural violations, and coordinated institutional misconduct.",
-      "cta": "Open Case File"
+    "featuredCase": {
+      "badge": "FEATURED INVESTIGATION",
+      "title": "Case File #001:",
+      "name": "Danish Thanvi",
+      "period": "2015–2025",
+      "location": "Pakistan",
+      "description": "This case study demonstrates HRPM's methodology for evidence-based human rights documentation. It includes documented cases of business interference, harassment, and procedural failures—serving as a reference for how the platform transforms raw evidence into structured intelligence.",
+      "highlight1": "verified sources with audit trails",
+      "highlight2": "timeline events documented",
+      "highlight3": "entities mapped with relationships",
+      "highlight4": "verified case law precedents",
+      "highlight5": "Litigation-grade AI summaries with cite-checking",
+      "viewTimeline": "View Full Timeline",
+      "legalSuiteTitle": "Legal Intelligence Suite",
+      "legalSuiteSubtitle": "Litigation-grade with full audit trails",
+      "verifiedCaseLaw": "Verified Case Law",
+      "citeCheck": "Cite-Check System",
+      "forensicEvidence": "Forensic Evidence",
+      "proceduralViolations": "Procedural Violations",
+      "verified": "verified",
+      "active": "active",
+      "critical": "critical",
+      "high": "high",
+      "readBriefing": "Read Full Briefing"
+    },
+    "capabilities": {
+      "badge": "PLATFORM CAPABILITIES",
+      "title": "Tools for",
+      "titleHighlight": "Investigative Research",
+      "description": "Purpose-built modules designed for journalists, researchers, and legal advocates to transform raw evidence into structured, verifiable intelligence.",
+      "evidence": {
+        "title": "Evidence & Documents",
+        "description": "Collect, verify, and organize source materials with full chain of custody.",
+        "docRepo": "Document Repository",
+        "docRepoDesc": "Secure storage with metadata tagging and version control",
+        "aiExtraction": "AI Extraction",
+        "aiExtractionDesc": "Extract events, entities, and violations from raw documents",
+        "evidenceMatrix": "Evidence Matrix",
+        "evidenceMatrixDesc": "Cross-reference documents with timeline events and claims"
+      },
+      "networks": {
+        "title": "Networks & Relationships",
+        "description": "Map connections between individuals, organizations, and institutions.",
+        "entityNetwork": "Entity Network",
+        "entityNetworkDesc": "Interactive force-directed graph of all case actors",
+        "roleAnalysis": "Role Analysis",
+        "roleAnalysisDesc": "Categorize entities by role, affiliation, and influence",
+        "timelineReconstruction": "Timeline Reconstruction",
+        "timelineReconstructionDesc": "Build parallel timelines to identify contradictions"
+      },
+      "legal": {
+        "title": "Legal & Rights Analysis",
+        "description": "Map violations against domestic and international legal frameworks.",
+        "claimCorrelation": "Claim Correlation",
+        "claimCorrelationDesc": "Link legal claims to supporting evidence with strength scoring",
+        "internationalRights": "International Rights Audit",
+        "internationalRightsDesc": "Map violations against UDHR, ICCPR, CAT, and ECHR",
+        "legalIntelligence": "Legal Intelligence",
+        "legalIntelligenceDesc": "Verified precedents, statutes, and court-ready summaries"
+      }
+    },
+    "cta": {
+      "title": "Ready to",
+      "titleHighlight": "Start Investigating",
+      "description": "Explore documented case files, trace entity networks, and see how verified evidence becomes actionable intelligence for human rights accountability.",
+      "primaryButton": "Start Investigating",
+      "secondaryButton": "Create an Account",
+      "whyAccount": "Why create an account?",
+      "benefit1": "Save cases to your personal watchlist",
+      "benefit2": "Follow ongoing investigations",
+      "benefit3": "Contribute verified evidence"
     }
   },
   "footer": {
