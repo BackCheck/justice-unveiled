@@ -223,5 +223,26 @@
     "ur": "اردو",
     "ar": "العربية",
     "zh": "中文"
+  },
+  "teaser": {
+    "title": "解锁完整情报访问",
+    "description": "免费注册以访问完整的案件数据、AI驱动的分析和详细的证据文档。",
+    "benefit1": "完整案件时间线",
+    "benefit2": "AI分析工具",
+    "benefit3": "证据矩阵",
+    "benefit4": "实体网络",
+    "signupFree": "免费注册",
+    "login": "已有账户？",
+    "trust": "✓ 永久免费 • 无需信用卡 • 加入1,000+调查员",
+    "dashboardTitle": "解锁情报仪表板",
+    "dashboardDesc": "获得AI驱动的案件分析、实体图表、实时警报和全面情报简报的完整访问权限。",
+    "timelineTitle": "探索完整调查时间线",
+    "timelineDesc": "访问200+已记录事件，包含已验证来源、AI提取的情报和法律分析。",
+    "networkTitle": "探索实体网络",
+    "networkDesc": "可视化个人、组织和事件之间的联系。发现证据中的隐藏模式。",
+    "evidenceTitle": "访问证据矩阵",
+    "evidenceDesc": "交叉引用文件、证词和法医证据。构建无懈可击的法律论据。",
+    "casesTitle": "浏览调查案件档案",
+    "casesDesc": "访问详细的案件档案、证据文档和调查时间线。"
   }
 }

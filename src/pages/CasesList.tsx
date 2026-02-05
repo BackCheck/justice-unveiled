@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
+import { TeaserWrapper } from "@/components/TeaserWrapper";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -52,6 +53,12 @@ const CasesList = () => {
 
   return (
     <PlatformLayout>
+      <TeaserWrapper
+        variant="blur"
+        title={t('teaser.casesTitle', 'Browse Investigation Case Files')}
+        description={t('teaser.casesDesc', 'Access detailed case profiles, evidence documentation, and investigation timelines.')}
+        previewHeight="90vh"
+      >
       {/* Header */}
       <div className="bg-secondary/50 backdrop-blur-xl border-b border-border/30 py-8 px-4 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
@@ -209,6 +216,7 @@ const CasesList = () => {
           </div>
         )}
       </main>
+      </TeaserWrapper>
     </PlatformLayout>
   );
 };

@@ -402,5 +402,26 @@
     "morning": "Good Morning",
     "afternoon": "Good Afternoon",
     "evening": "Good Evening"
+  },
+  "teaser": {
+    "title": "Unlock Full Intelligence Access",
+    "description": "Sign up for free to access complete case data, AI-powered analysis, and detailed evidence documentation.",
+    "benefit1": "Full case timelines",
+    "benefit2": "AI analysis tools",
+    "benefit3": "Evidence matrix",
+    "benefit4": "Entity networks",
+    "signupFree": "Sign Up Free",
+    "login": "Already have an account?",
+    "trust": "✓ Free forever • No credit card required • Join 1,000+ investigators",
+    "dashboardTitle": "Unlock the Intelligence Dashboard",
+    "dashboardDesc": "Get full access to AI-powered case analysis, entity charts, real-time alerts, and comprehensive intelligence briefings.",
+    "timelineTitle": "Explore the Full Investigation Timeline",
+    "timelineDesc": "Access 200+ documented events with verified sources, AI-extracted intelligence, and legal analysis.",
+    "networkTitle": "Explore Entity Networks",
+    "networkDesc": "Visualize connections between individuals, organizations, and events. Uncover hidden patterns in the evidence.",
+    "evidenceTitle": "Access the Evidence Matrix",
+    "evidenceDesc": "Cross-reference documents, testimonies, and forensic evidence. Build unbreakable legal arguments.",
+    "casesTitle": "Browse Investigation Case Files",
+    "casesDesc": "Access detailed case profiles, evidence documentation, and investigation timelines."
   }
 }
