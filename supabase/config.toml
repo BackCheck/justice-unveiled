@@ -20,9 +20,3 @@ verify_jwt = false
 
 [functions.generate-appeal-summary]
 verify_jwt = false
-
-[functions.fetch-news]
-verify_jwt = false
-
-[functions.fetch-case-law]
-verify_jwt = false

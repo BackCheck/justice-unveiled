@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BookmarkPlus, Search, FileText } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
@@ -8,12 +7,10 @@ import GlowingOrb from "./GlowingOrb";
 import hrpmLogo from "@/assets/human-rights-logo.svg";
 
 const BottomCTA = () => {
-  const { t } = useTranslation();
-
   const accountBenefits = [
-    { icon: BookmarkPlus, textKey: "landing.cta.benefit1" },
-    { icon: Search, textKey: "landing.cta.benefit2" },
-    { icon: FileText, textKey: "landing.cta.benefit3" }
+    { icon: BookmarkPlus, text: "Save cases to your personal watchlist" },
+    { icon: Search, text: "Follow ongoing investigations" },
+    { icon: FileText, text: "Contribute verified evidence" }
   ];
 
   return (
@@ -34,13 +31,14 @@ const BottomCTA = () => {
         
         <ScrollReveal delay={100}>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            <GradientText>{t('landing.cta.title', 'Ready to Start Investigating?')}</GradientText>
+            Ready to <GradientText>Start Investigating</GradientText>?
           </h2>
         </ScrollReveal>
         
         <ScrollReveal delay={200}>
           <p className="text-foreground/70 mb-8 max-w-xl mx-auto text-base leading-relaxed">
-            {t('landing.cta.description', 'Explore documented case files, trace entity networks, and see how verified evidence becomes actionable intelligence for human rights accountability.')}
+            Explore documented case files, trace entity networks, and see how verified evidence 
+            becomes actionable intelligence for human rights accountability.
           </p>
         </ScrollReveal>
         
@@ -49,13 +47,13 @@ const BottomCTA = () => {
             <Button size="lg" className="group relative overflow-hidden" asChild>
               <Link to="/cases">
                 <span className="relative z-10 flex items-center">
-                  {t('landing.cta.startInvestigating', 'Start Investigating')}
-                  <ArrowRight className="w-4 h-4 ml-2 rtl:ml-0 rtl:mr-2 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
+                  Start Investigating
+                  <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                 </span>
               </Link>
             </Button>
             <Button size="lg" variant="outline" className="hover:border-primary/50 hover:bg-primary/5" asChild>
-              <Link to="/auth">{t('landing.cta.createAccount', 'Create an Account')}</Link>
+              <Link to="/auth">Create an Account</Link>
             </Button>
           </div>
         </ScrollReveal>
@@ -63,12 +61,12 @@ const BottomCTA = () => {
         {/* Account Benefits */}
         <ScrollReveal delay={400}>
           <div className="pt-6 border-t border-border/30">
-            <p className="text-sm text-foreground/50 mb-4">{t('landing.cta.whyAccount', 'Why create an account?')}</p>
+            <p className="text-sm text-foreground/50 mb-4">Why create an account?</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
               {accountBenefits.map((benefit) => (
-                <div key={benefit.textKey} className="flex items-center gap-2 text-sm text-foreground/60">
+                <div key={benefit.text} className="flex items-center gap-2 text-sm text-foreground/60">
                   <benefit.icon className="w-4 h-4 text-primary" />
-                  <span>{t(benefit.textKey)}</span>
+                  <span>{benefit.text}</span>
                 </div>
               ))}
             </div>

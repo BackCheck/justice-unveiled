@@ -1,4 +1,5 @@
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -56,46 +57,12 @@ interface SourcesUsed {
   violations: CitedSource[];
 }
 
-Deno.serve(async (req) => {
+serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // ============ AUTHENTICATION CHECK ============
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      console.error("Missing or invalid authorization header");
-      return new Response(
-        JSON.stringify({ error: 'Missing authorization header' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-    
-    // Create client with user's auth token
-    const authClient = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } }
-    });
-
-    // Verify the user's JWT
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claimsData, error: claimsError } = await authClient.auth.getUser(token);
-    
-    if (claimsError || !claimsData?.user) {
-      console.error("Auth verification failed:", claimsError?.message);
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized - invalid token' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const userId = claimsData.user.id;
-    console.log(`Authenticated user: ${userId}`);
-    // ============ END AUTHENTICATION ============
-
     const { caseId, summaryType, caseTitle, includeUnverifiedPrecedents } = await req.json();
 
     if (!caseId || !summaryType) {
@@ -105,6 +72,8 @@ Deno.serve(async (req) => {
       );
     }
 
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
 
     if (!lovableApiKey) {
@@ -114,8 +83,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Use service role for database operations
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Track sources for both human-readable and machine-readable output
@@ -509,7 +476,7 @@ Generate the ${summaryType.replace("_", " ")} summary now, strictly citing only 
       }
       if (response.status === 402) {
         return new Response(
-          JSON.stringify({ error: "AI credits exhausted." }),
+          JSON.stringify({ error: "API credits exhausted. Please add credits to continue." }),
           { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -518,47 +485,39 @@ Generate the ${summaryType.replace("_", " ")} summary now, strictly citing only 
     }
 
     const aiResponse = await response.json();
-    const summary = aiResponse.choices?.[0]?.message?.content;
+    const content = aiResponse.choices?.[0]?.message?.content;
 
-    if (!summary) {
-      throw new Error("No summary generated");
+    if (!content) {
+      throw new Error("No content in AI response");
     }
 
-    // Save to database with sources_json
-    const { data: savedSummary, error: saveError } = await supabase
-      .from("appeal_summaries")
-      .insert({
-        case_id: caseId,
-        title: `${caseTitle || "Case"} - ${summaryType.replace("_", " ").toUpperCase()} Summary`,
-        summary_type: summaryType,
-        content: summary,
-        ai_generated: true,
-        sources_json: sourcesJson,
-        version: 1,
-        is_finalized: false,
-      })
-      .select()
-      .single();
+    // Generate title based on type
+    const titles: Record<string, string> = {
+      factual: "Factual Summary for Appeal",
+      legal: "Legal Analysis Summary",
+      procedural: "Procedural Issues Summary",
+      full_appeal: "Comprehensive Appeal Brief",
+    };
 
-    if (saveError) {
-      console.error("Error saving summary:", saveError);
-    }
+    console.log("Successfully generated litigation-grade summary with citation audit trail");
 
     return new Response(
       JSON.stringify({
-        summary,
+        title: titles[summaryType] || "Legal Summary",
+        content,
+        summaryType,
+        // Human-readable sources for UI display
         sourcesUsed,
+        // Machine-readable JSON for database storage and audit
         sourcesJson,
-        savedId: savedSummary?.id,
-        unverifiedPrecedentsExcluded: unverifiedCount,
-        isDraft: includeUnverifiedPrecedents === true,
+        unverifiedPrecedentsCount: unverifiedCount,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("Appeal summary error:", error);
+    console.error("Error in generate-appeal-summary:", error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Summary generation failed" }),
+      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

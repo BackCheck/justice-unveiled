@@ -25,9 +25,7 @@ import {
   GitBranch,
   ClipboardCheck,
   TrendingDown,
-  Gavel,
-  Newspaper,
-  Globe
+  Gavel
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -61,47 +59,40 @@ import {
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
+const mainNavItems = [
+  { path: "/", label: "Home", icon: Home },
+  { path: "/investigations", label: "Investigation Hub", icon: Target },
+  { path: "/cases", label: "Case Files", icon: FolderOpen },
+  { path: "/timeline", label: "Timeline", icon: Clock },
+  { path: "/dashboard", label: "Intel Dashboard", icon: BarChart3 },
+  { path: "/intel-briefing", label: "Briefing", icon: BookOpen },
+  { path: "/network", label: "Entity Network", icon: Network },
+  { path: "/watchlist", label: "My Watchlist", icon: Eye },
+];
+
+const analysisNavItems = [
+  { path: "/reconstruction", label: "Reconstruction", icon: GitBranch },
+  { path: "/correlation", label: "Claim Correlation", icon: Scale },
+  { path: "/compliance", label: "Compliance Checker", icon: ClipboardCheck },
+  { path: "/regulatory-harm", label: "Economic Harm", icon: TrendingDown },
+  { path: "/legal-intelligence", label: "Legal Intelligence", icon: Gavel },
+  { path: "/analyze", label: "AI Analyzer", icon: Brain },
+  { path: "/evidence", label: "Evidence Matrix", icon: FileText },
+  { path: "/international", label: "International Rights", icon: Scale },
+];
+
+const systemNavItems = [
+  { path: "/uploads", label: "Uploads", icon: Upload },
+  { path: "/about", label: "About", icon: Info },
+];
+
 export function AppSidebar() {
-  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const { state, toggleSidebar } = useSidebar();
   const { user, profile, signOut } = useAuth();
   const { role, canEdit, canUpload, isAdmin } = useUserRole();
   const collapsed = state === "collapsed";
-
-  const mainNavItems = [
-    { path: "/", label: t('nav.home'), icon: Home },
-    { path: "/investigations", label: t('nav.investigations'), icon: Target },
-    { path: "/cases", label: t('nav.cases'), icon: FolderOpen },
-    { path: "/timeline", label: t('nav.timeline'), icon: Clock },
-    { path: "/dashboard", label: t('nav.dashboard'), icon: BarChart3 },
-    { path: "/intel-briefing", label: t('nav.briefing'), icon: BookOpen },
-    { path: "/network", label: t('nav.network'), icon: Network },
-    { path: "/watchlist", label: t('nav.watchlist'), icon: Eye },
-  ];
-
-  const analysisNavItems = [
-    { path: "/reconstruction", label: t('nav.reconstruction'), icon: GitBranch },
-    { path: "/correlation", label: t('nav.correlation'), icon: Scale },
-    { path: "/compliance", label: t('nav.compliance'), icon: ClipboardCheck },
-    { path: "/regulatory-harm", label: t('nav.harm'), icon: TrendingDown },
-    { path: "/legal-intelligence", label: t('nav.legal'), icon: Gavel },
-    { path: "/analyze", label: t('nav.aiAnalyzer'), icon: Brain },
-    { path: "/evidence", label: t('nav.evidence'), icon: FileText },
-    { path: "/international", label: t('nav.international'), icon: Scale },
-  ];
-
-  const contentNavItems = [
-    { path: "/case-law", label: t('nav.caseLaw'), icon: Gavel },
-    { path: "/blog", label: t('nav.blog'), icon: BookOpen },
-    { path: "/news", label: t('nav.news'), icon: Newspaper },
-  ];
-
-  const systemNavItems = [
-    { path: "/uploads", label: t('nav.uploads'), icon: Upload },
-    { path: "/about", label: t('nav.about'), icon: Info },
-  ];
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -119,7 +110,7 @@ export function AppSidebar() {
 
   const handleSignOut = async () => {
     await signOut();
-    toast.success(t('common.signedOutSuccess'));
+    toast.success("Signed out successfully");
     navigate("/auth");
   };
 
@@ -191,7 +182,7 @@ export function AppSidebar() {
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right">
-              {collapsed ? t('common.expandSidebar') : t('common.collapseSidebar')}
+              {collapsed ? "Expand sidebar" : "Collapse sidebar"}
             </TooltipContent>
           </Tooltip>
         </div>
@@ -208,7 +199,7 @@ export function AppSidebar() {
         {/* Main Navigation */}
         <SidebarGroup>
           <SidebarGroupLabel className={cn("text-xs font-semibold text-muted-foreground uppercase tracking-wider", collapsed && "sr-only")}>
-            {t('sidebar.main')}
+            Main
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -222,7 +213,7 @@ export function AppSidebar() {
         {/* Analysis */}
         <SidebarGroup className="mt-4">
           <SidebarGroupLabel className={cn("text-xs font-semibold text-muted-foreground uppercase tracking-wider", collapsed && "sr-only")}>
-            {t('sidebar.analysis')}
+            Analysis
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -233,24 +224,10 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Content & Resources */}
-        <SidebarGroup className="mt-4">
-          <SidebarGroupLabel className={cn("text-xs font-semibold text-muted-foreground uppercase tracking-wider", collapsed && "sr-only")}>
-            {t('sidebar.content')}
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {contentNavItems.map((item) => (
-                <NavItem key={item.path} item={item} />
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
         {/* System */}
         <SidebarGroup className="mt-4">
           <SidebarGroupLabel className={cn("text-xs font-semibold text-muted-foreground uppercase tracking-wider", collapsed && "sr-only")}>
-            {t('sidebar.system')}
+            System
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -259,7 +236,7 @@ export function AppSidebar() {
               ))}
               {/* Admin Panel - only visible to admins */}
               {isAdmin && (
-                <NavItem item={{ path: "/admin", label: t('nav.admin'), icon: Shield }} />
+                <NavItem item={{ path: "/admin", label: "Admin Panel", icon: Shield }} />
               )}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -270,7 +247,7 @@ export function AppSidebar() {
         {/* Language & Theme Toggle */}
         <div className={cn("flex items-center gap-2 px-2 py-1", collapsed ? "justify-center flex-col" : "justify-between")}>
           {!collapsed && (
-            <span className="text-xs text-muted-foreground">{t('sidebar.settings')}</span>
+            <span className="text-xs text-muted-foreground">Settings</span>
           )}
           <div className="flex items-center gap-1">
             <LanguageSwitcher />
@@ -322,11 +299,11 @@ export function AppSidebar() {
               <DropdownMenuSeparator />
               <DropdownMenuItem className="cursor-pointer">
                 <User className="mr-2 h-4 w-4" />
-                {t('common.profile')}
+                Profile
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer">
                 <Settings className="mr-2 h-4 w-4" />
-                {t('common.settings')}
+                Settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem 
@@ -334,7 +311,7 @@ export function AppSidebar() {
                 onClick={handleSignOut}
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                {t('common.signOut')}
+                Sign out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -352,8 +329,8 @@ export function AppSidebar() {
             </div>
             {!collapsed && (
               <div className="flex flex-col items-start min-w-0 flex-1">
-                <span className="text-sm font-medium">{t('common.signIn')}</span>
-                <span className="text-xs text-muted-foreground">{t('common.optional')}</span>
+                <span className="text-sm font-medium">Sign In</span>
+                <span className="text-xs text-muted-foreground">Optional</span>
               </div>
             )}
           </Link>

@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,15 +17,14 @@ import { cn } from "@/lib/utils";
 import { usePlatformStats } from "@/hooks/usePlatformStats";
 
 const FeaturedCaseSection = () => {
-  const { t } = useTranslation();
   const { stats: fullStats } = usePlatformStats();
 
   const caseHighlights = [
-    t('landing.featured.highlight1', { count: fullStats.totalSources }),
-    t('landing.featured.highlight2', { count: fullStats.totalEvents }),
-    t('landing.featured.highlight3', { count: fullStats.totalEntities }),
-    t('landing.featured.highlight4', { count: fullStats.verifiedPrecedents }),
-    t('landing.featured.highlight5')
+    `${fullStats.totalSources}+ verified sources with audit trails`,
+    `${fullStats.totalEvents}+ timeline events documented`,
+    `${fullStats.totalEntities}+ entities mapped with relationships`,
+    `${fullStats.verifiedPrecedents} verified case law precedents`,
+    "Litigation-grade AI summaries with cite-checking"
   ];
 
   return (
@@ -39,13 +37,13 @@ const FeaturedCaseSection = () => {
             {/* Featured Label */}
             <div className="flex items-center gap-3 mb-4">
               <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
-                {t('landing.featured.label', 'FEATURED INVESTIGATION')}
+                FEATURED INVESTIGATION
               </Badge>
             </div>
 
             {/* Case Title */}
             <h2 className="text-3xl md:text-4xl font-bold mb-3">
-              {t('landing.casePreview.title')}: <GradientText>{t('landing.casePreview.subtitle')}</GradientText>
+              Case File #001: <GradientText>Danish Thanvi</GradientText>
             </h2>
 
             {/* Why Featured */}
@@ -59,14 +57,17 @@ const FeaturedCaseSection = () => {
 
             {/* Description */}
             <p className="text-foreground/80 mb-6 leading-relaxed text-base">
-              {t('landing.casePreview.description')}
+              This case study demonstrates HRPM's methodology for evidence-based human rights 
+              documentation. It includes documented cases of business interference, harassment, 
+              and procedural failures—serving as a reference for how the platform transforms 
+              raw evidence into structured intelligence.
             </p>
             
             {/* Highlights */}
             <ul className="space-y-3 mb-8">
               {caseHighlights.map((item, index) => (
                 <li 
-                  key={index} 
+                  key={item} 
                   className="flex items-center gap-3 opacity-0 animate-fade-in-left"
                   style={{ animationDelay: `${index * 0.15}s`, animationFillMode: 'forwards' }}
                 >
@@ -80,8 +81,8 @@ const FeaturedCaseSection = () => {
 
             <Link to="/timeline">
               <Button className="group">
-                {t('landing.featured.viewTimeline', 'View Full Timeline')}
-                <ArrowRight className="w-4 h-4 ml-2 rtl:ml-0 rtl:mr-2 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
+                View Full Timeline
+                <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
           </ScrollReveal>
@@ -97,17 +98,17 @@ const FeaturedCaseSection = () => {
                       <FileSearch className="w-6 h-6 text-primary" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-foreground">{t('landing.featured.legalSuite', 'Legal Intelligence Suite')}</h4>
-                      <p className="text-sm text-foreground/60">{t('landing.featured.legalSuiteDesc', 'Litigation-grade with full audit trails')}</p>
+                      <h4 className="font-semibold text-foreground">Legal Intelligence Suite</h4>
+                      <p className="text-sm text-foreground/60">Litigation-grade with full audit trails</p>
                     </div>
                   </div>
                   
                   <div className="space-y-3">
                     {[
-                      { label: t('landing.featured.verifiedCaseLaw', 'Verified Case Law'), severity: "verified" },
-                      { label: t('landing.featured.citeCheck', 'Cite-Check System'), severity: "active" },
-                      { label: t('landing.featured.forensicEvidence', 'Forensic Evidence'), severity: "critical" },
-                      { label: t('landing.featured.proceduralViolations', 'Procedural Violations'), severity: "high" }
+                      { label: "Verified Case Law", severity: "verified" },
+                      { label: "Cite-Check System", severity: "active" },
+                      { label: "Forensic Evidence", severity: "critical" },
+                      { label: "Procedural Violations", severity: "high" }
                     ].map((item, index) => (
                       <div 
                         key={item.label} 
@@ -137,8 +138,8 @@ const FeaturedCaseSection = () => {
 
                   <Link to="/intel-briefing" className="block mt-6">
                     <Button variant="outline" className="w-full group hover:bg-primary/5 hover:border-primary/50 transition-all duration-300">
-                      {t('landing.featured.readBriefing', 'Read Full Briefing')}
-                      <ExternalLink className="w-4 h-4 ml-2 rtl:ml-0 rtl:mr-2 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      Read Full Briefing
+                      <ExternalLink className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </Button>
                   </Link>
                 </CardContent>

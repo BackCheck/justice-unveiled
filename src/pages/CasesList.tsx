@@ -1,7 +1,5 @@
 import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
-import { TeaserWrapper } from "@/components/TeaserWrapper";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -39,7 +37,6 @@ const statusColors: Record<string, string> = {
 };
 
 const CasesList = () => {
-  const { t } = useTranslation();
   const { data: cases, isLoading, error } = useCases();
   const { canEdit } = useUserRole();
   const [searchQuery, setSearchQuery] = useState("");
@@ -53,12 +50,6 @@ const CasesList = () => {
 
   return (
     <PlatformLayout>
-      <TeaserWrapper
-        variant="blur"
-        title={t('teaser.casesTitle', 'Browse Investigation Case Files')}
-        description={t('teaser.casesDesc', 'Access detailed case profiles, evidence documentation, and investigation timelines.')}
-        previewHeight="90vh"
-      >
       {/* Header */}
       <div className="bg-secondary/50 backdrop-blur-xl border-b border-border/30 py-8 px-4 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
@@ -73,17 +64,17 @@ const CasesList = () => {
               </div>
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-                  {t('cases.title')}
+                  Case Files
                 </h1>
                 <p className="text-muted-foreground">
-                  {t('common.investigationsOnRecord', { count: cases?.length || 0 })}
+                  {cases?.length || 0} investigation{cases?.length !== 1 ? "s" : ""} on record
                 </p>
               </div>
             </div>
             {canEdit && (
               <Button className="glow-primary-sm">
                 <Plus className="w-4 h-4 mr-2" />
-                {t('common.newCase')}
+                New Case
               </Button>
             )}
           </div>
@@ -93,7 +84,7 @@ const CasesList = () => {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder={t('common.searchCases')}
+                placeholder="Search cases..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -123,17 +114,17 @@ const CasesList = () => {
           <Card className="glass-card">
             <CardContent className="py-12 text-center">
               <AlertTriangle className="w-12 h-12 mx-auto text-destructive mb-4" />
-              <p className="text-lg font-medium">{t('common.failedToLoad')}</p>
-              <p className="text-sm text-muted-foreground mt-1">{t('common.tryAgain')}</p>
+              <p className="text-lg font-medium">Failed to load cases</p>
+              <p className="text-sm text-muted-foreground mt-1">Please try again later</p>
             </CardContent>
           </Card>
         ) : filteredCases?.length === 0 ? (
           <Card className="glass-card">
             <CardContent className="py-12 text-center">
               <FolderOpen className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-lg font-medium">{t('common.noCasesFound')}</p>
+              <p className="text-lg font-medium">No cases found</p>
               <p className="text-sm text-muted-foreground mt-1">
-                {searchQuery ? t('common.tryDifferentSearch') : t('common.createFirstCase')}
+                {searchQuery ? "Try a different search term" : "Create your first case to get started"}
               </p>
             </CardContent>
           </Card>
@@ -169,17 +160,17 @@ const CasesList = () => {
                       <div className="text-center p-2 rounded-lg bg-muted/50">
                         <FileText className="w-4 h-4 mx-auto mb-1 text-primary" />
                         <span className="text-sm font-semibold">{caseItem.total_sources}</span>
-                        <p className="text-[10px] text-muted-foreground">{t('common.sources')}</p>
+                        <p className="text-[10px] text-muted-foreground">Sources</p>
                       </div>
                       <div className="text-center p-2 rounded-lg bg-muted/50">
                         <Clock className="w-4 h-4 mx-auto mb-1 text-primary" />
                         <span className="text-sm font-semibold">{caseItem.total_events}</span>
-                        <p className="text-[10px] text-muted-foreground">{t('common.events')}</p>
+                        <p className="text-[10px] text-muted-foreground">Events</p>
                       </div>
                       <div className="text-center p-2 rounded-lg bg-muted/50">
                         <Users className="w-4 h-4 mx-auto mb-1 text-primary" />
                         <span className="text-sm font-semibold">{caseItem.total_entities}</span>
-                        <p className="text-[10px] text-muted-foreground">{t('common.entities')}</p>
+                        <p className="text-[10px] text-muted-foreground">Entities</p>
                       </div>
                     </div>
 
@@ -194,7 +185,7 @@ const CasesList = () => {
                       {caseItem.date_opened && (
                         <div className="flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5" />
-                          <span>{t('common.opened')} {format(new Date(caseItem.date_opened), "MMM d, yyyy")}</span>
+                          <span>Opened {format(new Date(caseItem.date_opened), "MMM d, yyyy")}</span>
                         </div>
                       )}
                       {caseItem.lead_investigator && (
@@ -207,7 +198,7 @@ const CasesList = () => {
 
                     {/* View button */}
                     <div className="mt-4 flex items-center justify-end text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                      {t('common.viewCase')} <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                      View Case <ArrowRight className="w-3.5 h-3.5 ml-1" />
                     </div>
                   </CardContent>
                 </Card>
@@ -216,7 +207,6 @@ const CasesList = () => {
           </div>
         )}
       </main>
-      </TeaserWrapper>
     </PlatformLayout>
   );
 };

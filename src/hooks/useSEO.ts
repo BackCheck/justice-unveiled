@@ -11,9 +11,6 @@ interface SEOProps {
   author?: string;
   section?: string;
   tags?: string[];
-  keywords?: string[];
-  ogImage?: string;
-  ogType?: "website" | "article";
 }
 
 const DEFAULT_IMAGE = "https://hrpm.org/og-image.png";
@@ -31,9 +28,6 @@ export const useSEO = ({
   author = "HRPM",
   section,
   tags = [],
-  keywords = [],
-  ogImage,
-  ogType,
 }: SEOProps) => {
   useEffect(() => {
     // Update document title
@@ -55,15 +49,12 @@ export const useSEO = ({
     // Basic meta tags
     updateMetaTag("description", description);
     updateMetaTag("author", author);
-    if (keywords.length > 0) {
-      updateMetaTag("keywords", keywords.join(", "));
-    }
 
     // Open Graph
     updateMetaTag("og:title", title || SITE_NAME, true);
     updateMetaTag("og:description", description, true);
-    updateMetaTag("og:image", ogImage || image, true);
-    updateMetaTag("og:type", ogType || type, true);
+    updateMetaTag("og:image", image, true);
+    updateMetaTag("og:type", type, true);
     updateMetaTag("og:site_name", SITE_NAME, true);
     if (url) {
       updateMetaTag("og:url", url, true);
@@ -97,7 +88,7 @@ export const useSEO = ({
     return () => {
       document.title = `${SITE_NAME} | Human Rights Protection Movement`;
     };
-  }, [title, description, image, url, type, publishedTime, modifiedTime, author, section, tags, keywords, ogImage, ogType]);
+  }, [title, description, image, url, type, publishedTime, modifiedTime, author, section, tags]);
 };
 
 export default useSEO;
