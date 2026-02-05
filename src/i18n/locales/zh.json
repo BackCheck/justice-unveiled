@@ -41,6 +41,18 @@
     "harm": "经济损害",
     "legal": "法律情报",
     "admin": "管理面板",
+    "settings": "设置",
+    "briefing": "简报",
+    "aiAnalyzer": "AI分析器",
+    "caseLaw": "判例法库",
+    "blog": "博客与意识",
+    "news": "新闻中心"
+  },
+  "sidebar": {
+    "main": "主要",
+    "analysis": "分析",
+    "content": "内容与资源",
+    "system": "系统",
     "settings": "设置"
   },
   "landing": {

@@ -25,7 +25,9 @@ import {
   GitBranch,
   ClipboardCheck,
   TrendingDown,
-  Gavel
+  Gavel,
+  Newspaper,
+  Globe
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -88,6 +90,12 @@ export function AppSidebar() {
     { path: "/analyze", label: t('nav.aiAnalyzer'), icon: Brain },
     { path: "/evidence", label: t('nav.evidence'), icon: FileText },
     { path: "/international", label: t('nav.international'), icon: Scale },
+  ];
+
+  const contentNavItems = [
+    { path: "/case-law", label: t('nav.caseLaw'), icon: Gavel },
+    { path: "/blog", label: t('nav.blog'), icon: BookOpen },
+    { path: "/news", label: t('nav.news'), icon: Newspaper },
   ];
 
   const systemNavItems = [
@@ -219,6 +227,20 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {analysisNavItems.map((item) => (
+                <NavItem key={item.path} item={item} />
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Content & Resources */}
+        <SidebarGroup className="mt-4">
+          <SidebarGroupLabel className={cn("text-xs font-semibold text-muted-foreground uppercase tracking-wider", collapsed && "sr-only")}>
+            {t('sidebar.content')}
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {contentNavItems.map((item) => (
                 <NavItem key={item.path} item={item} />
               ))}
             </SidebarMenu>
