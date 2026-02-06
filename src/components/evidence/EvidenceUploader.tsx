@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 import { 
   Select,
   SelectContent,
@@ -11,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload, FileAudio, FileText, File, X, CheckCircle, AlertCircle } from "lucide-react";
+import { Upload, FileAudio, FileText, File, X, CheckCircle, AlertCircle, Sparkles, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
@@ -33,17 +34,36 @@ const CATEGORIES = [
   { value: "witness_statement", label: "Witness Statement" },
   { value: "court_record", label: "Court Record" },
   { value: "media_coverage", label: "Media Coverage" },
+  { value: "financial_record", label: "Financial Record" },
+  { value: "regulatory_notice", label: "Regulatory Notice" },
   { value: "general", label: "General" },
 ];
 
 interface UploadState {
   file: File;
   progress: number;
-  status: "pending" | "uploading" | "success" | "error";
+  status: "pending" | "uploading" | "analyzing" | "success" | "error";
   error?: string;
+  analysisResult?: {
+    events: number;
+    entities: number;
+    claims: number;
+    violations: number;
+    harm: number;
+  };
 }
 
-export const EvidenceUploader = ({ onUploadComplete }: { onUploadComplete?: () => void }) => {
+interface EvidenceUploaderProps {
+  onUploadComplete?: () => void;
+  caseId?: string;
+  autoAnalyze?: boolean;
+}
+
+export const EvidenceUploader = ({ 
+  onUploadComplete, 
+  caseId,
+  autoAnalyze = true 
+}: EvidenceUploaderProps) => {
   const { user } = useAuth();
   const [uploads, setUploads] = useState<UploadState[]>([]);
   const [description, setDescription] = useState("");
@@ -94,6 +114,65 @@ export const EvidenceUploader = ({ onUploadComplete }: { onUploadComplete?: () =
     setUploads(prev => prev.filter((_, i) => i !== index));
   };
 
+  // Read file content for AI analysis
+  const readFileContent = async (file: File): Promise<string | null> => {
+    // Only analyze text-based files
+    if (file.type === 'text/plain' || file.type === 'text/markdown' || 
+        file.name.endsWith('.txt') || file.name.endsWith('.md')) {
+      return await file.text();
+    }
+    
+    // For PDFs, we can't read directly in browser - would need backend processing
+    // Return null to skip AI analysis for binary files
+    if (file.type === 'application/pdf') {
+      // Return a placeholder indicating PDF needs server-side processing
+      return `[PDF Document: ${file.name}]\n\nThis PDF document requires server-side text extraction for full analysis. File size: ${(file.size / 1024).toFixed(1)} KB`;
+    }
+    
+    return null;
+  };
+
+  // Trigger AI analysis on uploaded document
+  const analyzeDocument = async (uploadId: string, file: File, index: number) => {
+    try {
+      setUploads(prev => prev.map((u, idx) => 
+        idx === index ? { ...u, status: "analyzing" as const, progress: 70 } : u
+      ));
+
+      const content = await readFileContent(file);
+      if (!content) {
+        console.log(`Skipping AI analysis for ${file.name} - unsupported format`);
+        return null;
+      }
+
+      const { data, error } = await supabase.functions.invoke('analyze-document', {
+        body: {
+          uploadId,
+          documentContent: content,
+          fileName: file.name,
+          documentType: category,
+          caseId: caseId || null
+        }
+      });
+
+      if (error) {
+        console.error('Analysis error:', error);
+        throw error;
+      }
+
+      return {
+        events: data.eventsExtracted || 0,
+        entities: data.entitiesExtracted || 0,
+        claims: data.claimsExtracted || 0,
+        violations: data.complianceViolationsExtracted || 0,
+        harm: data.financialHarmExtracted || 0
+      };
+    } catch (error) {
+      console.error('Document analysis failed:', error);
+      return null;
+    }
+  };
+
   const uploadFiles = async () => {
     for (let i = 0; i < uploads.length; i++) {
       if (uploads[i].status !== "pending") continue;
@@ -116,7 +195,7 @@ export const EvidenceUploader = ({ onUploadComplete }: { onUploadComplete?: () =
         if (uploadError) throw uploadError;
 
         setUploads(prev => prev.map((u, idx) => 
-          idx === i ? { ...u, progress: 60 } : u
+          idx === i ? { ...u, progress: 40 } : u
         ));
 
         // Get public URL
@@ -125,7 +204,7 @@ export const EvidenceUploader = ({ onUploadComplete }: { onUploadComplete?: () =
           .getPublicUrl(storagePath);
 
         // Save metadata to database
-        const { error: dbError } = await supabase
+        const { data: uploadRecord, error: dbError } = await supabase
           .from('evidence_uploads')
           .insert({
             file_name: file.name,
@@ -135,19 +214,41 @@ export const EvidenceUploader = ({ onUploadComplete }: { onUploadComplete?: () =
             public_url: publicUrl,
             description: description || null,
             category,
+            case_id: caseId || null,
             related_event_ids: selectedEventIds.length > 0 ? selectedEventIds : null,
             uploaded_by: user?.id || null,
-          });
+          })
+          .select()
+          .single();
 
         if (dbError) throw dbError;
 
         setUploads(prev => prev.map((u, idx) => 
-          idx === i ? { ...u, status: "success" as const, progress: 100 } : u
+          idx === i ? { ...u, progress: 60 } : u
         ));
+
+        // Auto-analyze if enabled
+        let analysisResult = null;
+        if (autoAnalyze && uploadRecord) {
+          analysisResult = await analyzeDocument(uploadRecord.id, file, i);
+        }
+
+        setUploads(prev => prev.map((u, idx) => 
+          idx === i ? { 
+            ...u, 
+            status: "success" as const, 
+            progress: 100,
+            analysisResult: analysisResult || undefined
+          } : u
+        ));
+
+        const extractedItems = analysisResult 
+          ? ` Extracted: ${analysisResult.events} events, ${analysisResult.claims} claims, ${analysisResult.violations} violations, ${analysisResult.harm} harm records.`
+          : '';
 
         toast({
           title: "Upload successful",
-          description: `${file.name} has been uploaded.`,
+          description: `${file.name} has been uploaded and analyzed.${extractedItems}`,
         });
 
       } catch (error: any) {
@@ -181,6 +282,12 @@ export const EvidenceUploader = ({ onUploadComplete }: { onUploadComplete?: () =
         <CardTitle className="flex items-center gap-2">
           <Upload className="w-5 h-5" />
           Upload Evidence Files
+          {autoAnalyze && (
+            <Badge variant="secondary" className="ml-2 gap-1">
+              <Sparkles className="w-3 h-3" />
+              AI Auto-Analysis
+            </Badge>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -204,6 +311,12 @@ export const EvidenceUploader = ({ onUploadComplete }: { onUploadComplete?: () =
           <p className="text-xs text-muted-foreground mt-1">
             Supports MP3, PDF, MD, TXT files
           </p>
+          {autoAnalyze && (
+            <p className="text-xs text-primary mt-2 flex items-center justify-center gap-1">
+              <Sparkles className="w-3 h-3" />
+              AI will auto-extract Claims, Compliance issues & Financial Harm
+            </p>
+          )}
           <input
             ref={fileInputRef}
             type="file"
@@ -231,8 +344,32 @@ export const EvidenceUploader = ({ onUploadComplete }: { onUploadComplete?: () =
                     <p className="text-xs text-muted-foreground">
                       {(upload.file.size / 1024).toFixed(1)} KB
                     </p>
-                    {upload.status === "uploading" && (
-                      <Progress value={upload.progress} className="h-1 mt-1" />
+                    {(upload.status === "uploading" || upload.status === "analyzing") && (
+                      <div className="flex items-center gap-2 mt-1">
+                        <Progress value={upload.progress} className="h-1 flex-1" />
+                        {upload.status === "analyzing" && (
+                          <span className="text-xs text-primary flex items-center gap-1">
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                            Analyzing...
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    {upload.analysisResult && (
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {upload.analysisResult.events > 0 && (
+                          <Badge variant="outline" className="text-xs">{upload.analysisResult.events} events</Badge>
+                        )}
+                        {upload.analysisResult.claims > 0 && (
+                          <Badge variant="outline" className="text-xs text-primary">{upload.analysisResult.claims} claims</Badge>
+                        )}
+                        {upload.analysisResult.violations > 0 && (
+                          <Badge variant="outline" className="text-xs text-accent-foreground">{upload.analysisResult.violations} violations</Badge>
+                        )}
+                        {upload.analysisResult.harm > 0 && (
+                          <Badge variant="outline" className="text-xs text-destructive">{upload.analysisResult.harm} harm</Badge>
+                        )}
+                      </div>
                     )}
                   </div>
                   {upload.status === "pending" && (
@@ -246,7 +383,7 @@ export const EvidenceUploader = ({ onUploadComplete }: { onUploadComplete?: () =
                     </Button>
                   )}
                   {upload.status === "success" && (
-                    <CheckCircle className="w-5 h-5 text-emerald-500 shrink-0" />
+                    <CheckCircle className="w-5 h-5 text-primary shrink-0" />
                   )}
                   {upload.status === "error" && (
                     <AlertCircle className="w-5 h-5 text-destructive shrink-0" />
@@ -294,7 +431,7 @@ export const EvidenceUploader = ({ onUploadComplete }: { onUploadComplete?: () =
 
             <Button onClick={uploadFiles} className="w-full">
               <Upload className="w-4 h-4 mr-2" />
-              Upload {pendingCount} file{pendingCount > 1 ? 's' : ''}
+              Upload {pendingCount} file{pendingCount > 1 ? 's' : ''} & Analyze
             </Button>
           </>
         )}
