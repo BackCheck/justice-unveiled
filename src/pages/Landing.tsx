@@ -15,7 +15,8 @@ import {
   Eye,
   Phone,
   Mail,
-  MapPin
+  MapPin,
+  Plus
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import hrpmLogo from "@/assets/human-rights-logo.svg";
@@ -29,6 +30,8 @@ import TrustMetrics from "@/components/landing/TrustMetrics";
 import FeaturedCaseSection from "@/components/landing/FeaturedCaseSection";
 import CapabilitiesSection from "@/components/landing/CapabilitiesSection";
 import BottomCTA from "@/components/landing/BottomCTA";
+import BlogPreviewSection from "@/components/landing/BlogPreviewSection";
+import LegalResearchPreviewSection from "@/components/landing/LegalResearchPreviewSection";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const Landing = () => {
@@ -69,7 +72,8 @@ const Landing = () => {
           <nav className="hidden md:flex items-center gap-4">
             <Link to="/about" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">{t('nav.about')}</Link>
             <Link to="/cases" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">{t('nav.cases')}</Link>
-            <Link to="/dashboard" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">{t('nav.dashboard')}</Link>
+            <Link to="/blog" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">Blog</Link>
+            <Link to="/legal-research" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">Legal Research</Link>
             <Link to="/contact" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">{t('nav.contact')}</Link>
             <LanguageSwitcher />
             <Button size="sm" variant="outline" className="border-primary/50 hover:bg-primary hover:text-primary-foreground transition-all duration-300" asChild>
@@ -145,7 +149,13 @@ const Landing = () => {
                     </span>
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="border-border/50 hover:border-primary/50 hover:bg-primary/5" asChild>
+                <Button size="lg" variant="outline" className="border-primary/50 hover:bg-primary hover:text-primary-foreground" asChild>
+                  <Link to="/auth">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Start Investigation
+                  </Link>
+                </Button>
+                <Button size="lg" variant="ghost" className="hover:bg-primary/5" asChild>
                   <Link to="/dashboard">{t('landing.hero.secondaryCta')}</Link>
                 </Button>
               </div>
@@ -170,6 +180,12 @@ const Landing = () => {
 
       {/* Featured Case Section */}
       <FeaturedCaseSection />
+
+      {/* Blog Preview Section */}
+      <BlogPreviewSection />
+
+      {/* Legal Research Preview Section */}
+      <LegalResearchPreviewSection />
 
       {/* Capabilities Section - Grouped into 3 clusters */}
       <CapabilitiesSection />
