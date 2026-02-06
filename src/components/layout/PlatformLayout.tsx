@@ -5,15 +5,9 @@ import { AppSidebar } from "./AppSidebar";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { QuickActions } from "./QuickActions";
 import { GlobalSearch } from "./GlobalSearch";
+import { NotificationCenter } from "./NotificationCenter";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Sparkles } from "lucide-react";
 
 interface PlatformLayoutProps {
   children: ReactNode;
@@ -88,20 +82,7 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
                 <GlobalSearch />
                 <QuickActions />
                 
-                {/* Notifications - Placeholder */}
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 relative">
-                        <Bell className="w-4 h-4" />
-                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-primary rounded-full animate-pulse" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Notifications</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <NotificationCenter />
               </div>
             </div>
 
