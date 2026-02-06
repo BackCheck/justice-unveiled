@@ -25,6 +25,7 @@ import GlowingOrb from "@/components/landing/GlowingOrb";
 import FloatingIcon from "@/components/landing/FloatingIcon";
 import ScrollReveal from "@/components/landing/ScrollReveal";
 import GradientText from "@/components/landing/GradientText";
+import TypingText from "@/components/landing/TypingText";
 import SpotlightEffect from "@/components/landing/SpotlightEffect";
 import TrustMetrics from "@/components/landing/TrustMetrics";
 import FeaturedCaseSection from "@/components/landing/FeaturedCaseSection";
@@ -131,15 +132,28 @@ const Landing = () => {
               </h1>
             </ScrollReveal>
 
-            {/* Plain-language Subtitle */}
+            {/* Typewriter tagline */}
             <ScrollReveal delay={300}>
-              <p className="text-base md:text-lg text-foreground/80 mb-8 max-w-2xl mx-auto leading-relaxed">
+              <div className="text-lg md:text-xl text-foreground/80 mb-4 font-medium">
+                <span className="text-foreground">Documenting </span>
+                <TypingText 
+                  words={["Injustice", "Human Rights Abuses", "Institutional Failures", "Legal Persecution", "Systemic Corruption"]}
+                  typingSpeed={80}
+                  deletingSpeed={40}
+                  pauseDuration={2500}
+                />
+              </div>
+            </ScrollReveal>
+
+            {/* Plain-language Subtitle */}
+            <ScrollReveal delay={400}>
+              <p className="text-base md:text-lg text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
                 {t('landing.hero.description')}
               </p>
             </ScrollReveal>
 
             {/* CTA Buttons */}
-            <ScrollReveal delay={400}>
+            <ScrollReveal delay={500}>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button size="lg" className="group relative overflow-hidden" asChild>
                   <Link to="/cases">
