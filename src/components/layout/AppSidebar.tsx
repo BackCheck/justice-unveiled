@@ -147,7 +147,7 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar overflow-hidden">
+    <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar h-screen max-h-screen flex flex-col">
       <SidebarHeader className="border-b border-border/30 p-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group flex-1 min-w-0">
@@ -188,7 +188,7 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 py-4 overflow-y-auto overflow-x-hidden">
+      <SidebarContent className="px-2 py-4 overflow-y-auto overflow-x-hidden flex-1 min-h-0">
         {/* Time-based Greeting - Compact version for sidebar */}
         {!collapsed && (
           <div className="mb-4 px-2">
@@ -243,7 +243,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-border/30 p-2">
+      <SidebarFooter className="border-t border-border/30 p-2 shrink-0">
         {/* Language & Theme Toggle */}
         <div className={cn("flex items-center gap-2 px-2 py-1", collapsed ? "justify-center flex-col" : "justify-between")}>
           {!collapsed && (
