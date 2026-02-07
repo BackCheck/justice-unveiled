@@ -16,7 +16,8 @@ import {
   Phone,
   Mail,
   MapPin,
-  Plus
+  Plus,
+  LogOut
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import hrpmLogo from "@/assets/human-rights-logo.svg";
@@ -31,12 +32,24 @@ import TrustMetrics from "@/components/landing/TrustMetrics";
 import FeaturedCaseSection from "@/components/landing/FeaturedCaseSection";
 import CapabilitiesSection from "@/components/landing/CapabilitiesSection";
 import BottomCTA from "@/components/landing/BottomCTA";
-import BlogPreviewSection from "@/components/landing/BlogPreviewSection";
-import LegalResearchPreviewSection from "@/components/landing/LegalResearchPreviewSection";
+import TutorialVideoSection from "@/components/landing/TutorialVideoSection";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Landing = () => {
   const { t } = useTranslation();
+  const { user } = useAuth();
+
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error("Failed to sign out");
+    } else {
+      toast.success("Signed out successfully");
+    }
+  };
 
   const values = [
     { icon: Scale, title: t('landing.values.justice'), description: t('landing.values.justiceDesc') },
@@ -73,19 +86,34 @@ const Landing = () => {
           <nav className="hidden md:flex items-center gap-4">
             <Link to="/about" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">{t('nav.about')}</Link>
             <Link to="/cases" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">{t('nav.cases')}</Link>
-            <Link to="/blog" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">Blog</Link>
-            <Link to="/legal-research" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">Legal Research</Link>
             <Link to="/contact" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">{t('nav.contact')}</Link>
             <LanguageSwitcher />
-            <Button size="sm" variant="outline" className="border-primary/50 hover:bg-primary hover:text-primary-foreground transition-all duration-300" asChild>
-              <Link to="/auth">{t('common.signIn')}</Link>
-            </Button>
+            {user ? (
+              <div className="flex items-center gap-2">
+                <Button size="sm" variant="outline" className="border-primary/50 hover:bg-primary hover:text-primary-foreground transition-all duration-300" asChild>
+                  <Link to="/dashboard">Dashboard</Link>
+                </Button>
+                <Button size="sm" variant="ghost" onClick={handleSignOut} className="text-muted-foreground hover:text-foreground">
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
+            ) : (
+              <Button size="sm" variant="outline" className="border-primary/50 hover:bg-primary hover:text-primary-foreground transition-all duration-300" asChild>
+                <Link to="/auth">{t('common.signIn')}</Link>
+              </Button>
+            )}
           </nav>
           <div className="flex items-center gap-2 md:hidden">
             <LanguageSwitcher />
-            <Button size="sm" asChild>
-              <Link to="/cases">{t('common.explore')}</Link>
-            </Button>
+            {user ? (
+              <Button size="sm" asChild>
+                <Link to="/dashboard">Dashboard</Link>
+              </Button>
+            ) : (
+              <Button size="sm" asChild>
+                <Link to="/auth">{t('common.signIn')}</Link>
+              </Button>
+            )}
           </div>
         </div>
       </header>
@@ -195,11 +223,8 @@ const Landing = () => {
       {/* Featured Case Section */}
       <FeaturedCaseSection />
 
-      {/* Blog Preview Section */}
-      <BlogPreviewSection />
-
-      {/* Legal Research Preview Section */}
-      <LegalResearchPreviewSection />
+      {/* Tutorial Video Section */}
+      <TutorialVideoSection />
 
       {/* Capabilities Section - Grouped into 3 clusters */}
       <CapabilitiesSection />

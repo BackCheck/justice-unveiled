@@ -41,6 +41,8 @@ import {
   Loader2,
   ArrowLeft,
   AlertTriangle,
+  Settings,
+  Video,
   ScrollText
 } from "lucide-react";
 import { useUserRole, AppRole } from "@/hooks/useUserRole";
@@ -49,6 +51,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { AuditLogViewer } from "@/components/admin/AuditLogViewer";
+import { TutorialVideoUploader } from "@/components/admin/TutorialVideoUploader";
 
 const roleConfig: Record<AppRole, { label: string; icon: typeof Crown; color: string; description: string }> = {
   admin: {
@@ -172,14 +175,18 @@ const AdminPanel = () => {
       {/* Content */}
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
         <Tabs defaultValue="users" className="w-full">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsList className="grid w-full max-w-lg grid-cols-3">
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
-              User Management
+              Users
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="flex items-center gap-2">
+              <Settings className="w-4 h-4" />
+              Site Settings
             </TabsTrigger>
             <TabsTrigger value="audit" className="flex items-center gap-2">
               <ScrollText className="w-4 h-4" />
-              Audit Trail
+              Audit
             </TabsTrigger>
           </TabsList>
 
@@ -331,6 +338,10 @@ const AdminPanel = () => {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="settings" className="mt-6 space-y-6">
+            <TutorialVideoUploader />
           </TabsContent>
 
           <TabsContent value="audit" className="mt-6">
