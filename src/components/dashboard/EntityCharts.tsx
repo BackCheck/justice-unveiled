@@ -1,29 +1,17 @@
-import { useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  ChartLegend,
-  ChartLegendContent,
-} from "@/components/ui/chart";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  ResponsiveContainer,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  Radar,
-} from "recharts";
 import { useCombinedEntities } from "@/hooks/useCombinedEntities";
-import { Sparkles, Users, Network, TrendingUp } from "lucide-react";
+import { Sparkles, Network } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import {
+  NetworkMetricsGrid,
+  EntityTypePieChart,
+  RoleDistributionChart,
+  ConnectionRadarChart,
+  ConnectionSankeyChart,
+  EntityTreemap,
+} from "./charts";
 
 const CHART_COLORS = {
   person: "hsl(var(--chart-1))",
@@ -42,6 +30,8 @@ const CATEGORY_COLORS = {
 
 export const EntityCharts = () => {
   const { entities, connections, aiEntityCount, inferredConnectionCount, isLoading } = useCombinedEntities();
+  const navigate = useNavigate();
+  const [activeMetric, setActiveMetric] = useState<string | undefined>();
 
   const typeData = useMemo(() => {
     const typeCounts: Record<string, number> = {};
@@ -99,183 +89,84 @@ export const EntityCharts = () => {
     };
   }, [entities, connections]);
 
-  const chartConfig = {
-    person: { label: "Person", color: CHART_COLORS.person },
-    organization: { label: "Organization", color: CHART_COLORS.organization },
-    agency: { label: "Agency", color: CHART_COLORS.agency },
-    legal: { label: "Legal", color: CHART_COLORS.legal },
-    evidence: { label: "Evidence", color: CHART_COLORS.evidence },
+  const handleMetricClick = (metric: string) => {
+    setActiveMetric(prev => prev === metric ? undefined : metric);
+    toast.info(`Filtered by: ${metric}`, { duration: 1500 });
+  };
+
+  const handleEntityClick = (entityId: string) => {
+    navigate(`/entity/${entityId}`);
+  };
+
+  const handleTypeClick = (type: string) => {
+    toast.info(`Viewing ${type} entities`, { duration: 1500 });
+  };
+
+  const handleConnectionClick = (type: string) => {
+    toast.info(`Viewing ${type} connections`, { duration: 1500 });
+    navigate("/network");
   };
 
   if (isLoading) {
     return (
-      <Card className="glass-card">
-        <CardContent className="pt-6 flex items-center justify-center h-64">
-          <div className="animate-pulse text-muted-foreground">Loading entity data...</div>
-        </CardContent>
-      </Card>
+      <div className="glass-card rounded-xl p-6 flex items-center justify-center h-64">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-muted-foreground">Loading entity analytics...</p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header with AI indicators */}
+    <div className="space-y-6 animate-fade-in">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold flex items-center gap-2">
-          <Network className="w-5 h-5" />
+          <Network className="w-5 h-5 text-primary" />
           Entity Analytics
         </h2>
-        {aiEntityCount > 0 && (
-          <Badge variant="outline" className="bg-primary/10 border-primary/30 gap-1">
-            <Sparkles className="w-3 h-3" />
-            {aiEntityCount} AI-Extracted
-          </Badge>
-        )}
-      </div>
-
-      {/* Network Metrics Row */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <Card className="glass-card">
-          <CardContent className="pt-4 pb-3">
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-primary" />
-              <div>
-                <p className="text-2xl font-bold text-primary">{networkMetrics.totalEntities}</p>
-                <p className="text-xs text-muted-foreground">Total Entities</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="glass-card">
-          <CardContent className="pt-4 pb-3">
-            <div className="flex items-center gap-2">
-              <Network className="w-4 h-4 text-chart-2" />
-              <div>
-                <p className="text-2xl font-bold text-chart-2">{networkMetrics.totalConnections}</p>
-                <p className="text-xs text-muted-foreground">Connections</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="glass-card">
-          <CardContent className="pt-4 pb-3">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-chart-3" />
-              <div>
-                <p className="text-2xl font-bold text-chart-3">{networkMetrics.avgConnections}</p>
-                <p className="text-xs text-muted-foreground">Avg Connections</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="glass-card">
-          <CardContent className="pt-4 pb-3">
-            <div>
-              <p className="text-2xl font-bold text-destructive">{networkMetrics.adversarialCount}</p>
-              <p className="text-xs text-muted-foreground">Adversarial Links</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="glass-card">
-          <CardContent className="pt-4 pb-3">
-            <div>
-              <p className="text-2xl font-bold text-chart-4">{networkMetrics.highStrength}</p>
-              <p className="text-xs text-muted-foreground">Strong Links (4-5)</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Charts Grid */}
-      <div className="grid md:grid-cols-3 gap-4">
-        {/* Entity Types Pie Chart */}
-        <Card className="glass-card">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Entity Types</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-[200px]">
-              <PieChart>
-                <Pie
-                  data={typeData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={40}
-                  outerRadius={70}
-                  strokeWidth={2}
-                  stroke="hsl(var(--background))"
-                >
-                  {typeData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
-                </Pie>
-                <ChartTooltip content={<ChartTooltipContent />} />
-              </PieChart>
-            </ChartContainer>
-            <div className="flex flex-wrap gap-2 mt-2 justify-center">
-              {typeData.map((item) => (
-                <Badge key={item.name} variant="outline" className="text-xs" style={{ borderColor: item.fill, color: item.fill }}>
-                  {item.name}: {item.value}
-                </Badge>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Category Distribution Bar Chart */}
-        <Card className="glass-card">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Role Distribution</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-[200px]">
-              <BarChart data={categoryData} layout="vertical">
-                <XAxis type="number" hide />
-                <YAxis dataKey="name" type="category" width={80} tick={{ fontSize: 11 }} />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                  {categoryData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ChartContainer>
-          </CardContent>
-        </Card>
-
-        {/* Connection Strength Radar */}
-        <Card className="glass-card">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Connection Intensity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-[200px]">
-              <RadarChart data={connectionStrengthData}>
-                <PolarGrid stroke="hsl(var(--border))" />
-                <PolarAngleAxis dataKey="subject" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
-                <Radar
-                  name="Strength"
-                  dataKey="value"
-                  stroke="hsl(var(--primary))"
-                  fill="hsl(var(--primary))"
-                  fillOpacity={0.3}
-                />
-                <ChartTooltip content={<ChartTooltipContent />} />
-              </RadarChart>
-            </ChartContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Inferred Connections Note */}
-      {inferredConnectionCount > 0 && (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Sparkles className="w-4 h-4 text-primary" />
-          <span>{inferredConnectionCount} connections were AI-inferred from shared event mentions</span>
+        <div className="flex items-center gap-2">
+          {aiEntityCount > 0 && (
+            <Badge variant="outline" className="bg-primary/10 border-primary/30 gap-1">
+              <Sparkles className="w-3 h-3" />
+              {aiEntityCount} AI-Extracted
+            </Badge>
+          )}
+          {inferredConnectionCount > 0 && (
+            <Badge variant="outline" className="bg-chart-2/10 border-chart-2/30 gap-1 text-chart-2">
+              {inferredConnectionCount} Inferred Links
+            </Badge>
+          )}
         </div>
-      )}
+      </div>
+
+      {/* Network Metrics */}
+      <NetworkMetricsGrid 
+        metrics={networkMetrics} 
+        onMetricClick={handleMetricClick}
+        activeMetric={activeMetric}
+      />
+
+      {/* Main Charts Grid */}
+      <div className="grid md:grid-cols-3 gap-4">
+        <EntityTypePieChart data={typeData} onSliceClick={handleTypeClick} />
+        <RoleDistributionChart data={categoryData} onBarClick={handleTypeClick} />
+        <ConnectionRadarChart data={connectionStrengthData} />
+      </div>
+
+      {/* Advanced Visualizations */}
+      <div className="grid md:grid-cols-4 gap-4">
+        <ConnectionSankeyChart 
+          entities={entities}
+          connections={connections}
+          onConnectionClick={handleConnectionClick}
+        />
+        <EntityTreemap 
+          entities={entities}
+          onEntityClick={handleEntityClick}
+        />
+      </div>
     </div>
   );
 };
