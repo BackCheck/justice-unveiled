@@ -60,19 +60,16 @@ const NetworkExpansionAnimation = () => {
       connectionsRef.current = [];
       packetsRef.current = [];
       
-      const nodeCount = 80;
+      const nodeCount = 60;
       const width = canvas.width;
       const height = canvas.height;
+      const heroHeight = window.innerHeight;
       
-      // Create nodes scattered across the entire page with more in hero area
+      // Create nodes only BELOW the hero section
       for (let i = 0; i < nodeCount; i++) {
-        const inHeroArea = i < 40; // More nodes in hero
-        const x = inHeroArea 
-          ? width * 0.1 + Math.random() * width * 0.8
-          : Math.random() * width;
-        const y = inHeroArea 
-          ? Math.random() * window.innerHeight * 0.8
-          : window.innerHeight + Math.random() * (height - window.innerHeight);
+        const x = Math.random() * width;
+        // Start nodes below hero area (with some buffer)
+        const y = heroHeight + 100 + Math.random() * (height - heroHeight - 100);
         
         nodesRef.current.push({
           x,
@@ -81,14 +78,14 @@ const NetworkExpansionAnimation = () => {
           targetY: y,
           vx: 0,
           vy: 0,
-          radius: inHeroArea ? 3 + Math.random() * 5 : 2 + Math.random() * 4,
-          opacity: inHeroArea ? 0.5 + Math.random() * 0.4 : 0.3 + Math.random() * 0.5,
+          radius: 2 + Math.random() * 4,
+          opacity: 0.3 + Math.random() * 0.5,
           delay: Math.random() * 2000,
           active: true,
           pulse: Math.random() * Math.PI * 2,
           connections: [],
           driftAngle: Math.random() * Math.PI * 2,
-          driftSpeed: inHeroArea ? 0.4 + Math.random() * 0.8 : 0.2 + Math.random() * 0.5
+          driftSpeed: 0.2 + Math.random() * 0.5
         });
       }
       
@@ -101,17 +98,13 @@ const NetworkExpansionAnimation = () => {
           const dy = node.y - other.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           
-          // Connect if close enough - closer threshold for hero area
-          const isHeroConnection = node.y < window.innerHeight && other.y < window.innerHeight;
-          const threshold = isHeroConnection ? 200 : 250;
-          
-          if (dist < threshold && Math.random() > 0.4) {
+          if (dist < 250 && Math.random() > 0.4) {
             node.connections.push(j);
             connectionsRef.current.push({
               from: i,
               to: j,
               progress: 1,
-              opacity: isHeroConnection ? 0.25 + Math.random() * 0.3 : 0.15 + Math.random() * 0.2,
+              opacity: 0.15 + Math.random() * 0.2,
               active: true,
               pulseOffset: Math.random() * Math.PI * 2
             });
@@ -119,8 +112,8 @@ const NetworkExpansionAnimation = () => {
         });
       });
       
-      // Initialize data packets - more in hero area
-      for (let i = 0; i < 35; i++) {
+      // Initialize data packets
+      for (let i = 0; i < 25; i++) {
         if (connectionsRef.current.length > 0) {
           packetsRef.current.push({
             connectionIndex: Math.floor(Math.random() * connectionsRef.current.length),
@@ -149,26 +142,23 @@ const NetworkExpansionAnimation = () => {
       // Subtle parallax based on scroll
       const scrollOffset = scrollRef.current * 0.1;
       
-      // Update node positions with enhanced drift and wave motion
+      // Update node positions with drift and wave motion
       nodes.forEach((node, i) => {
-        const heroMultiplier = node.targetY < window.innerHeight ? 1.8 : 1;
-        node.driftAngle += 0.003 * heroMultiplier;
-        const waveOffset = Math.sin(time * 0.0015 + i * 0.5) * 12 * heroMultiplier;
+        node.driftAngle += 0.003;
+        const waveOffset = Math.sin(time * 0.0015 + i * 0.5) * 12;
         node.x = node.targetX + Math.cos(node.driftAngle) * 35 * node.driftSpeed + waveOffset;
         node.y = node.targetY + Math.sin(node.driftAngle * 0.7) * 30 * node.driftSpeed - scrollOffset;
-        node.pulse += 0.025 * heroMultiplier;
+        node.pulse += 0.025;
       });
       
-      // Draw connections with enhanced breathing effect
+      // Draw connections with breathing effect
       connections.forEach((conn) => {
         const fromNode = nodes[conn.from];
         const toNode = nodes[conn.to];
         
         if (!fromNode || !toNode) return;
         
-        const isHeroConnection = fromNode.targetY < window.innerHeight || toNode.targetY < window.innerHeight;
-        const breatheSpeed = isHeroConnection ? 0.003 : 0.001;
-        const breathe = Math.sin(time * breatheSpeed + conn.pulseOffset) * 0.5 + 0.5;
+        const breathe = Math.sin(time * 0.001 + conn.pulseOffset) * 0.5 + 0.5;
         const opacity = conn.opacity * (0.7 + breathe * 0.3);
         
         // Draw connection line with gradient
@@ -181,7 +171,7 @@ const NetworkExpansionAnimation = () => {
         ctx.moveTo(fromNode.x, fromNode.y);
         ctx.lineTo(toNode.x, toNode.y);
         ctx.strokeStyle = gradient;
-        ctx.lineWidth = isHeroConnection ? 1.5 + breathe * 0.8 : 0.8 + breathe * 0.4;
+        ctx.lineWidth = 0.8 + breathe * 0.4;
         ctx.stroke();
       });
       
