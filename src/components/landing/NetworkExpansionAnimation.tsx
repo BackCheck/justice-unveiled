@@ -13,6 +13,8 @@ interface Node {
   active: boolean;
   pulse: number;
   connections: number[];
+  driftAngle: number;
+  driftSpeed: number;
 }
 
 interface Connection {
@@ -21,6 +23,15 @@ interface Connection {
   progress: number;
   opacity: number;
   active: boolean;
+  pulseOffset: number;
+}
+
+interface DataPacket {
+  connectionIndex: number;
+  progress: number;
+  speed: number;
+  size: number;
+  direction: number; // 1 or -1
 }
 
 const NetworkExpansionAnimation = () => {
@@ -28,8 +39,9 @@ const NetworkExpansionAnimation = () => {
   const animationRef = useRef<number>();
   const nodesRef = useRef<Node[]>([]);
   const connectionsRef = useRef<Connection[]>([]);
+  const packetsRef = useRef<DataPacket[]>([]);
   const timeRef = useRef(0);
-  const phaseRef = useRef(0);
+  const scrollRef = useRef(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -39,90 +51,82 @@ const NetworkExpansionAnimation = () => {
     if (!ctx) return;
 
     const resizeCanvas = () => {
-      const container = canvas.parentElement;
-      if (container) {
-        canvas.width = container.offsetWidth;
-        canvas.height = container.offsetHeight;
-      }
+      canvas.width = window.innerWidth;
+      canvas.height = document.documentElement.scrollHeight;
     };
 
     const initNetwork = () => {
       nodesRef.current = [];
       connectionsRef.current = [];
+      packetsRef.current = [];
       
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
-      const nodeCount = 35;
+      const nodeCount = 60;
+      const width = canvas.width;
+      const height = canvas.height;
       
-      // Create nodes in expanding rings
-      const rings = [
-        { count: 1, radius: 0, delay: 0 },
-        { count: 6, radius: 80, delay: 500 },
-        { count: 10, radius: 160, delay: 1200 },
-        { count: 12, radius: 260, delay: 2000 },
-        { count: 6, radius: 360, delay: 2800 },
-      ];
+      // Create nodes scattered across the entire page
+      for (let i = 0; i < nodeCount; i++) {
+        const x = Math.random() * width;
+        const y = Math.random() * height;
+        
+        nodesRef.current.push({
+          x,
+          y,
+          targetX: x,
+          targetY: y,
+          vx: 0,
+          vy: 0,
+          radius: 2 + Math.random() * 4,
+          opacity: 0.3 + Math.random() * 0.5,
+          delay: Math.random() * 2000,
+          active: true,
+          pulse: Math.random() * Math.PI * 2,
+          connections: [],
+          driftAngle: Math.random() * Math.PI * 2,
+          driftSpeed: 0.2 + Math.random() * 0.5
+        });
+      }
       
-      let nodeIndex = 0;
-      rings.forEach((ring, ringIndex) => {
-        for (let i = 0; i < ring.count; i++) {
-          const angle = (i / ring.count) * Math.PI * 2 + (ringIndex * 0.3);
-          const targetX = centerX + Math.cos(angle) * ring.radius;
-          const targetY = centerY + Math.sin(angle) * ring.radius;
-          
-          nodesRef.current.push({
-            x: centerX,
-            y: centerY,
-            targetX,
-            targetY,
-            vx: 0,
-            vy: 0,
-            radius: ringIndex === 0 ? 8 : 4 + Math.random() * 3,
-            opacity: 0,
-            delay: ring.delay + i * 80,
-            active: false,
-            pulse: Math.random() * Math.PI * 2,
-            connections: []
-          });
-          nodeIndex++;
-        }
-      });
-      
-      // Create connections between nodes
+      // Create connections between nearby nodes
       const nodes = nodesRef.current;
       nodes.forEach((node, i) => {
-        // Connect to nearby nodes
         nodes.forEach((other, j) => {
           if (i >= j) return;
-          const dx = node.targetX - other.targetX;
-          const dy = node.targetY - other.targetY;
+          const dx = node.x - other.x;
+          const dy = node.y - other.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           
-          // Connect if close enough, with bias toward center
-          const threshold = i === 0 ? 200 : 140;
-          if (dist < threshold && Math.random() > 0.3) {
+          // Connect if close enough
+          if (dist < 250 && Math.random() > 0.5) {
             node.connections.push(j);
             connectionsRef.current.push({
               from: i,
               to: j,
-              progress: 0,
-              opacity: 0,
-              active: false
+              progress: 1,
+              opacity: 0.15 + Math.random() * 0.2,
+              active: true,
+              pulseOffset: Math.random() * Math.PI * 2
             });
           }
         });
       });
+      
+      // Initialize data packets
+      for (let i = 0; i < 20; i++) {
+        if (connectionsRef.current.length > 0) {
+          packetsRef.current.push({
+            connectionIndex: Math.floor(Math.random() * connectionsRef.current.length),
+            progress: Math.random(),
+            speed: 0.005 + Math.random() * 0.01,
+            size: 1.5 + Math.random() * 2,
+            direction: Math.random() > 0.5 ? 1 : -1
+          });
+        }
+      }
     };
 
-    const drawGlow = (x: number, y: number, radius: number, color: string, intensity: number) => {
-      const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius * 3);
-      gradient.addColorStop(0, color.replace(')', `, ${intensity})`).replace('hsl', 'hsla'));
-      gradient.addColorStop(0.5, color.replace(')', `, ${intensity * 0.3})`).replace('hsl', 'hsla'));
-      gradient.addColorStop(1, 'transparent');
-      ctx.fillStyle = gradient;
-      ctx.beginPath();
-      ctx.arc(x, y, radius * 3, 0, Math.PI * 2);
-      ctx.fill();
+    const handleScroll = () => {
+      scrollRef.current = window.scrollY;
     };
 
     const animate = () => {
@@ -133,120 +137,116 @@ const NetworkExpansionAnimation = () => {
       
       const nodes = nodesRef.current;
       const connections = connectionsRef.current;
+      const packets = packetsRef.current;
       
-      // Update and draw connections
-      connections.forEach((conn) => {
+      // Subtle parallax based on scroll
+      const scrollOffset = scrollRef.current * 0.1;
+      
+      // Update node positions with gentle drift
+      nodes.forEach((node) => {
+        node.driftAngle += 0.001;
+        node.x = node.targetX + Math.cos(node.driftAngle) * 20 * node.driftSpeed;
+        node.y = node.targetY + Math.sin(node.driftAngle * 0.7) * 15 * node.driftSpeed - scrollOffset;
+        node.pulse += 0.015;
+      });
+      
+      // Draw connections with breathing effect
+      connections.forEach((conn, idx) => {
         const fromNode = nodes[conn.from];
         const toNode = nodes[conn.to];
         
-        if (!fromNode.active || !toNode.active) return;
+        if (!fromNode || !toNode) return;
         
-        if (!conn.active) {
-          conn.active = true;
-        }
+        const breathe = Math.sin(time * 0.001 + conn.pulseOffset) * 0.5 + 0.5;
+        const opacity = conn.opacity * (0.5 + breathe * 0.5);
         
-        // Animate connection progress
-        if (conn.progress < 1) {
-          conn.progress += 0.02;
-          conn.opacity = Math.min(conn.progress * 2, 0.6);
-        }
-        
-        const startX = fromNode.x;
-        const startY = fromNode.y;
-        const endX = startX + (toNode.x - startX) * conn.progress;
-        const endY = startY + (toNode.y - startY) * conn.progress;
-        
-        // Draw connection line with gradient
-        const gradient = ctx.createLinearGradient(startX, startY, endX, endY);
-        gradient.addColorStop(0, `hsla(199, 100%, 50%, ${conn.opacity})`);
-        gradient.addColorStop(1, `hsla(199, 100%, 70%, ${conn.opacity * 0.5})`);
+        // Draw connection line
+        const gradient = ctx.createLinearGradient(fromNode.x, fromNode.y, toNode.x, toNode.y);
+        gradient.addColorStop(0, `hsla(199, 89%, 48%, ${opacity})`);
+        gradient.addColorStop(0.5, `hsla(199, 89%, 60%, ${opacity * 1.2})`);
+        gradient.addColorStop(1, `hsla(199, 89%, 48%, ${opacity})`);
         
         ctx.beginPath();
-        ctx.moveTo(startX, startY);
-        ctx.lineTo(endX, endY);
+        ctx.moveTo(fromNode.x, fromNode.y);
+        ctx.lineTo(toNode.x, toNode.y);
         ctx.strokeStyle = gradient;
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 0.8 + breathe * 0.4;
         ctx.stroke();
-        
-        // Draw data pulse along connection
-        if (conn.progress >= 1) {
-          const pulsePos = (Math.sin(time * 0.003 + conn.from) + 1) / 2;
-          const pulseX = startX + (toNode.x - startX) * pulsePos;
-          const pulseY = startY + (toNode.y - startY) * pulsePos;
-          
-          ctx.beginPath();
-          ctx.arc(pulseX, pulseY, 2, 0, Math.PI * 2);
-          ctx.fillStyle = `hsla(199, 100%, 70%, ${0.8})`;
-          ctx.fill();
-        }
       });
       
-      // Update and draw nodes
-      nodes.forEach((node, i) => {
-        // Check if node should activate
-        if (!node.active && time > node.delay) {
-          node.active = true;
+      // Draw and update data packets
+      packets.forEach((packet) => {
+        const conn = connections[packet.connectionIndex];
+        if (!conn) return;
+        
+        const fromNode = nodes[conn.from];
+        const toNode = nodes[conn.to];
+        if (!fromNode || !toNode) return;
+        
+        // Update packet position
+        packet.progress += packet.speed * packet.direction;
+        
+        // Bounce at ends
+        if (packet.progress >= 1) {
+          packet.progress = 1;
+          packet.direction = -1;
+        } else if (packet.progress <= 0) {
+          packet.progress = 0;
+          packet.direction = 1;
+          // Randomly jump to new connection
+          if (Math.random() > 0.7 && connections.length > 0) {
+            packet.connectionIndex = Math.floor(Math.random() * connections.length);
+          }
         }
         
-        if (!node.active) return;
+        const x = fromNode.x + (toNode.x - fromNode.x) * packet.progress;
+        const y = fromNode.y + (toNode.y - fromNode.y) * packet.progress;
         
-        // Animate node to target position
-        const dx = node.targetX - node.x;
-        const dy = node.targetY - node.y;
-        node.x += dx * 0.05;
-        node.y += dy * 0.05;
+        // Draw packet with glow
+        const packetGlow = ctx.createRadialGradient(x, y, 0, x, y, packet.size * 4);
+        packetGlow.addColorStop(0, 'hsla(199, 100%, 70%, 0.8)');
+        packetGlow.addColorStop(0.5, 'hsla(199, 100%, 60%, 0.3)');
+        packetGlow.addColorStop(1, 'transparent');
         
-        // Fade in
-        if (node.opacity < 1) {
-          node.opacity += 0.03;
-        }
-        
-        // Pulse effect
-        node.pulse += 0.02;
-        const pulseScale = 1 + Math.sin(node.pulse) * 0.15;
-        const radius = node.radius * pulseScale;
-        
-        // Draw glow
-        drawGlow(node.x, node.y, radius, 'hsl(199, 100%, 50%)', node.opacity * 0.4);
-        
-        // Draw node
         ctx.beginPath();
-        ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
-        
-        // Center node is special
-        if (i === 0) {
-          const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, radius);
-          gradient.addColorStop(0, `hsla(199, 100%, 70%, ${node.opacity})`);
-          gradient.addColorStop(0.7, `hsla(199, 100%, 50%, ${node.opacity})`);
-          gradient.addColorStop(1, `hsla(199, 100%, 40%, ${node.opacity * 0.8})`);
-          ctx.fillStyle = gradient;
-        } else {
-          ctx.fillStyle = `hsla(199, 100%, 60%, ${node.opacity * 0.9})`;
-        }
+        ctx.arc(x, y, packet.size * 4, 0, Math.PI * 2);
+        ctx.fillStyle = packetGlow;
         ctx.fill();
         
-        // Node border
-        ctx.strokeStyle = `hsla(199, 100%, 80%, ${node.opacity * 0.5})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(x, y, packet.size, 0, Math.PI * 2);
+        ctx.fillStyle = 'hsla(199, 100%, 80%, 0.9)';
+        ctx.fill();
       });
       
-      // Draw subtle grid in background
-      ctx.strokeStyle = 'hsla(199, 50%, 50%, 0.05)';
-      ctx.lineWidth = 0.5;
-      const gridSize = 60;
-      for (let x = 0; x < canvas.width; x += gridSize) {
+      // Draw nodes
+      nodes.forEach((node) => {
+        const pulseScale = 1 + Math.sin(node.pulse) * 0.2;
+        const radius = node.radius * pulseScale;
+        
+        // Outer glow
+        const glow = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, radius * 4);
+        glow.addColorStop(0, `hsla(199, 89%, 48%, ${node.opacity * 0.4})`);
+        glow.addColorStop(0.5, `hsla(199, 89%, 48%, ${node.opacity * 0.1})`);
+        glow.addColorStop(1, 'transparent');
+        
         ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-        ctx.stroke();
-      }
-      for (let y = 0; y < canvas.height; y += gridSize) {
+        ctx.arc(node.x, node.y, radius * 4, 0, Math.PI * 2);
+        ctx.fillStyle = glow;
+        ctx.fill();
+        
+        // Node core
         ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-      }
+        ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(199, 89%, 60%, ${node.opacity})`;
+        ctx.fill();
+        
+        // Bright center
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, radius * 0.4, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(199, 100%, 80%, ${node.opacity})`;
+        ctx.fill();
+      });
       
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -259,24 +259,23 @@ const NetworkExpansionAnimation = () => {
       resizeCanvas();
       initNetwork();
     });
+    window.addEventListener("scroll", handleScroll);
 
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
       window.removeEventListener("resize", resizeCanvas);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <canvas
-        ref={canvasRef}
-        className="w-full h-full opacity-70"
-      />
-      {/* Central glow effect */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[100px] animate-pulse" />
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full pointer-events-none"
+      style={{ opacity: 0.6 }}
+    />
   );
 };
 
