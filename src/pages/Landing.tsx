@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import hrpmLogo from "@/assets/human-rights-logo.svg";
 import GlowingOrb from "@/components/landing/GlowingOrb";
 import NetworkExpansionAnimation from "@/components/landing/NetworkExpansionAnimation";
+import HeroScrollNetwork from "@/components/landing/HeroScrollNetwork";
 import ScrollReveal from "@/components/landing/ScrollReveal";
 import GradientText from "@/components/landing/GradientText";
 import TypingText from "@/components/landing/TypingText";
@@ -118,6 +119,9 @@ const Landing = () => {
 
       {/* Hero Section */}
       <section className="relative min-h-[85vh] flex items-center">
+        {/* Scroll-triggered network animation */}
+        <HeroScrollNetwork />
+        
         {/* Animated background orbs */}
         <GlowingOrb color="primary" size="xl" className="top-20 -left-32" delay={0} />
         <GlowingOrb color="accent" size="lg" className="bottom-20 -right-20" delay={1} />
