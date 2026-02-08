@@ -5,14 +5,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   ArrowRight, 
-  Shield, 
   Scale, 
+  Shield,
   Users,
   FileText,
   Sparkles,
-  Zap,
-  Target,
-  Eye,
   Phone,
   Mail,
   MapPin,
@@ -21,9 +18,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import hrpmLogo from "@/assets/human-rights-logo.svg";
-import ParticleField from "@/components/landing/ParticleField";
 import GlowingOrb from "@/components/landing/GlowingOrb";
-import FloatingIcon from "@/components/landing/FloatingIcon";
+import NetworkExpansionAnimation from "@/components/landing/NetworkExpansionAnimation";
 import ScrollReveal from "@/components/landing/ScrollReveal";
 import GradientText from "@/components/landing/GradientText";
 import TypingText from "@/components/landing/TypingText";
@@ -60,11 +56,6 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-background overflow-hidden relative">
-      {/* Mouse-following spotlight - entire page */}
-      <SpotlightEffect size={500} intensity={0.2} />
-      
-      {/* Particle Background */}
-      <ParticleField />
 
       {/* Navigation */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/30">
@@ -120,16 +111,12 @@ const Landing = () => {
 
       {/* Hero Section */}
       <section className="relative min-h-[85vh] flex items-center">
+        {/* Network Expansion Animation */}
+        <NetworkExpansionAnimation />
+        
         {/* Animated background orbs */}
         <GlowingOrb color="primary" size="xl" className="top-20 -left-32" delay={0} />
         <GlowingOrb color="accent" size="lg" className="bottom-20 -right-20" delay={1} />
-        <GlowingOrb color="chart-2" size="md" className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" delay={2} />
-
-        {/* Floating decorative icons */}
-        <FloatingIcon icon={Shield} className="top-32 left-[15%] hidden lg:block" delay={0} />
-        <FloatingIcon icon={Eye} className="top-48 right-[12%] hidden lg:block" delay={0.5} />
-        <FloatingIcon icon={Target} className="bottom-32 left-[8%] hidden lg:block" delay={1} />
-        <FloatingIcon icon={Zap} className="bottom-48 right-[18%] hidden lg:block" delay={1.5} />
 
         <div className="relative max-w-7xl mx-auto px-4 py-16 md:py-24 z-10">
           <div className="text-center max-w-4xl mx-auto">
