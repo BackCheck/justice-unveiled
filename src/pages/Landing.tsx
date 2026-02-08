@@ -56,6 +56,13 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-background overflow-hidden relative">
+      {/* Full-page Network Animation */}
+      <div className="fixed inset-0 z-0">
+        <NetworkExpansionAnimation />
+      </div>
+      
+      {/* Mouse-following spotlight */}
+      <SpotlightEffect size={500} intensity={0.15} />
 
       {/* Navigation */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/30">
@@ -111,9 +118,6 @@ const Landing = () => {
 
       {/* Hero Section */}
       <section className="relative min-h-[85vh] flex items-center">
-        {/* Network Expansion Animation */}
-        <NetworkExpansionAnimation />
-        
         {/* Animated background orbs */}
         <GlowingOrb color="primary" size="xl" className="top-20 -left-32" delay={0} />
         <GlowingOrb color="accent" size="lg" className="bottom-20 -right-20" delay={1} />
