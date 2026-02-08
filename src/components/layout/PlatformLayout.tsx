@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { Breadcrumbs } from "./Breadcrumbs";
@@ -7,7 +7,7 @@ import { QuickActions } from "./QuickActions";
 import { GlobalSearch } from "./GlobalSearch";
 import { NotificationCenter } from "./NotificationCenter";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles } from "lucide-react";
+import { Sparkles, FileText, Github } from "lucide-react";
 
 interface PlatformLayoutProps {
   children: ReactNode;
@@ -95,6 +95,28 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
           </header>
 
           <main className="flex-1">{children}</main>
+          
+          {/* Footer */}
+          <footer className="border-t border-border/30 bg-card/30 backdrop-blur px-4 py-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
+              <p>© {new Date().getFullYear()} Human Rights Protection Movement</p>
+              <div className="flex items-center gap-4">
+                <Link to="/docs" className="flex items-center gap-1.5 hover:text-primary transition-colors">
+                  <FileText className="w-4 h-4" />
+                  Documentation
+                </Link>
+                <a 
+                  href="https://github.com/BackCheck/justice-unveiled" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center gap-1.5 hover:text-primary transition-colors"
+                >
+                  <Github className="w-4 h-4" />
+                  Open Source
+                </a>
+              </div>
+            </div>
+          </footer>
         </div>
       </div>
     </SidebarProvider>
