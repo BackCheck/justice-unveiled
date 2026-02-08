@@ -1,7 +1,7 @@
-HRPM.org 
+
 ![unnamed (21)](https://github.com/user-attachments/assets/654751e0-ab00-4c28-a591-7d3c202d638d)
 
-
+About HRPM.org 
 
 The Human Rights Protection Movement (HRPM) platform serves as a comprehensive digital archive and analytical tool designed to document institutional failures and legal injustices. Through its AI-powered Investigation Hub, the system utilizes advanced algorithms to map complex relationships between entities, identify patterns of misconduct, and assess security risks. Users can explore a searchable database of case files and interactive chronological timelines that link specific events directly to verified evidence and legal references. The platform further streamlines the investigative process by featuring a document analyzer that automatically extracts critical intelligence from various file formats. By cross-referencing findings against international human rights frameworks, the site provides a robust infrastructure for demanding legal accountability. Ultimately, these sources outline a sophisticated ecosystem built to transform raw data into actionable intelligence for human rights advocacy.
 
