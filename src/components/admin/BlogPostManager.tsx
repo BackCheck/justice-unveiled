@@ -58,6 +58,8 @@ import {
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { useAuth } from "@/contexts/AuthContext";
+import { RichTextEditor } from "./RichTextEditor";
+import { CoverImageUploader } from "./CoverImageUploader";
 
 interface BlogPost {
   id: string;
@@ -538,17 +540,10 @@ export const BlogPostManager = () => {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="cover_image">Cover Image URL</Label>
-              <Input
-                id="cover_image"
-                value={formData.cover_image_url}
-                onChange={(e) =>
-                  setFormData({ ...formData, cover_image_url: e.target.value })
-                }
-                placeholder="https://example.com/image.jpg"
-              />
-            </div>
+            <CoverImageUploader
+              value={formData.cover_image_url}
+              onChange={(url) => setFormData({ ...formData, cover_image_url: url })}
+            />
 
             <div className="space-y-2">
               <Label htmlFor="excerpt">Excerpt</Label>
@@ -564,15 +559,11 @@ export const BlogPostManager = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="content">Content *</Label>
-              <Textarea
-                id="content"
-                value={formData.content}
-                onChange={(e) =>
-                  setFormData({ ...formData, content: e.target.value })
-                }
-                placeholder="Write your blog post content here... (Markdown supported)"
-                rows={10}
+              <Label>Content *</Label>
+              <RichTextEditor
+                content={formData.content}
+                onChange={(content) => setFormData({ ...formData, content })}
+                placeholder="Start writing your blog post..."
               />
             </div>
 

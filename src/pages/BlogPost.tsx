@@ -166,9 +166,10 @@ const BlogPostPage = () => {
         {/* Content */}
         <Card className="mb-8">
           <CardContent className="prose prose-neutral dark:prose-invert max-w-none py-8">
-            <div className="whitespace-pre-wrap text-foreground leading-relaxed">
-              {post.content}
-            </div>
+            <div 
+              className="text-foreground leading-relaxed [&_img]:rounded-lg [&_img]:max-w-full [&_a]:text-primary [&_a]:underline [&_iframe]:rounded-lg [&_iframe]:w-full [&_iframe]:aspect-video"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
           </CardContent>
         </Card>
 
