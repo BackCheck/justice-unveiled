@@ -7,7 +7,7 @@ import { QuickActions } from "./QuickActions";
 import { GlobalSearch } from "./GlobalSearch";
 import { NotificationCenter } from "./NotificationCenter";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, FileText, Github } from "lucide-react";
+import { Sparkles, FileText, Github, Newspaper } from "lucide-react";
 
 interface PlatformLayoutProps {
   children: ReactNode;
@@ -101,6 +101,10 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
               <p>© {new Date().getFullYear()} Human Rights Protection Movement</p>
               <div className="flex items-center gap-4">
+                <Link to="/blog" className="flex items-center gap-1.5 hover:text-primary transition-colors">
+                  <Newspaper className="w-4 h-4" />
+                  Blog
+                </Link>
                 <Link to="/docs" className="flex items-center gap-1.5 hover:text-primary transition-colors">
                   <FileText className="w-4 h-4" />
                   Documentation

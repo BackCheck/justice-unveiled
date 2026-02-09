@@ -21,6 +21,7 @@ import { format } from "date-fns";
 interface BlogPost {
   id: string;
   title: string;
+  slug: string;
   excerpt: string | null;
   cover_image_url: string | null;
   category: string | null;
@@ -36,7 +37,7 @@ const BlogPreviewSection = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("blog_posts")
-        .select("id, title, excerpt, cover_image_url, category, published_at, is_ai_generated")
+        .select("id, title, slug, excerpt, cover_image_url, category, published_at, is_ai_generated")
         .eq("is_published", true)
         .order("published_at", { ascending: false })
         .limit(3);
@@ -86,50 +87,52 @@ const BlogPreviewSection = () => {
           <div className="grid md:grid-cols-3 gap-6">
             {posts.map((post, index) => (
               <ScrollReveal key={post.id} delay={index * 100} direction="up">
-                <Card className="overflow-hidden hover:border-primary/30 transition-all duration-300 group h-full">
-                  {post.cover_image_url ? (
-                    <div className="relative h-48 overflow-hidden">
-                      <img 
-                        src={post.cover_image_url} 
-                        alt={post.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      {post.is_ai_generated && (
-                        <Badge className="absolute top-2 right-2 bg-primary/90">
-                          <Sparkles className="w-3 h-3 mr-1" />
-                          AI
-                        </Badge>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="h-48 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                      <BookOpen className="w-12 h-12 text-primary/50" />
-                    </div>
-                  )}
-                  <CardContent className="p-4 space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      {post.category && (
-                        <Badge variant="outline" className="text-xs">
-                          {post.category}
-                        </Badge>
-                      )}
-                      {post.published_at && (
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          {format(new Date(post.published_at), "MMM d, yyyy")}
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="font-semibold line-clamp-2 group-hover:text-primary transition-colors">
-                      {post.title}
-                    </h3>
-                    {post.excerpt && (
-                      <p className="text-sm text-muted-foreground line-clamp-2">
-                        {post.excerpt}
-                      </p>
+                <Link to={`/blog/${post.slug}`}>
+                  <Card className="overflow-hidden hover:border-primary/30 transition-all duration-300 group h-full">
+                    {post.cover_image_url ? (
+                      <div className="relative h-48 overflow-hidden">
+                        <img 
+                          src={post.cover_image_url} 
+                          alt={post.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        {post.is_ai_generated && (
+                          <Badge className="absolute top-2 right-2 bg-primary/90">
+                            <Sparkles className="w-3 h-3 mr-1" />
+                            AI
+                          </Badge>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="h-48 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                        <BookOpen className="w-12 h-12 text-primary/50" />
+                      </div>
                     )}
-                  </CardContent>
-                </Card>
+                    <CardContent className="p-4 space-y-3">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        {post.category && (
+                          <Badge variant="outline" className="text-xs">
+                            {post.category}
+                          </Badge>
+                        )}
+                        {post.published_at && (
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {format(new Date(post.published_at), "MMM d, yyyy")}
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="font-semibold line-clamp-2 group-hover:text-primary transition-colors">
+                        {post.title}
+                      </h3>
+                      {post.excerpt && (
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {post.excerpt}
+                        </p>
+                      )}
+                    </CardContent>
+                  </Card>
+                </Link>
               </ScrollReveal>
             ))}
           </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -224,66 +225,68 @@ const Blog = () => {
 };
 
 const BlogCard = ({ post, featured = false }: { post: BlogPost; featured?: boolean }) => (
-  <Card className={cn(
-    "overflow-hidden hover:border-primary/30 transition-all duration-300 group",
-    featured && "md:col-span-1"
-  )}>
-    {post.cover_image_url && (
-      <div className="relative h-48 overflow-hidden">
-        <img 
-          src={post.cover_image_url} 
-          alt={post.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
-        {post.is_ai_generated && (
-          <Badge className="absolute top-2 right-2 bg-primary/90">
-            <Sparkles className="w-3 h-3 mr-1" />
-            AI Generated
-          </Badge>
-        )}
-      </div>
-    )}
-    <CardContent className="p-4 space-y-3">
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        {post.category && (
-          <Badge variant="outline" className="text-xs">
-            {post.category}
-          </Badge>
-        )}
-        {post.published_at && (
-          <span className="flex items-center gap-1">
-            <Calendar className="w-3 h-3" />
-            {format(new Date(post.published_at), "MMM d, yyyy")}
-          </span>
-        )}
-      </div>
-      <h3 className="font-semibold text-lg line-clamp-2 group-hover:text-primary transition-colors">
-        {post.title}
-      </h3>
-      {post.excerpt && (
-        <p className="text-sm text-muted-foreground line-clamp-3">
-          {post.excerpt}
-        </p>
+  <Link to={`/blog/${post.slug}`}>
+    <Card className={cn(
+      "overflow-hidden hover:border-primary/30 transition-all duration-300 group h-full",
+      featured && "md:col-span-1"
+    )}>
+      {post.cover_image_url && (
+        <div className="relative h-48 overflow-hidden">
+          <img 
+            src={post.cover_image_url} 
+            alt={post.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+          {post.is_ai_generated && (
+            <Badge className="absolute top-2 right-2 bg-primary/90">
+              <Sparkles className="w-3 h-3 mr-1" />
+              AI Generated
+            </Badge>
+          )}
+        </div>
       )}
-      <div className="flex items-center justify-between pt-2">
-        {post.author_name && (
-          <span className="text-xs text-muted-foreground flex items-center gap-1">
-            <User className="w-3 h-3" />
-            {post.author_name}
-          </span>
+      <CardContent className="p-4 space-y-3">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          {post.category && (
+            <Badge variant="outline" className="text-xs">
+              {post.category}
+            </Badge>
+          )}
+          {post.published_at && (
+            <span className="flex items-center gap-1">
+              <Calendar className="w-3 h-3" />
+              {format(new Date(post.published_at), "MMM d, yyyy")}
+            </span>
+          )}
+        </div>
+        <h3 className="font-semibold text-lg line-clamp-2 group-hover:text-primary transition-colors">
+          {post.title}
+        </h3>
+        {post.excerpt && (
+          <p className="text-sm text-muted-foreground line-clamp-3">
+            {post.excerpt}
+          </p>
         )}
-        {post.tags && post.tags.length > 0 && (
-          <div className="flex gap-1">
-            {post.tags.slice(0, 2).map(tag => (
-              <Badge key={tag} variant="secondary" className="text-xs">
-                {tag}
-              </Badge>
-            ))}
-          </div>
-        )}
-      </div>
-    </CardContent>
-  </Card>
+        <div className="flex items-center justify-between pt-2">
+          {post.author_name && (
+            <span className="text-xs text-muted-foreground flex items-center gap-1">
+              <User className="w-3 h-3" />
+              {post.author_name}
+            </span>
+          )}
+          {post.tags && post.tags.length > 0 && (
+            <div className="flex gap-1">
+              {post.tags.slice(0, 2).map(tag => (
+                <Badge key={tag} variant="secondary" className="text-xs">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  </Link>
 );
 
 const NewsCard = ({ article }: { article: NewsArticle }) => (

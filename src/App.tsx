@@ -32,6 +32,7 @@ import RegulatoryHarm from "./pages/RegulatoryHarm";
 import Contact from "./pages/Contact";
 import LegalIntelligence from "./pages/LegalIntelligence";
 import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import LegalResearch from "./pages/LegalResearch";
 
 const queryClient = new QueryClient();
@@ -65,6 +66,7 @@ const App = () => (
             <Route path="/regulatory-harm" element={<RegulatoryHarm />} />
             <Route path="/legal-intelligence" element={<LegalIntelligence />} />
             <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/legal-research" element={<LegalResearch />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/events/:eventId" element={<EventDetail />} />
