@@ -17,7 +17,10 @@ import {
   Mail,
   MapPin,
   Plus,
-  LogOut
+  LogOut,
+  Code,
+  BookOpen,
+  Github
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import hrpmLogo from "@/assets/human-rights-logo.svg";
@@ -87,7 +90,23 @@ const Landing = () => {
           <nav className="hidden md:flex items-center gap-4">
             <Link to="/about" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">{t('nav.about')}</Link>
             <Link to="/cases" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">{t('nav.cases')}</Link>
-            <Link to="/contact" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">{t('nav.contact')}</Link>
+            <Link to="/docs" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300 flex items-center gap-1">
+              <BookOpen className="w-3.5 h-3.5" />
+              Docs
+            </Link>
+            <Link to="/api" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300 flex items-center gap-1">
+              <Code className="w-3.5 h-3.5" />
+              API
+            </Link>
+            <a 
+              href="https://github.com/BackCheck/justice-unveiled" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-sm text-foreground/70 hover:text-primary transition-all duration-300 flex items-center gap-1"
+            >
+              <Github className="w-3.5 h-3.5" />
+              GitHub
+            </a>
             <LanguageSwitcher />
             {user ? (
               <div className="flex items-center gap-2">
@@ -331,6 +350,7 @@ const Landing = () => {
                 <Link to="/dashboard" className="hover:text-primary transition-all duration-300">{t('nav.dashboard')}</Link>
                 <Link to="/blog" className="hover:text-primary transition-all duration-300">Blog</Link>
                 <Link to="/docs" className="hover:text-primary transition-all duration-300">Documentation</Link>
+                <Link to="/api" className="hover:text-primary transition-all duration-300">API</Link>
                 <a href="https://github.com/BackCheck/justice-unveiled" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-all duration-300">Open Source</a>
                 <Link to="/auth" className="hover:text-primary transition-all duration-300">{t('common.signIn')}</Link>
               </div>
