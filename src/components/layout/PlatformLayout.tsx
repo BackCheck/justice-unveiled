@@ -7,7 +7,7 @@ import { QuickActions } from "./QuickActions";
 import { GlobalSearch } from "./GlobalSearch";
 import { NotificationCenter } from "./NotificationCenter";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, FileText, Github, Newspaper } from "lucide-react";
+import { Sparkles, FileText, Github, Newspaper, Code } from "lucide-react";
 
 interface PlatformLayoutProps {
   children: ReactNode;
@@ -107,7 +107,11 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
                 </Link>
                 <Link to="/docs" className="flex items-center gap-1.5 hover:text-primary transition-colors">
                   <FileText className="w-4 h-4" />
-                  Documentation
+                  Docs
+                </Link>
+                <Link to="/api" className="flex items-center gap-1.5 hover:text-primary transition-colors">
+                  <Code className="w-4 h-4" />
+                  API
                 </Link>
                 <a 
                   href="https://github.com/BackCheck/justice-unveiled" 
@@ -116,7 +120,7 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
                   className="flex items-center gap-1.5 hover:text-primary transition-colors"
                 >
                   <Github className="w-4 h-4" />
-                  Open Source
+                  GitHub
                 </a>
               </div>
             </div>
