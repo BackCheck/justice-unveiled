@@ -1,0 +1,206 @@
+import { useParams, Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { PlatformLayout } from "@/components/layout/PlatformLayout";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { 
+  ArrowLeft, 
+  Calendar, 
+  User, 
+  Clock,
+  Sparkles,
+  BookOpen,
+  Share2,
+  Tag
+} from "lucide-react";
+import { format } from "date-fns";
+
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string;
+  cover_image_url: string | null;
+  post_type: string;
+  category: string | null;
+  tags: string[] | null;
+  author_name: string | null;
+  author_avatar_url: string | null;
+  is_featured: boolean | null;
+  is_ai_generated: boolean | null;
+  published_at: string | null;
+  views_count: number | null;
+  created_at: string;
+}
+
+const BlogPostPage = () => {
+  const { slug } = useParams<{ slug: string }>();
+
+  const { data: post, isLoading, error } = useQuery({
+    queryKey: ["blog-post", slug],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("blog_posts")
+        .select("*")
+        .eq("slug", slug)
+        .eq("is_published", true)
+        .single();
+      if (error) throw error;
+      return data as BlogPost;
+    },
+    enabled: !!slug,
+  });
+
+  if (isLoading) {
+    return (
+      <PlatformLayout>
+        <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+          <Skeleton className="h-8 w-32" />
+          <Skeleton className="h-12 w-3/4" />
+          <Skeleton className="h-64 w-full rounded-xl" />
+          <div className="space-y-4">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
+          </div>
+        </div>
+      </PlatformLayout>
+    );
+  }
+
+  if (error || !post) {
+    return (
+      <PlatformLayout>
+        <div className="max-w-4xl mx-auto px-4 py-16 text-center">
+          <BookOpen className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+          <h1 className="text-2xl font-bold mb-2">Post Not Found</h1>
+          <p className="text-muted-foreground mb-6">
+            The blog post you're looking for doesn't exist or has been removed.
+          </p>
+          <Button asChild>
+            <Link to="/blog">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Blog
+            </Link>
+          </Button>
+        </div>
+      </PlatformLayout>
+    );
+  }
+
+  return (
+    <PlatformLayout>
+      <article className="max-w-4xl mx-auto px-4 py-8">
+        {/* Back Button */}
+        <Button variant="ghost" size="sm" className="mb-6" asChild>
+          <Link to="/blog">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Blog
+          </Link>
+        </Button>
+
+        {/* Header */}
+        <header className="space-y-4 mb-8">
+          <div className="flex items-center gap-2 flex-wrap">
+            {post.category && (
+              <Badge variant="outline">{post.category}</Badge>
+            )}
+            {post.is_ai_generated && (
+              <Badge className="gap-1 bg-primary/90">
+                <Sparkles className="w-3 h-3" />
+                AI Generated
+              </Badge>
+            )}
+            {post.is_featured && (
+              <Badge variant="secondary">Featured</Badge>
+            )}
+          </div>
+
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground leading-tight">
+            {post.title}
+          </h1>
+
+          {post.excerpt && (
+            <p className="text-lg text-muted-foreground">
+              {post.excerpt}
+            </p>
+          )}
+
+          <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
+            {post.author_name && (
+              <div className="flex items-center gap-1.5">
+                <User className="w-4 h-4" />
+                {post.author_name}
+              </div>
+            )}
+            {post.published_at && (
+              <div className="flex items-center gap-1.5">
+                <Calendar className="w-4 h-4" />
+                {format(new Date(post.published_at), "MMMM d, yyyy")}
+              </div>
+            )}
+            {post.views_count !== null && post.views_count > 0 && (
+              <div className="flex items-center gap-1.5">
+                <Clock className="w-4 h-4" />
+                {post.views_count} views
+              </div>
+            )}
+          </div>
+        </header>
+
+        {/* Cover Image */}
+        {post.cover_image_url && (
+          <div className="mb-8 rounded-xl overflow-hidden">
+            <img 
+              src={post.cover_image_url} 
+              alt={post.title}
+              className="w-full h-auto object-cover max-h-96"
+            />
+          </div>
+        )}
+
+        {/* Content */}
+        <Card className="mb-8">
+          <CardContent className="prose prose-neutral dark:prose-invert max-w-none py-8">
+            <div className="whitespace-pre-wrap text-foreground leading-relaxed">
+              {post.content}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Tags */}
+        {post.tags && post.tags.length > 0 && (
+          <div className="flex items-center gap-2 flex-wrap mb-8">
+            <Tag className="w-4 h-4 text-muted-foreground" />
+            {post.tags.map((tag) => (
+              <Badge key={tag} variant="secondary" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        )}
+
+        {/* Share Actions */}
+        <div className="flex items-center gap-4 pt-6 border-t">
+          <span className="text-sm text-muted-foreground">Share this post:</span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.href);
+            }}
+          >
+            <Share2 className="w-4 h-4 mr-2" />
+            Copy Link
+          </Button>
+        </div>
+      </article>
+    </PlatformLayout>
+  );
+};
+
+export default BlogPostPage;

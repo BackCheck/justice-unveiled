@@ -43,7 +43,8 @@ import {
   AlertTriangle,
   Settings,
   Video,
-  ScrollText
+  ScrollText,
+  Newspaper
 } from "lucide-react";
 import { useUserRole, AppRole } from "@/hooks/useUserRole";
 import { useAllUserRoles, useUpdateUserRole } from "@/hooks/useAdminRoles";
@@ -52,6 +53,7 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { AuditLogViewer } from "@/components/admin/AuditLogViewer";
 import { TutorialVideoUploader } from "@/components/admin/TutorialVideoUploader";
+import { BlogPostManager } from "@/components/admin/BlogPostManager";
 
 const roleConfig: Record<AppRole, { label: string; icon: typeof Crown; color: string; description: string }> = {
   admin: {
@@ -175,14 +177,18 @@ const AdminPanel = () => {
       {/* Content */}
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
         <Tabs defaultValue="users" className="w-full">
-          <TabsList className="grid w-full max-w-lg grid-cols-3">
+          <TabsList className="grid w-full max-w-2xl grid-cols-4">
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
               Users
             </TabsTrigger>
+            <TabsTrigger value="blog" className="flex items-center gap-2">
+              <Newspaper className="w-4 h-4" />
+              Blog
+            </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
-              Site Settings
+              Settings
             </TabsTrigger>
             <TabsTrigger value="audit" className="flex items-center gap-2">
               <ScrollText className="w-4 h-4" />
@@ -338,6 +344,10 @@ const AdminPanel = () => {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="blog" className="mt-6">
+            <BlogPostManager />
           </TabsContent>
 
           <TabsContent value="settings" className="mt-6 space-y-6">

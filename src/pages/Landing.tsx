@@ -33,6 +33,7 @@ import FeaturedCaseSection from "@/components/landing/FeaturedCaseSection";
 import CapabilitiesSection from "@/components/landing/CapabilitiesSection";
 import BottomCTA from "@/components/landing/BottomCTA";
 import TutorialVideoSection from "@/components/landing/TutorialVideoSection";
+import BlogPreviewSection from "@/components/landing/BlogPreviewSection";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -291,6 +292,9 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* Blog Preview Section */}
+      <BlogPreviewSection />
+
       {/* Bottom CTA Section */}
       <BottomCTA />
 
@@ -325,6 +329,7 @@ const Landing = () => {
                 <Link to="/contact" className="hover:text-primary transition-all duration-300">{t('nav.contact')}</Link>
                 <Link to="/cases" className="hover:text-primary transition-all duration-300">{t('cases.title')}</Link>
                 <Link to="/dashboard" className="hover:text-primary transition-all duration-300">{t('nav.dashboard')}</Link>
+                <Link to="/blog" className="hover:text-primary transition-all duration-300">Blog</Link>
                 <Link to="/docs" className="hover:text-primary transition-all duration-300">Documentation</Link>
                 <a href="https://github.com/BackCheck/justice-unveiled" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-all duration-300">Open Source</a>
                 <Link to="/auth" className="hover:text-primary transition-all duration-300">{t('common.signIn')}</Link>
