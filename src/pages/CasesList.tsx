@@ -11,11 +11,12 @@ import {
   Zap, BarChart3, Globe, Printer, Share2
 } from "lucide-react";
 import { SocialShareButtons } from "@/components/sharing/SocialShareButtons";
+import { CaseReportPrint } from "@/components/export/CaseReportPrint";
 import { useCases, Case } from "@/hooks/useCases";
 import { useUserRole } from "@/hooks/useUserRole";
 import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 const severityColors: Record<string, string> = {
   critical: "bg-red-500/20 text-red-700 dark:text-red-300 border-red-500/30",
@@ -30,7 +31,7 @@ const statusColors: Record<string, string> = {
   pending: "bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/30",
 };
 
-const FeaturedCaseWidget = ({ caseItem }: { caseItem: Case }) => (
+const FeaturedCaseWidget = ({ caseItem, onPrint }: { caseItem: Case; onPrint: (c: Case) => void }) => (
   <Link to={`/cases/${caseItem.id}`} className="block group">
     <Card className="glass-card relative overflow-hidden border-primary/30 hover:border-primary/60 transition-all duration-500">
       {/* Glow background */}
@@ -122,8 +123,8 @@ const FeaturedCaseWidget = ({ caseItem }: { caseItem: Case }) => (
             )}
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-1.5" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.print(); }}>
-              <Printer className="w-3.5 h-3.5" /> Print
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onPrint(caseItem); }}>
+              <Printer className="w-3.5 h-3.5" /> Print Report
             </Button>
             <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
               <SocialShareButtons
@@ -151,7 +152,7 @@ const StatBox = ({ icon: Icon, value, label, accent }: { icon: any; value: strin
   </div>
 );
 
-const CaseCard = ({ caseItem }: { caseItem: Case }) => (
+const CaseCard = ({ caseItem, onPrint }: { caseItem: Case; onPrint: (c: Case) => void }) => (
   <Link to={`/cases/${caseItem.id}`}>
     <Card className="glass-card h-full group cursor-pointer hover-glow-primary">
       <CardHeader className="pb-3">
@@ -196,7 +197,7 @@ const CaseCard = ({ caseItem }: { caseItem: Case }) => (
         </div>
         <div className="mt-4 flex items-center justify-end gap-2">
           <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.print(); }}>
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onPrint(caseItem); }}>
               <Printer className="w-3.5 h-3.5" />
             </Button>
             <SocialShareButtons
@@ -219,6 +220,21 @@ const CasesList = () => {
   const { data: cases, isLoading, error } = useCases();
   const { canEdit } = useUserRole();
   const [searchQuery, setSearchQuery] = useState("");
+  const [printCase, setPrintCase] = useState<Case | null>(null);
+  const [userIP, setUserIP] = useState("Detecting...");
+  const printRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    fetch("https://api.ipify.org?format=json")
+      .then(r => r.json())
+      .then(d => setUserIP(d.ip))
+      .catch(() => setUserIP("Unable to detect"));
+  }, []);
+
+  const handlePrint = useCallback((c: Case) => {
+    setPrintCase(c);
+    setTimeout(() => window.print(), 300);
+  }, []);
 
   const featuredCase = cases?.find((c) => c.case_number === "CF-001");
   const otherCases = cases?.filter((c) => c.case_number !== "CF-001");
@@ -279,7 +295,7 @@ const CasesList = () => {
         ) : (
           <>
             {/* Featured Case */}
-            {featuredCase && <FeaturedCaseWidget caseItem={featuredCase} />}
+            {featuredCase && <FeaturedCaseWidget caseItem={featuredCase} onPrint={handlePrint} />}
 
             {/* Other Cases Section */}
             <div>
@@ -308,7 +324,7 @@ const CasesList = () => {
               ) : (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredOtherCases?.map((caseItem) => (
-                    <CaseCard key={caseItem.id} caseItem={caseItem} />
+                    <CaseCard key={caseItem.id} caseItem={caseItem} onPrint={handlePrint} />
                   ))}
                 </div>
               )}
@@ -316,6 +332,22 @@ const CasesList = () => {
           </>
         )}
       </main>
+
+      {/* Hidden print report */}
+      {printCase && (
+        <CaseReportPrint ref={printRef} caseItem={printCase} userIP={userIP} />
+      )}
+
+      {/* Print styles */}
+      <style>{`
+        @media print {
+          body > * { display: none !important; }
+          body > #root { display: block !important; }
+          #root > * { display: none !important; }
+          [class*="CaseReportPrint"], .print\\:block { display: block !important; }
+          @page { margin: 0; size: A4; }
+        }
+      `}</style>
     </PlatformLayout>
   );
 };
