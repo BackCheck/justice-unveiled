@@ -197,7 +197,7 @@ const CaseCard = ({ caseItem, onPrint }: { caseItem: Case; onPrint: (c: Case) =>
         </div>
         <div className="mt-4 flex items-center justify-end gap-2">
           <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.print(); }}>
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onPrint(caseItem); }}>
               <Printer className="w-3.5 h-3.5" />
             </Button>
             <SocialShareButtons
