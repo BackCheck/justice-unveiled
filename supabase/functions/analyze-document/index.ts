@@ -200,6 +200,16 @@ EXTRACTION REQUIREMENTS:
 
 Be thorough but accurate. Only extract information explicitly stated or clearly implied. Assign confidence scores based on clarity of evidence.`;
 
+    // Truncate document content to avoid exceeding token limits (~4 chars per token, limit ~1M tokens, leave room for prompt)
+    const MAX_CONTENT_CHARS = 500000;
+    let truncatedContent = documentContent;
+    let truncationNote = '';
+    if (documentContent.length > MAX_CONTENT_CHARS) {
+      truncatedContent = documentContent.substring(0, MAX_CONTENT_CHARS);
+      truncationNote = `\n\n[NOTE: Document was truncated from ${documentContent.length} to ${MAX_CONTENT_CHARS} characters due to size limits. Analysis covers the first portion only.]`;
+      console.log(`Document truncated from ${documentContent.length} to ${MAX_CONTENT_CHARS} chars`);
+    }
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -207,12 +217,12 @@ Be thorough but accurate. Only extract information explicitly stated or clearly 
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
           { 
             role: "user", 
-            content: `Analyze this ${documentType || "document"} (${fileName || "uploaded file"}) and extract ALL intelligence including timeline events, entities, discrepancies, LEGAL CLAIMS, COMPLIANCE VIOLATIONS, and FINANCIAL HARM:\n\n${documentContent}` 
+            content: `Analyze this ${documentType || "document"} (${fileName || "uploaded file"}) and extract ALL intelligence including timeline events, entities, discrepancies, LEGAL CLAIMS, COMPLIANCE VIOLATIONS, and FINANCIAL HARM:\n\n${truncatedContent}${truncationNote}` 
           }
         ],
         tools: [
