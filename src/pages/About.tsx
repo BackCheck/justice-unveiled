@@ -44,14 +44,15 @@ const About = () => {
     }
   ];
 
-  const whatWeDo = [
-    "Document and analyze cases of human rights violations and legal abuse",
-    "Build transparent evidence repositories accessible to the public",
-    "Identify patterns of procedural failures across institutions",
-    "Support individuals navigating complex legal systems",
-    "Advocate for systemic reforms to protect fundamental rights",
-    "Connect victims with resources, legal aid, and support networks"
-  ];
+   const whatWeDo = [
+     "Document and analyze cases of human rights violations and legal abuse",
+     "Build transparent, open-source evidence repositories accessible to the public",
+     "Identify patterns of procedural failures across institutions",
+     "Support individuals navigating complex legal systems",
+     "Advocate for systemic reforms to protect fundamental rights",
+     "Connect victims with resources, legal aid, and support networks",
+     "Publish all source code openly for community audit and contribution"
+   ];
 
   return (
     <PlatformLayout>
