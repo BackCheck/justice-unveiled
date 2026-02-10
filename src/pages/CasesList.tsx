@@ -11,11 +11,12 @@ import {
   Zap, BarChart3, Globe, Printer, Share2
 } from "lucide-react";
 import { SocialShareButtons } from "@/components/sharing/SocialShareButtons";
+import { CaseReportPrint } from "@/components/export/CaseReportPrint";
 import { useCases, Case } from "@/hooks/useCases";
 import { useUserRole } from "@/hooks/useUserRole";
 import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 const severityColors: Record<string, string> = {
   critical: "bg-red-500/20 text-red-700 dark:text-red-300 border-red-500/30",
