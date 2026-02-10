@@ -332,6 +332,22 @@ const CasesList = () => {
           </>
         )}
       </main>
+
+      {/* Hidden print report */}
+      {printCase && (
+        <CaseReportPrint ref={printRef} caseItem={printCase} userIP={userIP} />
+      )}
+
+      {/* Print styles */}
+      <style>{`
+        @media print {
+          body > * { display: none !important; }
+          body > #root { display: block !important; }
+          #root > * { display: none !important; }
+          [class*="CaseReportPrint"], .print\\:block { display: block !important; }
+          @page { margin: 0; size: A4; }
+        }
+      `}</style>
     </PlatformLayout>
   );
 };
