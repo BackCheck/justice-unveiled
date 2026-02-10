@@ -123,8 +123,8 @@ const FeaturedCaseWidget = ({ caseItem, onPrint }: { caseItem: Case; onPrint: (c
             )}
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-1.5" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.print(); }}>
-              <Printer className="w-3.5 h-3.5" /> Print
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onPrint(caseItem); }}>
+              <Printer className="w-3.5 h-3.5" /> Print Report
             </Button>
             <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
               <SocialShareButtons
