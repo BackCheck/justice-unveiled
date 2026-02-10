@@ -31,7 +31,7 @@ const statusColors: Record<string, string> = {
   pending: "bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/30",
 };
 
-const FeaturedCaseWidget = ({ caseItem }: { caseItem: Case }) => (
+const FeaturedCaseWidget = ({ caseItem, onPrint }: { caseItem: Case; onPrint: (c: Case) => void }) => (
   <Link to={`/cases/${caseItem.id}`} className="block group">
     <Card className="glass-card relative overflow-hidden border-primary/30 hover:border-primary/60 transition-all duration-500">
       {/* Glow background */}
