@@ -78,12 +78,12 @@ const About = () => {
                 variant="compact"
               />
             </div>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl leading-relaxed">
-              We are a non-profit organization dedicated to documenting cases of human rights abuse, 
-              legal persecution, and institutional failures. Our mission is to bring transparency 
-              to systems that too often operate in darkness, and to support those whose fundamental 
-              rights have been violated.
-            </p>
+             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl leading-relaxed">
+               We are a <strong className="text-foreground">non-profit, open-source</strong> organization dedicated to documenting cases of human rights abuse, 
+               legal persecution, and institutional failures. Our mission is to bring transparency 
+               to systems that too often operate in darkness, and to support those whose fundamental 
+               rights have been violated. Every tool we build is freely available to the public.
+             </p>
           </div>
         </section>
 
