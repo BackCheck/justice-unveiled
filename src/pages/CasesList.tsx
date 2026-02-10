@@ -8,8 +8,9 @@ import {
   FolderOpen, MapPin, Calendar, Users, FileText, Clock,
   AlertTriangle, Shield, Plus, Search, ArrowRight,
   Database, Brain, Scale, Network, TrendingUp, Eye,
-  Zap, BarChart3, Globe
+  Zap, BarChart3, Globe, Printer, Share2
 } from "lucide-react";
+import { SocialShareButtons } from "@/components/sharing/SocialShareButtons";
 import { useCases, Case } from "@/hooks/useCases";
 import { useUserRole } from "@/hooks/useUserRole";
 import { format } from "date-fns";
