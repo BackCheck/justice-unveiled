@@ -66,18 +66,18 @@ export const BatchDocumentUploader = ({ onBatchComplete }: BatchDocumentUploader
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        const content = e.target?.result as string;
+        let content = e.target?.result as string;
+        // Truncate to 200K chars client-side to prevent memory limits on edge function
+        const MAX_CHARS = 200000;
+        if (content && content.length > MAX_CHARS) {
+          console.warn(`Truncating ${file.name} from ${content.length} to ${MAX_CHARS} chars`);
+          content = content.substring(0, MAX_CHARS) + 
+            `\n\n[Document truncated from ${content.length} characters. Analysis covers the first portion.]`;
+        }
         resolve(content);
       };
       reader.onerror = () => reject(new Error("Failed to read file"));
-      
-      // For PDF files, we'll just read as text (basic extraction)
-      // In production, you might want to use a PDF parsing library
-      if (file.type === "application/pdf") {
-        reader.readAsText(file);
-      } else {
-        reader.readAsText(file);
-      }
+      reader.readAsText(file);
     });
   };
 

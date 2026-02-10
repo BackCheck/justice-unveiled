@@ -45,9 +45,17 @@ export const DocumentAnalyzer = ({ uploadId, onAnalysisComplete }: DocumentAnaly
   const handleAnalyze = async () => {
     if (!documentContent.trim()) return;
 
+    // Truncate to 200K chars to prevent edge function memory limits
+    const MAX_CHARS = 200000;
+    let content = documentContent;
+    if (content.length > MAX_CHARS) {
+      content = content.substring(0, MAX_CHARS) + 
+        `\n\n[Document truncated from ${content.length} characters. Analysis covers the first portion.]`;
+    }
+
     await analyzeDocument.mutateAsync({
       uploadId: localUploadId,
-      documentContent,
+      documentContent: content,
       fileName: fileName || "Pasted Document",
       documentType,
       caseId: selectedCaseId === "none" ? undefined : selectedCaseId,
