@@ -105,11 +105,12 @@ const About = () => {
                   the resources to fight back. Evidence is scattered, timelines are obscured, and 
                   patterns of misconduct remain hidden.
                 </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  HRPM exists to change that. We build comprehensive case files that synthesize 
-                  documents, testimonies, and evidence into actionable intelligence—bringing 
-                  clarity to complex situations and accountability to those who abuse their power.
-                </p>
+                 <p className="text-muted-foreground leading-relaxed">
+                   HRPM exists to change that. As a non-profit, open-source initiative, we build comprehensive case files that synthesize 
+                   documents, testimonies, and evidence into actionable intelligence—bringing 
+                   clarity to complex situations and accountability to those who abuse their power. 
+                   Our entire codebase is publicly available for review, audit, and contribution.
+                 </p>
               </div>
               <Card className="border-border">
                 <CardHeader>
