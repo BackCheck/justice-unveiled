@@ -35,6 +35,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import LegalResearch from "./pages/LegalResearch";
 import Api from "./pages/Api";
+import HowToUse from "./pages/HowToUse";
 const queryClient = new QueryClient();
 
 const App = () => (
