@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import humanRightsLogo from "@/assets/human-rights-logo.svg";
+import humanRightsLogo from "@/assets/human-rights-logo.png";
 
 interface PDFCoverPageProps {
   totalEvents: number;

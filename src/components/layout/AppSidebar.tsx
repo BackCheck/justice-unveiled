@@ -33,7 +33,7 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
 import { GreetingBanner } from "@/components/GreetingBanner";
-import hrpmLogo from "@/assets/human-rights-logo.svg";
+import hrpmLogo from "@/assets/human-rights-logo.png";
 import {
   Sidebar,
   SidebarContent,

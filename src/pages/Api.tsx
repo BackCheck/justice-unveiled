@@ -19,7 +19,7 @@ import {
   Lock
 } from "lucide-react";
 import { toast } from "sonner";
-import hrpmLogo from "@/assets/human-rights-logo.svg";
+import hrpmLogo from "@/assets/human-rights-logo.png";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const Api = () => {
