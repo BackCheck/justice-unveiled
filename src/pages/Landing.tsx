@@ -311,8 +311,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Blog Preview Section */}
-      <BlogPreviewSection />
 
       {/* Bottom CTA Section */}
       <BottomCTA />
