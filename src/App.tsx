@@ -35,6 +35,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import LegalResearch from "./pages/LegalResearch";
 import Api from "./pages/Api";
+import HowToUse from "./pages/HowToUse";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -69,6 +70,7 @@ const App = () => (
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/legal-research" element={<LegalResearch />} />
             <Route path="/api" element={<Api />} />
+            <Route path="/how-to-use" element={<HowToUse />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/events/:eventId" element={<EventDetail />} />
             <Route path="/violations/:type/:violationId" element={<ViolationDetail />} />
