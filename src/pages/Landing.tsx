@@ -79,10 +79,10 @@ const Landing = () => {
               />
               <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-lg text-foreground tracking-tight">HRPM</span>
-              <span className="text-[10px] text-foreground/60 leading-tight">Human Rights Protection Movement</span>
-            </div>
+             <div className="flex flex-col">
+               <span className="font-bold text-lg text-foreground tracking-tight">HRPM</span>
+               <span className="text-[10px] text-foreground/60 leading-tight">Open-Source · Non-Profit</span>
+             </div>
           </Link>
           <nav className="hidden md:flex items-center gap-4">
             <Link to="/about" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">{t('nav.about')}</Link>

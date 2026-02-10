@@ -8,7 +8,9 @@ import {
   Heart,
   Globe,
   Target,
-  CheckCircle
+  CheckCircle,
+  Github,
+  Code2
 } from "lucide-react";
 import { SocialShareButtons } from "@/components/sharing";
 import { useSEO } from "@/hooks/useSEO";
@@ -42,14 +44,15 @@ const About = () => {
     }
   ];
 
-  const whatWeDo = [
-    "Document and analyze cases of human rights violations and legal abuse",
-    "Build transparent evidence repositories accessible to the public",
-    "Identify patterns of procedural failures across institutions",
-    "Support individuals navigating complex legal systems",
-    "Advocate for systemic reforms to protect fundamental rights",
-    "Connect victims with resources, legal aid, and support networks"
-  ];
+   const whatWeDo = [
+     "Document and analyze cases of human rights violations and legal abuse",
+     "Build transparent, open-source evidence repositories accessible to the public",
+     "Identify patterns of procedural failures across institutions",
+     "Support individuals navigating complex legal systems",
+     "Advocate for systemic reforms to protect fundamental rights",
+     "Connect victims with resources, legal aid, and support networks",
+     "Publish all source code openly for community audit and contribution"
+   ];
 
   return (
     <PlatformLayout>
@@ -63,10 +66,10 @@ const About = () => {
                   <Globe className="w-9 h-9 text-primary-foreground" />
                 </div>
                 <div>
-                  <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                    Human Rights Protection Movement
-                  </h1>
-                  <p className="text-muted-foreground font-medium">Non-profit investigative platform</p>
+                   <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                     Human Rights Protection Movement
+                   </h1>
+                   <p className="text-muted-foreground font-medium">Open-source · Non-profit · Investigative Intelligence</p>
                 </div>
               </div>
               <SocialShareButtons
@@ -76,12 +79,12 @@ const About = () => {
                 variant="compact"
               />
             </div>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl leading-relaxed">
-              We are a non-profit organization dedicated to documenting cases of human rights abuse, 
-              legal persecution, and institutional failures. Our mission is to bring transparency 
-              to systems that too often operate in darkness, and to support those whose fundamental 
-              rights have been violated.
-            </p>
+             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl leading-relaxed">
+               We are a <strong className="text-foreground">non-profit, open-source</strong> organization dedicated to documenting cases of human rights abuse, 
+               legal persecution, and institutional failures. Our mission is to bring transparency 
+               to systems that too often operate in darkness, and to support those whose fundamental 
+               rights have been violated. Every tool we build is freely available to the public.
+             </p>
           </div>
         </section>
 
@@ -102,11 +105,12 @@ const About = () => {
                   the resources to fight back. Evidence is scattered, timelines are obscured, and 
                   patterns of misconduct remain hidden.
                 </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  HRPM exists to change that. We build comprehensive case files that synthesize 
-                  documents, testimonies, and evidence into actionable intelligence—bringing 
-                  clarity to complex situations and accountability to those who abuse their power.
-                </p>
+                 <p className="text-muted-foreground leading-relaxed">
+                   HRPM exists to change that. As a non-profit, open-source initiative, we build comprehensive case files that synthesize 
+                   documents, testimonies, and evidence into actionable intelligence—bringing 
+                   clarity to complex situations and accountability to those who abuse their power. 
+                   Our entire codebase is publicly available for review, audit, and contribution.
+                 </p>
               </div>
               <Card className="border-border">
                 <CardHeader>
@@ -194,11 +198,80 @@ const About = () => {
           </div>
         </section>
 
+        {/* Open Source Section */}
+        <section className="py-16 bg-primary/5 border-b border-border">
+          <div className="max-w-5xl mx-auto px-4">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <Code2 className="w-5 h-5 text-primary" />
+                  <span className="text-sm font-semibold text-primary uppercase tracking-wide">Open Source</span>
+                </div>
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+                  Built in the Open
+                </h2>
+                <p className="text-muted-foreground leading-relaxed mb-4">
+                  Transparency is not just a value we advocate for—it's how we build. Our entire platform is 
+                  open-source, allowing anyone to inspect, audit, and contribute to the codebase. We believe 
+                  that tools for justice should be freely accessible and community-driven.
+                </p>
+                <p className="text-muted-foreground leading-relaxed mb-6">
+                  As a non-profit initiative, we accept no corporate sponsorships that could compromise our independence. 
+                  Every feature we ship is designed to serve victims, researchers, and advocates—not shareholders.
+                </p>
+                <a 
+                  href="https://github.com/BackCheck/justice-unveiled" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-card border border-border text-sm text-foreground hover:border-primary/50 hover:text-primary transition-colors"
+                >
+                  <Github className="w-4 h-4" />
+                  View Source on GitHub
+                </a>
+              </div>
+              <Card className="border-border">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Shield className="w-5 h-5 text-primary" />
+                    Our Commitments
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3 text-muted-foreground">
+                  <p>• 100% open-source codebase under public license</p>
+                  <p>• No paywalls on public interest data</p>
+                  <p>• Community-driven development and governance</p>
+                  <p>• Independent from corporate or political influence</p>
+                  <p>• Non-profit — all resources directed to the mission</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Case File Section */}
+        <section className="py-16 bg-muted/30">
+          <div className="max-w-5xl mx-auto px-4 text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+              Case File #001: The Thanvi Investigation
+            </h2>
+            <p className="text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed">
+              Our inaugural investigation documents a multi-year pattern of harassment, business 
+              interference, and legal abuse targeting an individual and their family in Denmark. 
+              Built from 123 sources, this case file demonstrates how institutional failures 
+              can devastate lives—and why transparency matters.
+            </p>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-card border border-border text-sm text-muted-foreground">
+              <FileText className="w-4 h-4" />
+              <span>Explore the timeline, evidence matrix, and entity network above</span>
+            </div>
+          </div>
+        </section>
+
         {/* Footer Note */}
         <section className="py-12 border-t border-border">
           <div className="max-w-5xl mx-auto px-4 text-center">
             <p className="text-sm text-muted-foreground">
-              HRPM is a non-profit initiative. We do not provide legal advice. 
+              HRPM is a non-profit, open-source initiative. We do not provide legal advice. 
               All case documentation is based on primary sources and is presented for 
               public interest, research, and advocacy purposes.
             </p>
