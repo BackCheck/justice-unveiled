@@ -20,7 +20,7 @@ import {
   Github
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import hrpmLogo from "@/assets/human-rights-logo.svg";
+import hrpmLogo from "@/assets/human-rights-logo.png";
 import ParticleField from "@/components/landing/ParticleField";
 import GlowingOrb from "@/components/landing/GlowingOrb";
 import FloatingIcon from "@/components/landing/FloatingIcon";
