@@ -295,7 +295,7 @@ const CasesList = () => {
         ) : (
           <>
             {/* Featured Case */}
-            {featuredCase && <FeaturedCaseWidget caseItem={featuredCase} />}
+            {featuredCase && <FeaturedCaseWidget caseItem={featuredCase} onPrint={handlePrint} />}
 
             {/* Other Cases Section */}
             <div>
