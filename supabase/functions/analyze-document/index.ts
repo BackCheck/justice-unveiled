@@ -138,11 +138,27 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Verify uploadId exists in evidence_uploads before using as FK
+    let validSourceUploadId: string | null = null;
+    if (uploadId && uploadId !== 'pasted') {
+      const { data: existingUpload } = await supabase
+        .from("evidence_uploads")
+        .select("id")
+        .eq("id", uploadId)
+        .maybeSingle();
+      
+      if (existingUpload) {
+        validSourceUploadId = uploadId;
+      } else {
+        console.warn(`Upload ID ${uploadId} not found in evidence_uploads, proceeding without FK link`);
+      }
+    }
+
     // Create analysis job
     const { data: job, error: jobError } = await supabase
       .from("document_analysis_jobs")
       .insert({
-        upload_id: uploadId !== 'pasted' ? uploadId : null,
+        upload_id: validSourceUploadId,
         status: "processing",
         started_at: new Date().toISOString(),
       })
@@ -200,6 +216,16 @@ EXTRACTION REQUIREMENTS:
 
 Be thorough but accurate. Only extract information explicitly stated or clearly implied. Assign confidence scores based on clarity of evidence.`;
 
+    // Truncate document content to avoid exceeding token limits (~4 chars per token, limit ~1M tokens, leave room for prompt)
+    const MAX_CONTENT_CHARS = 500000;
+    let truncatedContent = documentContent;
+    let truncationNote = '';
+    if (documentContent.length > MAX_CONTENT_CHARS) {
+      truncatedContent = documentContent.substring(0, MAX_CONTENT_CHARS);
+      truncationNote = `\n\n[NOTE: Document was truncated from ${documentContent.length} to ${MAX_CONTENT_CHARS} characters due to size limits. Analysis covers the first portion only.]`;
+      console.log(`Document truncated from ${documentContent.length} to ${MAX_CONTENT_CHARS} chars`);
+    }
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -207,12 +233,12 @@ Be thorough but accurate. Only extract information explicitly stated or clearly 
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
           { 
             role: "user", 
-            content: `Analyze this ${documentType || "document"} (${fileName || "uploaded file"}) and extract ALL intelligence including timeline events, entities, discrepancies, LEGAL CLAIMS, COMPLIANCE VIOLATIONS, and FINANCIAL HARM:\n\n${documentContent}` 
+            content: `Analyze this ${documentType || "document"} (${fileName || "uploaded file"}) and extract ALL intelligence including timeline events, entities, discrepancies, LEGAL CLAIMS, COMPLIANCE VIOLATIONS, and FINANCIAL HARM:\n\n${truncatedContent}${truncationNote}` 
           }
         ],
         tools: [
@@ -380,7 +406,7 @@ Be thorough but accurate. Only extract information explicitly stated or clearly 
     const extraction: ExtractionResult = JSON.parse(toolCall.function.arguments);
     console.log(`Extracted: ${extraction.events?.length || 0} events, ${extraction.entities?.length || 0} entities, ${extraction.discrepancies?.length || 0} discrepancies, ${extraction.claims?.length || 0} claims, ${extraction.complianceViolations?.length || 0} compliance violations, ${extraction.financialHarm?.length || 0} financial harm incidents`);
 
-    const sourceUploadId = uploadId !== 'pasted' ? uploadId : null;
+    const sourceUploadId = validSourceUploadId;
 
     // Insert extracted events
     if (extraction.events?.length > 0) {
@@ -495,8 +521,7 @@ Be thorough but accurate. Only extract information explicitly stated or clearly 
           title: harm.title,
           description: harm.description,
           incident_date: normalizedDate,
-          perpetrator_agency: harm.perpetratorAgency,
-          is_documented: harm.isDocumented,
+          institution_name: harm.perpetratorAgency || null,
           status: 'documented'
         };
       });
@@ -521,7 +546,7 @@ Be thorough but accurate. Only extract information explicitly stated or clearly 
           loss_category: harm.lossCategory,
           description: harm.description,
           is_estimated: true,
-          is_documented: harm.isDocumented
+          is_documented: harm.isDocumented || false
         })).filter(row => row.incident_id);
 
         if (lossRows.length > 0) {
