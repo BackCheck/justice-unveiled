@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Phone, Mail, MapPin, Github, Code, BookOpen } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import hrpmLogo from "@/assets/human-rights-logo.svg";
+import hrpmLogo from "@/assets/human-rights-logo.png";
 
 const LandingFooter = () => {
   const { t } = useTranslation();

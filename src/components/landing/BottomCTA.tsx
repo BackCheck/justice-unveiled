@@ -5,7 +5,7 @@ import { ArrowRight, BookmarkPlus, Search, FileText } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
 import GradientText from "./GradientText";
 import GlowingOrb from "./GlowingOrb";
-import hrpmLogo from "@/assets/human-rights-logo.svg";
+import hrpmLogo from "@/assets/human-rights-logo.png";
 
 const BottomCTA = () => {
   const { t } = useTranslation();
