@@ -194,8 +194,21 @@ const CaseCard = ({ caseItem }: { caseItem: Case }) => (
             <div className="flex items-center gap-1.5"><Shield className="w-3.5 h-3.5" /><span className="truncate">{caseItem.lead_investigator}</span></div>
           )}
         </div>
-        <div className="mt-4 flex items-center justify-end text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-          View Case <ArrowRight className="w-3.5 h-3.5 ml-1" />
+        <div className="mt-4 flex items-center justify-end gap-2">
+          <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} className="flex items-center gap-1">
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.print(); }}>
+              <Printer className="w-3.5 h-3.5" />
+            </Button>
+            <SocialShareButtons
+              title={`${caseItem.title} | HRPM Investigation`}
+              description={`${caseItem.case_number} — ${caseItem.total_sources} sources, ${caseItem.total_events} events, ${caseItem.total_entities} entities mapped`}
+              hashtags={["HumanRights", "HRPM", "Justice"]}
+              variant="compact"
+            />
+          </div>
+          <span className="text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity flex items-center">
+            View Case <ArrowRight className="w-3.5 h-3.5 ml-1" />
+          </span>
         </div>
       </CardContent>
     </Card>
