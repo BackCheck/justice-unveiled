@@ -152,7 +152,7 @@ const StatBox = ({ icon: Icon, value, label, accent }: { icon: any; value: strin
   </div>
 );
 
-const CaseCard = ({ caseItem }: { caseItem: Case }) => (
+const CaseCard = ({ caseItem, onPrint }: { caseItem: Case; onPrint: (c: Case) => void }) => (
   <Link to={`/cases/${caseItem.id}`}>
     <Card className="glass-card h-full group cursor-pointer hover-glow-primary">
       <CardHeader className="pb-3">
