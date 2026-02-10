@@ -5,19 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
-  FolderOpen, 
-  MapPin, 
-  Calendar, 
-  Users, 
-  FileText, 
-  Clock,
-  AlertTriangle,
-  Shield,
-  Plus,
-  Search,
-  ArrowRight
+  FolderOpen, MapPin, Calendar, Users, FileText, Clock,
+  AlertTriangle, Shield, Plus, Search, ArrowRight,
+  Database, Brain, Scale, Network, TrendingUp, Eye,
+  Zap, BarChart3, Globe
 } from "lucide-react";
-import { useCases } from "@/hooks/useCases";
+import { useCases, Case } from "@/hooks/useCases";
 import { useUserRole } from "@/hooks/useUserRole";
 import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
@@ -36,12 +29,174 @@ const statusColors: Record<string, string> = {
   pending: "bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/30",
 };
 
+const FeaturedCaseWidget = ({ caseItem }: { caseItem: Case }) => (
+  <Link to={`/cases/${caseItem.id}`} className="block group">
+    <Card className="glass-card relative overflow-hidden border-primary/30 hover:border-primary/60 transition-all duration-500">
+      {/* Glow background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-20 -right-20 w-80 h-80 bg-primary/8 rounded-full blur-3xl group-hover:bg-primary/15 transition-all duration-700" />
+        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-destructive/5 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
+      </div>
+
+      <CardContent className="relative z-10 p-6 md:p-8">
+        {/* Top badges */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Badge className="bg-primary/20 text-primary border-primary/30 border font-semibold">
+              <Zap className="w-3 h-3 mr-1" /> Featured Case
+            </Badge>
+            <Badge variant="outline" className="font-mono text-xs">{caseItem.case_number}</Badge>
+          </div>
+          <div className="flex gap-1.5">
+            <Badge className={`${severityColors[caseItem.severity || "medium"]} border text-xs uppercase tracking-wider`}>
+              {caseItem.severity}
+            </Badge>
+            <Badge className={`${statusColors[caseItem.status]} border text-xs uppercase tracking-wider`}>
+              {caseItem.status}
+            </Badge>
+          </div>
+        </div>
+
+        {/* Title & Description */}
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+          {caseItem.title}
+        </h2>
+        <p className="text-muted-foreground leading-relaxed mb-6 max-w-3xl">
+          {caseItem.description}
+        </p>
+
+        {/* Intelligence Stats Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-6">
+          <StatBox icon={FileText} value={caseItem.total_sources} label="Source Documents" accent="primary" />
+          <StatBox icon={Clock} value={caseItem.total_events} label="Timeline Events" accent="primary" />
+          <StatBox icon={Users} value={caseItem.total_entities} label="Entities Mapped" accent="primary" />
+          <StatBox icon={Database} value="4.7 GB" label="Raw Data Processed" accent="accent" />
+          <StatBox icon={Brain} value="12" label="AI Analyses Run" accent="accent" />
+          <StatBox icon={Scale} value="7" label="Legal Frameworks" accent="accent" />
+        </div>
+
+        {/* Intelligence Summary Cards */}
+        <div className="grid md:grid-cols-3 gap-3 mb-6">
+          <div className="rounded-xl bg-muted/40 border border-border/50 p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Network className="w-4 h-4 text-primary" />
+              <span className="text-sm font-semibold text-foreground">Network Analysis</span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              111 entities mapped across 4 categories with influence scoring. Power structure visualization reveals 3 key clusters of coordinated action.
+            </p>
+          </div>
+          <div className="rounded-xl bg-muted/40 border border-border/50 p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <TrendingUp className="w-4 h-4 text-primary" />
+              <span className="text-sm font-semibold text-foreground">Pattern Detection</span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              98 chronological events reconstructed spanning 10+ years. AI detected 14 procedural failures and 6 testimony contradictions.
+            </p>
+          </div>
+          <div className="rounded-xl bg-muted/40 border border-border/50 p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Globe className="w-4 h-4 text-primary" />
+              <span className="text-sm font-semibold text-foreground">Rights Audit</span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Benchmarked against UDHR, ICCPR, and 5 local statutes. Identified 23 potential violations across international and domestic frameworks.
+            </p>
+          </div>
+        </div>
+
+        {/* Meta + CTA */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+            {caseItem.location && (
+              <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {caseItem.location}</span>
+            )}
+            {caseItem.date_opened && (
+              <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> Opened {format(new Date(caseItem.date_opened), "MMM d, yyyy")}</span>
+            )}
+            {caseItem.lead_investigator && (
+              <span className="flex items-center gap-1"><Shield className="w-3.5 h-3.5" /> {caseItem.lead_investigator}</span>
+            )}
+          </div>
+          <Button variant="default" size="sm" className="glow-primary-sm gap-2">
+            <Eye className="w-4 h-4" /> Explore Full Case <ArrowRight className="w-3.5 h-3.5" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  </Link>
+);
+
+const StatBox = ({ icon: Icon, value, label, accent }: { icon: any; value: string | number; label: string; accent: string }) => (
+  <div className="text-center p-3 rounded-xl bg-muted/50 border border-border/30">
+    <Icon className={`w-4 h-4 mx-auto mb-1.5 text-${accent === "primary" ? "primary" : "muted-foreground"}`} />
+    <span className="text-lg font-bold text-foreground block">{value}</span>
+    <p className="text-[10px] text-muted-foreground leading-tight">{label}</p>
+  </div>
+);
+
+const CaseCard = ({ caseItem }: { caseItem: Case }) => (
+  <Link to={`/cases/${caseItem.id}`}>
+    <Card className="glass-card h-full group cursor-pointer hover-glow-primary">
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between gap-2">
+          <Badge variant="outline" className="font-mono text-xs">{caseItem.case_number}</Badge>
+          <div className="flex gap-1.5">
+            <Badge className={`${severityColors[caseItem.severity || "medium"]} border text-xs`}>{caseItem.severity || "medium"}</Badge>
+            <Badge className={`${statusColors[caseItem.status]} border text-xs`}>{caseItem.status}</Badge>
+          </div>
+        </div>
+        <CardTitle className="text-lg mt-2 group-hover:text-primary transition-colors line-clamp-2">{caseItem.title}</CardTitle>
+        <CardDescription className="line-clamp-3">{caseItem.description}</CardDescription>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          <div className="text-center p-2 rounded-lg bg-muted/50">
+            <FileText className="w-4 h-4 mx-auto mb-1 text-primary" />
+            <span className="text-sm font-semibold">{caseItem.total_sources}</span>
+            <p className="text-[10px] text-muted-foreground">Sources</p>
+          </div>
+          <div className="text-center p-2 rounded-lg bg-muted/50">
+            <Clock className="w-4 h-4 mx-auto mb-1 text-primary" />
+            <span className="text-sm font-semibold">{caseItem.total_events}</span>
+            <p className="text-[10px] text-muted-foreground">Events</p>
+          </div>
+          <div className="text-center p-2 rounded-lg bg-muted/50">
+            <Users className="w-4 h-4 mx-auto mb-1 text-primary" />
+            <span className="text-sm font-semibold">{caseItem.total_entities}</span>
+            <p className="text-[10px] text-muted-foreground">Entities</p>
+          </div>
+        </div>
+        <div className="space-y-1.5 text-xs text-muted-foreground">
+          {caseItem.location && (
+            <div className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /><span>{caseItem.location}</span></div>
+          )}
+          {caseItem.date_opened && (
+            <div className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /><span>Opened {format(new Date(caseItem.date_opened), "MMM d, yyyy")}</span></div>
+          )}
+          {caseItem.lead_investigator && (
+            <div className="flex items-center gap-1.5"><Shield className="w-3.5 h-3.5" /><span className="truncate">{caseItem.lead_investigator}</span></div>
+          )}
+        </div>
+        <div className="mt-4 flex items-center justify-end text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+          View Case <ArrowRight className="w-3.5 h-3.5 ml-1" />
+        </div>
+      </CardContent>
+    </Card>
+  </Link>
+);
+
 const CasesList = () => {
   const { data: cases, isLoading, error } = useCases();
   const { canEdit } = useUserRole();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredCases = cases?.filter(
+  const featuredCase = cases?.find((c) => c.case_number === "CF-001");
+  const otherCases = cases?.filter((c) => c.case_number !== "CF-001");
+
+  const filteredOtherCases = otherCases?.filter(
     (c) =>
       c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.case_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -63,52 +218,28 @@ const CasesList = () => {
                 <FolderOpen className="w-7 h-7 text-primary" />
               </div>
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-                  Case Files
-                </h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground">Case Files</h1>
                 <p className="text-muted-foreground">
                   {cases?.length || 0} investigation{cases?.length !== 1 ? "s" : ""} on record
                 </p>
               </div>
             </div>
             {canEdit && (
-              <Button className="glow-primary-sm">
-                <Plus className="w-4 h-4 mr-2" />
-                New Case
-              </Button>
+              <Button className="glow-primary-sm"><Plus className="w-4 h-4 mr-2" />New Case</Button>
             )}
-          </div>
-
-          {/* Search */}
-          <div className="mt-6 max-w-md">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search cases..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
           </div>
         </div>
       </div>
 
-      {/* Cases Grid */}
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-4 py-8 space-y-10">
         {isLoading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <Card key={i} className="glass-card">
-                <CardHeader>
-                  <Skeleton className="h-6 w-24" />
-                  <Skeleton className="h-5 w-full" />
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-20 w-full" />
-                </CardContent>
-              </Card>
-            ))}
+          <div className="space-y-6">
+            <Card className="glass-card"><CardContent className="p-8"><Skeleton className="h-48 w-full" /></CardContent></Card>
+            <div className="grid md:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <Card key={i} className="glass-card"><CardHeader><Skeleton className="h-6 w-24" /><Skeleton className="h-5 w-full" /></CardHeader><CardContent><Skeleton className="h-20 w-full" /></CardContent></Card>
+              ))}
+            </div>
           </div>
         ) : error ? (
           <Card className="glass-card">
@@ -118,93 +249,44 @@ const CasesList = () => {
               <p className="text-sm text-muted-foreground mt-1">Please try again later</p>
             </CardContent>
           </Card>
-        ) : filteredCases?.length === 0 ? (
-          <Card className="glass-card">
-            <CardContent className="py-12 text-center">
-              <FolderOpen className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-lg font-medium">No cases found</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                {searchQuery ? "Try a different search term" : "Create your first case to get started"}
-              </p>
-            </CardContent>
-          </Card>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredCases?.map((caseItem) => (
-              <Link key={caseItem.id} to={`/cases/${caseItem.id}`}>
-                <Card className="glass-card h-full group cursor-pointer hover-glow-primary">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <Badge variant="outline" className="font-mono text-xs">
-                        {caseItem.case_number}
-                      </Badge>
-                      <div className="flex gap-1.5">
-                        <Badge className={`${severityColors[caseItem.severity || "medium"]} border text-xs`}>
-                          {caseItem.severity || "medium"}
-                        </Badge>
-                        <Badge className={`${statusColors[caseItem.status]} border text-xs`}>
-                          {caseItem.status}
-                        </Badge>
-                      </div>
-                    </div>
-                    <CardTitle className="text-lg mt-2 group-hover:text-primary transition-colors line-clamp-2">
-                      {caseItem.title}
-                    </CardTitle>
-                    <CardDescription className="line-clamp-2">
-                      {caseItem.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    {/* Stats */}
-                    <div className="grid grid-cols-3 gap-2 mb-4">
-                      <div className="text-center p-2 rounded-lg bg-muted/50">
-                        <FileText className="w-4 h-4 mx-auto mb-1 text-primary" />
-                        <span className="text-sm font-semibold">{caseItem.total_sources}</span>
-                        <p className="text-[10px] text-muted-foreground">Sources</p>
-                      </div>
-                      <div className="text-center p-2 rounded-lg bg-muted/50">
-                        <Clock className="w-4 h-4 mx-auto mb-1 text-primary" />
-                        <span className="text-sm font-semibold">{caseItem.total_events}</span>
-                        <p className="text-[10px] text-muted-foreground">Events</p>
-                      </div>
-                      <div className="text-center p-2 rounded-lg bg-muted/50">
-                        <Users className="w-4 h-4 mx-auto mb-1 text-primary" />
-                        <span className="text-sm font-semibold">{caseItem.total_entities}</span>
-                        <p className="text-[10px] text-muted-foreground">Entities</p>
-                      </div>
-                    </div>
+          <>
+            {/* Featured Case */}
+            {featuredCase && <FeaturedCaseWidget caseItem={featuredCase} />}
 
-                    {/* Meta info */}
-                    <div className="space-y-1.5 text-xs text-muted-foreground">
-                      {caseItem.location && (
-                        <div className="flex items-center gap-1.5">
-                          <MapPin className="w-3.5 h-3.5" />
-                          <span>{caseItem.location}</span>
-                        </div>
-                      )}
-                      {caseItem.date_opened && (
-                        <div className="flex items-center gap-1.5">
-                          <Calendar className="w-3.5 h-3.5" />
-                          <span>Opened {format(new Date(caseItem.date_opened), "MMM d, yyyy")}</span>
-                        </div>
-                      )}
-                      {caseItem.lead_investigator && (
-                        <div className="flex items-center gap-1.5">
-                          <Shield className="w-3.5 h-3.5" />
-                          <span className="truncate">{caseItem.lead_investigator}</span>
-                        </div>
-                      )}
-                    </div>
+            {/* Other Cases Section */}
+            <div>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-primary" />
+                  <h2 className="text-xl font-bold text-foreground">All Investigations</h2>
+                  <Badge variant="secondary" className="ml-1">{otherCases?.length || 0}</Badge>
+                </div>
+                <div className="relative max-w-xs w-full">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input placeholder="Search cases..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
+                </div>
+              </div>
 
-                    {/* View button */}
-                    <div className="mt-4 flex items-center justify-end text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                      View Case <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                    </div>
+              {filteredOtherCases?.length === 0 ? (
+                <Card className="glass-card">
+                  <CardContent className="py-12 text-center">
+                    <FolderOpen className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                    <p className="text-lg font-medium">No cases found</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {searchQuery ? "Try a different search term" : "No additional cases on record"}
+                    </p>
                   </CardContent>
                 </Card>
-              </Link>
-            ))}
-          </div>
+              ) : (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredOtherCases?.map((caseItem) => (
+                    <CaseCard key={caseItem.id} caseItem={caseItem} />
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
         )}
       </main>
     </PlatformLayout>
