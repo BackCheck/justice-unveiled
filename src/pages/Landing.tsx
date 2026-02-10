@@ -36,7 +36,7 @@ import FeaturedCaseSection from "@/components/landing/FeaturedCaseSection";
 import CapabilitiesSection from "@/components/landing/CapabilitiesSection";
 import BottomCTA from "@/components/landing/BottomCTA";
 import TutorialVideoSection from "@/components/landing/TutorialVideoSection";
-import BlogPreviewSection from "@/components/landing/BlogPreviewSection";
+
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -311,8 +311,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Blog Preview Section */}
-      <BlogPreviewSection />
 
       {/* Bottom CTA Section */}
       <BottomCTA />
