@@ -8,7 +8,9 @@ import {
   Heart,
   Globe,
   Target,
-  CheckCircle
+  CheckCircle,
+  Github,
+  Code2
 } from "lucide-react";
 import { SocialShareButtons } from "@/components/sharing";
 import { useSEO } from "@/hooks/useSEO";
