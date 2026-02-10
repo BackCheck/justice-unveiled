@@ -505,8 +505,7 @@ Be thorough but accurate. Only extract information explicitly stated or clearly 
           title: harm.title,
           description: harm.description,
           incident_date: normalizedDate,
-          perpetrator_agency: harm.perpetratorAgency,
-          is_documented: harm.isDocumented,
+          institution_name: harm.perpetratorAgency || null,
           status: 'documented'
         };
       });
@@ -531,7 +530,7 @@ Be thorough but accurate. Only extract information explicitly stated or clearly 
           loss_category: harm.lossCategory,
           description: harm.description,
           is_estimated: true,
-          is_documented: harm.isDocumented
+          is_documented: harm.isDocumented || false
         })).filter(row => row.incident_id);
 
         if (lossRows.length > 0) {
