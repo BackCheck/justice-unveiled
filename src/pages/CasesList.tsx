@@ -324,7 +324,7 @@ const CasesList = () => {
               ) : (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredOtherCases?.map((caseItem) => (
-                    <CaseCard key={caseItem.id} caseItem={caseItem} />
+                    <CaseCard key={caseItem.id} caseItem={caseItem} onPrint={handlePrint} />
                   ))}
                 </div>
               )}
