@@ -65,10 +65,10 @@ const About = () => {
                   <Globe className="w-9 h-9 text-primary-foreground" />
                 </div>
                 <div>
-                  <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                    Human Rights Protection Movement
-                  </h1>
-                  <p className="text-muted-foreground font-medium">Non-profit investigative platform</p>
+                   <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                     Human Rights Protection Movement
+                   </h1>
+                   <p className="text-muted-foreground font-medium">Open-source · Non-profit · Investigative Intelligence</p>
                 </div>
               </div>
               <SocialShareButtons
