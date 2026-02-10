@@ -13,9 +13,6 @@ import {
   Zap,
   Target,
   Eye,
-  Phone,
-  Mail,
-  MapPin,
   Plus,
   LogOut,
   Code,
@@ -36,7 +33,7 @@ import FeaturedCaseSection from "@/components/landing/FeaturedCaseSection";
 import CapabilitiesSection from "@/components/landing/CapabilitiesSection";
 import BottomCTA from "@/components/landing/BottomCTA";
 import TutorialVideoSection from "@/components/landing/TutorialVideoSection";
-
+import LandingFooter from "@/components/landing/LandingFooter";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -316,95 +313,7 @@ const Landing = () => {
       <BottomCTA />
 
       {/* Footer */}
-      <footer className="border-t border-border/50 py-16 bg-card/30 backdrop-blur">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-            {/* Brand */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 group">
-                <img 
-                  src={hrpmLogo} 
-                  alt="HRPM Logo" 
-                  className="w-10 h-10 transition-transform group-hover:scale-110" 
-                />
-                <div>
-                  <p className="font-semibold text-foreground text-lg">HRPM.org</p>
-                  <p className="text-xs text-foreground/60">Human Rights Protection Movement</p>
-                </div>
-              </div>
-              <p className="text-sm text-foreground/70 leading-relaxed">
-                <span className="block font-medium text-foreground/80">{t('footer.tagline')}</span>
-                {t('footer.description')}
-              </p>
-            </div>
-
-            {/* Quick Links */}
-            <div className="space-y-4">
-              <h4 className="font-semibold text-foreground">{t('footer.quickLinks')}</h4>
-              <div className="flex flex-col gap-2 text-sm text-foreground/70">
-                <Link to="/about" className="hover:text-primary transition-all duration-300">{t('nav.about')}</Link>
-                <Link to="/contact" className="hover:text-primary transition-all duration-300">{t('nav.contact')}</Link>
-                <Link to="/cases" className="hover:text-primary transition-all duration-300">{t('cases.title')}</Link>
-                <Link to="/dashboard" className="hover:text-primary transition-all duration-300">{t('nav.dashboard')}</Link>
-                <Link to="/blog" className="hover:text-primary transition-all duration-300">Blog</Link>
-                <Link to="/docs" className="hover:text-primary transition-all duration-300">Documentation</Link>
-                <Link to="/api" className="hover:text-primary transition-all duration-300">API</Link>
-                <a href="https://github.com/BackCheck/justice-unveiled" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-all duration-300">Open Source</a>
-                <Link to="/auth" className="hover:text-primary transition-all duration-300">{t('common.signIn')}</Link>
-              </div>
-            </div>
-
-            {/* Contact Info */}
-            <div className="space-y-4">
-              <h4 className="font-semibold text-foreground">{t('footer.contact')}</h4>
-              <div className="flex flex-col gap-3 text-sm text-foreground/70">
-                <div className="flex items-start gap-2">
-                  <Phone className="w-4 h-4 mt-0.5 text-primary shrink-0" />
-                  <div>
-                    <p>+65 31 290 390</p>
-                    <p>+92-21-35891281-83</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-primary shrink-0" />
-                  <a href="mailto:info@hrpm.org" className="hover:text-primary transition-colors">info@hrpm.org</a>
-                </div>
-              </div>
-            </div>
-
-            {/* Offices */}
-            <div className="space-y-4">
-              <h4 className="font-semibold text-foreground">{t('footer.offices')}</h4>
-              <div className="flex flex-col gap-4 text-sm text-foreground/70">
-                <div className="flex items-start gap-2">
-                  <MapPin className="w-4 h-4 mt-0.5 text-primary shrink-0" />
-                  <div>
-                    <p className="font-medium text-foreground/80">{t('footer.headOffice')}</p>
-                    <p>36 Robinson Road, #20-01 City House, Singapore 068877</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <MapPin className="w-4 h-4 mt-0.5 text-primary shrink-0" />
-                  <div>
-                    <p className="font-medium text-foreground/80">{t('footer.karachiOffice')}</p>
-                    <p>Ground Floor, Zamzam Tower, Building # 1-C, 16th Commercial Street, DHA Phase 2 Extension, Karachi 75500</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-foreground/50">
-              © {new Date().getFullYear()} Human Rights Protection Movement. {t('footer.copyright')}
-            </p>
-            <div className="flex items-center gap-4 text-xs text-foreground/50">
-              <Link to="/about" className="hover:text-primary transition-colors">{t('footer.privacy')}</Link>
-              <Link to="/about" className="hover:text-primary transition-colors">{t('footer.terms')}</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <LandingFooter />
     </div>
   );
 };
