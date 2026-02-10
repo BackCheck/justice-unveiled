@@ -406,7 +406,7 @@ Be thorough but accurate. Only extract information explicitly stated or clearly 
     const extraction: ExtractionResult = JSON.parse(toolCall.function.arguments);
     console.log(`Extracted: ${extraction.events?.length || 0} events, ${extraction.entities?.length || 0} entities, ${extraction.discrepancies?.length || 0} discrepancies, ${extraction.claims?.length || 0} claims, ${extraction.complianceViolations?.length || 0} compliance violations, ${extraction.financialHarm?.length || 0} financial harm incidents`);
 
-    const sourceUploadId = uploadId !== 'pasted' ? uploadId : null;
+    const sourceUploadId = validSourceUploadId;
 
     // Insert extracted events
     if (extraction.events?.length > 0) {
