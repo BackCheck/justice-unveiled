@@ -31,7 +31,7 @@ const LandingFooter = () => {
               <img src={hrpmLogo} alt="HRPM Logo" className="w-10 h-10 transition-transform group-hover:scale-110" />
               <div>
                 <p className="font-semibold text-foreground text-lg">HRPM.org</p>
-                <p className="text-xs text-foreground/60">Human Rights Protection Movement</p>
+                <p className="text-xs text-foreground/60">Open-Source · Non-Profit</p>
               </div>
             </div>
             <p className="text-sm text-foreground/70 leading-relaxed">
