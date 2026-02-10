@@ -138,11 +138,27 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Verify uploadId exists in evidence_uploads before using as FK
+    let validSourceUploadId: string | null = null;
+    if (uploadId && uploadId !== 'pasted') {
+      const { data: existingUpload } = await supabase
+        .from("evidence_uploads")
+        .select("id")
+        .eq("id", uploadId)
+        .maybeSingle();
+      
+      if (existingUpload) {
+        validSourceUploadId = uploadId;
+      } else {
+        console.warn(`Upload ID ${uploadId} not found in evidence_uploads, proceeding without FK link`);
+      }
+    }
+
     // Create analysis job
     const { data: job, error: jobError } = await supabase
       .from("document_analysis_jobs")
       .insert({
-        upload_id: uploadId !== 'pasted' ? uploadId : null,
+        upload_id: validSourceUploadId,
         status: "processing",
         started_at: new Date().toISOString(),
       })
