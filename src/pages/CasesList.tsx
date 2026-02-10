@@ -220,6 +220,21 @@ const CasesList = () => {
   const { data: cases, isLoading, error } = useCases();
   const { canEdit } = useUserRole();
   const [searchQuery, setSearchQuery] = useState("");
+  const [printCase, setPrintCase] = useState<Case | null>(null);
+  const [userIP, setUserIP] = useState("Detecting...");
+  const printRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    fetch("https://api.ipify.org?format=json")
+      .then(r => r.json())
+      .then(d => setUserIP(d.ip))
+      .catch(() => setUserIP("Unable to detect"));
+  }, []);
+
+  const handlePrint = useCallback((c: Case) => {
+    setPrintCase(c);
+    setTimeout(() => window.print(), 300);
+  }, []);
 
   const featuredCase = cases?.find((c) => c.case_number === "CF-001");
   const otherCases = cases?.filter((c) => c.case_number !== "CF-001");
