@@ -8,8 +8,9 @@ import {
   FolderOpen, MapPin, Calendar, Users, FileText, Clock,
   AlertTriangle, Shield, Plus, Search, ArrowRight,
   Database, Brain, Scale, Network, TrendingUp, Eye,
-  Zap, BarChart3, Globe
+  Zap, BarChart3, Globe, Printer, Share2
 } from "lucide-react";
+import { SocialShareButtons } from "@/components/sharing/SocialShareButtons";
 import { useCases, Case } from "@/hooks/useCases";
 import { useUserRole } from "@/hooks/useUserRole";
 import { format } from "date-fns";
@@ -120,9 +121,22 @@ const FeaturedCaseWidget = ({ caseItem }: { caseItem: Case }) => (
               <span className="flex items-center gap-1"><Shield className="w-3.5 h-3.5" /> {caseItem.lead_investigator}</span>
             )}
           </div>
-          <Button variant="default" size="sm" className="glow-primary-sm gap-2">
-            <Eye className="w-4 h-4" /> Explore Full Case <ArrowRight className="w-3.5 h-3.5" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.print(); }}>
+              <Printer className="w-3.5 h-3.5" /> Print
+            </Button>
+            <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+              <SocialShareButtons
+                title={`${caseItem.title} | HRPM Investigation`}
+                description={`${caseItem.case_number} — ${caseItem.total_sources} sources, ${caseItem.total_events} events, ${caseItem.total_entities} entities mapped`}
+                hashtags={["HumanRights", "HRPM", "Justice", "Investigation"]}
+                variant="compact"
+              />
+            </div>
+            <Button variant="default" size="sm" className="glow-primary-sm gap-2">
+              <Eye className="w-4 h-4" /> Explore Full Case <ArrowRight className="w-3.5 h-3.5" />
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
@@ -180,8 +194,21 @@ const CaseCard = ({ caseItem }: { caseItem: Case }) => (
             <div className="flex items-center gap-1.5"><Shield className="w-3.5 h-3.5" /><span className="truncate">{caseItem.lead_investigator}</span></div>
           )}
         </div>
-        <div className="mt-4 flex items-center justify-end text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-          View Case <ArrowRight className="w-3.5 h-3.5 ml-1" />
+        <div className="mt-4 flex items-center justify-end gap-2">
+          <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} className="flex items-center gap-1">
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.print(); }}>
+              <Printer className="w-3.5 h-3.5" />
+            </Button>
+            <SocialShareButtons
+              title={`${caseItem.title} | HRPM Investigation`}
+              description={`${caseItem.case_number} — ${caseItem.total_sources} sources, ${caseItem.total_events} events, ${caseItem.total_entities} entities mapped`}
+              hashtags={["HumanRights", "HRPM", "Justice"]}
+              variant="compact"
+            />
+          </div>
+          <span className="text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity flex items-center">
+            View Case <ArrowRight className="w-3.5 h-3.5 ml-1" />
+          </span>
         </div>
       </CardContent>
     </Card>
