@@ -112,8 +112,8 @@ const LandingFooter = () => {
         </div>
 
         <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-foreground/50">
-            © {new Date().getFullYear()} Human Rights Protection Movement. {t('footer.copyright')}
+           <p className="text-xs text-foreground/50">
+             © {new Date().getFullYear()} Human Rights Protection Movement. Open-source & non-profit. {t('footer.copyright')}
           </p>
           <div className="flex items-center gap-4 text-xs text-foreground/50">
             <Link to="/about" className="hover:text-primary transition-colors">{t('footer.privacy')}</Link>
