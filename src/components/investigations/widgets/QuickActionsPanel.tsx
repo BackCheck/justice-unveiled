@@ -60,32 +60,22 @@ const quickActions = [
 
 export const QuickActionsPanel = () => {
   return (
-    <Card className="glass-card">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center gap-2">
-          <Zap className="w-4 h-4 text-primary" />
-          Quick Actions
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-2">
-          {quickActions.map((action) => {
-            const Icon = action.icon;
-            return (
-              <Link key={action.title} to={action.href}>
-                <Button
-                  variant="ghost"
-                  className={`w-full h-auto p-3 flex flex-col items-start gap-1 ${action.color} border border-transparent hover:border-current/20`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span className="text-xs font-medium">{action.title}</span>
-                  <span className="text-[10px] opacity-70">{action.description}</span>
-                </Button>
-              </Link>
-            );
-          })}
-        </div>
-      </CardContent>
-    </Card>
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+      {quickActions.map((action) => {
+        const Icon = action.icon;
+        return (
+          <Link key={action.title} to={action.href}>
+            <Button
+              variant="ghost"
+              className={`w-full h-auto p-3 flex flex-col items-center gap-1.5 ${action.color} border border-transparent hover:border-current/20 rounded-xl`}
+            >
+              <Icon className="w-5 h-5" />
+              <span className="text-xs font-medium">{action.title}</span>
+              <span className="text-[10px] opacity-70 text-center leading-tight">{action.description}</span>
+            </Button>
+          </Link>
+        );
+      })}
+    </div>
   );
 };
