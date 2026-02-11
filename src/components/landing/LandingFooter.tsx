@@ -51,7 +51,7 @@ const LandingFooter = () => {
               <Link to="/cases" className="hover:text-primary transition-all duration-300">{t('cases.title')}</Link>
               <Link to="/dashboard" className="hover:text-primary transition-all duration-300">{t('nav.dashboard')}</Link>
               <Link to="/docs" className="hover:text-primary transition-all duration-300 flex items-center gap-1">
-                <BookOpen className="w-3.5 h-3.5" /> Documentation
+                <BookOpen className="w-3.5 h-3.5" /> Full Documentation
               </Link>
               <Link to="/api" className="hover:text-primary transition-all duration-300 flex items-center gap-1">
                 <Code className="w-3.5 h-3.5" /> API
