@@ -12,7 +12,7 @@ import {
   Upload,
   BookOpen,
   Scale,
-  Info
+  Info,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -28,6 +28,7 @@ const navItems = [
   { path: "/evidence", label: "Evidence Matrix", icon: FileText },
   { path: "/international", label: "International Rights", icon: Scale },
   { path: "/uploads", label: "Uploads", icon: Upload },
+  { path: "/docs", label: "Docs", icon: BookOpen },
   { path: "/about", label: "About", icon: Info },
 ];
 
