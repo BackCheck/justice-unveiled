@@ -29,9 +29,9 @@ export const InvestigationWorkspace = () => {
   const { stats } = usePlatformStats();
 
   return (
-    <div className="flex-1 flex overflow-hidden">
+    <div className="flex-1 flex">
       {/* Main Workspace */}
-      <div className="flex-1 p-6 overflow-auto">
+      <div className="flex-1 p-6">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Search Bar */}
           <div className="flex items-center gap-4">
@@ -76,7 +76,7 @@ export const InvestigationWorkspace = () => {
       </div>
 
       {/* Right Panel - Activity Feed */}
-      <div className="w-72 border-l border-border/50 bg-accent/20 p-4 hidden xl:flex flex-col overflow-hidden">
+      <div className="w-72 border-l border-border/50 bg-accent/20 p-4 hidden xl:flex flex-col">
         <h3 className="font-semibold text-sm mb-4 flex items-center gap-2">
           <Zap className="w-4 h-4 text-primary" />
           Activity Feed
