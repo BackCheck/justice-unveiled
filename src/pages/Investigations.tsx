@@ -88,7 +88,7 @@ const Investigations = () => {
 
   return (
     <PlatformLayout>
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col min-h-0">
         {/* Command Center Header */}
         <div className="bg-gradient-to-r from-primary/10 via-accent/5 to-primary/10 border-b border-border/50 px-6 py-4">
           <div className="max-w-7xl mx-auto">
@@ -130,8 +130,8 @@ const Investigations = () => {
         </div>
 
         {/* Main Investigation Area */}
-        <div className="flex-1 overflow-hidden">
-          <Tabs value={activeSection} onValueChange={setActiveSection} className="h-full flex flex-col">
+        <div className="flex-1">
+          <Tabs value={activeSection} onValueChange={setActiveSection} className="flex flex-col">
             {/* Module Tabs */}
             <div className="border-b border-border/50 bg-background/50 backdrop-blur-sm px-6">
               <TabsList className="h-auto p-1 bg-transparent gap-1 flex-wrap">
@@ -152,28 +152,28 @@ const Investigations = () => {
             </div>
 
             {/* Tab Content */}
-            <div className="flex-1 overflow-hidden">
-              <TabsContent value="workspace" className="h-full m-0 data-[state=active]:flex">
+            <div className="flex-1">
+              <TabsContent value="workspace" className="m-0 data-[state=active]:flex">
                 <InvestigationWorkspace />
               </TabsContent>
 
-              <TabsContent value="threats" className="h-full m-0 p-6 overflow-auto">
+              <TabsContent value="threats" className="m-0 p-6">
                 <ThreatProfiler />
               </TabsContent>
 
-              <TabsContent value="patterns" className="h-full m-0 p-6 overflow-auto">
+              <TabsContent value="patterns" className="m-0 p-6">
                 <PatternDetector />
               </TabsContent>
 
-              <TabsContent value="risk" className="h-full m-0 p-6 overflow-auto">
+              <TabsContent value="risk" className="m-0 p-6">
                 <RiskAssessment />
               </TabsContent>
 
-              <TabsContent value="links" className="h-full m-0 p-6 overflow-auto">
+              <TabsContent value="links" className="m-0 p-6">
                 <LinkAnalysis />
               </TabsContent>
 
-              <TabsContent value="reports" className="h-full m-0 p-6 overflow-auto">
+              <TabsContent value="reports" className="m-0 p-6">
                 <ReportGenerator />
               </TabsContent>
             </div>
