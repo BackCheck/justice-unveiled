@@ -3,521 +3,866 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
 import {
-  Code,
-  Key,
-  Zap,
-  Shield,
-  FileText,
-  Network,
-  Brain,
-  BookOpen,
-  Copy,
-  ExternalLink,
-  ArrowRight,
-  Terminal,
-  Lock
+  Code, Key, Zap, Shield, FileText, Network, Brain, BookOpen, Copy,
+  ExternalLink, Terminal, Lock, Globe, Database, Search, AlertTriangle,
+  Scale, BarChart3, ChevronRight, ArrowRight, CheckCircle
 } from "lucide-react";
 import { toast } from "sonner";
 import hrpmLogo from "@/assets/human-rights-logo.png";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { ThemeToggle } from "@/components/ThemeToggle";
+
+const BASE_URL = "https://ccdyqmjvzzoftzbzbqlu.supabase.co/functions/v1/public-api";
+
+const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text);
+  toast.success("Copied to clipboard");
+};
+
+const CodeBlock = ({ code, language = "" }: { code: string; language?: string }) => (
+  <div className="relative group">
+    <pre className="bg-muted/60 rounded-lg p-4 overflow-x-auto text-sm font-mono border border-border/30">
+      <code>{code}</code>
+    </pre>
+    <Button
+      size="sm"
+      variant="ghost"
+      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+      onClick={() => copyToClipboard(code)}
+    >
+      <Copy className="w-3.5 h-3.5" />
+    </Button>
+  </div>
+);
+
+const EndpointCard = ({
+  method, resource, description, params, responseExample, icon: Icon
+}: {
+  method: string; resource: string; description: string;
+  params: { name: string; type: string; desc: string; required?: boolean }[];
+  responseExample: string; icon: any;
+}) => (
+  <Card className="bg-card/60 border-border/40" id={`endpoint-${resource}`}>
+    <CardHeader className="pb-3">
+      <div className="flex items-center gap-3 flex-wrap">
+        <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/30 font-mono text-xs px-2.5">
+          {method}
+        </Badge>
+        <code className="text-sm font-mono bg-muted/50 px-3 py-1 rounded-md">
+          ?resource={resource}
+        </code>
+      </div>
+      <div className="flex items-center gap-2 mt-2">
+        <Icon className="w-5 h-5 text-primary" />
+        <CardTitle className="text-lg capitalize">{resource.replace("-", " ")}</CardTitle>
+      </div>
+      <CardDescription>{description}</CardDescription>
+    </CardHeader>
+    <CardContent className="space-y-4">
+      {/* Parameters */}
+      <div>
+        <p className="text-xs font-semibold text-foreground/50 uppercase tracking-wider mb-2">Query Parameters</p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border/30 text-left">
+                <th className="py-1.5 pr-4 font-medium text-foreground/70">Parameter</th>
+                <th className="py-1.5 pr-4 font-medium text-foreground/70">Type</th>
+                <th className="py-1.5 font-medium text-foreground/70">Description</th>
+              </tr>
+            </thead>
+            <tbody className="text-foreground/60">
+              {params.map((p) => (
+                <tr key={p.name} className="border-b border-border/10">
+                  <td className="py-1.5 pr-4 font-mono text-xs">
+                    {p.name}
+                    {p.required && <span className="text-destructive ml-1">*</span>}
+                  </td>
+                  <td className="py-1.5 pr-4 text-xs">{p.type}</td>
+                  <td className="py-1.5 text-xs">{p.desc}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Response */}
+      <div>
+        <p className="text-xs font-semibold text-foreground/50 uppercase tracking-wider mb-2">Example Response</p>
+        <CodeBlock code={responseExample} language="json" />
+      </div>
+    </CardContent>
+  </Card>
+);
+
+const tocItems = [
+  { id: "overview", label: "Overview" },
+  { id: "quickstart", label: "Quick Start" },
+  { id: "auth", label: "Authentication" },
+  { id: "pagination", label: "Pagination" },
+  { id: "endpoint-cases", label: "Cases" },
+  { id: "endpoint-events", label: "Events" },
+  { id: "endpoint-entities", label: "Entities" },
+  { id: "endpoint-relationships", label: "Relationships" },
+  { id: "endpoint-violations", label: "Violations" },
+  { id: "endpoint-claims", label: "Legal Claims" },
+  { id: "endpoint-statutes", label: "Statutes" },
+  { id: "endpoint-precedents", label: "Precedents" },
+  { id: "endpoint-discrepancies", label: "Discrepancies" },
+  { id: "endpoint-harm-incidents", label: "Harm Incidents" },
+  { id: "endpoint-blog", label: "Blog Posts" },
+  { id: "endpoint-stats", label: "Platform Stats" },
+  { id: "ai-endpoints", label: "AI Endpoints" },
+  { id: "errors", label: "Error Handling" },
+  { id: "rate-limits", label: "Rate Limits" },
+  { id: "sdks", label: "SDKs & Examples" },
+];
 
 const Api = () => {
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast.success("Copied to clipboard");
-  };
-
-  const endpoints = [
-    {
-      name: "Analyze Document",
-      method: "POST",
-      path: "/functions/v1/analyze-document",
-      description: "Extract events, entities, and discrepancies from documents using AI",
-      auth: true,
-      body: `{
-  "documentText": "string",
-  "documentType": "legal" | "news" | "report",
-  "caseId": "uuid (optional)"
-}`
-    },
-    {
-      name: "Intel Chat",
-      method: "POST",
-      path: "/functions/v1/intel-chat",
-      description: "AI-powered conversational interface for case intelligence queries",
-      auth: true,
-      body: `{
-  "message": "string",
-  "conversationHistory": [],
-  "caseId": "uuid (optional)"
-}`
-    },
-    {
-      name: "Pattern Detector",
-      method: "POST",
-      path: "/functions/v1/pattern-detector",
-      description: "Detect behavioral patterns and anomalies across case data",
-      auth: true,
-      body: `{
-  "caseId": "uuid",
-  "analysisType": "behavioral" | "temporal" | "network"
-}`
-    },
-    {
-      name: "Threat Profiler",
-      method: "POST",
-      path: "/functions/v1/threat-profiler",
-      description: "Generate threat assessments and risk profiles for entities",
-      auth: true,
-      body: `{
-  "entityId": "uuid",
-  "caseId": "uuid (optional)"
-}`
-    },
-    {
-      name: "Generate Report",
-      method: "POST",
-      path: "/functions/v1/generate-report",
-      description: "Generate comprehensive investigation reports in multiple formats",
-      auth: true,
-      body: `{
-  "caseId": "uuid",
-  "reportType": "executive" | "detailed" | "timeline",
-  "format": "pdf" | "markdown"
-}`
-    },
-    {
-      name: "Fetch Legal Precedents",
-      method: "POST",
-      path: "/functions/v1/fetch-legal-precedents",
-      description: "Search and retrieve relevant legal precedents from case law databases",
-      auth: true,
-      body: `{
-  "query": "string",
-  "jurisdiction": "string (optional)",
-  "yearRange": { "start": number, "end": number }
-}`
-    },
-    {
-      name: "Analyze Rights Violations",
-      method: "POST",
-      path: "/functions/v1/analyze-rights-violations",
-      description: "Analyze text for potential human rights violations against international frameworks",
-      auth: true,
-      body: `{
-  "text": "string",
-  "frameworks": ["UDHR", "ICCPR", "ICESCR"]
-}`
-    },
-    {
-      name: "Generate Appeal Summary",
-      method: "POST",
-      path: "/functions/v1/generate-appeal-summary",
-      description: "Generate AI-powered appeal summaries for legal proceedings",
-      auth: true,
-      body: `{
-  "caseId": "uuid",
-  "summaryType": "brief" | "comprehensive",
-  "focusAreas": ["procedural", "constitutional", "human_rights"]
-}`
-    }
-  ];
-
-  const codeExamples = {
-    javascript: `// Initialize Supabase client
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  'YOUR_SUPABASE_URL',
-  'YOUR_SUPABASE_ANON_KEY'
-)
-
-// Analyze a document
-const analyzeDocument = async (documentText) => {
-  const { data, error } = await supabase.functions.invoke('analyze-document', {
-    body: {
-      documentText,
-      documentType: 'legal'
-    }
-  })
-  
-  if (error) throw error
-  return data
-}
-
-// Use Intel Chat
-const askIntelChat = async (message, history = []) => {
-  const { data, error } = await supabase.functions.invoke('intel-chat', {
-    body: {
-      message,
-      conversationHistory: history
-    }
-  })
-  
-  if (error) throw error
-  return data
-}`,
-    python: `# Install: pip install supabase
-from supabase import create_client
-
-supabase = create_client(
-    "YOUR_SUPABASE_URL",
-    "YOUR_SUPABASE_ANON_KEY"
-)
-
-# Analyze a document
-def analyze_document(document_text: str, doc_type: str = "legal"):
-    response = supabase.functions.invoke(
-        "analyze-document",
-        invoke_options={
-            "body": {
-                "documentText": document_text,
-                "documentType": doc_type
-            }
-        }
-    )
-    return response
-
-# Pattern detection
-def detect_patterns(case_id: str, analysis_type: str = "behavioral"):
-    response = supabase.functions.invoke(
-        "pattern-detector",
-        invoke_options={
-            "body": {
-                "caseId": case_id,
-                "analysisType": analysis_type
-            }
-        }
-    )
-    return response`,
-    curl: `# Analyze Document
-curl -X POST 'https://ccdyqmjvzzoftzbzbqlu.supabase.co/functions/v1/analyze-document' \\
-  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \\
-  -H 'Content-Type: application/json' \\
-  -d '{
-    "documentText": "Your document text here",
-    "documentType": "legal"
-  }'
-
-# Intel Chat
-curl -X POST 'https://ccdyqmjvzzoftzbzbqlu.supabase.co/functions/v1/intel-chat' \\
-  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \\
-  -H 'Content-Type: application/json' \\
-  -d '{
-    "message": "What patterns exist in this case?",
-    "conversationHistory": []
-  }'
-
-# Generate Report
-curl -X POST 'https://ccdyqmjvzzoftzbzbqlu.supabase.co/functions/v1/generate-report' \\
-  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \\
-  -H 'Content-Type: application/json' \\
-  -d '{
-    "caseId": "your-case-uuid",
-    "reportType": "executive",
-    "format": "pdf"
-  }'`
-  };
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/30">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
-            <img 
-              src={hrpmLogo} 
-              alt="HRPM Logo" 
-              className="w-10 h-10 transition-all duration-300 group-hover:scale-110"
-            />
+            <img src={hrpmLogo} alt="HRPM Logo" className="w-9 h-9 transition-all duration-300 group-hover:scale-110" />
             <div className="flex flex-col">
-              <span className="font-bold text-lg text-foreground tracking-tight">HRPM</span>
-              <span className="text-[10px] text-foreground/60 leading-tight">API Documentation</span>
+              <span className="font-bold text-lg text-foreground tracking-tight leading-none">HRPM</span>
+              <span className="text-[10px] text-foreground/50 leading-tight">API Reference</span>
             </div>
           </Link>
-          <nav className="flex items-center gap-4">
-            <Link to="/docs" className="text-sm text-foreground/70 hover:text-primary transition-colors">
-              <BookOpen className="w-4 h-4 inline mr-1" />
-              Docs
+          <nav className="flex items-center gap-3">
+            <Link to="/docs" className="text-sm text-foreground/60 hover:text-primary transition-colors hidden sm:flex items-center gap-1">
+              <BookOpen className="w-4 h-4" /> Docs
             </Link>
-            <a 
-              href="https://github.com/BackCheck/justice-unveiled" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-sm text-foreground/70 hover:text-primary transition-colors"
-            >
-              <Code className="w-4 h-4 inline mr-1" />
-              GitHub
+            <a href="https://github.com/BackCheck/justice-unveiled" target="_blank" rel="noopener noreferrer" className="text-sm text-foreground/60 hover:text-primary transition-colors hidden sm:flex items-center gap-1">
+              <Code className="w-4 h-4" /> GitHub
             </a>
             <LanguageSwitcher />
-            <Button size="sm" variant="outline" asChild>
-              <Link to="/auth">Get API Key</Link>
-            </Button>
+            <ThemeToggle />
           </nav>
         </div>
       </header>
 
       {/* Hero */}
       <section className="border-b border-border/30 bg-gradient-to-br from-primary/5 via-background to-accent/5">
-        <div className="max-w-7xl mx-auto px-4 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 py-16 md:py-20">
           <div className="max-w-3xl">
             <Badge variant="outline" className="mb-4 bg-primary/10 text-primary border-primary/30">
-              <Zap className="w-3 h-3 mr-1" />
-              REST API v1
+              <Zap className="w-3 h-3 mr-1" /> Public REST API v1.0
             </Badge>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
               HRPM <span className="text-primary">API</span>
             </h1>
-            <p className="text-lg text-muted-foreground mb-8">
-              Integrate human rights investigation intelligence into your applications. 
-              Access AI-powered document analysis, pattern detection, and legal research capabilities.
+            <p className="text-lg text-muted-foreground mb-6">
+              Open-access REST API for human rights investigation data. Query cases, events, entities, 
+              legal claims, and violations — no authentication required for read endpoints.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <Button size="lg" asChild>
-                <Link to="/auth">
-                  <Key className="w-4 h-4 mr-2" />
-                  Get API Key
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild>
-                <a href="https://github.com/BackCheck/justice-unveiled" target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  View on GitHub
-                </a>
-              </Button>
+            <div className="flex flex-wrap gap-3">
+              <Badge variant="secondary" className="text-xs"><Globe className="w-3 h-3 mr-1" /> Public Access</Badge>
+              <Badge variant="secondary" className="text-xs"><Database className="w-3 h-3 mr-1" /> JSON Responses</Badge>
+              <Badge variant="secondary" className="text-xs"><CheckCircle className="w-3 h-3 mr-1" /> Paginated</Badge>
+              <Badge variant="secondary" className="text-xs"><Search className="w-3 h-3 mr-1" /> Full-Text Search</Badge>
+            </div>
+            <div className="mt-6">
+              <p className="text-xs text-foreground/40 font-mono">Base URL:</p>
+              <div className="flex items-center gap-2 mt-1">
+                <code className="text-sm font-mono bg-muted/60 px-3 py-2 rounded-lg border border-border/30 flex-1 overflow-x-auto">
+                  {BASE_URL}
+                </code>
+                <Button size="sm" variant="outline" onClick={() => copyToClipboard(BASE_URL)}>
+                  <Copy className="w-3.5 h-3.5" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Quick Start */}
-      <section className="py-16 border-b border-border/30">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-8 flex items-center gap-2">
-            <Terminal className="w-6 h-6 text-primary" />
-            Quick Start
-          </h2>
-          
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <Card className="bg-card/50 border-border/50">
-              <CardHeader>
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-2">
-                  <Key className="w-5 h-5 text-primary" />
-                </div>
-                <CardTitle className="text-lg">1. Get Your API Key</CardTitle>
-                <CardDescription>
-                  Sign up and generate your API credentials from the dashboard
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            
-            <Card className="bg-card/50 border-border/50">
-              <CardHeader>
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-2">
-                  <Lock className="w-5 h-5 text-primary" />
-                </div>
-                <CardTitle className="text-lg">2. Authenticate</CardTitle>
-                <CardDescription>
-                  Include your access token in the Authorization header
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            
-            <Card className="bg-card/50 border-border/50">
-              <CardHeader>
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-2">
-                  <Zap className="w-5 h-5 text-primary" />
-                </div>
-                <CardTitle className="text-lg">3. Make Requests</CardTitle>
-                <CardDescription>
-                  Call endpoints to analyze documents, detect patterns, and more
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 py-10">
+        <div className="flex gap-10">
+          {/* Sidebar TOC */}
+          <nav className="hidden lg:block w-56 shrink-0 sticky top-20 self-start max-h-[calc(100vh-6rem)] overflow-y-auto">
+            <p className="text-xs font-semibold text-foreground/40 uppercase tracking-wider mb-3">API Reference</p>
+            <div className="space-y-0.5">
+              {tocItems.map((item) => (
+                <a key={item.id} href={`#${item.id}`} className="block text-sm text-foreground/55 hover:text-primary py-1.5 px-3 rounded-md hover:bg-primary/5 transition-colors">
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </nav>
 
-          {/* Code Examples */}
-          <Card className="bg-card/50 border-border/50">
-            <CardHeader>
-              <CardTitle>Code Examples</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Tabs defaultValue="javascript">
+          {/* Main Content */}
+          <div className="flex-1 min-w-0 space-y-12">
+
+            {/* Overview */}
+            <section id="overview">
+              <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+                <Globe className="w-6 h-6 text-primary" /> Overview
+              </h2>
+              <p className="text-foreground/70 leading-relaxed mb-4">
+                The HRPM Public API provides read-only access to all investigation data stored on the platform. 
+                All data is classified as <strong>public domain</strong> and available as open access. The API 
+                returns JSON responses with built-in pagination, full-text search, and filtering capabilities.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card className="bg-card/60 border-border/40">
+                  <CardContent className="p-4 flex items-start gap-3">
+                    <Globe className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                    <div>
+                      <p className="font-semibold text-foreground text-sm">No Auth Required</p>
+                      <p className="text-xs text-foreground/55">All read endpoints are publicly accessible</p>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="bg-card/60 border-border/40">
+                  <CardContent className="p-4 flex items-start gap-3">
+                    <Database className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                    <div>
+                      <p className="font-semibold text-foreground text-sm">12 Resources</p>
+                      <p className="text-xs text-foreground/55">Cases, events, entities, claims, and more</p>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="bg-card/60 border-border/40">
+                  <CardContent className="p-4 flex items-start gap-3">
+                    <Brain className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                    <div>
+                      <p className="font-semibold text-foreground text-sm">AI Endpoints</p>
+                      <p className="text-xs text-foreground/55">Authenticated AI analysis endpoints</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </section>
+
+            <Separator className="border-border/20" />
+
+            {/* Quick Start */}
+            <section id="quickstart">
+              <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+                <Terminal className="w-6 h-6 text-primary" /> Quick Start
+              </h2>
+              <p className="text-foreground/70 mb-4">Make your first API call in seconds — no setup required:</p>
+              <CodeBlock code={`# List all cases
+curl "${BASE_URL}?resource=cases"
+
+# Search events by keyword
+curl "${BASE_URL}?resource=events&search=arrest&limit=10"
+
+# Get a single case by ID
+curl "${BASE_URL}?resource=cases&id=YOUR_CASE_UUID"
+
+# Get platform statistics
+curl "${BASE_URL}?resource=stats"`} />
+            </section>
+
+            <Separator className="border-border/20" />
+
+            {/* Authentication */}
+            <section id="auth">
+              <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+                <Lock className="w-6 h-6 text-primary" /> Authentication
+              </h2>
+              <div className="space-y-4 text-foreground/70">
+                <p>
+                  <strong>Public endpoints</strong> (data queries) require <strong>no authentication</strong>. 
+                  Simply call the API with the <code className="bg-muted/60 px-1.5 py-0.5 rounded text-xs">resource</code> query parameter.
+                </p>
+                <p>
+                  <strong>AI-powered endpoints</strong> (document analysis, threat profiling, etc.) require a valid 
+                  JWT bearer token. Sign up at <Link to="/auth" className="text-primary hover:underline">/auth</Link> to 
+                  obtain your access token.
+                </p>
+                <CodeBlock code={`# Authenticated request (AI endpoints only)
+curl -X POST '${BASE_URL.replace('public-api', 'analyze-document')}' \\
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \\
+  -H 'Content-Type: application/json' \\
+  -d '{"documentText": "...", "documentType": "legal"}'`} />
+              </div>
+            </section>
+
+            <Separator className="border-border/20" />
+
+            {/* Pagination */}
+            <section id="pagination">
+              <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+                <BarChart3 className="w-6 h-6 text-primary" /> Pagination & Filtering
+              </h2>
+              <div className="space-y-4 text-foreground/70">
+                <p>All list endpoints return paginated results with metadata:</p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm border-collapse">
+                    <thead>
+                      <tr className="border-b border-border/30 text-left">
+                        <th className="py-2 pr-4 font-semibold text-foreground">Parameter</th>
+                        <th className="py-2 pr-4 font-semibold text-foreground">Default</th>
+                        <th className="py-2 font-semibold text-foreground">Description</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-foreground/60">
+                      <tr className="border-b border-border/10"><td className="py-2 pr-4 font-mono text-xs">page</td><td className="py-2 pr-4">1</td><td className="py-2">Page number</td></tr>
+                      <tr className="border-b border-border/10"><td className="py-2 pr-4 font-mono text-xs">limit</td><td className="py-2 pr-4">25</td><td className="py-2">Items per page (max: 100)</td></tr>
+                      <tr className="border-b border-border/10"><td className="py-2 pr-4 font-mono text-xs">search</td><td className="py-2 pr-4">—</td><td className="py-2">Full-text search across relevant fields</td></tr>
+                      <tr className="border-b border-border/10"><td className="py-2 pr-4 font-mono text-xs">case_id</td><td className="py-2 pr-4">—</td><td className="py-2">Filter by case UUID</td></tr>
+                      <tr className="border-b border-border/10"><td className="py-2 pr-4 font-mono text-xs">category</td><td className="py-2 pr-4">—</td><td className="py-2">Filter by category/type</td></tr>
+                      <tr className="border-b border-border/10"><td className="py-2 pr-4 font-mono text-xs">severity</td><td className="py-2 pr-4">—</td><td className="py-2">Filter by severity level</td></tr>
+                      <tr className="border-b border-border/10"><td className="py-2 pr-4 font-mono text-xs">sort_by</td><td className="py-2 pr-4">varies</td><td className="py-2">Sort field</td></tr>
+                      <tr><td className="py-2 pr-4 font-mono text-xs">sort_order</td><td className="py-2 pr-4">desc</td><td className="py-2">asc or desc</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <CodeBlock code={`// Pagination response format
+{
+  "data": [...],
+  "pagination": {
+    "page": 1,
+    "limit": 25,
+    "total": 142,
+    "total_pages": 6
+  }
+}`} />
+              </div>
+            </section>
+
+            <Separator className="border-border/20" />
+
+            {/* Data Endpoints */}
+            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2 pt-4">
+              <Database className="w-6 h-6 text-primary" /> Data Endpoints
+            </h2>
+            <p className="text-foreground/60 text-sm -mt-8">All public, read-only, no authentication required.</p>
+
+            <div className="space-y-6 mt-6">
+              <EndpointCard
+                method="GET" resource="cases" icon={FileText}
+                description="Retrieve investigation cases. Each case contains metadata, status, severity, and aggregate counts for associated events, entities, and sources."
+                params={[
+                  { name: "id", type: "uuid", desc: "Get single case by ID" },
+                  { name: "search", type: "string", desc: "Search title, description, case number" },
+                  { name: "category", type: "string", desc: "Filter by category" },
+                  { name: "severity", type: "string", desc: "Filter: critical, high, medium, low" },
+                  { name: "sort_by", type: "string", desc: "title, case_number, status, severity, created_at, updated_at" },
+                ]}
+                responseExample={`{
+  "data": [
+    {
+      "id": "uuid",
+      "case_number": "CF-001",
+      "title": "FIA Investigation Irregularities",
+      "status": "Active",
+      "severity": "critical",
+      "category": "Institutional Failure",
+      "location": "Karachi, Pakistan",
+      "total_events": 47,
+      "total_entities": 23,
+      "created_at": "2024-01-15T00:00:00Z"
+    }
+  ],
+  "pagination": { "page": 1, "limit": 25, "total": 4, "total_pages": 1 }
+}`}
+              />
+
+              <EndpointCard
+                method="GET" resource="events" icon={BarChart3}
+                description="Retrieve timeline events extracted from case documents. Events include dates, categories, involved individuals, legal actions, and evidence discrepancies."
+                params={[
+                  { name: "id", type: "uuid", desc: "Get single event by ID" },
+                  { name: "case_id", type: "uuid", desc: "Filter by case" },
+                  { name: "category", type: "string", desc: "Business Interference, Harassment, Legal Proceeding, Criminal Allegation" },
+                  { name: "search", type: "string", desc: "Search description, individuals" },
+                  { name: "sort_by", type: "string", desc: "date, category, created_at" },
+                ]}
+                responseExample={`{
+  "data": [
+    {
+      "id": "uuid",
+      "date": "2019-06-15",
+      "category": "Legal Proceeding",
+      "description": "FIR lodged under PECA 2016",
+      "individuals": "IO Ahmad, Complainant X",
+      "legal_action": "Criminal complaint filed",
+      "outcome": "Investigation initiated",
+      "evidence_discrepancy": "No CNIC verification performed",
+      "confidence_score": 0.92
+    }
+  ],
+  "pagination": { ... }
+}`}
+              />
+
+              <EndpointCard
+                method="GET" resource="entities" icon={Network}
+                description="Retrieve named entities (people, organizations, institutions) extracted from case documents with their roles, types, and influence scores."
+                params={[
+                  { name: "id", type: "uuid", desc: "Get single entity by ID" },
+                  { name: "case_id", type: "uuid", desc: "Filter by case" },
+                  { name: "category", type: "string", desc: "Person, Organization, Official Body, Legal Entity" },
+                  { name: "search", type: "string", desc: "Search name, description" },
+                  { name: "sort_by", type: "string", desc: "name, entity_type, influence_score, created_at" },
+                ]}
+                responseExample={`{
+  "data": [
+    {
+      "id": "uuid",
+      "name": "Federal Investigation Agency",
+      "entity_type": "Official Body",
+      "role": "Investigating Authority",
+      "influence_score": 85,
+      "organization_affiliation": "Ministry of Interior"
+    }
+  ],
+  "pagination": { ... }
+}`}
+              />
+
+              <EndpointCard
+                method="GET" resource="relationships" icon={Network}
+                description="Retrieve relationships between entities including influence weights, directions, and evidence sources."
+                params={[
+                  { name: "case_id", type: "uuid", desc: "Filter by case" },
+                  { name: "category", type: "string", desc: "Filter by relationship type" },
+                ]}
+                responseExample={`{
+  "data": [
+    {
+      "id": "uuid",
+      "source_entity_id": "uuid",
+      "target_entity_id": "uuid",
+      "relationship_type": "reports_to",
+      "influence_weight": 8,
+      "influence_direction": "upstream"
+    }
+  ],
+  "pagination": { ... }
+}`}
+              />
+
+              <EndpointCard
+                method="GET" resource="violations" icon={AlertTriangle}
+                description="Retrieve compliance violations flagged during investigation audits with severity and remediation status."
+                params={[
+                  { name: "case_id", type: "uuid", desc: "Filter by case" },
+                  { name: "severity", type: "string", desc: "critical, high, medium, low" },
+                  { name: "search", type: "string", desc: "Search title, description" },
+                ]}
+                responseExample={`{
+  "data": [
+    {
+      "id": "uuid",
+      "title": "Missing Chain of Custody Documentation",
+      "violation_type": "Documentation Gap",
+      "severity": "critical",
+      "legal_consequence": "Evidence inadmissible under QSO 1984",
+      "resolved": false
+    }
+  ],
+  "pagination": { ... }
+}`}
+              />
+
+              <EndpointCard
+                method="GET" resource="claims" icon={Scale}
+                description="Retrieve legal claims and allegations extracted from case documents with framework references."
+                params={[
+                  { name: "case_id", type: "uuid", desc: "Filter by case" },
+                  { name: "category", type: "string", desc: "criminal, regulatory, civil" },
+                  { name: "search", type: "string", desc: "Search allegation text" },
+                ]}
+                responseExample={`{
+  "data": [
+    {
+      "id": "uuid",
+      "allegation_text": "Unauthorized account freeze without court order",
+      "claim_type": "regulatory",
+      "legal_framework": "pakistani",
+      "legal_section": "Banking Companies Ordinance 1962",
+      "alleged_against": "State Bank of Pakistan"
+    }
+  ],
+  "pagination": { ... }
+}`}
+              />
+
+              <EndpointCard
+                method="GET" resource="statutes" icon={BookOpen}
+                description="Browse legal statutes across multiple frameworks including Pakistani law and international conventions."
+                params={[
+                  { name: "category", type: "string", desc: "Filter by framework (e.g. PPC, UDHR, ICCPR)" },
+                  { name: "search", type: "string", desc: "Search statute name, title, summary" },
+                ]}
+                responseExample={`{
+  "data": [
+    {
+      "id": "uuid",
+      "statute_code": "PECA-20",
+      "statute_name": "PECA 2016",
+      "title": "Offences against dignity of a natural person",
+      "framework": "Pakistani",
+      "section": "Section 20",
+      "summary": "Criminalizes online harassment..."
+    }
+  ],
+  "pagination": { ... }
+}`}
+              />
+
+              <EndpointCard
+                method="GET" resource="precedents" icon={Scale}
+                description="Search case law precedents with citations, courts, jurisdictions, and verification status."
+                params={[
+                  { name: "id", type: "uuid", desc: "Get single precedent by ID" },
+                  { name: "category", type: "string", desc: "Filter by jurisdiction" },
+                  { name: "search", type: "string", desc: "Search case name, citation, summary" },
+                ]}
+                responseExample={`{
+  "data": [
+    {
+      "id": "uuid",
+      "case_name": "Muhammad Azhar Siddique v. Federation of Pakistan",
+      "citation": "2012 SCMR 1818",
+      "court": "Supreme Court of Pakistan",
+      "year": 2012,
+      "jurisdiction": "Pakistan",
+      "verified": true,
+      "is_landmark": true
+    }
+  ],
+  "pagination": { ... }
+}`}
+              />
+
+              <EndpointCard
+                method="GET" resource="discrepancies" icon={AlertTriangle}
+                description="Retrieve evidence discrepancies and procedural failures identified during analysis."
+                params={[
+                  { name: "case_id", type: "uuid", desc: "Filter by case" },
+                  { name: "severity", type: "string", desc: "critical, high, medium, low" },
+                  { name: "search", type: "string", desc: "Search title, description" },
+                ]}
+                responseExample={`{
+  "data": [
+    {
+      "id": "uuid",
+      "title": "Timeline Inconsistency in FIR Filing",
+      "discrepancy_type": "Timeline Inconsistency",
+      "severity": "high",
+      "legal_reference": "CrPC Section 154"
+    }
+  ],
+  "pagination": { ... }
+}`}
+              />
+
+              <EndpointCard
+                method="GET" resource="harm-incidents" icon={AlertTriangle}
+                description="Retrieve documented regulatory harm incidents including financial impacts and institutional actions."
+                params={[
+                  { name: "case_id", type: "uuid", desc: "Filter by case" },
+                  { name: "severity", type: "string", desc: "Filter by severity" },
+                ]}
+                responseExample={`{
+  "data": [
+    {
+      "id": "uuid",
+      "title": "Bank Account Freeze",
+      "incident_type": "account_freeze",
+      "severity": "critical",
+      "incident_date": "2020-03-15",
+      "estimated_loss": 5000000,
+      "currency": "PKR"
+    }
+  ],
+  "pagination": { ... }
+}`}
+              />
+
+              <EndpointCard
+                method="GET" resource="blog" icon={BookOpen}
+                description="Retrieve published blog posts. Use id parameter with the post slug for single post lookup."
+                params={[
+                  { name: "id", type: "string", desc: "Get single post by slug" },
+                  { name: "category", type: "string", desc: "Filter by category" },
+                  { name: "search", type: "string", desc: "Search title, excerpt" },
+                ]}
+                responseExample={`{
+  "data": [
+    {
+      "id": "uuid",
+      "title": "Understanding PECA 2016 Amendments",
+      "slug": "understanding-peca-2016",
+      "excerpt": "An analysis of recent amendments...",
+      "category": "Legal Analysis",
+      "published_at": "2026-01-20T10:00:00Z"
+    }
+  ],
+  "pagination": { ... }
+}`}
+              />
+
+              <EndpointCard
+                method="GET" resource="stats" icon={BarChart3}
+                description="Get aggregate platform statistics — total cases, events, entities, violations, claims, and precedents."
+                params={[]}
+                responseExample={`{
+  "data": {
+    "total_cases": 4,
+    "total_events": 187,
+    "total_entities": 94,
+    "total_violations": 23,
+    "total_claims": 31,
+    "total_precedents": 15
+  }
+}`}
+              />
+            </div>
+
+            <Separator className="border-border/20" />
+
+            {/* AI Endpoints */}
+            <section id="ai-endpoints">
+              <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+                <Brain className="w-6 h-6 text-primary" /> AI-Powered Endpoints
+              </h2>
+              <p className="text-foreground/70 mb-4">
+                These endpoints require <Badge variant="outline" className="text-xs mx-1"><Lock className="w-3 h-3 mr-1" />Authentication</Badge> 
+                and use AI credits. Pass a valid JWT in the <code className="bg-muted/60 px-1.5 py-0.5 rounded text-xs">Authorization</code> header.
+              </p>
+              <div className="space-y-3">
+                {[
+                  { name: "analyze-document", method: "POST", desc: "Extract events, entities, discrepancies, claims, and financial harm from documents using AI", body: '{ "uploadId": "uuid", "documentContent": "text", "fileName": "doc.pdf", "documentType": "legal", "caseId": "uuid" }' },
+                  { name: "intel-chat", method: "POST", desc: "Conversational AI for investigation queries with case context", body: '{ "message": "What patterns exist?", "conversationHistory": [], "caseId": "uuid" }' },
+                  { name: "threat-profiler", method: "POST", desc: "Generate threat profiles for adversarial entities", body: '{ "entityId": "uuid", "caseId": "uuid" }' },
+                  { name: "pattern-detector", method: "POST", desc: "Detect behavioral, temporal, and network patterns across case data", body: '{ "caseId": "uuid", "analysisType": "behavioral" | "temporal" | "network" }' },
+                  { name: "generate-report", method: "POST", desc: "Generate formatted investigation reports", body: '{ "caseId": "uuid", "reportType": "executive" | "detailed", "format": "markdown" }' },
+                  { name: "analyze-rights-violations", method: "POST", desc: "Map text against UDHR, ICCPR, and other international frameworks", body: '{ "text": "...", "frameworks": ["UDHR", "ICCPR"] }' },
+                  { name: "fetch-legal-precedents", method: "POST", desc: "Search external case law databases (CourtListener)", body: '{ "query": "due process", "jurisdiction": "Pakistan" }' },
+                  { name: "generate-appeal-summary", method: "POST", desc: "Generate appeal briefs with AI source citations", body: '{ "caseId": "uuid", "summaryType": "comprehensive" }' },
+                ].map((ep) => (
+                  <Card key={ep.name} className="bg-card/60 border-border/40">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-3 mb-2 flex-wrap">
+                        <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/30 font-mono text-xs">{ep.method}</Badge>
+                        <code className="text-sm font-mono bg-muted/50 px-2 py-0.5 rounded">/functions/v1/{ep.name}</code>
+                        <Badge variant="outline" className="text-xs"><Lock className="w-3 h-3 mr-1" />Auth</Badge>
+                      </div>
+                      <p className="text-sm text-foreground/65 mb-2">{ep.desc}</p>
+                      <details className="text-xs">
+                        <summary className="cursor-pointer text-primary hover:underline">View request body</summary>
+                        <pre className="bg-muted/50 rounded p-2 mt-2 overflow-x-auto font-mono">{ep.body}</pre>
+                      </details>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </section>
+
+            <Separator className="border-border/20" />
+
+            {/* Error Handling */}
+            <section id="errors">
+              <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+                <AlertTriangle className="w-6 h-6 text-primary" /> Error Handling
+              </h2>
+              <p className="text-foreground/70 mb-4">All errors return a consistent JSON structure:</p>
+              <CodeBlock code={`{
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "Case not found",
+    "status": 404
+  }
+}`} />
+              <div className="overflow-x-auto mt-4">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="border-b border-border/30 text-left">
+                      <th className="py-2 pr-4 font-semibold text-foreground">Status</th>
+                      <th className="py-2 pr-4 font-semibold text-foreground">Code</th>
+                      <th className="py-2 font-semibold text-foreground">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-foreground/60">
+                    <tr className="border-b border-border/10"><td className="py-2 pr-4 font-mono">200</td><td className="py-2 pr-4">—</td><td className="py-2">Success</td></tr>
+                    <tr className="border-b border-border/10"><td className="py-2 pr-4 font-mono">401</td><td className="py-2 pr-4">UNAUTHORIZED</td><td className="py-2">Missing or invalid auth token (AI endpoints only)</td></tr>
+                    <tr className="border-b border-border/10"><td className="py-2 pr-4 font-mono">404</td><td className="py-2 pr-4">NOT_FOUND</td><td className="py-2">Resource not found</td></tr>
+                    <tr className="border-b border-border/10"><td className="py-2 pr-4 font-mono">405</td><td className="py-2 pr-4">METHOD_NOT_ALLOWED</td><td className="py-2">Only GET supported for public API</td></tr>
+                    <tr className="border-b border-border/10"><td className="py-2 pr-4 font-mono">429</td><td className="py-2 pr-4">RATE_LIMITED</td><td className="py-2">Too many requests</td></tr>
+                    <tr><td className="py-2 pr-4 font-mono">500</td><td className="py-2 pr-4">INTERNAL_ERROR</td><td className="py-2">Server error</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <Separator className="border-border/20" />
+
+            {/* Rate Limits */}
+            <section id="rate-limits">
+              <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+                <Shield className="w-6 h-6 text-primary" /> Rate Limits
+              </h2>
+              <div className="text-foreground/70 space-y-3">
+                <p>The public API has the following rate limits:</p>
+                <ul className="list-disc list-inside space-y-1 text-sm">
+                  <li><strong>Public read endpoints:</strong> 100 requests per minute per IP</li>
+                  <li><strong>AI endpoints:</strong> 10 requests per minute per authenticated user</li>
+                  <li><strong>Maximum page size:</strong> 100 items per request</li>
+                </ul>
+                <p className="text-sm">
+                  If you need higher limits for research purposes, 
+                  <Link to="/contact" className="text-primary hover:underline ml-1">contact us</Link>.
+                </p>
+              </div>
+            </section>
+
+            <Separator className="border-border/20" />
+
+            {/* SDKs & Examples */}
+            <section id="sdks">
+              <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+                <Code className="w-6 h-6 text-primary" /> SDKs & Code Examples
+              </h2>
+
+              <Tabs defaultValue="javascript" className="mt-4">
                 <TabsList className="mb-4">
                   <TabsTrigger value="javascript">JavaScript</TabsTrigger>
                   <TabsTrigger value="python">Python</TabsTrigger>
                   <TabsTrigger value="curl">cURL</TabsTrigger>
                 </TabsList>
-                {Object.entries(codeExamples).map(([lang, code]) => (
-                  <TabsContent key={lang} value={lang}>
-                    <div className="relative">
-                      <pre className="bg-muted/50 rounded-lg p-4 overflow-x-auto text-sm">
-                        <code>{code}</code>
-                      </pre>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="absolute top-2 right-2"
-                        onClick={() => copyToClipboard(code)}
-                      >
-                        <Copy className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TabsContent>
-                ))}
+
+                <TabsContent value="javascript">
+                  <CodeBlock code={`const API_BASE = "${BASE_URL}";
+
+// Fetch all cases
+async function getCases({ page = 1, limit = 25, search = "" } = {}) {
+  const params = new URLSearchParams({ resource: "cases", page, limit });
+  if (search) params.set("search", search);
+  const res = await fetch(\`\${API_BASE}?\${params}\`);
+  return res.json();
+}
+
+// Get single case
+async function getCase(id) {
+  const res = await fetch(\`\${API_BASE}?resource=cases&id=\${id}\`);
+  return res.json();
+}
+
+// Search events across a case
+async function searchEvents(caseId, query) {
+  const params = new URLSearchParams({
+    resource: "events",
+    case_id: caseId,
+    search: query,
+    sort_by: "date",
+    sort_order: "asc"
+  });
+  const res = await fetch(\`\${API_BASE}?\${params}\`);
+  return res.json();
+}
+
+// Get platform stats
+async function getStats() {
+  const res = await fetch(\`\${API_BASE}?resource=stats\`);
+  return res.json();
+}
+
+// Usage
+const { data, pagination } = await getCases({ search: "FIA" });
+console.log(\`Found \${pagination.total} cases\`);`} />
+                </TabsContent>
+
+                <TabsContent value="python">
+                  <CodeBlock code={`import requests
+
+API_BASE = "${BASE_URL}"
+
+def get_cases(page=1, limit=25, search=""):
+    params = {"resource": "cases", "page": page, "limit": limit}
+    if search:
+        params["search"] = search
+    return requests.get(API_BASE, params=params).json()
+
+def get_events(case_id, category=None):
+    params = {"resource": "events", "case_id": case_id}
+    if category:
+        params["category"] = category
+    return requests.get(API_BASE, params=params).json()
+
+def get_entities(case_id, search=""):
+    params = {"resource": "entities", "case_id": case_id}
+    if search:
+        params["search"] = search
+    return requests.get(API_BASE, params=params).json()
+
+def get_stats():
+    return requests.get(API_BASE, params={"resource": "stats"}).json()
+
+# Usage
+result = get_cases(search="FIA")
+print(f"Found {result['pagination']['total']} cases")
+
+for case in result["data"]:
+    events = get_events(case["id"])
+    print(f"  {case['title']}: {events['pagination']['total']} events")`} />
+                </TabsContent>
+
+                <TabsContent value="curl">
+                  <CodeBlock code={`# List all cases
+curl "${BASE_URL}?resource=cases"
+
+# Search cases
+curl "${BASE_URL}?resource=cases&search=FIA&severity=critical"
+
+# Get case events sorted by date
+curl "${BASE_URL}?resource=events&case_id=UUID&sort_by=date&sort_order=asc"
+
+# Search entities
+curl "${BASE_URL}?resource=entities&search=Federal&category=Official+Body"
+
+# Get legal precedents from Pakistan
+curl "${BASE_URL}?resource=precedents&category=Pakistan"
+
+# Get all violations for a case
+curl "${BASE_URL}?resource=violations&case_id=UUID&severity=critical"
+
+# Platform stats
+curl "${BASE_URL}?resource=stats"
+
+# Paginate through events (page 3, 50 per page)
+curl "${BASE_URL}?resource=events&page=3&limit=50"`} />
+                </TabsContent>
               </Tabs>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+            </section>
 
-      {/* Endpoints */}
-      <section className="py-16 border-b border-border/30">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-8 flex items-center gap-2">
-            <Network className="w-6 h-6 text-primary" />
-            API Endpoints
-          </h2>
-          
-          <div className="space-y-4">
-            {endpoints.map((endpoint, index) => (
-              <Card key={index} className="bg-card/50 border-border/50">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between flex-wrap gap-2">
-                    <div className="flex items-center gap-3">
-                      <Badge className="bg-green-500/10 text-green-500 border-green-500/30">
-                        {endpoint.method}
-                      </Badge>
-                      <code className="text-sm font-mono bg-muted/50 px-2 py-1 rounded">
-                        {endpoint.path}
-                      </code>
-                    </div>
-                    {endpoint.auth && (
-                      <Badge variant="outline" className="text-xs">
-                        <Lock className="w-3 h-3 mr-1" />
-                        Auth Required
-                      </Badge>
-                    )}
-                  </div>
-                  <CardTitle className="text-lg mt-2">{endpoint.name}</CardTitle>
-                  <CardDescription>{endpoint.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="relative">
-                    <p className="text-xs text-muted-foreground mb-2">Request Body:</p>
-                    <pre className="bg-muted/50 rounded-lg p-3 text-xs overflow-x-auto">
-                      <code>{endpoint.body}</code>
-                    </pre>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="absolute top-6 right-2"
-                      onClick={() => copyToClipboard(endpoint.body)}
-                    >
-                      <Copy className="w-3 h-3" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="py-16 border-b border-border/30 bg-muted/20">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-8 flex items-center gap-2">
-            <Zap className="w-6 h-6 text-primary" />
-            Key Features
-          </h2>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="bg-card/50 border-border/50">
-              <CardHeader>
-                <Brain className="w-8 h-8 text-primary mb-2" />
-                <CardTitle className="text-lg">AI-Powered Analysis</CardTitle>
-                <CardDescription>
-                  Advanced NLP for document analysis, entity extraction, and pattern detection
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            
-            <Card className="bg-card/50 border-border/50">
-              <CardHeader>
-                <Shield className="w-8 h-8 text-primary mb-2" />
-                <CardTitle className="text-lg">Secure by Default</CardTitle>
-                <CardDescription>
-                  JWT authentication, RLS policies, and encrypted data at rest
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            
-            <Card className="bg-card/50 border-border/50">
-              <CardHeader>
-                <FileText className="w-8 h-8 text-primary mb-2" />
-                <CardTitle className="text-lg">Legal Intelligence</CardTitle>
-                <CardDescription>
-                  Access case law, precedents, and human rights framework analysis
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            
-            <Card className="bg-card/50 border-border/50">
-              <CardHeader>
-                <Network className="w-8 h-8 text-primary mb-2" />
-                <CardTitle className="text-lg">Real-time Updates</CardTitle>
-                <CardDescription>
-                  WebSocket support for live data streaming and collaboration
-                </CardDescription>
-              </CardHeader>
+            {/* Footer CTA */}
+            <Card className="bg-primary/5 border-primary/20 mt-8">
+              <CardContent className="p-8 text-center">
+                <p className="text-lg font-semibold text-foreground mb-2">Open-Source & Free Forever</p>
+                <p className="text-foreground/60 text-sm mb-4">
+                  This API is part of the HRPM open-source project. All data is public domain.
+                </p>
+                <div className="flex justify-center gap-3 flex-wrap">
+                  <Button variant="outline" size="sm" asChild>
+                    <a href="https://github.com/BackCheck/justice-unveiled" target="_blank" rel="noopener noreferrer">
+                      <Code className="w-4 h-4 mr-2" /> View Source
+                    </a>
+                  </Button>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to="/docs"><BookOpen className="w-4 h-4 mr-2" /> Full Documentation</Link>
+                  </Button>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to="/contact"><ArrowRight className="w-4 h-4 mr-2" /> Contact</Link>
+                  </Button>
+                </div>
+                <p className="text-xs text-foreground/40 italic mt-4">Documenting injustice. Demanding accountability.</p>
+              </CardContent>
             </Card>
           </div>
         </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
-          <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-            Join researchers and human rights organizations using HRPM API to power their investigations.
-          </p>
-          <div className="flex justify-center gap-4 flex-wrap">
-            <Button size="lg" asChild>
-              <Link to="/auth">
-                Get Started Free
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link to="/docs">Read Documentation</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border/30 py-8 bg-card/30">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Human Rights Protection Movement
-          </p>
-          <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <Link to="/docs" className="hover:text-primary transition-colors">Documentation</Link>
-            <Link to="/blog" className="hover:text-primary transition-colors">Blog</Link>
-            <a 
-              href="https://github.com/BackCheck/justice-unveiled" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="hover:text-primary transition-colors"
-            >
-              GitHub
-            </a>
-          </div>
-        </div>
-      </footer>
+      </div>
     </div>
   );
 };
