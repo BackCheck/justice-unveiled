@@ -1,18 +1,6 @@
 import { forwardRef, useEffect, useState } from "react";
 import humanRightsLogo from "@/assets/human-rights-logo.png";
-
-interface ThreatProfile {
-  entityId: string;
-  entityName: string;
-  threatLevel: "critical" | "high" | "medium" | "low";
-  summary: string;
-  motivations: string[];
-  tactics: string[];
-  connections: string[];
-  timeline: string[];
-  vulnerabilities: string[];
-  recommendations: string[];
-}
+import type { ThreatProfile } from "./ThreatProfiler";
 
 interface ThreatProfileReportProps {
   profile: ThreatProfile;
@@ -43,6 +31,13 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
       low: "#16a34a",
     };
 
+    const priorityColors: Record<string, string> = {
+      critical: "#dc2626",
+      high: "#ea580c",
+      medium: "#ca8a04",
+      low: "#16a34a",
+    };
+
     return (
       <div ref={ref} className="hidden print:block bg-white text-gray-900" style={{ fontSize: "12px" }}>
         {/* COVER PAGE */}
@@ -67,10 +62,19 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
             >
               {profile.threatLevel} Threat Level
             </div>
+            {/* Risk Score */}
+            <div className="mt-6">
+              <p className="text-sm text-gray-500 mb-1">Risk Score</p>
+              <p className="text-4xl font-bold" style={{ color: threatColors[profile.threatLevel] }}>
+                {profile.riskScore}<span className="text-lg text-gray-400">/100</span>
+              </p>
+            </div>
             <div className="mt-8 inline-flex items-center gap-6 px-8 py-4 bg-gray-50 rounded-lg border border-gray-200">
               <Stat value={profile.motivations.length} label="Motivations" />
               <span className="text-gray-300">|</span>
               <Stat value={profile.tactics.length} label="Tactics" />
+              <span className="text-gray-300">|</span>
+              <Stat value={(profile.behavioralPatterns || []).length} label="Patterns" />
               <span className="text-gray-300">|</span>
               <Stat value={profile.connections.length} label="Connections" />
               <span className="text-gray-300">|</span>
@@ -78,7 +82,6 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
             </div>
           </div>
 
-          {/* Generation details */}
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-8">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-4">
               Report Generation Details
@@ -94,7 +97,33 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
           <CoverFooter year={now.getFullYear()} />
         </div>
 
-        {/* EXECUTIVE SUMMARY */}
+        {/* TABLE OF CONTENTS */}
+        <div className="p-12" style={{ pageBreakAfter: "always" }}>
+          <SectionHeader title="Table of Contents" number={0} />
+          <div className="space-y-3 mt-6">
+            {[
+              "Executive Summary",
+              "Suspected Motivations",
+              "Known Tactics & Patterns",
+              "Behavioral Patterns Analysis",
+              "Network Connections",
+              "Exploitable Vulnerabilities",
+              "Counter-Strategies",
+              "Evidence Gaps & Investigation Priorities",
+              "Historical Precedents",
+              "Strategic Recommendations",
+            ].map((title, i) => (
+              <div key={i} className="flex items-center gap-3 py-2 border-b border-gray-100">
+                <span className="font-bold text-gray-400 font-mono w-6">{i + 1}.</span>
+                <span className="text-sm font-medium text-gray-800">{title}</span>
+                <span className="flex-1 border-b border-dotted border-gray-300 mx-2" />
+                <span className="text-xs text-gray-400 font-mono">Section {i + 1}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 1. EXECUTIVE SUMMARY */}
         <div className="p-12" style={{ pageBreakAfter: "always" }}>
           <SectionHeader title="Executive Summary" number={1} />
           <div className="space-y-4 text-sm leading-relaxed text-gray-700">
@@ -103,14 +132,25 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
               <p className="font-semibold text-gray-900 mb-1">Threat Assessment</p>
               <p>
                 This entity has been assessed at <strong style={{ color: threatColors[profile.threatLevel] }}>{profile.threatLevel.toUpperCase()}</strong> threat level
+                with a risk score of <strong>{profile.riskScore}/100</strong>,
                 based on analysis of {profile.motivations.length} suspected motivations, {profile.tactics.length} documented tactics,
-                and {profile.connections.length} network connections.
+                {(profile.behavioralPatterns || []).length} behavioral patterns, and {profile.connections.length} network connections.
               </p>
+            </div>
+            {/* Risk Score Visual */}
+            <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
+              <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Risk Score Breakdown</p>
+              <div className="flex items-center gap-4">
+                <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                  <div className="h-2 rounded-full" style={{ width: `${profile.riskScore}%`, backgroundColor: threatColors[profile.threatLevel] }} />
+                </div>
+                <span className="text-lg font-bold" style={{ color: threatColors[profile.threatLevel] }}>{profile.riskScore}%</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* MOTIVATIONS */}
+        {/* 2. MOTIVATIONS */}
         <div className="p-12" style={{ pageBreakAfter: "always" }}>
           <SectionHeader title="Suspected Motivations" number={2} />
           <div className="space-y-3">
@@ -123,7 +163,7 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
           </div>
         </div>
 
-        {/* TACTICS */}
+        {/* 3. TACTICS */}
         <div className="p-12" style={{ pageBreakAfter: "always" }}>
           <SectionHeader title="Known Tactics & Patterns" number={3} />
           <div className="space-y-3">
@@ -136,9 +176,50 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
           </div>
         </div>
 
-        {/* CONNECTIONS */}
+        {/* 4. BEHAVIORAL PATTERNS */}
+        {(profile.behavioralPatterns || []).length > 0 && (
+          <div className="p-12" style={{ pageBreakAfter: "always" }}>
+            <SectionHeader title="Behavioral Patterns Analysis" number={4} />
+            <p className="text-sm text-gray-600 mb-4">
+              Identified behavioral patterns of {profile.entityName} with frequency and severity indicators.
+            </p>
+            <table>
+              <thead>
+                <tr>
+                  <th style={{ width: "5%" }}>#</th>
+                  <th style={{ width: "55%" }}>Pattern</th>
+                  <th style={{ width: "20%" }}>Frequency</th>
+                  <th style={{ width: "20%" }}>Severity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {profile.behavioralPatterns.map((bp, i) => (
+                  <tr key={i}>
+                    <td className="font-mono text-gray-400">{i + 1}</td>
+                    <td>{bp.pattern}</td>
+                    <td>
+                      <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-gray-50 border border-gray-200">
+                        {bp.frequency}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        className="inline-block px-3 py-1 rounded-full text-xs font-bold text-white"
+                        style={{ backgroundColor: priorityColors[bp.severity] || "#6b7280" }}
+                      >
+                        {bp.severity}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* 5. CONNECTIONS */}
         <div className="p-12" style={{ pageBreakAfter: "always" }}>
-          <SectionHeader title="Network Connections" number={4} />
+          <SectionHeader title="Network Connections" number={5} />
           <p className="text-sm text-gray-600 mb-4">
             The following entities have been identified as connected to {profile.entityName} through documented interactions, relationships, or coordinated activities.
           </p>
@@ -154,11 +235,11 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
           </div>
         </div>
 
-        {/* VULNERABILITIES */}
+        {/* 6. VULNERABILITIES */}
         <div className="p-12" style={{ pageBreakAfter: "always" }}>
-          <SectionHeader title="Exploitable Vulnerabilities" number={5} />
+          <SectionHeader title="Exploitable Vulnerabilities" number={6} />
           <p className="text-sm text-gray-600 mb-4">
-            The following vulnerabilities have been identified through analysis of documentary evidence, procedural records, and behavioral patterns.
+            Vulnerabilities identified through analysis of documentary evidence, procedural records, and behavioral patterns.
           </p>
           <div className="space-y-3">
             {profile.vulnerabilities.map((v, i) => (
@@ -170,9 +251,95 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
           </div>
         </div>
 
-        {/* RECOMMENDATIONS */}
+        {/* 7. COUNTER-STRATEGIES */}
+        {(profile.counterStrategies || []).length > 0 && (
+          <div className="p-12" style={{ pageBreakAfter: "always" }}>
+            <SectionHeader title="Counter-Strategies" number={7} />
+            <p className="text-sm text-gray-600 mb-4">
+              Recommended counter-measures for each identified tactic, with effectiveness ratings.
+            </p>
+            <table>
+              <thead>
+                <tr>
+                  <th style={{ width: "30%" }}>Tactic</th>
+                  <th style={{ width: "45%" }}>Counter-Strategy</th>
+                  <th style={{ width: "25%" }}>Effectiveness</th>
+                </tr>
+              </thead>
+              <tbody>
+                {profile.counterStrategies.map((cs, i) => (
+                  <tr key={i}>
+                    <td className="font-medium">{cs.tactic}</td>
+                    <td>{cs.counter}</td>
+                    <td>
+                      <span
+                        className="inline-block px-3 py-1 rounded-full text-xs font-bold text-white"
+                        style={{ backgroundColor: priorityColors[cs.effectiveness] || "#6b7280" }}
+                      >
+                        {cs.effectiveness}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* 8. EVIDENCE GAPS */}
+        {(profile.evidenceGaps || []).length > 0 && (
+          <div className="p-12" style={{ pageBreakAfter: "always" }}>
+            <SectionHeader title="Evidence Gaps & Investigation Priorities" number={8} />
+            <p className="text-sm text-gray-600 mb-4">
+              Critical evidence gaps that require investigation to strengthen the case.
+            </p>
+            <div className="space-y-4">
+              {profile.evidenceGaps.map((eg, i) => (
+                <div key={i} className="p-4 rounded-lg border bg-amber-50 border-amber-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-semibold text-gray-800">{eg.gap}</span>
+                    <span
+                      className="inline-block px-3 py-1 rounded-full text-xs font-bold text-white"
+                      style={{ backgroundColor: priorityColors[eg.priority] || "#6b7280" }}
+                    >
+                      {eg.priority} priority
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-600">
+                    <strong>Suggested Action:</strong> {eg.suggestedAction}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 9. HISTORICAL PRECEDENTS */}
+        {(profile.historicalPrecedents || []).length > 0 && (
+          <div className="p-12" style={{ pageBreakAfter: "always" }}>
+            <SectionHeader title="Historical Precedents" number={9} />
+            <p className="text-sm text-gray-600 mb-4">
+              Relevant legal precedents that may inform strategy against {profile.entityName}.
+            </p>
+            <div className="space-y-4">
+              {profile.historicalPrecedents.map((hp, i) => (
+                <div key={i} className="p-4 rounded-lg border bg-purple-50 border-purple-200">
+                  <p className="text-sm font-semibold text-gray-900">{hp.caseName}</p>
+                  <p className="text-xs text-gray-600 mt-1">{hp.relevance}</p>
+                  <div className="mt-2 pt-2 border-t border-purple-200">
+                    <p className="text-xs">
+                      <strong className="text-purple-700">Outcome:</strong> {hp.outcome}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 10. RECOMMENDATIONS */}
         <div className="p-12" style={{ pageBreakAfter: "always" }}>
-          <SectionHeader title="Strategic Recommendations" number={6} />
+          <SectionHeader title="Strategic Recommendations" number={10} />
           <p className="text-sm text-gray-600 mb-4">
             Based on the comprehensive threat assessment, the following strategic actions are recommended for investigators and legal advocates.
           </p>
@@ -191,10 +358,13 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
           <div className="text-center max-w-lg">
             <div className="w-16 h-1 mx-auto mb-8 rounded-full" style={{ backgroundColor: "#0087C1" }} />
             <h2 className="text-2xl font-bold text-gray-900 mb-4">End of Threat Profile Report</h2>
-            <p className="text-gray-600 mb-8">
+            <p className="text-gray-600 mb-2">
               This threat intelligence profile for <strong>{profile.entityName}</strong> was generated using
-              AI-assisted analysis of case evidence, entity networks, and timeline data. All findings should
-              be independently verified before use in legal proceedings.
+              AI-assisted analysis of case evidence, entity networks, and timeline data.
+            </p>
+            <p className="text-xs text-gray-500 mb-8">
+              Risk Score: {profile.riskScore}/100 | Threat Level: {profile.threatLevel.toUpperCase()} |
+              Sections: 10 | Generated: {formattedDate}
             </p>
             <CoverFooter year={now.getFullYear()} />
           </div>
@@ -224,9 +394,11 @@ const Detail = ({ label, value, mono }: { label: string; value: string; mono?: b
 
 const SectionHeader = ({ title, number }: { title: string; number: number }) => (
   <div className="flex items-center gap-4 mb-8 pb-4" style={{ borderBottom: "2px solid #0087C1" }}>
-    <div className="flex items-center justify-center w-10 h-10 rounded-lg text-white font-bold text-lg" style={{ backgroundColor: "#0087C1" }}>
-      {number}
-    </div>
+    {number > 0 && (
+      <div className="flex items-center justify-center w-10 h-10 rounded-lg text-white font-bold text-lg" style={{ backgroundColor: "#0087C1" }}>
+        {number}
+      </div>
+    )}
     <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
   </div>
 );

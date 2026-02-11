@@ -37,6 +37,7 @@ import LegalResearch from "./pages/LegalResearch";
 import Api from "./pages/Api";
 import HowToUse from "./pages/HowToUse";
 import Documentation from "./pages/Documentation";
+import ThreatProfilerPage from "./pages/ThreatProfilerPage";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -73,6 +74,7 @@ const App = () => (
             <Route path="/api" element={<Api />} />
             <Route path="/how-to-use" element={<HowToUse />} />
             <Route path="/docs" element={<Documentation />} />
+            <Route path="/threat-profiler" element={<ThreatProfilerPage />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/events/:eventId" element={<EventDetail />} />
             <Route path="/violations/:type/:violationId" element={<ViolationDetail />} />

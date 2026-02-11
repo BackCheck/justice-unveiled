@@ -76,6 +76,7 @@ const analysisNavItems = [
   { path: "/compliance", label: "Compliance Checker", icon: ClipboardCheck },
   { path: "/regulatory-harm", label: "Economic Harm", icon: TrendingDown },
   { path: "/legal-intelligence", label: "Legal Intelligence", icon: Gavel },
+  { path: "/threat-profiler", label: "Threat Profiler", icon: Shield },
   { path: "/analyze", label: "AI Analyzer", icon: Brain },
   { path: "/evidence", label: "Evidence Matrix", icon: FileText },
   { path: "/international", label: "International Rights", icon: Scale },

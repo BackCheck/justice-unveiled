@@ -22,11 +22,16 @@ serve(async (req) => {
 
 Analyze the provided entity data and generate a detailed threat profile including:
 1. Threat level assessment (critical, high, medium, low)
-2. Behavioral motivations
-3. Known tactics and patterns
-4. Network connections and influence
-5. Exploitable vulnerabilities for legal defense
-6. Strategic recommendations
+2. Risk score (0-100)
+3. Behavioral motivations
+4. Known tactics and patterns
+5. Behavioral patterns with frequency and severity indicators
+6. Network connections and influence
+7. Exploitable vulnerabilities for legal defense
+8. Counter-strategies for each tactic
+9. Evidence gaps that need investigation
+10. Historical precedent comparisons
+11. Strategic recommendations
 
 Be analytical, evidence-based, and focus on actionable intelligence.`;
 
@@ -44,7 +49,7 @@ ${relatedEvents.map((e: any, i: number) => `${i + 1}. [${e.date}] ${e.category}:
 KNOWN CONNECTIONS (${connections.length}):
 ${connections.join(", ") || "None documented"}
 
-Analyze this entity and provide a comprehensive threat assessment.`;
+Analyze this entity and provide a comprehensive threat assessment with all sections populated.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -73,6 +78,7 @@ Analyze this entity and provide a comprehensive threat assessment.`;
                     type: "string", 
                     enum: ["critical", "high", "medium", "low"]
                   },
+                  riskScore: { type: "number", description: "Risk score 0-100" },
                   summary: { type: "string" },
                   motivations: {
                     type: "array",
@@ -81,6 +87,18 @@ Analyze this entity and provide a comprehensive threat assessment.`;
                   tactics: {
                     type: "array",
                     items: { type: "string" }
+                  },
+                  behavioralPatterns: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        pattern: { type: "string" },
+                        frequency: { type: "string", enum: ["recurring", "occasional", "rare"] },
+                        severity: { type: "string", enum: ["critical", "high", "medium", "low"] }
+                      },
+                      required: ["pattern", "frequency", "severity"]
+                    }
                   },
                   connections: {
                     type: "array",
@@ -94,12 +112,48 @@ Analyze this entity and provide a comprehensive threat assessment.`;
                     type: "array",
                     items: { type: "string" }
                   },
+                  counterStrategies: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        tactic: { type: "string" },
+                        counter: { type: "string" },
+                        effectiveness: { type: "string", enum: ["high", "medium", "low"] }
+                      },
+                      required: ["tactic", "counter", "effectiveness"]
+                    }
+                  },
+                  evidenceGaps: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        gap: { type: "string" },
+                        priority: { type: "string", enum: ["critical", "high", "medium", "low"] },
+                        suggestedAction: { type: "string" }
+                      },
+                      required: ["gap", "priority", "suggestedAction"]
+                    }
+                  },
+                  historicalPrecedents: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        caseName: { type: "string" },
+                        relevance: { type: "string" },
+                        outcome: { type: "string" }
+                      },
+                      required: ["caseName", "relevance", "outcome"]
+                    }
+                  },
                   recommendations: {
                     type: "array",
                     items: { type: "string" }
                   }
                 },
-                required: ["entityName", "threatLevel", "summary", "motivations", "tactics", "vulnerabilities", "recommendations"]
+                required: ["entityName", "threatLevel", "riskScore", "summary", "motivations", "tactics", "behavioralPatterns", "vulnerabilities", "counterStrategies", "evidenceGaps", "recommendations"]
               }
             }
           }
