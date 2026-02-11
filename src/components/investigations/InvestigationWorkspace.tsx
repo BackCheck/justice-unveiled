@@ -53,25 +53,23 @@ export const InvestigationWorkspace = () => {
           {/* Stats Grid */}
           <InvestigationStatsGrid />
 
-          {/* Main Dashboard Grid */}
-          <div className="grid lg:grid-cols-3 gap-6">
-            {/* Left Column - Categories & Severity */}
+          {/* Quick Actions */}
+          <QuickActionsPanel />
+
+          {/* Main Dashboard Grid - 2 columns */}
+          <div className="grid lg:grid-cols-2 gap-6">
+            {/* Left Column - Threat & Activity */}
             <div className="space-y-6">
-              <CategoryBreakdown />
               <SeverityMeter />
-            </div>
-
-            {/* Center Column - Recent Activity */}
-            <div className="space-y-6">
-              <RecentExtractions />
               <RecentViolations />
+              <CategoryBreakdown />
             </div>
 
-            {/* Right Column - Entity & Actions */}
+            {/* Right Column - Entities & Intelligence */}
             <div className="space-y-6">
               <EntityWatchlist />
+              <RecentExtractions />
               <EntityDistribution />
-              <QuickActionsPanel />
             </div>
           </div>
         </div>
