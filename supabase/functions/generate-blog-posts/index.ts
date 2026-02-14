@@ -19,19 +19,62 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { topic, count = 1 } = await req.json();
+    let topic = "";
+    let count = 5;
+    try {
+      const body = await req.json();
+      topic = body.topic || "";
+      count = Math.min(body.count || 5, 5);
+    } catch {
+      // cron calls may have empty or minimal body
+    }
 
-    const systemPrompt = `You are an expert journalist and human rights researcher specializing in Pakistan and South Asia. Write compelling, well-researched blog posts about human rights concerns. Use a serious, evidence-driven, investigative tone. Posts should educate and raise awareness.`;
+    const systemPrompt = `You are a senior investigative journalist and human rights researcher with expertise in documenting systemic abuses worldwide. Your work is strictly non-partisan and non-politically motivated. You focus exclusively on:
 
-    const userPrompt = `Generate ${count} blog post(s) about human rights concerns in ${topic || "Pakistan and South Asia"}. 
+- Documented human rights violations backed by verifiable data
+- Systemic corruption patterns with institutional evidence
+- Justice delayed or denied cases with procedural analysis
+- Abuse of power by state and non-state actors
+
+Your reporting style is evidence-driven, citing specific laws, conventions (UDHR, ICCPR, CAT, CRC), and documented incidents. You never take political sides or promote any political agenda. Your sole mission is accountability and justice.`;
+
+    const topics = [
+      "enforced disappearances and extrajudicial actions in Pakistan",
+      "systematic corruption in judiciary and law enforcement in South Asia",
+      "justice delayed: case backlogs and procedural failures in Pakistan's courts",
+      "abuse of power by security forces and institutional impunity worldwide",
+      "digital surveillance overreach and PECA misuse against journalists and activists in Pakistan",
+      "custodial torture and deaths in police custody across South Asia",
+      "land grabbing and forced evictions by powerful entities in Pakistan",
+      "child labor exploitation and trafficking networks in South Asia",
+      "religious minority persecution and blasphemy law misuse in Pakistan",
+      "women's rights violations including honor killings and forced marriages",
+      "press freedom violations and attacks on journalists worldwide",
+      "refugee rights violations and stateless populations globally",
+      "prison conditions and overcrowding crisis in Pakistan",
+      "environmental rights violations by industrial polluters in developing nations",
+      "modern slavery and bonded labor in brick kilns and agriculture in Pakistan",
+    ];
+
+    const selectedTopic = topic || topics[Math.floor(Math.random() * topics.length)];
+
+    const userPrompt = `Generate ${count} unique, well-researched investigative blog post(s) about: "${selectedTopic}".
+
+CRITICAL RULES:
+- Each post MUST be a genuine investigation report, NOT opinion or political commentary
+- Focus on documented facts, statistics, legal frameworks, and real patterns of abuse
+- Reference specific laws, international conventions, and institutional mechanisms
+- Include context from Pakistan AND relevant global parallels
+- Vary the angles: one could be a case study, another a systemic analysis, another a legal framework review
+- Each post should stand alone as a publishable investigation
 
 For each post return a JSON array of objects with these fields:
-- title: compelling headline (max 80 chars)
-- slug: URL-friendly slug
-- excerpt: 1-2 sentence summary (max 200 chars)
-- content: full HTML article (800-1200 words) with <h2>, <h3>, <p>, <ul>, <blockquote> tags. Include real context about documented issues.
-- category: one of "Human Rights", "Legal Analysis", "Investigative", "South Asia", "Pakistan"
-- tags: array of 3-5 relevant tags
+- title: compelling investigative headline (max 100 chars)
+- slug: URL-friendly slug (unique, include date context like month-year)
+- excerpt: 1-2 sentence investigation summary (max 250 chars)
+- content: full HTML investigation report (1000-1500 words) using <h2>, <h3>, <p>, <ul>, <ol>, <blockquote>, <strong>, <em> tags. Structure with: Executive Summary, Key Findings, Evidence & Data, Legal Framework, Recommendations
+- category: one of "Investigative", "Human Rights", "Legal Analysis", "Accountability", "South Asia"
+- tags: array of 4-6 relevant tags
 
 Return ONLY the JSON array, no other text.`;
 
@@ -68,13 +111,24 @@ Return ONLY the JSON array, no other text.`;
     let rawContent = aiResponse.choices?.[0]?.message?.content;
     if (!rawContent) throw new Error("No content generated");
 
-    // Strip markdown code fences if present
     rawContent = rawContent.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
 
     const posts = JSON.parse(rawContent);
 
     const inserted = [];
     for (const post of posts) {
+      // Check for duplicate slugs
+      const { data: existing } = await supabase
+        .from("blog_posts")
+        .select("id")
+        .eq("slug", post.slug)
+        .maybeSingle();
+
+      if (existing) {
+        console.log(`Skipping duplicate slug: ${post.slug}`);
+        continue;
+      }
+
       const { data, error } = await supabase.from("blog_posts").insert({
         title: post.title,
         slug: post.slug,
@@ -86,7 +140,7 @@ Return ONLY the JSON array, no other text.`;
         is_published: true,
         is_ai_generated: true,
         is_featured: false,
-        author_name: "HRPM Research",
+        author_name: "HRPM Investigations Unit",
         published_at: new Date().toISOString(),
       }).select("id, title, slug").single();
 
@@ -96,6 +150,8 @@ Return ONLY the JSON array, no other text.`;
       }
       inserted.push(data);
     }
+
+    console.log(`Generated ${inserted.length} investigation reports`);
 
     return new Response(
       JSON.stringify({ success: true, posts: inserted }),
