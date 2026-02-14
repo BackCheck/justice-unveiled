@@ -294,8 +294,8 @@ export const TimelineCard = ({ event, index, forceExpanded = false, showAdminCon
                 <p className="text-xs text-muted-foreground">Sources: {event.sources}</p>
               </div>
 
-              {/* Linked Evidence */}
-              <LinkedEvidence eventIndex={index} />
+              {/* Linked Evidence - hide in print mode */}
+              {!isPrintMode && <LinkedEvidence eventIndex={index} />}
             </div>
           )}
         </CardContent>
