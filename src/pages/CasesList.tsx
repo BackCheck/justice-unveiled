@@ -233,7 +233,75 @@ const CasesList = () => {
 
   const handlePrint = useCallback((c: Case) => {
     setPrintCase(c);
-    setTimeout(() => window.print(), 300);
+    // Use timeout to let CaseReportPrint render, then open in new window
+    setTimeout(() => {
+      if (!printRef.current) return;
+      const printContent = printRef.current.innerHTML;
+      const win = window.open("", "_blank");
+      if (!win) return;
+      win.document.write(`<!DOCTYPE html><html><head><title>${c.title} – Case Report</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { font-family: 'Inter', sans-serif; color: #1a1a1a; background: #fff; }
+          .hidden { display: block !important; }
+          .print\\:block { display: block !important; }
+          .min-h-screen { min-height: 100vh; }
+          .flex { display: flex; } .flex-col { flex-direction: column; }
+          .items-center { align-items: center; } .justify-center { justify-content: center; }
+          .justify-between { justify-content: space-between; }
+          .text-center { text-align: center; }
+          .text-4xl { font-size: 2.25rem; } .text-3xl { font-size: 1.875rem; }
+          .text-2xl { font-size: 1.5rem; } .text-xl { font-size: 1.25rem; }
+          .text-lg { font-size: 1.125rem; } .text-sm { font-size: 0.875rem; }
+          .text-xs { font-size: 0.75rem; }
+          .font-bold { font-weight: 700; } .font-semibold { font-weight: 600; }
+          .font-medium { font-weight: 500; } .font-mono { font-family: monospace; }
+          .uppercase { text-transform: uppercase; }
+          .tracking-widest { letter-spacing: 0.1em; } .tracking-wider { letter-spacing: 0.05em; }
+          .leading-relaxed { line-height: 1.625; }
+          .mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; }
+          .mb-4 { margin-bottom: 1rem; } .mb-6 { margin-bottom: 1.5rem; }
+          .mb-8 { margin-bottom: 2rem; } .mt-1 { margin-top: 0.25rem; }
+          .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; }
+          .mt-8 { margin-top: 2rem; } .my-12 { margin-top: 3rem; margin-bottom: 3rem; }
+          .ml-2 { margin-left: 0.5rem; }
+          .p-3 { padding: 0.75rem; } .p-4 { padding: 1rem; }
+          .p-6 { padding: 1.5rem; } .p-12 { padding: 3rem; }
+          .px-8 { padding-left: 2rem; padding-right: 2rem; }
+          .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+          .pt-3 { padding-top: 0.75rem; } .pt-6 { padding-top: 1.5rem; }
+          .pb-4 { padding-bottom: 1rem; }
+          .gap-2 { gap: 0.5rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; }
+          .space-y-3 > * + * { margin-top: 0.75rem; }
+          .space-y-4 > * + * { margin-top: 1rem; }
+          .rounded-full { border-radius: 9999px; } .rounded-lg { border-radius: 0.5rem; }
+          .border { border: 1px solid #e5e7eb; }
+          .border-t { border-top: 1px solid #e5e7eb; }
+          .bg-gray-50 { background-color: #f9fafb; }
+          .border-gray-100 { border-color: #f3f4f6; }
+          .border-gray-200 { border-color: #e5e7eb; }
+          .text-gray-500 { color: #6b7280; } .text-gray-600 { color: #4b5563; }
+          .text-gray-700 { color: #374151; } .text-gray-800 { color: #1f2937; }
+          .text-gray-900 { color: #111827; } .text-white { color: #fff; }
+          .text-red-700 { color: #b91c1c; }
+          .w-10 { width: 2.5rem; } .w-16 { width: 4rem; } .w-32 { width: 8rem; }
+          .h-1 { height: 0.25rem; } .h-10 { height: 2.5rem; } .h-24 { height: 6rem; }
+          .w-auto { width: auto; } .w-full { width: 100%; }
+          .max-w-lg { max-width: 32rem; }
+          .inline-flex { display: inline-flex; }
+          .grid { display: grid; }
+          .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+          .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+          img { max-width: 100%; height: auto; }
+          @media print {
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          }
+          @page { margin: 0; size: A4; }
+        </style></head><body>${printContent}</body></html>`);
+      win.document.close();
+      setTimeout(() => { win.print(); }, 500);
+    }, 300);
   }, []);
 
   const featuredCase = cases?.find((c) => c.case_number === "CF-001");
@@ -338,16 +406,6 @@ const CasesList = () => {
         <CaseReportPrint ref={printRef} caseItem={printCase} userIP={userIP} />
       )}
 
-      {/* Print styles */}
-      <style>{`
-        @media print {
-          body > * { display: none !important; }
-          body > #root { display: block !important; }
-          #root > * { display: none !important; }
-          [class*="CaseReportPrint"], .print\\:block { display: block !important; }
-          @page { margin: 0; size: A4; }
-        }
-      `}</style>
     </PlatformLayout>
   );
 };
