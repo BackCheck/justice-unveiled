@@ -17,6 +17,8 @@ import {
   Tag
 } from "lucide-react";
 import { format } from "date-fns";
+import { StartInvestigationButton } from "@/components/blog/StartInvestigationButton";
+import { toast } from "sonner";
 
 interface BlogPost {
   id: string;
@@ -185,14 +187,21 @@ const BlogPostPage = () => {
           </div>
         )}
 
-        {/* Share Actions */}
-        <div className="flex items-center gap-4 pt-6 border-t">
-          <span className="text-sm text-muted-foreground">Share this post:</span>
+        {/* Actions */}
+        <div className="flex items-center gap-4 pt-6 border-t flex-wrap">
+          <StartInvestigationButton
+            blogTitle={post.title}
+            blogExcerpt={post.excerpt}
+            blogContent={post.content}
+            blogCategory={post.category}
+            blogSlug={post.slug}
+          />
           <Button
             variant="outline"
             size="sm"
             onClick={() => {
               navigator.clipboard.writeText(window.location.href);
+              toast.success("Link copied!");
             }}
           >
             <Share2 className="w-4 h-4 mr-2" />
