@@ -17,6 +17,7 @@ import { useUserRole } from "@/hooks/useUserRole";
 import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { useState, useRef, useEffect, useCallback } from "react";
+import { NewCaseDialog } from "@/components/cases/NewCaseDialog";
 
 const severityColors: Record<string, string> = {
   critical: "bg-red-500/20 text-red-700 dark:text-red-300 border-red-500/30",
@@ -221,6 +222,7 @@ const CasesList = () => {
   const { canEdit } = useUserRole();
   const [searchQuery, setSearchQuery] = useState("");
   const [printCase, setPrintCase] = useState<Case | null>(null);
+  const [showNewCase, setShowNewCase] = useState(false);
   const [userIP, setUserIP] = useState("Detecting...");
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -336,7 +338,9 @@ const CasesList = () => {
               </div>
             </div>
             {canEdit && (
-              <Button className="glow-primary-sm"><Plus className="w-4 h-4 mr-2" />New Case</Button>
+              <Button className="glow-primary-sm" onClick={() => setShowNewCase(true)}>
+                <Plus className="w-4 h-4 mr-2" />New Case
+              </Button>
             )}
           </div>
         </div>
@@ -405,6 +409,8 @@ const CasesList = () => {
       {printCase && (
         <CaseReportPrint ref={printRef} caseItem={printCase} userIP={userIP} />
       )}
+
+      <NewCaseDialog open={showNewCase} onOpenChange={setShowNewCase} />
 
     </PlatformLayout>
   );
