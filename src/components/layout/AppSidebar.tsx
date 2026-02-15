@@ -1,5 +1,4 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { 
   Clock, 
   BarChart3, 
@@ -25,7 +24,12 @@ import {
   GitBranch,
   ClipboardCheck,
   TrendingDown,
-  Gavel
+  Gavel,
+  Newspaper,
+  Phone,
+  HelpCircle,
+  Code,
+  Search
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -56,17 +60,27 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-const mainNavItems = [
+const coreNavItems = [
   { path: "/", label: "Home", icon: Home },
-  { path: "/investigations", label: "Investigation Hub", icon: Target },
   { path: "/cases", label: "Case Files", icon: FolderOpen },
   { path: "/timeline", label: "Timeline", icon: Clock },
   { path: "/dashboard", label: "Intel Dashboard", icon: BarChart3 },
-  { path: "/intel-briefing", label: "Briefing", icon: BookOpen },
   { path: "/network", label: "Entity Network", icon: Network },
+];
+
+const investigationNavItems = [
+  { path: "/investigations", label: "Investigation Hub", icon: Target },
+  { path: "/analyze", label: "AI Analyzer", icon: Brain },
+  { path: "/threat-profiler", label: "Threat Profiler", icon: Shield },
+  { path: "/evidence", label: "Evidence Matrix", icon: FileText },
   { path: "/watchlist", label: "My Watchlist", icon: Eye },
 ];
 
@@ -76,15 +90,30 @@ const analysisNavItems = [
   { path: "/compliance", label: "Compliance Checker", icon: ClipboardCheck },
   { path: "/regulatory-harm", label: "Economic Harm", icon: TrendingDown },
   { path: "/legal-intelligence", label: "Legal Intelligence", icon: Gavel },
-  { path: "/threat-profiler", label: "Threat Profiler", icon: Shield },
-  { path: "/analyze", label: "AI Analyzer", icon: Brain },
-  { path: "/evidence", label: "Evidence Matrix", icon: FileText },
   { path: "/international", label: "International Rights", icon: Scale },
+  { path: "/legal-research", label: "Legal Research", icon: Search },
+];
+
+const resourcesNavItems = [
+  { path: "/intel-briefing", label: "Intel Briefing", icon: BookOpen },
+  { path: "/blog", label: "Blog & News", icon: Newspaper },
+  { path: "/docs", label: "Documentation", icon: FileText },
+  { path: "/api", label: "Developer API", icon: Code },
+  { path: "/how-to-use", label: "How to Use", icon: HelpCircle },
 ];
 
 const systemNavItems = [
   { path: "/uploads", label: "Uploads", icon: Upload },
   { path: "/about", label: "About", icon: Info },
+  { path: "/contact", label: "Contact", icon: Phone },
+];
+
+const navGroups = [
+  { label: "Core", items: coreNavItems, defaultOpen: true },
+  { label: "Investigation", items: investigationNavItems, defaultOpen: true },
+  { label: "Analysis", items: analysisNavItems, defaultOpen: false },
+  { label: "Resources", items: resourcesNavItems, defaultOpen: false },
+  { label: "System", items: systemNavItems, defaultOpen: false },
 ];
 
 export function AppSidebar() {
@@ -115,7 +144,11 @@ export function AppSidebar() {
     navigate("/auth");
   };
 
-  const NavItem = ({ item, index = 0 }: { item: { path: string; label: string; icon: React.ComponentType<{ className?: string }> }; index?: number }) => {
+  // Check if any item in a group is active
+  const isGroupActive = (items: typeof coreNavItems) => 
+    items.some(item => isActive(item.path));
+
+  const NavItem = ({ item }: { item: { path: string; label: string; icon: React.ComponentType<{ className?: string }> } }) => {
     const Icon = item.icon;
     const active = isActive(item.path);
     
@@ -125,19 +158,17 @@ export function AppSidebar() {
           <Link 
             to={item.path}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-300 group/item",
+              "flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-200 group/item",
               active 
                 ? "bg-primary/10 text-primary border border-primary/20 shadow-sm" 
-                : "text-muted-foreground hover:text-foreground hover:bg-accent/20 hover:translate-x-1"
+                : "text-muted-foreground hover:text-foreground hover:bg-accent/20"
             )}
-            style={{ animationDelay: `${index * 50}ms` }}
           >
             <Icon className={cn(
-              "h-5 w-5 shrink-0 transition-all duration-300",
-              active && "text-primary",
-              !active && "group-hover/item:scale-110"
+              "h-4 w-4 shrink-0 transition-colors duration-200",
+              active && "text-primary"
             )} />
-            <span className={cn("truncate", collapsed && "sr-only")}>{item.label}</span>
+            <span className={cn("truncate text-sm", collapsed && "sr-only")}>{item.label}</span>
             {active && (
               <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
             )}
@@ -189,59 +220,69 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 py-4 overflow-y-auto overflow-x-hidden flex-1 min-h-0">
-        {/* Time-based Greeting - Compact version for sidebar */}
+      <SidebarContent className="px-2 py-3 overflow-y-auto overflow-x-hidden flex-1 min-h-0">
+        {/* Greeting */}
         {!collapsed && (
-          <div className="mb-4 px-2">
+          <div className="mb-3 px-2">
             <GreetingBanner compact showIcon />
           </div>
         )}
 
-        {/* Main Navigation */}
-        <SidebarGroup>
-          <SidebarGroupLabel className={cn("text-xs font-semibold text-muted-foreground uppercase tracking-wider", collapsed && "sr-only")}>
-            Main
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {mainNavItems.map((item) => (
-                <NavItem key={item.path} item={item} />
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Analysis */}
-        <SidebarGroup className="mt-4">
-          <SidebarGroupLabel className={cn("text-xs font-semibold text-muted-foreground uppercase tracking-wider", collapsed && "sr-only")}>
-            Analysis
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {analysisNavItems.map((item) => (
-                <NavItem key={item.path} item={item} />
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* System */}
-        <SidebarGroup className="mt-4">
-          <SidebarGroupLabel className={cn("text-xs font-semibold text-muted-foreground uppercase tracking-wider", collapsed && "sr-only")}>
-            System
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {systemNavItems.map((item) => (
-                <NavItem key={item.path} item={item} />
-              ))}
-              {/* Admin Panel - only visible to admins */}
-              {isAdmin && (
-                <NavItem item={{ path: "/admin", label: "Admin Panel", icon: Shield }} />
+        {/* Nav Groups with Collapsible sections */}
+        {navGroups.map((group) => {
+          const groupActive = isGroupActive(group.items);
+          return (
+            <SidebarGroup key={group.label} className="mb-1">
+              {collapsed ? (
+                <>
+                  <SidebarGroupLabel className="sr-only">{group.label}</SidebarGroupLabel>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      {group.items.map((item) => (
+                        <NavItem key={item.path} item={item} />
+                      ))}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </>
+              ) : (
+                <Collapsible defaultOpen={group.defaultOpen || groupActive}>
+                  <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors rounded-md hover:bg-accent/10 group/trigger">
+                    <span className="flex items-center gap-2">
+                      {group.label}
+                      {groupActive && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      )}
+                    </span>
+                    <ChevronRight className="h-3 w-3 transition-transform duration-200 group-data-[state=open]/trigger:rotate-90" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarGroupContent>
+                      <SidebarMenu className="mt-1">
+                        {group.items.map((item) => (
+                          <NavItem key={item.path} item={item} />
+                        ))}
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </CollapsibleContent>
+                </Collapsible>
               )}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+            </SidebarGroup>
+          );
+        })}
+
+        {/* Admin - only visible to admins */}
+        {isAdmin && (
+          <SidebarGroup className="mb-1">
+            <SidebarGroupLabel className={cn("text-[11px] font-semibold text-muted-foreground uppercase tracking-wider", collapsed && "sr-only")}>
+              Admin
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <NavItem item={{ path: "/admin", label: "Admin Panel", icon: Shield }} />
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
 
       <SidebarFooter className="border-t border-border/30 p-2 shrink-0">
@@ -256,7 +297,7 @@ export function AppSidebar() {
           </div>
         </div>
 
-        {/* User Profile Section - Show Sign In for guests */}
+        {/* User Profile Section */}
         {user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
