@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { BarChart3, Scale, Gavel, AlertCircle, Briefcase } from "lucide-react";
 import { useCombinedTimeline } from "@/hooks/useCombinedTimeline";
+import { useTranslation } from "react-i18next";
 
 const categoryConfig = {
   "Legal Proceeding": { icon: Gavel, color: "text-blue-500", bg: "bg-blue-500" },
@@ -13,6 +14,7 @@ const categoryConfig = {
 
 export const CategoryBreakdown = () => {
   const { stats } = useCombinedTimeline();
+  const { t } = useTranslation();
   const total = stats.total;
 
   const categories = Object.entries(stats.byCategory)
@@ -29,8 +31,8 @@ export const CategoryBreakdown = () => {
       <CardHeader className="pb-3">
         <CardTitle className="text-base flex items-center gap-2">
           <BarChart3 className="w-4 h-4 text-primary" />
-          Event Categories
-          <Badge variant="secondary" className="ml-auto text-xs">{total} total</Badge>
+          {t('widgets.eventCategories')}
+          <Badge variant="secondary" className="ml-auto text-xs">{total} {t('widgets.total')}</Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -48,10 +50,7 @@ export const CategoryBreakdown = () => {
                   <span className="text-xs text-muted-foreground">({cat.percentage}%)</span>
                 </div>
               </div>
-              <Progress 
-                value={cat.percentage} 
-                className="h-1.5" 
-              />
+              <Progress value={cat.percentage} className="h-1.5" />
             </div>
           );
         })}

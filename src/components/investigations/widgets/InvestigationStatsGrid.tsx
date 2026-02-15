@@ -14,12 +14,14 @@ import { usePlatformStats } from "@/hooks/usePlatformStats";
 import { useCombinedTimeline } from "@/hooks/useCombinedTimeline";
 import { useCombinedEntities } from "@/hooks/useCombinedEntities";
 import { useExtractedDiscrepancies } from "@/hooks/useExtractedEvents";
+import { useTranslation } from "react-i18next";
 
 export const InvestigationStatsGrid = () => {
   const { stats } = usePlatformStats();
   const { events, stats: timelineStats } = useCombinedTimeline();
   const { entities } = useCombinedEntities();
   const { data: discrepancies } = useExtractedDiscrepancies();
+  const { t } = useTranslation();
 
   const antagonists = entities.filter(e => e.category === "antagonist").length;
   const criticalIssues = (discrepancies || []).filter(d => d.severity === "critical").length;
@@ -27,49 +29,49 @@ export const InvestigationStatsGrid = () => {
 
   const statCards = [
     {
-      label: "Total Events",
+      label: t('widgets.totalEvents'),
       value: stats.totalEvents,
-      subValue: `${stats.aiExtractedEvents} AI-extracted`,
+      subValue: `${stats.aiExtractedEvents} ${t('widgets.aiExtracted')}`,
       icon: Calendar,
       color: "text-primary bg-primary/10",
       trend: "+12%",
     },
     {
-      label: "Entities Tracked",
+      label: t('widgets.entitiesTracked'),
       value: stats.totalEntities,
-      subValue: `${antagonists} antagonists`,
+      subValue: `${antagonists} ${t('widgets.antagonists')}`,
       icon: Users,
       color: "text-blue-500 bg-blue-500/10",
       trend: "+8%",
     },
     {
-      label: "Critical Issues",
+      label: t('widgets.criticalIssues'),
       value: criticalIssues,
-      subValue: `${highIssues} high severity`,
+      subValue: `${highIssues} ${t('widgets.highSeverity')}`,
       icon: AlertTriangle,
       color: "text-destructive bg-destructive/10",
       trend: "-5%",
     },
     {
-      label: "Documents Analyzed",
+      label: t('widgets.documentsAnalyzed'),
       value: stats.documentsAnalyzed,
-      subValue: `${stats.totalSources} total sources`,
+      subValue: `${stats.totalSources} ${t('widgets.totalSources')}`,
       icon: FileText,
       color: "text-emerald-500 bg-emerald-500/10",
       trend: "+25%",
     },
     {
-      label: "Network Connections",
+      label: t('widgets.networkConnections'),
       value: stats.totalConnections,
-      subValue: `${stats.inferredConnections} AI-inferred`,
+      subValue: `${stats.inferredConnections} ${t('widgets.aiInferred')}`,
       icon: Target,
       color: "text-purple-500 bg-purple-500/10",
       trend: "+15%",
     },
     {
-      label: "Years Documented",
+      label: t('widgets.yearsDocumented'),
       value: stats.yearsDocumented,
-      subValue: `${stats.internationalFrameworks} frameworks`,
+      subValue: `${stats.internationalFrameworks} ${t('widgets.frameworks')}`,
       icon: Shield,
       color: "text-orange-500 bg-orange-500/10",
       trend: "",
