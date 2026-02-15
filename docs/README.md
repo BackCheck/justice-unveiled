@@ -10,12 +10,37 @@
 
 ## 📚 Documentation Index
 
+### User Documentation
+
 | Document | Description |
 |----------|-------------|
-| [User Guide](./USER_GUIDE.md) | Complete guide to using the platform |
-| [API Reference](./API_REFERENCE.md) | Backend API documentation |
-| [Database Schema](./DATABASE_SCHEMA.md) | Database structure and relationships |
-| [Developer Guide](./DEVELOPER_GUIDE.md) | Contributing and development setup |
+| [User Guide](./USER_GUIDE.md) | Complete guide to using the platform for investigators and legal teams |
+
+### Developer Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Developer Guide](./DEVELOPER_GUIDE.md) | Development setup, project structure, and contributing guidelines |
+| [Architecture](./ARCHITECTURE.md) | System architecture, design patterns, and technical decisions |
+| [Components Reference](./COMPONENTS.md) | Complete component library reference with usage examples |
+| [State Management](./STATE_MANAGEMENT.md) | React Query, Context, and state management patterns |
+| [Testing Guide](./TESTING_GUIDE.md) | Unit, integration, and E2E testing strategies |
+
+### Operations Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Deployment Guide](./DEPLOYMENT.md) | Build process, deployment procedures, and production setup |
+| [Security Guide](./SECURITY.md) | Security best practices, authentication, and data protection |
+| [Performance Guide](./PERFORMANCE.md) | Optimization strategies and performance monitoring |
+| [Troubleshooting](./TROUBLESHOOTING.md) | Common issues and solutions |
+
+### API & Database Documentation
+
+| Document | Description |
+|----------|-------------|
+| [API Reference](./API_REFERENCE.md) | Backend Edge Functions API documentation |
+| [Database Schema](./DATABASE_SCHEMA.md) | Database structure, relationships, and RLS policies |
 
 ---
 
