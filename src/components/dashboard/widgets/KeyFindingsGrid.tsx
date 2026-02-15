@@ -4,20 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Target, ChevronRight, Lightbulb } from "lucide-react";
 import { keyFindings, severityColors, findingCategoryColors } from "@/data/keyFindingsData";
+import { useTranslation } from "react-i18next";
 
 export const KeyFindingsGrid = () => {
   const displayFindings = keyFindings.slice(0, 6);
+  const { t } = useTranslation();
 
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Lightbulb className="w-4 h-4 text-muted-foreground" />
-          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Key Intelligence Findings</h2>
+          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">{t('dashboard.keyIntelFindings')}</h2>
         </div>
         <Link to="/evidence">
           <Button variant="ghost" size="sm" className="gap-1 text-xs text-primary hover:text-primary">
-            View All
+            {t('dashboard.viewAll')}
             <ChevronRight className="w-4 h-4" />
           </Button>
         </Link>

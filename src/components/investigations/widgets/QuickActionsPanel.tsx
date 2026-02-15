@@ -1,5 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
   Shield, 
@@ -8,57 +6,58 @@ import {
   FileText, 
   Brain, 
   Target,
-  ChevronRight,
-  Zap,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-
-const quickActions = [
-  {
-    title: "Threat Profiler",
-    description: "Generate AI adversary profiles",
-    icon: Shield,
-    color: "text-red-500 bg-red-500/10 hover:bg-red-500/20",
-    href: "/investigations?tab=threats",
-  },
-  {
-    title: "Pattern Detection",
-    description: "Find hidden connections",
-    icon: Network,
-    color: "text-purple-500 bg-purple-500/10 hover:bg-purple-500/20",
-    href: "/investigations?tab=patterns",
-  },
-  {
-    title: "Risk Assessment",
-    description: "Automated threat scoring",
-    icon: AlertTriangle,
-    color: "text-orange-500 bg-orange-500/10 hover:bg-orange-500/20",
-    href: "/investigations?tab=risk",
-  },
-  {
-    title: "Generate Report",
-    description: "Create intelligence brief",
-    icon: FileText,
-    color: "text-emerald-500 bg-emerald-500/10 hover:bg-emerald-500/20",
-    href: "/investigations?tab=reports",
-  },
-  {
-    title: "AI Analyzer",
-    description: "Process new documents",
-    icon: Brain,
-    color: "text-primary bg-primary/10 hover:bg-primary/20",
-    href: "/analyze",
-  },
-  {
-    title: "Network Graph",
-    description: "Visualize relationships",
-    icon: Target,
-    color: "text-blue-500 bg-blue-500/10 hover:bg-blue-500/20",
-    href: "/network",
-  },
-];
+import { useTranslation } from "react-i18next";
 
 export const QuickActionsPanel = () => {
+  const { t } = useTranslation();
+
+  const quickActions = [
+    {
+      title: t('widgets.threatProfiler'),
+      description: t('widgets.generateProfiles'),
+      icon: Shield,
+      color: "text-red-500 bg-red-500/10 hover:bg-red-500/20",
+      href: "/investigations?tab=threats",
+    },
+    {
+      title: t('widgets.patternDetection'),
+      description: t('widgets.findConnections'),
+      icon: Network,
+      color: "text-purple-500 bg-purple-500/10 hover:bg-purple-500/20",
+      href: "/investigations?tab=patterns",
+    },
+    {
+      title: t('widgets.riskAssessment'),
+      description: t('widgets.automatedScoring'),
+      icon: AlertTriangle,
+      color: "text-orange-500 bg-orange-500/10 hover:bg-orange-500/20",
+      href: "/investigations?tab=risk",
+    },
+    {
+      title: t('widgets.generateReport'),
+      description: t('widgets.createBrief'),
+      icon: FileText,
+      color: "text-emerald-500 bg-emerald-500/10 hover:bg-emerald-500/20",
+      href: "/investigations?tab=reports",
+    },
+    {
+      title: t('widgets.aiAnalyzer'),
+      description: t('widgets.processDocuments'),
+      icon: Brain,
+      color: "text-primary bg-primary/10 hover:bg-primary/20",
+      href: "/analyze",
+    },
+    {
+      title: t('widgets.networkGraph'),
+      description: t('widgets.visualizeRelations'),
+      icon: Target,
+      color: "text-blue-500 bg-blue-500/10 hover:bg-blue-500/20",
+      href: "/network",
+    },
+  ];
+
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
       {quickActions.map((action) => {

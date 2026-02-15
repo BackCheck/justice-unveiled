@@ -14,6 +14,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 const activityIcons = {
   upload: Upload,
@@ -36,7 +37,8 @@ const activityColors = {
 };
 
 export const ActivityFeed = () => {
-  // Fetch recent uploads
+  const { t } = useTranslation();
+
   const { data: uploads } = useQuery({
     queryKey: ["recent-uploads-activity"],
     queryFn: async () => {
@@ -51,7 +53,6 @@ export const ActivityFeed = () => {
     staleTime: 1000 * 60,
   });
 
-  // Fetch recent events
   const { data: events } = useQuery({
     queryKey: ["recent-events-activity"],
     queryFn: async () => {
@@ -66,7 +67,6 @@ export const ActivityFeed = () => {
     staleTime: 1000 * 60,
   });
 
-  // Fetch recent entities
   const { data: entities } = useQuery({
     queryKey: ["recent-entities-activity"],
     queryFn: async () => {
@@ -81,27 +81,26 @@ export const ActivityFeed = () => {
     staleTime: 1000 * 60,
   });
 
-  // Combine and sort activities
   const activities = [
     ...(uploads || []).map(u => ({
       id: `upload-${u.id}`,
       type: "upload" as const,
       title: u.file_name,
-      description: "Document uploaded",
+      description: t('dashboard.documentUploaded'),
       time: u.created_at,
     })),
     ...(events || []).map(e => ({
       id: `event-${e.id}`,
       type: "event" as const,
       title: e.description.slice(0, 50) + (e.description.length > 50 ? "..." : ""),
-      description: "AI extracted event",
+      description: t('dashboard.aiExtractedEvent'),
       time: e.created_at,
     })),
     ...(entities || []).map(e => ({
       id: `entity-${e.id}`,
       type: "entity" as const,
       title: e.name,
-      description: "Entity identified",
+      description: t('dashboard.entityIdentified'),
       time: e.created_at,
     })),
   ]
@@ -114,11 +113,11 @@ export const ActivityFeed = () => {
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Activity className="w-4 h-4 text-primary" />
-            Recent Activity
+            {t('dashboard.recentActivityTitle')}
           </CardTitle>
           {activities.length > 0 && (
             <Badge variant="secondary" className="text-[10px] font-medium">
-              {activities.length} updates
+              {activities.length} {t('dashboard.updates')}
             </Badge>
           )}
         </div>
@@ -128,7 +127,7 @@ export const ActivityFeed = () => {
           <div className="px-4 pb-4 space-y-1.5">
             {activities.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground text-sm">
-                No recent activity
+                {t('dashboard.noRecentActivity')}
               </div>
             ) : (
               activities.map((activity, index) => {

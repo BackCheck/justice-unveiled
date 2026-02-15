@@ -12,69 +12,71 @@ import {
 } from "lucide-react";
 import { usePlatformStats } from "@/hooks/usePlatformStats";
 import { keyFindings } from "@/data/keyFindingsData";
+import { useTranslation } from "react-i18next";
 
 export const DashboardStatsHeader = () => {
   const { stats, isLoading } = usePlatformStats();
+  const { t } = useTranslation();
   
   const criticalFindings = keyFindings.filter(f => f.severity === "critical").length;
   const highFindings = keyFindings.filter(f => f.severity === "high").length;
 
   const statCards = [
     {
-      label: "Timeline Span",
+      label: t('dashboard.timelineSpan'),
       value: "2015–2025",
       icon: Calendar,
       color: "text-primary",
       bgColor: "bg-primary/10",
-      subValue: `${stats.totalEvents} events`,
+      subValue: `${stats.totalEvents} ${t('dashboard.events')}`,
       trend: null,
     },
     {
-      label: "Critical Issues",
+      label: t('dashboard.criticalIssues'),
       value: criticalFindings,
       icon: AlertTriangle,
       color: "text-destructive",
       bgColor: "bg-destructive/10",
-      subValue: `${highFindings} high severity`,
+      subValue: `${highFindings} ${t('dashboard.highSeverity')}`,
       trend: null,
       pulse: true,
     },
     {
-      label: "Entities Tracked",
+      label: t('dashboard.entitiesTracked'),
       value: stats.totalEntities,
       icon: Users,
       color: "text-chart-2",
       bgColor: "bg-chart-2/10",
-      subValue: stats.aiExtractedEntities > 0 ? `+${stats.aiExtractedEntities} AI` : "mapped",
+      subValue: stats.aiExtractedEntities > 0 ? `+${stats.aiExtractedEntities} AI` : t('dashboard.mapped'),
       trend: "+8%",
       hasAI: stats.aiExtractedEntities > 0,
     },
     {
-      label: "Verified Sources",
+      label: t('dashboard.verifiedSources'),
       value: stats.totalSources,
       icon: FileCheck,
       color: "text-chart-4",
       bgColor: "bg-chart-4/10",
-      subValue: `${stats.documentsAnalyzed} analyzed`,
+      subValue: `${stats.documentsAnalyzed} ${t('dashboard.analyzed')}`,
       trend: "+12%",
     },
     {
-      label: "Network Links",
+      label: t('dashboard.networkLinks'),
       value: stats.totalConnections,
       icon: Network,
       color: "text-purple-500",
       bgColor: "bg-purple-500/10",
-      subValue: `${stats.inferredConnections} AI-inferred`,
+      subValue: `${stats.inferredConnections} ${t('dashboard.aiInferred')}`,
       trend: "+15%",
       hasAI: stats.inferredConnections > 0,
     },
     {
-      label: "Rights Frameworks",
+      label: t('dashboard.rightsFrameworks'),
       value: stats.internationalFrameworks,
       icon: Shield,
       color: "text-orange-500",
       bgColor: "bg-orange-500/10",
-      subValue: "Int'l standards",
+      subValue: t('dashboard.intlStandards'),
       trend: null,
     },
   ];
@@ -106,7 +108,6 @@ export const DashboardStatsHeader = () => {
             style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'forwards' }}
           >
             <CardContent className="p-4">
-              {/* Header Row - Icon and Trend */}
               <div className="flex items-center justify-between mb-3">
                 <div className={`w-9 h-9 rounded-lg ${stat.bgColor} flex items-center justify-center transition-transform group-hover:scale-110`}>
                   <Icon className={`w-4 h-4 ${stat.color} ${stat.pulse ? 'animate-pulse' : ''}`} />
@@ -118,14 +119,8 @@ export const DashboardStatsHeader = () => {
                   </Badge>
                 )}
               </div>
-              
-              {/* Value - Large and prominent */}
               <p className="text-2xl font-bold text-foreground mb-1">{stat.value}</p>
-              
-              {/* Label - Clear descriptor */}
               <p className="text-xs font-medium text-foreground/70 mb-1">{stat.label}</p>
-              
-              {/* Sub-value with AI indicator */}
               <div className="flex items-center gap-1">
                 {stat.hasAI && <Sparkles className="w-3 h-3 text-amber-500" />}
                 <p className="text-[11px] text-muted-foreground">{stat.subValue}</p>

@@ -11,6 +11,7 @@ import {
 import { keyFindings } from "@/data/keyFindingsData";
 import { useExtractedDiscrepancies } from "@/hooks/useExtractedEvents";
 import { formatDistanceToNow } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 const severityConfig = {
   critical: { icon: AlertTriangle, color: "text-destructive", bg: "bg-destructive/10", border: "border-destructive/30" },
@@ -21,8 +22,8 @@ const severityConfig = {
 
 export const CriticalAlertsPanel = () => {
   const { data: discrepancies } = useExtractedDiscrepancies();
+  const { t } = useTranslation();
 
-  // Combine static findings with dynamic discrepancies
   const alerts = [
     ...keyFindings
       .filter(f => f.severity === "critical" || f.severity === "high")
@@ -31,8 +32,8 @@ export const CriticalAlertsPanel = () => {
         id: f.id,
         title: f.title,
         severity: f.severity as "critical" | "high" | "medium" | "low",
-        source: "Static Intel",
-        time: "Case File",
+        source: t('dashboard.staticIntel'),
+        time: t('dashboard.caseFile'),
       })),
     ...(discrepancies || [])
       .filter(d => d.severity === "critical" || d.severity === "high")
@@ -41,7 +42,7 @@ export const CriticalAlertsPanel = () => {
         id: d.id,
         title: d.title,
         severity: d.severity as "critical" | "high" | "medium" | "low",
-        source: "AI Analysis",
+        source: t('dashboard.aiAnalysis'),
         time: formatDistanceToNow(new Date(d.created_at), { addSuffix: true }),
       })),
   ].slice(0, 6);
@@ -54,7 +55,7 @@ export const CriticalAlertsPanel = () => {
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 text-destructive" />
-            Critical Alerts
+            {t('dashboard.criticalAlerts')}
           </CardTitle>
           {criticalCount > 0 && (
             <Badge variant="destructive" className="text-[10px] font-medium">
@@ -68,7 +69,7 @@ export const CriticalAlertsPanel = () => {
           <div className="px-4 pb-4 space-y-2.5">
             {alerts.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground text-sm">
-                No critical alerts
+                {t('dashboard.noCriticalAlerts')}
               </div>
             ) : (
               alerts.map((alert, index) => {
