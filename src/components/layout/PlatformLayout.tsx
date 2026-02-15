@@ -29,6 +29,19 @@ const pageTitles: Record<string, { title: string; subtitle?: string; isAI?: bool
   "/about": { title: "About HRPM", subtitle: "Mission & values" },
   "/admin": { title: "Admin Panel", subtitle: "System administration" },
   "/auth": { title: "Authentication", subtitle: "Sign in or create account" },
+  "/reconstruction": { title: "Event Reconstruction", subtitle: "Timeline reconstruction & contradictions" },
+  "/correlation": { title: "Claim Correlation", subtitle: "Evidence-claim mapping" },
+  "/compliance": { title: "Compliance Checker", subtitle: "Procedural compliance audit" },
+  "/regulatory-harm": { title: "Economic Harm", subtitle: "Financial impact tracking" },
+  "/legal-intelligence": { title: "Legal Intelligence", subtitle: "Statutes, precedents & doctrines", isAI: true },
+  "/legal-research": { title: "Legal Research", subtitle: "Search case law & statutes" },
+  "/threat-profiler": { title: "Threat Profiler", subtitle: "Entity threat assessment", isAI: true },
+  "/watchlist": { title: "My Watchlist", subtitle: "Tracked entities & events" },
+  "/blog": { title: "Blog & News", subtitle: "Articles and updates" },
+  "/docs": { title: "Documentation", subtitle: "Platform documentation" },
+  "/api": { title: "Developer API", subtitle: "API reference" },
+  "/how-to-use": { title: "How to Use", subtitle: "Getting started guide" },
+  "/contact": { title: "Contact", subtitle: "Get in touch" },
 };
 
 export const PlatformLayout = ({ children }: PlatformLayoutProps) => {

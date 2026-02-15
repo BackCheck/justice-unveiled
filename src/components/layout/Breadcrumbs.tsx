@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { ChevronRight, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -13,53 +13,69 @@ const routeConfig: Record<string, { label: string; parent?: string }> = {
   "/": { label: "Home" },
   "/timeline": { label: "Timeline", parent: "/" },
   "/dashboard": { label: "Intel Dashboard", parent: "/" },
-  "/intel-briefing": { label: "Intelligence Briefing", parent: "/" },
+  "/intel-briefing": { label: "Intel Briefing", parent: "/" },
   "/network": { label: "Entity Network", parent: "/" },
   "/investigations": { label: "Investigation Hub", parent: "/" },
   "/cases": { label: "Case Files", parent: "/" },
   "/analyze": { label: "AI Analyzer", parent: "/investigations" },
   "/evidence": { label: "Evidence Matrix", parent: "/investigations" },
   "/international": { label: "International Rights", parent: "/" },
-  "/uploads": { label: "Document Uploads", parent: "/" },
-  "/about": { label: "About HRPM", parent: "/" },
+  "/uploads": { label: "Uploads", parent: "/" },
+  "/about": { label: "About", parent: "/" },
+  "/contact": { label: "Contact", parent: "/" },
   "/auth": { label: "Sign In", parent: "/" },
   "/admin": { label: "Admin Panel", parent: "/" },
+  "/reconstruction": { label: "Reconstruction", parent: "/cases" },
+  "/correlation": { label: "Claim Correlation", parent: "/cases" },
+  "/compliance": { label: "Compliance Checker", parent: "/cases" },
+  "/regulatory-harm": { label: "Economic Harm", parent: "/cases" },
+  "/legal-intelligence": { label: "Legal Intelligence", parent: "/" },
+  "/legal-research": { label: "Legal Research", parent: "/legal-intelligence" },
+  "/threat-profiler": { label: "Threat Profiler", parent: "/investigations" },
+  "/watchlist": { label: "My Watchlist", parent: "/" },
+  "/blog": { label: "Blog", parent: "/" },
+  "/docs": { label: "Documentation", parent: "/" },
+  "/api": { label: "Developer API", parent: "/docs" },
+  "/how-to-use": { label: "How to Use", parent: "/docs" },
 };
 
 export const Breadcrumbs = () => {
   const location = useLocation();
   const currentPath = location.pathname;
 
-  // Build breadcrumb trail
   const buildBreadcrumbs = (): BreadcrumbItem[] => {
     const breadcrumbs: BreadcrumbItem[] = [];
     let path = currentPath;
 
-    // Handle dynamic routes (e.g., /cases/:id)
-    const basePath = path.split("/").slice(0, 2).join("/") || "/";
-    
+    // Handle dynamic routes like /cases/:id, /blog/:slug, /entities/:id, /events/:id, /violations/:type/:id
+    const segments = path.split("/").filter(Boolean);
+    const basePath = "/" + (segments[0] || "");
+
     while (path && path !== "/") {
-      const config = routeConfig[path] || routeConfig[basePath];
+      const config = routeConfig[path];
       if (config) {
         breadcrumbs.unshift({ label: config.label, path });
         path = config.parent || "";
       } else {
-        // Handle unknown routes or dynamic segments
-        const segments = path.split("/").filter(Boolean);
-        if (segments.length > 0) {
+        // Dynamic route handling
+        const parentConfig = routeConfig[basePath];
+        if (parentConfig && breadcrumbs.length === 0) {
+          // Add the dynamic segment as last crumb
           const lastSegment = segments[segments.length - 1];
-          breadcrumbs.unshift({ 
-            label: lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1).replace(/-/g, " "), 
-            path 
-          });
-          path = "/" + segments.slice(0, -1).join("/") || "/";
+          const dynamicLabel = lastSegment.length > 12 
+            ? lastSegment.slice(0, 10) + "…" 
+            : lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1).replace(/-/g, " ");
+          breadcrumbs.unshift({ label: dynamicLabel, path });
+          // Then add the parent
+          breadcrumbs.unshift({ label: parentConfig.label, path: basePath });
+          path = parentConfig.parent || "";
         } else {
           break;
         }
       }
     }
 
-    // Add home if not already first
+    // Always start with Home
     if (breadcrumbs.length === 0 || breadcrumbs[0].path !== "/") {
       breadcrumbs.unshift({ label: "Home", path: "/", icon: Home });
     } else {
@@ -71,24 +87,23 @@ export const Breadcrumbs = () => {
 
   const breadcrumbs = buildBreadcrumbs();
 
-  // Don't show breadcrumbs on home page
   if (currentPath === "/" || currentPath === "") {
     return null;
   }
 
   return (
-    <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm">
+    <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm overflow-x-auto scrollbar-none">
       {breadcrumbs.map((crumb, index) => {
         const isLast = index === breadcrumbs.length - 1;
         const Icon = crumb.icon;
 
         return (
-          <div key={crumb.path} className="flex items-center gap-1">
+          <div key={`${crumb.path}-${index}`} className="flex items-center gap-1 shrink-0">
             {index > 0 && (
               <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50" />
             )}
             {isLast ? (
-              <span className="font-medium text-foreground flex items-center gap-1.5">
+              <span className="font-medium text-foreground flex items-center gap-1.5 text-xs sm:text-sm">
                 {Icon && <Icon className="w-3.5 h-3.5" />}
                 {crumb.label}
               </span>
@@ -96,7 +111,7 @@ export const Breadcrumbs = () => {
               <Link
                 to={crumb.path}
                 className={cn(
-                  "text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5",
+                  "text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 text-xs sm:text-sm",
                   "hover:underline underline-offset-4"
                 )}
               >
