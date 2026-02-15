@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -25,79 +26,46 @@ import {
 import { cn } from "@/lib/utils";
 
 interface QuickAction {
-  label: string;
+  labelKey: string;
   path: string;
   icon: React.ComponentType<{ className?: string }>;
-  description: string;
+  descriptionKey: string;
   badge?: string;
 }
 
 const quickActions: QuickAction[] = [
-  {
-    label: "Upload Documents",
-    path: "/uploads",
-    icon: Upload,
-    description: "Add new evidence files",
-  },
-  {
-    label: "AI Analyzer",
-    path: "/analyze",
-    icon: Brain,
-    description: "Extract intelligence from documents",
-    badge: "AI",
-  },
-  {
-    label: "Investigation Hub",
-    path: "/investigations",
-    icon: Target,
-    description: "Threat profiling & pattern detection",
-    badge: "New",
-  },
-  {
-    label: "View Timeline",
-    path: "/timeline",
-    icon: Clock,
-    description: "Chronological event view",
-  },
-  {
-    label: "Entity Network",
-    path: "/network",
-    icon: Network,
-    description: "Relationship mapping",
-  },
-  {
-    label: "Evidence Matrix",
-    path: "/evidence",
-    icon: FileText,
-    description: "Cross-reference sources",
-  },
+  { labelKey: "pages.uploadDocuments", path: "/uploads", icon: Upload, descriptionKey: "pages.addNewEvidence" },
+  { labelKey: "nav.aiAnalyzer", path: "/analyze", icon: Brain, descriptionKey: "pages.extractIntelligence", badge: "AI" },
+  { labelKey: "nav.investigations", path: "/investigations", icon: Target, descriptionKey: "pages.threatProfilingDesc", badge: "New" },
+  { labelKey: "pages.viewTimeline", path: "/timeline", icon: Clock, descriptionKey: "pages.chronologicalView" },
+  { labelKey: "nav.entityNetwork", path: "/network", icon: Network, descriptionKey: "pages.relationshipMapping" },
+  { labelKey: "nav.evidenceMatrix", path: "/evidence", icon: FileText, descriptionKey: "pages.crossReferenceSources" },
 ];
 
-// Contextual actions based on current route
 const contextualActions: Record<string, QuickAction[]> = {
   "/timeline": [
-    { label: "View Network", path: "/network", icon: Network, description: "See entity relationships" },
-    { label: "Intel Dashboard", path: "/dashboard", icon: BarChart3, description: "Analytics overview" },
+    { labelKey: "nav.entityNetwork", path: "/network", icon: Network, descriptionKey: "pages.relationshipMapping" },
+    { labelKey: "nav.intelDashboard", path: "/dashboard", icon: BarChart3, descriptionKey: "pages.intelDashboardSub" },
   ],
   "/network": [
-    { label: "View Timeline", path: "/timeline", icon: Clock, description: "Chronological events" },
-    { label: "Investigation Hub", path: "/investigations", icon: Target, description: "Deep analysis tools" },
+    { labelKey: "pages.viewTimeline", path: "/timeline", icon: Clock, descriptionKey: "pages.chronologicalView" },
+    { labelKey: "nav.investigations", path: "/investigations", icon: Target, descriptionKey: "pages.investigationHubSub" },
   ],
   "/dashboard": [
-    { label: "Case Files", path: "/cases", icon: FolderOpen, description: "Browse investigations" },
-    { label: "Upload Evidence", path: "/uploads", icon: Upload, description: "Add new documents" },
+    { labelKey: "nav.caseFiles", path: "/cases", icon: FolderOpen, descriptionKey: "pages.caseFilesSub" },
+    { labelKey: "pages.uploadDocuments", path: "/uploads", icon: Upload, descriptionKey: "pages.addNewEvidence" },
   ],
   "/investigations": [
-    { label: "Entity Network", path: "/network", icon: Network, description: "Visualize connections" },
-    { label: "Evidence Matrix", path: "/evidence", icon: FileText, description: "Source verification" },
+    { labelKey: "nav.entityNetwork", path: "/network", icon: Network, descriptionKey: "pages.relationshipMapping" },
+    { labelKey: "nav.evidenceMatrix", path: "/evidence", icon: FileText, descriptionKey: "pages.crossReferenceSources" },
   ],
 };
 
 export const QuickActions = () => {
   const location = useLocation();
+  const { t } = useTranslation();
   const currentPath = location.pathname;
 
-  // Get contextual quick actions or default
   const relevantActions = contextualActions[currentPath] || quickActions.slice(0, 3);
 
   return (
@@ -114,7 +82,7 @@ export const QuickActions = () => {
           >
             <Link to={action.path}>
               <action.icon className="w-4 h-4" />
-              <span>{action.label}</span>
+              <span>{t(action.labelKey)}</span>
               {action.badge && (
                 <Badge variant="secondary" className="ml-1 h-4 px-1.5 text-[10px]">
                   {action.badge}
@@ -130,13 +98,13 @@ export const QuickActions = () => {
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="h-8 gap-2 border-primary/30 hover:border-primary/50">
             <Plus className="w-4 h-4" />
-            <span className="hidden sm:inline">Quick Actions</span>
+            <span className="hidden sm:inline">{t('pages.quickActions')}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-64">
           <DropdownMenuLabel className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-primary" />
-            Quick Navigation
+            {t('pages.quickNavigation')}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           {quickActions.map((action) => (
@@ -153,7 +121,7 @@ export const QuickActions = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-sm">{action.label}</span>
+                    <span className="font-medium text-sm">{t(action.labelKey)}</span>
                     {action.badge && (
                       <Badge
                         variant={action.badge === "AI" ? "default" : "secondary"}
@@ -163,7 +131,7 @@ export const QuickActions = () => {
                       </Badge>
                     )}
                   </div>
-                  <span className="text-xs text-muted-foreground">{action.description}</span>
+                  <span className="text-xs text-muted-foreground">{t(action.descriptionKey)}</span>
                 </div>
                 <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 mt-1" />
               </Link>

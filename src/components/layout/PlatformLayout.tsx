@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { Breadcrumbs } from "./Breadcrumbs";
@@ -13,41 +14,45 @@ interface PlatformLayoutProps {
   children: ReactNode;
 }
 
-// Page titles for header context
-const pageTitles: Record<string, { title: string; subtitle?: string; isAI?: boolean }> = {
-  "/": { title: "Home" },
-  "/timeline": { title: "Investigative Timeline", subtitle: "Chronological event documentation" },
-  "/dashboard": { title: "Intel Dashboard", subtitle: "Analytics & key findings" },
-  "/intel-briefing": { title: "Intelligence Briefing", subtitle: "Synthesized case intelligence" },
-  "/network": { title: "Entity Network", subtitle: "Relationship mapping" },
-  "/investigations": { title: "Investigation Hub", subtitle: "AI-powered analysis tools", isAI: true },
-  "/cases": { title: "Case Files", subtitle: "Investigation directory" },
-  "/analyze": { title: "AI Document Analyzer", subtitle: "Extract intelligence from evidence", isAI: true },
-  "/evidence": { title: "Evidence Matrix", subtitle: "Source cross-reference system" },
-  "/international": { title: "International Rights Audit", subtitle: "UN framework compliance" },
-  "/uploads": { title: "Document Uploads", subtitle: "Evidence management" },
-  "/about": { title: "About HRPM", subtitle: "Mission & values" },
-  "/admin": { title: "Admin Panel", subtitle: "System administration" },
-  "/auth": { title: "Authentication", subtitle: "Sign in or create account" },
-  "/reconstruction": { title: "Event Reconstruction", subtitle: "Timeline reconstruction & contradictions" },
-  "/correlation": { title: "Claim Correlation", subtitle: "Evidence-claim mapping" },
-  "/compliance": { title: "Compliance Checker", subtitle: "Procedural compliance audit" },
-  "/regulatory-harm": { title: "Economic Harm", subtitle: "Financial impact tracking" },
-  "/legal-intelligence": { title: "Legal Intelligence", subtitle: "Statutes, precedents & doctrines", isAI: true },
-  "/legal-research": { title: "Legal Research", subtitle: "Search case law & statutes" },
-  "/threat-profiler": { title: "Threat Profiler", subtitle: "Entity threat assessment", isAI: true },
-  "/watchlist": { title: "My Watchlist", subtitle: "Tracked entities & events" },
-  "/blog": { title: "Blog & News", subtitle: "Articles and updates" },
-  "/docs": { title: "Documentation", subtitle: "Platform documentation" },
-  "/api": { title: "Developer API", subtitle: "API reference" },
-  "/how-to-use": { title: "How to Use", subtitle: "Getting started guide" },
-  "/contact": { title: "Contact", subtitle: "Get in touch" },
+// Page titles mapped to translation keys
+const pageTitleKeys: Record<string, { titleKey: string; subtitleKey?: string; isAI?: boolean }> = {
+  "/": { titleKey: "nav.home" },
+  "/timeline": { titleKey: "nav.timeline", subtitleKey: "pages.investigativeTimeline" },
+  "/dashboard": { titleKey: "nav.intelDashboard", subtitleKey: "pages.intelDashboardSub" },
+  "/intel-briefing": { titleKey: "nav.intelBriefing", subtitleKey: "pages.intelligenceBriefing" },
+  "/network": { titleKey: "nav.entityNetwork", subtitleKey: "pages.entityNetworkSub" },
+  "/investigations": { titleKey: "nav.investigations", subtitleKey: "pages.investigationHubSub", isAI: true },
+  "/cases": { titleKey: "nav.caseFiles", subtitleKey: "pages.caseFilesSub" },
+  "/analyze": { titleKey: "nav.aiAnalyzer", subtitleKey: "pages.aiAnalyzerSub", isAI: true },
+  "/evidence": { titleKey: "nav.evidenceMatrix", subtitleKey: "pages.evidenceMatrixSub" },
+  "/international": { titleKey: "nav.international", subtitleKey: "pages.internationalRightsSub" },
+  "/uploads": { titleKey: "nav.uploads", subtitleKey: "pages.uploadsSub" },
+  "/about": { titleKey: "nav.about", subtitleKey: "pages.aboutSub" },
+  "/admin": { titleKey: "nav.admin", subtitleKey: "pages.adminSub" },
+  "/auth": { titleKey: "common.signIn", subtitleKey: "pages.authSub" },
+  "/reconstruction": { titleKey: "nav.reconstruction", subtitleKey: "pages.reconstructionSub" },
+  "/correlation": { titleKey: "nav.correlation", subtitleKey: "pages.correlationSub" },
+  "/compliance": { titleKey: "nav.complianceChecker", subtitleKey: "pages.complianceSub" },
+  "/regulatory-harm": { titleKey: "nav.harm", subtitleKey: "pages.harmSub" },
+  "/legal-intelligence": { titleKey: "nav.legal", subtitleKey: "pages.legalIntelligenceSub", isAI: true },
+  "/legal-research": { titleKey: "nav.legalResearch", subtitleKey: "pages.legalResearchSub" },
+  "/threat-profiler": { titleKey: "nav.threatProfiler", subtitleKey: "pages.threatProfilerSub", isAI: true },
+  "/watchlist": { titleKey: "nav.watchlist", subtitleKey: "pages.watchlistSub" },
+  "/blog": { titleKey: "nav.blogNews", subtitleKey: "pages.blogSub" },
+  "/docs": { titleKey: "nav.documentation", subtitleKey: "pages.docsSub" },
+  "/api": { titleKey: "nav.developerApi", subtitleKey: "pages.apiSub" },
+  "/how-to-use": { titleKey: "nav.howToUse", subtitleKey: "pages.howToUseSub" },
+  "/contact": { titleKey: "nav.contact", subtitleKey: "pages.contactSub" },
 };
 
 export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
   const location = useLocation();
+  const { t } = useTranslation();
   const currentPath = location.pathname;
-  const pageInfo = pageTitles[currentPath] || { title: "HRPM" };
+  const pageConfig = pageTitleKeys[currentPath];
+  const pageTitle = pageConfig ? t(pageConfig.titleKey) : "HRPM";
+  const pageSubtitle = pageConfig?.subtitleKey ? t(pageConfig.subtitleKey) : undefined;
+  const isAI = pageConfig?.isAI;
   const isHomePage = currentPath === "/" || currentPath === "";
 
   return (
@@ -73,16 +78,16 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
                 <div className="hidden md:flex items-center gap-3 min-w-0">
                   <div className="flex flex-col min-w-0">
                     <div className="flex items-center gap-2">
-                      <h1 className="font-semibold text-foreground truncate">{pageInfo.title}</h1>
-                      {pageInfo.isAI && (
+                      <h1 className="font-semibold text-foreground truncate">{pageTitle}</h1>
+                      {isAI && (
                         <Badge variant="secondary" className="gap-1 h-5 px-1.5 text-[10px] shrink-0">
                           <Sparkles className="w-3 h-3" />
                           AI
                         </Badge>
                       )}
                     </div>
-                    {pageInfo.subtitle && (
-                      <span className="text-xs text-muted-foreground truncate">{pageInfo.subtitle}</span>
+                    {pageSubtitle && (
+                      <span className="text-xs text-muted-foreground truncate">{pageSubtitle}</span>
                     )}
                   </div>
                 </div>
@@ -116,15 +121,15 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
               <div className="flex items-center gap-4">
                 <Link to="/blog" className="flex items-center gap-1.5 hover:text-primary transition-colors">
                   <Newspaper className="w-4 h-4" />
-                  Blog
+                  {t('pages.blog')}
                 </Link>
                 <Link to="/docs" className="flex items-center gap-1.5 hover:text-primary transition-colors">
                   <FileText className="w-4 h-4" />
-                  Docs
+                  {t('pages.docs')}
                 </Link>
                 <Link to="/api" className="flex items-center gap-1.5 hover:text-primary transition-colors">
                   <Code className="w-4 h-4" />
-                  API
+                  {t('pages.api')}
                 </Link>
                 <a 
                   href="https://github.com/BackCheck/justice-unveiled" 
