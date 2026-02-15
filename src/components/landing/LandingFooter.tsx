@@ -46,25 +46,25 @@ const LandingFooter = () => {
             <div className="flex flex-col gap-2 text-sm text-foreground/70">
               <Link to="/about" className="hover:text-primary transition-all duration-300">{t('nav.about')}</Link>
               <Link to="/how-to-use" className="hover:text-primary transition-all duration-300 flex items-center gap-1">
-                <BookOpen className="w-3.5 h-3.5" /> How to Use
+                <BookOpen className="w-3.5 h-3.5" /> {t('footer.howToUse')}
               </Link>
               <Link to="/cases" className="hover:text-primary transition-all duration-300">{t('cases.title')}</Link>
               <Link to="/dashboard" className="hover:text-primary transition-all duration-300">{t('nav.dashboard')}</Link>
               <Link to="/docs" className="hover:text-primary transition-all duration-300 flex items-center gap-1">
-                <BookOpen className="w-3.5 h-3.5" /> Full Documentation
+                <BookOpen className="w-3.5 h-3.5" /> {t('footer.fullDocs')}
               </Link>
               <Link to="/api" className="hover:text-primary transition-all duration-300 flex items-center gap-1">
-                <Code className="w-3.5 h-3.5" /> API
+                <Code className="w-3.5 h-3.5" /> {t('footer.api')}
               </Link>
               <a href="https://github.com/BackCheck/justice-unveiled" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-all duration-300 flex items-center gap-1">
-                <Github className="w-3.5 h-3.5" /> Open Source
+                <Github className="w-3.5 h-3.5" /> {t('footer.openSource')}
               </a>
             </div>
           </div>
 
           {/* Recent Blog Posts */}
           <div className="space-y-4">
-            <h4 className="font-semibold text-foreground">Recent Posts</h4>
+            <h4 className="font-semibold text-foreground">{t('footer.recentPosts')}</h4>
             <div className="flex flex-col gap-2 text-sm text-foreground/70">
               {recentPosts && recentPosts.length > 0 ? (
                 recentPosts.map((post) => (
@@ -73,10 +73,10 @@ const LandingFooter = () => {
                   </Link>
                 ))
               ) : (
-                <Link to="/blog" className="hover:text-primary transition-all duration-300">Visit our Blog</Link>
+                <Link to="/blog" className="hover:text-primary transition-all duration-300">{t('footer.visitBlog')}</Link>
               )}
               <Link to="/blog" className="text-primary hover:text-primary/80 transition-all duration-300 font-medium mt-1">
-                View all posts →
+                {t('footer.viewAllPosts')} →
               </Link>
             </div>
           </div>

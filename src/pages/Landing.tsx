@@ -180,9 +180,9 @@ const Landing = () => {
             {/* Typewriter tagline */}
             <ScrollReveal delay={300}>
               <div className="text-lg md:text-xl text-foreground/80 mb-4 font-medium">
-                <span className="text-foreground">Documenting </span>
+                <span className="text-foreground">{t('landing.hero.typingPrefix')} </span>
                 <TypingText 
-                  words={["Injustice", "Human Rights Abuses", "Institutional Failures", "Legal Persecution", "Systemic Corruption"]}
+                  words={t('landing.hero.typingWords', { returnObjects: true }) as string[]}
                   typingSpeed={80}
                   deletingSpeed={40}
                   pauseDuration={2500}
@@ -211,7 +211,7 @@ const Landing = () => {
                 <Button size="lg" variant="outline" className="border-primary/50 hover:bg-primary hover:text-primary-foreground" asChild>
                   <Link to="/auth">
                     <Plus className="w-4 h-4 mr-2" />
-                    Start Investigation
+                    {t('landing.hero.startInvestigation')}
                   </Link>
                 </Button>
                 <Button size="lg" variant="ghost" className="hover:bg-primary/5" asChild>
