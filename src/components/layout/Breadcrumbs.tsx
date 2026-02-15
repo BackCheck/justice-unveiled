@@ -1,4 +1,5 @@
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { ChevronRight, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -8,66 +9,63 @@ interface BreadcrumbItem {
   icon?: React.ComponentType<{ className?: string }>;
 }
 
-// Route configuration with labels and parent relationships
-const routeConfig: Record<string, { label: string; parent?: string }> = {
-  "/": { label: "Home" },
-  "/timeline": { label: "Timeline", parent: "/" },
-  "/dashboard": { label: "Intel Dashboard", parent: "/" },
-  "/intel-briefing": { label: "Intel Briefing", parent: "/" },
-  "/network": { label: "Entity Network", parent: "/" },
-  "/investigations": { label: "Investigation Hub", parent: "/" },
-  "/cases": { label: "Case Files", parent: "/" },
-  "/analyze": { label: "AI Analyzer", parent: "/investigations" },
-  "/evidence": { label: "Evidence Matrix", parent: "/investigations" },
-  "/international": { label: "International Rights", parent: "/" },
-  "/uploads": { label: "Uploads", parent: "/" },
-  "/about": { label: "About", parent: "/" },
-  "/contact": { label: "Contact", parent: "/" },
-  "/auth": { label: "Sign In", parent: "/" },
-  "/admin": { label: "Admin Panel", parent: "/" },
-  "/reconstruction": { label: "Reconstruction", parent: "/cases" },
-  "/correlation": { label: "Claim Correlation", parent: "/cases" },
-  "/compliance": { label: "Compliance Checker", parent: "/cases" },
-  "/regulatory-harm": { label: "Economic Harm", parent: "/cases" },
-  "/legal-intelligence": { label: "Legal Intelligence", parent: "/" },
-  "/legal-research": { label: "Legal Research", parent: "/legal-intelligence" },
-  "/threat-profiler": { label: "Threat Profiler", parent: "/investigations" },
-  "/watchlist": { label: "My Watchlist", parent: "/" },
-  "/blog": { label: "Blog", parent: "/" },
-  "/docs": { label: "Documentation", parent: "/" },
-  "/api": { label: "Developer API", parent: "/docs" },
-  "/how-to-use": { label: "How to Use", parent: "/docs" },
+// Route configuration with translation keys and parent relationships
+const routeConfig: Record<string, { labelKey: string; parent?: string }> = {
+  "/": { labelKey: "nav.home" },
+  "/timeline": { labelKey: "nav.timeline", parent: "/" },
+  "/dashboard": { labelKey: "nav.intelDashboard", parent: "/" },
+  "/intel-briefing": { labelKey: "nav.intelBriefing", parent: "/" },
+  "/network": { labelKey: "nav.entityNetwork", parent: "/" },
+  "/investigations": { labelKey: "nav.investigations", parent: "/" },
+  "/cases": { labelKey: "nav.caseFiles", parent: "/" },
+  "/analyze": { labelKey: "nav.aiAnalyzer", parent: "/investigations" },
+  "/evidence": { labelKey: "nav.evidenceMatrix", parent: "/investigations" },
+  "/international": { labelKey: "nav.international", parent: "/" },
+  "/uploads": { labelKey: "nav.uploads", parent: "/" },
+  "/about": { labelKey: "nav.about", parent: "/" },
+  "/contact": { labelKey: "nav.contact", parent: "/" },
+  "/auth": { labelKey: "common.signIn", parent: "/" },
+  "/admin": { labelKey: "nav.admin", parent: "/" },
+  "/reconstruction": { labelKey: "nav.reconstruction", parent: "/cases" },
+  "/correlation": { labelKey: "nav.correlation", parent: "/cases" },
+  "/compliance": { labelKey: "nav.complianceChecker", parent: "/cases" },
+  "/regulatory-harm": { labelKey: "nav.harm", parent: "/cases" },
+  "/legal-intelligence": { labelKey: "nav.legal", parent: "/" },
+  "/legal-research": { labelKey: "nav.legalResearch", parent: "/legal-intelligence" },
+  "/threat-profiler": { labelKey: "nav.threatProfiler", parent: "/investigations" },
+  "/watchlist": { labelKey: "nav.watchlist", parent: "/" },
+  "/blog": { labelKey: "nav.blogNews", parent: "/" },
+  "/docs": { labelKey: "nav.documentation", parent: "/" },
+  "/api": { labelKey: "nav.developerApi", parent: "/docs" },
+  "/how-to-use": { labelKey: "nav.howToUse", parent: "/docs" },
 };
 
 export const Breadcrumbs = () => {
   const location = useLocation();
+  const { t } = useTranslation();
   const currentPath = location.pathname;
 
   const buildBreadcrumbs = (): BreadcrumbItem[] => {
     const breadcrumbs: BreadcrumbItem[] = [];
     let path = currentPath;
 
-    // Handle dynamic routes like /cases/:id, /blog/:slug, /entities/:id, /events/:id, /violations/:type/:id
     const segments = path.split("/").filter(Boolean);
     const basePath = "/" + (segments[0] || "");
 
     while (path && path !== "/") {
       const config = routeConfig[path];
       if (config) {
-        breadcrumbs.unshift({ label: config.label, path });
+        breadcrumbs.unshift({ label: t(config.labelKey), path });
         path = config.parent || "";
       } else {
-        // Dynamic route handling
         const parentConfig = routeConfig[basePath];
         if (parentConfig && breadcrumbs.length === 0) {
-          // Add the dynamic segment as last crumb
           const lastSegment = segments[segments.length - 1];
           const dynamicLabel = lastSegment.length > 12 
             ? lastSegment.slice(0, 10) + "…" 
             : lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1).replace(/-/g, " ");
           breadcrumbs.unshift({ label: dynamicLabel, path });
-          // Then add the parent
-          breadcrumbs.unshift({ label: parentConfig.label, path: basePath });
+          breadcrumbs.unshift({ label: t(parentConfig.labelKey), path: basePath });
           path = parentConfig.parent || "";
         } else {
           break;
@@ -75,9 +73,8 @@ export const Breadcrumbs = () => {
       }
     }
 
-    // Always start with Home
     if (breadcrumbs.length === 0 || breadcrumbs[0].path !== "/") {
-      breadcrumbs.unshift({ label: "Home", path: "/", icon: Home });
+      breadcrumbs.unshift({ label: t('nav.home'), path: "/", icon: Home });
     } else {
       breadcrumbs[0].icon = Home;
     }

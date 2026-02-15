@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { 
   Clock, 
   BarChart3, 
@@ -69,56 +70,57 @@ import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const coreNavItems = [
-  { path: "/", label: "Home", icon: Home },
-  { path: "/cases", label: "Case Files", icon: FolderOpen },
-  { path: "/timeline", label: "Timeline", icon: Clock },
-  { path: "/dashboard", label: "Intel Dashboard", icon: BarChart3 },
-  { path: "/network", label: "Entity Network", icon: Network },
+  { path: "/", labelKey: "nav.home", icon: Home },
+  { path: "/cases", labelKey: "nav.caseFiles", icon: FolderOpen },
+  { path: "/timeline", labelKey: "nav.timeline", icon: Clock },
+  { path: "/dashboard", labelKey: "nav.intelDashboard", icon: BarChart3 },
+  { path: "/network", labelKey: "nav.entityNetwork", icon: Network },
 ];
 
 const investigationNavItems = [
-  { path: "/investigations", label: "Investigation Hub", icon: Target },
-  { path: "/analyze", label: "AI Analyzer", icon: Brain },
-  { path: "/threat-profiler", label: "Threat Profiler", icon: Shield },
-  { path: "/evidence", label: "Evidence Matrix", icon: FileText },
-  { path: "/watchlist", label: "My Watchlist", icon: Eye },
+  { path: "/investigations", labelKey: "nav.investigations", icon: Target },
+  { path: "/analyze", labelKey: "nav.aiAnalyzer", icon: Brain },
+  { path: "/threat-profiler", labelKey: "nav.threatProfiler", icon: Shield },
+  { path: "/evidence", labelKey: "nav.evidenceMatrix", icon: FileText },
+  { path: "/watchlist", labelKey: "nav.watchlist", icon: Eye },
 ];
 
 const analysisNavItems = [
-  { path: "/reconstruction", label: "Reconstruction", icon: GitBranch },
-  { path: "/correlation", label: "Claim Correlation", icon: Scale },
-  { path: "/compliance", label: "Compliance Checker", icon: ClipboardCheck },
-  { path: "/regulatory-harm", label: "Economic Harm", icon: TrendingDown },
-  { path: "/legal-intelligence", label: "Legal Intelligence", icon: Gavel },
-  { path: "/international", label: "International Rights", icon: Scale },
-  { path: "/legal-research", label: "Legal Research", icon: Search },
+  { path: "/reconstruction", labelKey: "nav.reconstruction", icon: GitBranch },
+  { path: "/correlation", labelKey: "nav.correlation", icon: Scale },
+  { path: "/compliance", labelKey: "nav.complianceChecker", icon: ClipboardCheck },
+  { path: "/regulatory-harm", labelKey: "nav.harm", icon: TrendingDown },
+  { path: "/legal-intelligence", labelKey: "nav.legal", icon: Gavel },
+  { path: "/international", labelKey: "nav.international", icon: Scale },
+  { path: "/legal-research", labelKey: "nav.legalResearch", icon: Search },
 ];
 
 const resourcesNavItems = [
-  { path: "/intel-briefing", label: "Intel Briefing", icon: BookOpen },
-  { path: "/blog", label: "Blog & News", icon: Newspaper },
-  { path: "/docs", label: "Documentation", icon: FileText },
-  { path: "/api", label: "Developer API", icon: Code },
-  { path: "/how-to-use", label: "How to Use", icon: HelpCircle },
+  { path: "/intel-briefing", labelKey: "nav.intelBriefing", icon: BookOpen },
+  { path: "/blog", labelKey: "nav.blogNews", icon: Newspaper },
+  { path: "/docs", labelKey: "nav.documentation", icon: FileText },
+  { path: "/api", labelKey: "nav.developerApi", icon: Code },
+  { path: "/how-to-use", labelKey: "nav.howToUse", icon: HelpCircle },
 ];
 
 const systemNavItems = [
-  { path: "/uploads", label: "Uploads", icon: Upload },
-  { path: "/about", label: "About", icon: Info },
-  { path: "/contact", label: "Contact", icon: Phone },
+  { path: "/uploads", labelKey: "nav.uploads", icon: Upload },
+  { path: "/about", labelKey: "nav.about", icon: Info },
+  { path: "/contact", labelKey: "nav.contact", icon: Phone },
 ];
 
 const navGroups = [
-  { label: "Core", items: coreNavItems, defaultOpen: true },
-  { label: "Investigation", items: investigationNavItems, defaultOpen: true },
-  { label: "Analysis", items: analysisNavItems, defaultOpen: false },
-  { label: "Resources", items: resourcesNavItems, defaultOpen: false },
-  { label: "System", items: systemNavItems, defaultOpen: false },
+  { labelKey: "nav.core", items: coreNavItems, defaultOpen: true },
+  { labelKey: "nav.investigation", items: investigationNavItems, defaultOpen: true },
+  { labelKey: "nav.analysis", items: analysisNavItems, defaultOpen: false },
+  { labelKey: "nav.resources", items: resourcesNavItems, defaultOpen: false },
+  { labelKey: "nav.system", items: systemNavItems, defaultOpen: false },
 ];
 
 export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { state, toggleSidebar } = useSidebar();
   const { user, profile, signOut } = useAuth();
   const { role, canEdit, canUpload, isAdmin } = useUserRole();
@@ -148,13 +150,14 @@ export function AppSidebar() {
   const isGroupActive = (items: typeof coreNavItems) => 
     items.some(item => isActive(item.path));
 
-  const NavItem = ({ item }: { item: { path: string; label: string; icon: React.ComponentType<{ className?: string }> } }) => {
+  const NavItem = ({ item }: { item: { path: string; labelKey: string; icon: React.ComponentType<{ className?: string }> } }) => {
     const Icon = item.icon;
     const active = isActive(item.path);
+    const label = t(item.labelKey);
     
     return (
       <SidebarMenuItem>
-        <SidebarMenuButton asChild tooltip={item.label}>
+        <SidebarMenuButton asChild tooltip={label}>
           <Link 
             to={item.path}
             className={cn(
@@ -168,7 +171,7 @@ export function AppSidebar() {
               "h-4 w-4 shrink-0 transition-colors duration-200",
               active && "text-primary"
             )} />
-            <span className={cn("truncate text-sm", collapsed && "sr-only")}>{item.label}</span>
+            <span className={cn("truncate text-sm", collapsed && "sr-only")}>{label}</span>
             {active && (
               <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
             )}
@@ -231,11 +234,12 @@ export function AppSidebar() {
         {/* Nav Groups with Collapsible sections */}
         {navGroups.map((group) => {
           const groupActive = isGroupActive(group.items);
+          const groupLabel = t(group.labelKey);
           return (
-            <SidebarGroup key={group.label} className="mb-1">
+            <SidebarGroup key={group.labelKey} className="mb-1">
               {collapsed ? (
                 <>
-                  <SidebarGroupLabel className="sr-only">{group.label}</SidebarGroupLabel>
+                  <SidebarGroupLabel className="sr-only">{groupLabel}</SidebarGroupLabel>
                   <SidebarGroupContent>
                     <SidebarMenu>
                       {group.items.map((item) => (
@@ -248,7 +252,7 @@ export function AppSidebar() {
                 <Collapsible defaultOpen={group.defaultOpen || groupActive}>
                   <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors rounded-md hover:bg-accent/10 group/trigger">
                     <span className="flex items-center gap-2">
-                      {group.label}
+                      {groupLabel}
                       {groupActive && (
                         <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                       )}
@@ -274,11 +278,11 @@ export function AppSidebar() {
         {isAdmin && (
           <SidebarGroup className="mb-1">
             <SidebarGroupLabel className={cn("text-[11px] font-semibold text-muted-foreground uppercase tracking-wider", collapsed && "sr-only")}>
-              Admin
+              {t('nav.admin')}
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                <NavItem item={{ path: "/admin", label: "Admin Panel", icon: Shield }} />
+                <NavItem item={{ path: "/admin", labelKey: "nav.admin", icon: Shield }} />
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -289,7 +293,7 @@ export function AppSidebar() {
         {/* Language & Theme Toggle */}
         <div className={cn("flex items-center gap-2 px-2 py-1", collapsed ? "justify-center flex-col" : "justify-between")}>
           {!collapsed && (
-            <span className="text-xs text-muted-foreground">Settings</span>
+            <span className="text-xs text-muted-foreground">{t('nav.settings')}</span>
           )}
           <div className="flex items-center gap-1">
             <LanguageSwitcher />
@@ -345,7 +349,7 @@ export function AppSidebar() {
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer">
                 <Settings className="mr-2 h-4 w-4" />
-                Settings
+                {t('nav.settings')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem 
@@ -353,7 +357,7 @@ export function AppSidebar() {
                 onClick={handleSignOut}
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                Sign out
+                {t('common.signOut')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -371,8 +375,8 @@ export function AppSidebar() {
             </div>
             {!collapsed && (
               <div className="flex flex-col items-start min-w-0 flex-1">
-                <span className="text-sm font-medium">Sign In</span>
-                <span className="text-xs text-muted-foreground">Optional</span>
+                <span className="text-sm font-medium">{t('common.signIn')}</span>
+                <span className="text-xs text-muted-foreground">{t('pages.optional')}</span>
               </div>
             )}
           </Link>
