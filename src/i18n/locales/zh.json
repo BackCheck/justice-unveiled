@@ -45,12 +45,16 @@
   },
   "landing": {
     "hero": {
-      "badge": "情报平台",
-      "title": "人权保护运动",
-      "subtitle": "记录不公正。要求问责。",
-      "description": "一个诉讼级调查平台，将记录的事实转化为可用于法庭的情报，配备经过验证的判例法映射和自动合规跟踪。",
-      "cta": "进入案件档案",
-      "secondaryCta": "查看仪表板"
+      "badge": "开源调查平台",
+      "title1": "记录真相。",
+      "title2": "要求",
+      "title3": "问责",
+      "description": "一个开源调查平台，利用经过验证的证据和透明的方法论来记录人权侵犯、腐败和程序不公正。",
+      "cta": "查看案件档案",
+      "secondaryCta": "查看情报仪表板",
+      "startInvestigation": "开始调查",
+      "typingPrefix": "记录",
+      "typingWords": ["不公正", "人权侵犯", "制度失败", "法律迫害", "系统性腐败"]
     },
     "stats": {
       "activeCases": "活跃案件",
@@ -58,9 +62,15 @@
       "events": "时间线事件",
       "sources": "已验证来源",
       "precedents": "已验证判例",
-      "statutes": "法律法规"
+      "statutes": "法律法规",
+      "yearsDocumented": "记录年数",
+      "internationalFrameworks": "国际框架"
     },
     "values": {
+      "sectionBadge": "我们的使命",
+      "sectionTitle": "捍卫",
+      "sectionTitleHighlight": "人权",
+      "sectionDescription": "HRPM是一个非营利组织，致力于记录人权侵犯并支持基本权利遭到侵犯的人们。",
       "justice": "公正",
       "justiceDesc": "法律面前人人平等。",
       "protection": "保护",
@@ -68,19 +78,93 @@
       "transparency": "透明",
       "transparencyDesc": "揭示程序失误。",
       "solidarity": "团结",
-      "solidarityDesc": "与面临不公正待遇的人站在一起。"
+      "solidarityDesc": "与面临不公正待遇的人站在一起。",
+      "learnMore": "了解更多关于我们"
     },
-    "casePreview": {
-      "title": "案件档案 #001",
-      "subtitle": "丹尼什·塔诺维调查",
-      "description": "对非法拘留、程序违规和协调的机构不当行为进行全面调查。",
-      "cta": "打开案件档案"
+    "featuredCase": {
+      "badge": "重点调查",
+      "title": "案件档案 #001：",
+      "name": "丹尼什·塔诺维",
+      "period": "2015–2025",
+      "location": "巴基斯坦",
+      "description": "此案例研究展示了HRPM基于证据的人权记录方法论。包括商业干预、骚扰和程序失误的记录案例，展示平台如何将原始证据转化为结构化情报。",
+      "highlight1": "带有审计记录的已验证来源",
+      "highlight2": "已记录的时间线事件",
+      "highlight3": "已映射关系的实体",
+      "highlight4": "已验证的案例法判例",
+      "highlight5": "带有引用检查的诉讼级AI摘要",
+      "viewTimeline": "查看完整时间线",
+      "legalSuiteTitle": "法律情报套件",
+      "legalSuiteSubtitle": "带有完整审计记录的诉讼级别",
+      "verifiedCaseLaw": "已验证案例法",
+      "citeCheck": "引用检查系统",
+      "forensicEvidence": "法证证据",
+      "proceduralViolations": "程序违规",
+      "verified": "已验证",
+      "active": "活跃",
+      "critical": "严重",
+      "high": "高",
+      "readBriefing": "阅读完整简报"
+    },
+    "capabilities": {
+      "badge": "平台能力",
+      "title": "工具用于",
+      "titleHighlight": "调查研究",
+      "description": "专为记者、研究人员和法律倡导者设计的模块，将原始证据转化为结构化、可验证的情报。",
+      "evidence": {
+        "title": "证据和文件",
+        "description": "通过完整的保管链收集、验证和组织源材料。",
+        "docRepo": "文件仓库",
+        "docRepoDesc": "带有元数据标记和版本控制的安全存储",
+        "aiExtraction": "AI提取",
+        "aiExtractionDesc": "从原始文件中提取事件、实体和违规行为",
+        "evidenceMatrix": "证据矩阵",
+        "evidenceMatrixDesc": "将文件与时间线事件和索赔交叉引用"
+      },
+      "networks": {
+        "title": "网络和关系",
+        "description": "绘制个人、组织和机构之间的联系。",
+        "entityNetwork": "实体网络",
+        "entityNetworkDesc": "所有案件参与者的交互式力导向图",
+        "roleAnalysis": "角色分析",
+        "roleAnalysisDesc": "按角色、隶属关系和影响力对实体进行分类",
+        "timelineReconstruction": "时间线重建",
+        "timelineReconstructionDesc": "构建平行时间线以识别矛盾"
+      },
+      "legal": {
+        "title": "法律和权利分析",
+        "description": "将违规行为映射到国内和国际法律框架。",
+        "claimCorrelation": "索赔关联",
+        "claimCorrelationDesc": "将法律索赔与支持证据关联并进行强度评分",
+        "internationalRights": "国际权利审计",
+        "internationalRightsDesc": "将违规行为映射到UDHR、ICCPR、CAT和ECHR",
+        "legalIntelligence": "法律情报",
+        "legalIntelligenceDesc": "已验证的判例、法规和法庭就绪的摘要"
+      }
+    },
+    "cta": {
+      "title": "准备好",
+      "titleHighlight": "开始调查",
+      "description": "探索已记录的案件档案，追踪实体网络，了解已验证的证据如何成为人权问责的可操作情报。",
+      "primaryButton": "开始调查",
+      "secondaryButton": "创建账户",
+      "whyAccount": "为什么要创建账户？",
+      "benefit1": "将案件保存到个人关注列表",
+      "benefit2": "关注正在进行的调查",
+      "benefit3": "提供已验证的证据"
     }
   },
   "footer": {
     "tagline": "记录不公正。要求问责。",
     "description": "致力于通过调查情报和经过验证的证据揭露人权侵犯行为的平台。",
     "quickLinks": "快速链接",
+    "recentPosts": "最新文章",
+    "viewAllPosts": "查看所有文章",
+    "visitBlog": "访问博客",
+    "howToUse": "使用指南",
+    "fullDocs": "完整文档",
+    "api": "API接口",
+    "openSource": "开源项目",
     "contact": "联系方式",
     "offices": "办公室",
     "headOffice": "新加坡（总部）",

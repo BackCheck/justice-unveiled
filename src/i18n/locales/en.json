@@ -51,7 +51,10 @@
       "title3": "Accountability",
       "description": "An open-source investigative platform for documenting human rights abuse, corruption, and procedural injustice using verified evidence and transparent methodology.",
       "cta": "Explore Case Files",
-      "secondaryCta": "View Intelligence Dashboard"
+      "secondaryCta": "View Intelligence Dashboard",
+      "startInvestigation": "Start Investigation",
+      "typingPrefix": "Documenting",
+      "typingWords": ["Injustice", "Human Rights Abuses", "Institutional Failures", "Legal Persecution", "Systemic Corruption"]
     },
     "stats": {
       "activeCases": "Active Cases",
@@ -155,6 +158,13 @@
     "tagline": "Documenting injustice. Demanding accountability.",
     "description": "A platform dedicated to exposing human rights violations through investigative intelligence and verified evidence.",
     "quickLinks": "Quick Links",
+    "recentPosts": "Recent Posts",
+    "viewAllPosts": "View all posts",
+    "visitBlog": "Visit our Blog",
+    "howToUse": "How to Use",
+    "fullDocs": "Full Documentation",
+    "api": "API",
+    "openSource": "Open Source",
     "contact": "Contact",
     "offices": "Offices",
     "headOffice": "Singapore (Head Office)",
