@@ -100,22 +100,22 @@ export const Breadcrumbs = () => {
         return (
           <div key={`${crumb.path}-${index}`} className="flex items-center gap-1 shrink-0">
             {index > 0 && (
-              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50" />
+              <ChevronRight className="w-3 h-3 text-muted-foreground/50" />
             )}
             {isLast ? (
-              <span className="font-medium text-foreground flex items-center gap-1.5 text-xs sm:text-sm">
-                {Icon && <Icon className="w-3.5 h-3.5" />}
+              <span className="font-medium text-foreground flex items-center gap-1 text-[11px] sm:text-xs">
+                {Icon && <Icon className="w-3 h-3" />}
                 {crumb.label}
               </span>
             ) : (
               <Link
                 to={crumb.path}
                 className={cn(
-                  "text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 text-xs sm:text-sm",
+                  "text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 text-[11px] sm:text-xs",
                   "hover:underline underline-offset-4"
                 )}
               >
-                {Icon && <Icon className="w-3.5 h-3.5" />}
+                {Icon && <Icon className="w-3 h-3" />}
                 {crumb.label}
               </Link>
             )}
