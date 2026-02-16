@@ -84,11 +84,11 @@ export const DocumentAnalyzer = ({ uploadId, onAnalysisComplete }: DocumentAnaly
         <div className="p-4 bg-muted/50 rounded-lg border border-primary/20">
           <Label htmlFor="caseSelect" className="flex items-center gap-2 mb-2">
             <FolderOpen className="w-4 h-4 text-primary" />
-            Associate with Case
+            Select Case <span className="text-destructive">*</span>
           </Label>
           <Select value={selectedCaseId} onValueChange={setSelectedCaseId}>
             <SelectTrigger id="caseSelect" className="bg-background">
-              <SelectValue placeholder="Select a case..." />
+              <SelectValue placeholder="Choose a case..." />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="none">
@@ -108,11 +108,11 @@ export const DocumentAnalyzer = ({ uploadId, onAnalysisComplete }: DocumentAnaly
               )}
             </SelectContent>
           </Select>
-          <p className="text-xs text-muted-foreground mt-2">
-            {selectedCaseId !== "none" 
-              ? "Extracted intelligence will be linked to the selected case" 
-              : "Intelligence will be available globally but not linked to a specific case"}
-          </p>
+          {selectedCaseId === "none" && (
+            <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
+              ⚠ It is recommended to select a case so extracted intelligence is properly linked.
+            </p>
+          )}
         </div>
 
         <div className="grid md:grid-cols-2 gap-4">

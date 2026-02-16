@@ -12,12 +12,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload, FileAudio, FileText, File, X, CheckCircle, AlertCircle, Sparkles, Loader2 } from "lucide-react";
+import { Upload, FileAudio, FileText, File, X, CheckCircle, AlertCircle, Sparkles, Loader2, FolderOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { EventSelector } from "./EventSelector";
+import { useCases } from "@/hooks/useCases";
 
 const ACCEPTED_TYPES = {
   "audio/mpeg": { ext: "mp3", icon: FileAudio, label: "Audio" },
@@ -63,7 +64,7 @@ interface EvidenceUploaderProps {
 
 export const EvidenceUploader = ({ 
   onUploadComplete, 
-  caseId,
+  caseId: externalCaseId,
   autoAnalyze = true 
 }: EvidenceUploaderProps) => {
   const { user } = useAuth();
@@ -72,7 +73,11 @@ export const EvidenceUploader = ({
   const [category, setCategory] = useState("general");
   const [selectedEventIds, setSelectedEventIds] = useState<number[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [selectedCaseId, setSelectedCaseId] = useState<string>(externalCaseId || "");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { data: cases, isLoading: casesLoading } = useCases();
+  const caseId = externalCaseId || selectedCaseId || undefined;
 
   const handleFiles = (files: FileList | null) => {
     if (!files) return;
@@ -300,22 +305,59 @@ export const EvidenceUploader = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Case Selection - shown when no external caseId is provided */}
+        {!externalCaseId && (
+          <div className="p-4 bg-muted/50 rounded-lg border border-primary/20">
+            <Label className="flex items-center gap-2 mb-2">
+              <FolderOpen className="w-4 h-4 text-primary" />
+              Select Case <span className="text-destructive">*</span>
+            </Label>
+            <Select value={selectedCaseId} onValueChange={setSelectedCaseId}>
+              <SelectTrigger className="bg-background">
+                <SelectValue placeholder="Choose a case to upload evidence to..." />
+              </SelectTrigger>
+              <SelectContent>
+                {casesLoading ? (
+                  <SelectItem value="loading" disabled>Loading cases...</SelectItem>
+                ) : (
+                  cases?.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-xs">{c.case_number}</Badge>
+                        <span>{c.title}</span>
+                      </div>
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+            {!selectedCaseId && (
+              <p className="text-xs text-destructive mt-2">
+                Please select a case before uploading evidence files.
+              </p>
+            )}
+          </div>
+        )}
         {/* Drop Zone */}
         <div
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onClick={() => fileInputRef.current?.click()}
+          onDrop={caseId ? handleDrop : undefined}
+          onDragOver={caseId ? handleDragOver : undefined}
+          onDragLeave={caseId ? handleDragLeave : undefined}
+          onClick={() => caseId && fileInputRef.current?.click()}
           className={cn(
-            "border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors",
+            "border-2 border-dashed rounded-lg p-8 text-center transition-colors",
+            !caseId && "opacity-50 cursor-not-allowed",
+            caseId && "cursor-pointer",
             isDragOver 
               ? "border-primary bg-primary/10" 
-              : "border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/50"
+              : caseId 
+                ? "border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/50"
+                : "border-muted-foreground/25"
           )}
         >
           <Upload className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
           <p className="text-sm font-medium">
-            Drop files here or click to browse
+            {caseId ? "Drop files here or click to browse" : "Select a case above to upload evidence"}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
             Supports MP3, MP4, PDF, MD, TXT files
@@ -438,7 +480,7 @@ export const EvidenceUploader = ({
               onSelectionChange={setSelectedEventIds}
             />
 
-            <Button onClick={uploadFiles} className="w-full">
+            <Button onClick={uploadFiles} className="w-full" disabled={!caseId}>
               <Upload className="w-4 h-4 mr-2" />
               Upload {pendingCount} file{pendingCount > 1 ? 's' : ''} & Analyze
             </Button>
