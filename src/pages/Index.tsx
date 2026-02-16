@@ -13,6 +13,8 @@ import { SocialShareButtons } from "@/components/sharing";
 import { useSEO } from "@/hooks/useSEO";
 import { PDFTimelineExport } from "@/components/export";
 import { useQueryClient } from "@tanstack/react-query";
+import { useCaseFilter } from "@/contexts/CaseFilterContext";
+import { useCases, useCase } from "@/hooks/useCases";
 
 const Index = () => {
   const [selectedCategories, setSelectedCategories] = useState<TimelineEvent["category"][]>([
@@ -23,19 +25,28 @@ const Index = () => {
   ]);
   const [isPrintMode, setIsPrintMode] = useState(false);
   const queryClient = useQueryClient();
+  const { selectedCaseId } = useCaseFilter();
+
+  // Fetch case details for dynamic title
+  const { data: cases } = useCases();
+  const { data: selectedCase } = useCase(selectedCaseId || undefined);
+  
+  // Determine active case: selected case, or first available
+  const activeCase = selectedCase || (cases && cases.length > 0 ? cases[0] : null);
+  const caseTitle = activeCase?.title || "Case Timeline";
+  const caseNumber = activeCase?.case_number || "";
 
   // Use combined timeline (static + AI-extracted events)
   const { events: allEvents, stats, isLoading } = useCombinedTimeline();
 
   // SEO
   useSEO({
-    title: "Case Timeline - Danish Thanvi vs State Agencies",
-    description: `${stats.total} documented events from 117 verified sources. Comprehensive timeline of human rights violations in Pakistan, 2015-2025.`,
+    title: `Case Timeline - ${caseTitle}`,
+    description: `${stats.total} documented events. Comprehensive timeline for ${caseTitle}.`,
     type: "article",
     section: "Investigation",
-    tags: ["Timeline", "Human Rights", "Pakistan", "Investigation"],
+    tags: ["Timeline", "Human Rights", "Investigation"],
   });
-
   const handleExportPDF = async () => {
     // Invalidate and refetch to ensure fresh data (no cached hidden records)
     await queryClient.invalidateQueries({ queryKey: ["hidden-static-events"] });
@@ -86,26 +97,26 @@ const Index = () => {
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <span className={cn(
-                  "text-xs font-medium px-2 py-1 rounded bg-primary/20 text-primary",
-                  "opacity-0 animate-fade-in-left badge-pop"
-                )} style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
-                  CASE FILE #001
-                </span>
+                {caseNumber && (
+                  <span className={cn(
+                    "text-xs font-medium px-2 py-1 rounded bg-primary/20 text-primary",
+                    "opacity-0 animate-fade-in-left badge-pop"
+                  )} style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
+                    {caseNumber}
+                  </span>
+                )}
               </div>
               <h2 className={cn(
                 "text-2xl md:text-3xl font-bold mb-2 text-foreground",
                 "opacity-0 animate-fade-in-up"
               )} style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
-                <span className="text-gradient-animate">Danish Thanvi</span>
-                <span className="text-muted-foreground font-normal"> vs. </span>
-                <span>State Agencies</span>
+                <span className="text-gradient-animate">{caseTitle}</span>
               </h2>
               <p className={cn(
                 "text-muted-foreground flex items-center gap-2 flex-wrap",
                 "opacity-0 animate-fade-in-up"
               )} style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
-                <span>{stats.total} documented events from 117 verified sources</span>
+                <span>{stats.total} documented events</span>
                 {stats.extracted > 0 && (
                   <Badge 
                     variant="outline" 
@@ -115,14 +126,16 @@ const Index = () => {
                     {stats.extracted} AI-extracted
                   </Badge>
                 )}
-                <span className="text-primary">Pakistan, 2015–2025</span>
+                {activeCase?.location && (
+                  <span className="text-primary">{activeCase.location}</span>
+                )}
               </p>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               <SocialShareButtons
-                title="Case Timeline: Danish Thanvi vs State Agencies"
-                description={`${stats.total} documented events from verified sources. Human rights investigation timeline.`}
-                hashtags={["HumanRights", "HRPM", "Justice", "Pakistan"]}
+                title={`Case Timeline: ${caseTitle}`}
+                description={`${stats.total} documented events. Investigation timeline for ${caseTitle}.`}
+                hashtags={["HumanRights", "HRPM", "Justice"]}
                 variant="compact"
               />
               <Button
@@ -159,7 +172,7 @@ const Index = () => {
         </div>
 
         {/* PDF Export Component - Only visible during print */}
-        <PDFTimelineExport events={filteredEvents} stats={stats} />
+        <PDFTimelineExport events={filteredEvents} stats={stats} caseTitle={caseTitle} />
 
         {/* Dynamic Timeline */}
         <div className={cn(
@@ -180,8 +193,8 @@ const Index = () => {
           <p className="font-medium text-foreground mb-2 hover:text-primary transition-colors">
             HRPM.org — Human Rights Protection Movement
           </p>
-          <p>This case file is compiled from 48 documented sources for legal reference purposes.</p>
-          <p className="mt-2">All dates and events are based on official court documents, FIR records, and verified testimonies.</p>
+          <p>This case file is compiled from documented sources for legal reference purposes.</p>
+          <p className="mt-2">All dates and events are based on official records and verified testimonies.</p>
           <p className="mt-4 text-xs text-gradient-animate font-medium">
             Documenting injustice. Demanding accountability.
           </p>

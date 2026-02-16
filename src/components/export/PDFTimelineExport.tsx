@@ -11,9 +11,10 @@ interface PDFTimelineExportProps {
     extracted: number;
     byCategory: Record<string, number>;
   };
+  caseTitle?: string;
 }
 
-export const PDFTimelineExport = ({ events, stats }: PDFTimelineExportProps) => {
+export const PDFTimelineExport = ({ events, stats, caseTitle = "Case Timeline" }: PDFTimelineExportProps) => {
   // Calculate date range
   const dates = events.map(e => new Date(e.date)).sort((a, b) => a.getTime() - b.getTime());
   const startYear = dates[0]?.getFullYear() || 2015;
@@ -36,7 +37,7 @@ export const PDFTimelineExport = ({ events, stats }: PDFTimelineExportProps) => 
       <PDFCoverPage 
         totalEvents={stats.total}
         dateRange={dateRange}
-        caseTitle="Danish Thanvi vs. State Agencies"
+        caseTitle={caseTitle}
       />
 
       {/* Table of Contents */}
@@ -186,17 +187,5 @@ export const PDFTimelineExport = ({ events, stats }: PDFTimelineExportProps) => 
 
 // Helper function to generate year summaries
 function getYearSummary(year: string): string {
-  const summaries: Record<string, string> = {
-    "2015": "Genesis of the professional relationship",
-    "2016": "Escalation of harassment and first legal attacks",
-    "2017": "FIR registration and FIA involvement begins",
-    "2018": "Investigation deepens with witness intimidation",
-    "2019": "Midnight raid and arrest phase",
-    "2021": "FIA corruption exposed internally",
-    "2022": "Forensic analysis reveals chain of custody failures",
-    "2023": "Handwriting expert confirms forgeries",
-    "2024": "Trial conviction and subsequent bail granted",
-    "2025": "Full acquittal and ongoing regulatory battles"
-  };
-  return summaries[year] || "Key case developments";
+  return `Key case developments in ${year}`;
 }

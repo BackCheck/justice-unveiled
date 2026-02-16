@@ -707,7 +707,33 @@
     color-adjust: exact !important;
   }
 
-  /* Force light theme colors for print */
+  /* Force light theme for ALL prints regardless of user preference */
+  :root, .dark {
+    --background: 200 20% 97% !important;
+    --foreground: 200 25% 15% !important;
+    --card: 0 0% 100% !important;
+    --card-foreground: 200 25% 15% !important;
+    --popover: 0 0% 100% !important;
+    --popover-foreground: 200 25% 15% !important;
+    --primary: 199 100% 38% !important;
+    --primary-foreground: 0 0% 100% !important;
+    --secondary: 199 25% 93% !important;
+    --secondary-foreground: 199 40% 25% !important;
+    --muted: 200 15% 94% !important;
+    --muted-foreground: 200 15% 40% !important;
+    --accent: 199 50% 90% !important;
+    --accent-foreground: 199 100% 30% !important;
+    --border: 200 15% 85% !important;
+    --input: 200 15% 85% !important;
+    --ring: 199 100% 38% !important;
+  }
+
+  html, body {
+    background-color: #ffffff !important;
+    color: #1a1a1a !important;
+  }
+
+  /* Legacy class support */
   html.print-light-mode,
   html.print-light-mode body {
     background-color: #ffffff !important;
