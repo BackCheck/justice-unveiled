@@ -1597,6 +1597,50 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          case_id: string | null
+          created_at: string
+          id: string
+          link: string | null
+          message: string
+          read: boolean
+          title: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          case_id?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          message: string
+          read?: boolean
+          title: string
+          type?: string
+          user_id?: string | null
+        }
+        Update: {
+          case_id?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          message?: string
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       procedural_requirements: {
         Row: {
           created_at: string

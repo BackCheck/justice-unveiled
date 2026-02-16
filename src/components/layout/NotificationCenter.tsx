@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Bell, FileText, AlertTriangle, CheckCircle, Brain, Clock, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,60 +9,9 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
-
-interface Notification {
-  id: string;
-  type: "upload" | "analysis" | "alert" | "success" | "info";
-  title: string;
-  message: string;
-  timestamp: Date;
-  read: boolean;
-  link?: string;
-}
-
-// Mock notifications - in production these would come from the database
-const mockNotifications: Notification[] = [
-  {
-    id: "1",
-    type: "analysis",
-    title: "Document Analysis Complete",
-    message: "FIR_2018.pdf has been processed. 3 claims and 2 violations extracted.",
-    timestamp: new Date(Date.now() - 1000 * 60 * 5),
-    read: false,
-  },
-  {
-    id: "2",
-    type: "alert",
-    title: "Compliance Alert",
-    message: "New procedural violation detected in Case #2018-CR-001",
-    timestamp: new Date(Date.now() - 1000 * 60 * 30),
-    read: false,
-  },
-  {
-    id: "3",
-    type: "upload",
-    title: "Evidence Uploaded",
-    message: "Bank_Statement_2019.pdf uploaded successfully",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
-    read: true,
-  },
-  {
-    id: "4",
-    type: "success",
-    title: "Claim Verified",
-    message: "Claim #CL-001 has been linked to 3 evidence documents",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5),
-    read: true,
-  },
-  {
-    id: "5",
-    type: "info",
-    title: "System Update",
-    message: "New AI extraction capabilities added for financial documents",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24),
-    read: true,
-  },
-];
+import { useState } from "react";
+import { useNotifications, type Notification } from "@/hooks/useNotifications";
+import { useAuth } from "@/contexts/AuthContext";
 
 const getNotificationIcon = (type: Notification["type"]) => {
   switch (type) {
@@ -81,24 +29,16 @@ const getNotificationIcon = (type: Notification["type"]) => {
 };
 
 export const NotificationCenter = () => {
-  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
-  const markAsRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
-  };
-
-  const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  };
-
-  const dismissNotification = (id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  };
+  const {
+    notifications,
+    loading,
+    unreadCount,
+    markAsRead,
+    markAllAsRead,
+    dismissNotification,
+  } = useNotifications();
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -135,10 +75,15 @@ export const NotificationCenter = () => {
         </div>
 
         <ScrollArea className="h-[300px]">
-          {notifications.length === 0 ? (
+          {!user ? (
             <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
               <Bell className="w-8 h-8 mb-2 opacity-50" />
-              <p className="text-sm">No notifications</p>
+              <p className="text-sm">Sign in to see notifications</p>
+            </div>
+          ) : notifications.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+              <Bell className="w-8 h-8 mb-2 opacity-50" />
+              <p className="text-sm">{loading ? "Loading..." : "No notifications"}</p>
             </div>
           ) : (
             <div className="divide-y">
@@ -156,10 +101,7 @@ export const NotificationCenter = () => {
                   </div>
                   <div className="flex-1 min-w-0 pr-6">
                     <div className="flex items-start gap-2">
-                      <p className={cn(
-                        "text-sm leading-tight",
-                        !notification.read && "font-medium"
-                      )}>
+                      <p className={cn("text-sm leading-tight", !notification.read && "font-medium")}>
                         {notification.title}
                       </p>
                       {!notification.read && (
@@ -170,7 +112,7 @@ export const NotificationCenter = () => {
                       {notification.message}
                     </p>
                     <p className="text-[10px] text-muted-foreground mt-1">
-                      {formatDistanceToNow(notification.timestamp, { addSuffix: true })}
+                      {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
                     </p>
                   </div>
                   <Button
