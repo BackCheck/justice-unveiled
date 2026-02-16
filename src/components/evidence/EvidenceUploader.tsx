@@ -147,25 +147,22 @@ export const EvidenceUploader = ({
   };
 
   // Trigger AI analysis on uploaded document
-  const analyzeDocument = async (uploadId: string, file: File, index: number) => {
+  const analyzeDocument = async (uploadId: string, file: File, index: number, storagePath?: string) => {
     try {
       setUploads(prev => prev.map((u, idx) => 
         idx === index ? { ...u, status: "analyzing" as const, progress: 70 } : u
       ));
 
       const content = await readFileContent(file);
-      if (!content) {
-        console.log(`Skipping AI analysis for ${file.name} - unsupported format`);
-        return null;
-      }
 
       const { data, error } = await supabase.functions.invoke('analyze-document', {
         body: {
           uploadId,
-          documentContent: content,
+          documentContent: content || '',
           fileName: file.name,
           documentType: category,
-          caseId: caseId || null
+          caseId: caseId || null,
+          storagePath: storagePath || null
         }
       });
 
@@ -244,7 +241,7 @@ export const EvidenceUploader = ({
         // Auto-analyze if enabled
         let analysisResult = null;
         if (autoAnalyze && uploadRecord) {
-          analysisResult = await analyzeDocument(uploadRecord.id, file, i);
+          analysisResult = await analyzeDocument(uploadRecord.id, file, i, storagePath);
         }
 
         setUploads(prev => prev.map((u, idx) => 
