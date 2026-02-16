@@ -170,13 +170,17 @@ serve(async (req) => {
       console.error("Job creation error:", jobError);
     }
 
-    // Determine if we need to fetch the file from storage for binary files (PDF, images)
+    // Determine if we need to fetch the file from storage
     let actualContent = documentContent || '';
     let fileBase64: string | null = null;
     let fileMimeType: string | null = null;
     const isPdf = fileName?.toLowerCase().endsWith('.pdf');
     const isImage = /\.(png|jpg|jpeg|gif|webp|bmp|tiff)$/i.test(fileName || '');
+    const isText = /\.(txt|md|csv|json|log)$/i.test(fileName || '');
+    const isAudio = /\.(mp3|wav|ogg|m4a|aac|flac)$/i.test(fileName || '');
     const needsBinaryFetch = (isPdf || isImage) && storagePath;
+    const needsTextFetch = isText && storagePath && !actualContent;
+    const needsAudioFetch = isAudio && storagePath;
 
     if (needsBinaryFetch) {
       console.log(`Fetching binary file from storage: ${storagePath}`);
@@ -190,7 +194,6 @@ serve(async (req) => {
         } else if (fileData) {
           const arrayBuffer = await fileData.arrayBuffer();
           const bytes = new Uint8Array(arrayBuffer);
-          // Convert to base64
           let binary = '';
           const chunkSize = 8192;
           for (let i = 0; i < bytes.length; i += chunkSize) {
@@ -204,9 +207,52 @@ serve(async (req) => {
       } catch (fetchErr) {
         console.error('Failed to fetch file from storage:', fetchErr);
       }
+    } else if (needsTextFetch) {
+      console.log(`Fetching text file from storage: ${storagePath}`);
+      try {
+        const { data: fileData, error: downloadError } = await supabase.storage
+          .from('evidence')
+          .download(storagePath);
+        
+        if (downloadError) {
+          console.error('Storage download error:', downloadError);
+        } else if (fileData) {
+          actualContent = await fileData.text();
+          console.log(`Successfully fetched text file, content length: ${actualContent.length}`);
+        }
+      } catch (fetchErr) {
+        console.error('Failed to fetch text file from storage:', fetchErr);
+      }
+    } else if (needsAudioFetch) {
+      console.log(`Fetching audio file from storage for multimodal analysis: ${storagePath}`);
+      try {
+        const { data: fileData, error: downloadError } = await supabase.storage
+          .from('evidence')
+          .download(storagePath);
+        
+        if (downloadError) {
+          console.error('Storage download error:', downloadError);
+        } else if (fileData) {
+          const arrayBuffer = await fileData.arrayBuffer();
+          const bytes = new Uint8Array(arrayBuffer);
+          let binary = '';
+          const chunkSize = 8192;
+          for (let i = 0; i < bytes.length; i += chunkSize) {
+            const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
+            binary += String.fromCharCode(...chunk);
+          }
+          fileBase64 = btoa(binary);
+          const ext = (fileName || '').split('.').pop()?.toLowerCase();
+          const mimeMap: Record<string, string> = { mp3: 'audio/mpeg', wav: 'audio/wav', ogg: 'audio/ogg', m4a: 'audio/mp4', aac: 'audio/aac', flac: 'audio/flac' };
+          fileMimeType = mimeMap[ext || ''] || 'audio/mpeg';
+          console.log(`Successfully fetched audio file, base64 length: ${fileBase64.length}`);
+        }
+      } catch (fetchErr) {
+        console.error('Failed to fetch audio file from storage:', fetchErr);
+      }
     }
 
-    // If we couldn't get binary content and have no text content, skip
+    // If we couldn't get any content, skip
     if (!fileBase64 && (!actualContent || actualContent.startsWith('[PDF Document:') || actualContent.startsWith('[Video File:') || actualContent.startsWith('[Audio File:'))) {
       console.log('No extractable content available for analysis');
       if (jobId) {
