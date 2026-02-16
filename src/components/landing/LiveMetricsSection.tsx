@@ -27,33 +27,33 @@ const LiveMetricsSection = () => {
       icon: Database,
       label: "Total Sources",
       value: stats.totalSources,
-      subtext: `${stats.staticSources} verified + ${stats.aiExtractedSources} AI-processed`,
+      subtext: `${stats.aiExtractedSources} documents uploaded & analyzed`,
       color: "primary",
-      trend: stats.aiExtractedSources > 0 ? `+${stats.aiExtractedSources} new` : undefined
+      trend: stats.aiExtractedSources > 0 ? `${stats.aiExtractedSources} processed` : undefined
     },
     {
       icon: Calendar,
       label: "Timeline Events",
       value: stats.totalEvents,
-      subtext: `${stats.staticEvents} documented + ${stats.aiExtractedEvents} extracted`,
+      subtext: `${stats.aiExtractedEvents} AI-extracted events`,
       color: "chart-2",
-      trend: stats.aiExtractedEvents > 0 ? `+${stats.aiExtractedEvents} AI` : undefined
+      trend: stats.aiExtractedEvents > 0 ? `${stats.aiExtractedEvents} extracted` : undefined
     },
     {
       icon: Users,
       label: "Entities Mapped",
       value: stats.totalEntities,
-      subtext: `${stats.staticEntities} known + ${stats.aiExtractedEntities} discovered`,
+      subtext: `${stats.aiExtractedEntities} entities discovered`,
       color: "chart-4",
-      trend: stats.aiExtractedEntities > 0 ? `+${stats.aiExtractedEntities} new` : undefined
+      trend: stats.aiExtractedEntities > 0 ? `${stats.aiExtractedEntities} discovered` : undefined
     },
     {
       icon: Link2,
       label: "Relationships",
       value: stats.totalConnections,
-      subtext: `${stats.inferredConnections} AI-inferred connections`,
+      subtext: `${stats.inferredConnections} entity relationships`,
       color: "chart-3",
-      trend: stats.inferredConnections > 0 ? `${stats.inferredConnections} inferred` : undefined
+      trend: stats.inferredConnections > 0 ? `${stats.inferredConnections} mapped` : undefined
     }
   ];
 

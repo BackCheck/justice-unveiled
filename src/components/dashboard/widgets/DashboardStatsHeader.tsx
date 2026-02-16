@@ -7,22 +7,31 @@ import {
   Network,
   Shield,
   TrendingUp,
+  TrendingDown,
   Sparkles,
 } from "lucide-react";
 import { usePlatformStats } from "@/hooks/usePlatformStats";
-import { keyFindings } from "@/data/keyFindingsData";
 import { useTranslation } from "react-i18next";
 
 export const DashboardStatsHeader = () => {
   const { stats, isLoading } = usePlatformStats();
   const { t } = useTranslation();
-  
-  const criticalFindings = keyFindings.filter(f => f.severity === "critical").length;
-  const highFindings = keyFindings.filter(f => f.severity === "high").length;
 
   const timelineSpanLabel = stats.timelineMinYear && stats.timelineMaxYear
     ? `${stats.timelineMinYear}–${stats.timelineMaxYear}`
     : "—";
+
+  const renderTrend = (growth: number | null) => {
+    if (growth === null) return null;
+    const isPositive = growth >= 0;
+    const Icon = isPositive ? TrendingUp : TrendingDown;
+    return (
+      <Badge variant="secondary" className={`text-[10px] gap-0.5 border-0 ${isPositive ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600'}`}>
+        <Icon className="w-2.5 h-2.5" />
+        {isPositive ? '+' : ''}{growth}%
+      </Badge>
+    );
+  };
 
   const statCards = [
     {
@@ -32,17 +41,17 @@ export const DashboardStatsHeader = () => {
       color: "text-primary",
       bgColor: "bg-primary/10",
       subValue: `${stats.totalEvents} ${t('dashboard.events')}`,
-      trend: null,
+      trend: stats.eventsGrowth,
     },
     {
       label: t('dashboard.criticalIssues'),
-      value: criticalFindings,
+      value: stats.criticalDiscrepancies,
       icon: AlertTriangle,
       color: "text-destructive",
       bgColor: "bg-destructive/10",
-      subValue: `${highFindings} ${t('dashboard.highSeverity')}`,
+      subValue: `${stats.totalDiscrepancies} total`,
       trend: null,
-      pulse: true,
+      pulse: stats.criticalDiscrepancies > 0,
     },
     {
       label: t('dashboard.entitiesTracked'),
@@ -50,8 +59,8 @@ export const DashboardStatsHeader = () => {
       icon: Users,
       color: "text-chart-2",
       bgColor: "bg-chart-2/10",
-      subValue: stats.aiExtractedEntities > 0 ? `+${stats.aiExtractedEntities} AI` : t('dashboard.mapped'),
-      trend: "+8%",
+      subValue: stats.totalEntities > 0 ? `${stats.totalEntities} extracted` : t('dashboard.mapped'),
+      trend: stats.entitiesGrowth,
       hasAI: stats.aiExtractedEntities > 0,
     },
     {
@@ -61,7 +70,7 @@ export const DashboardStatsHeader = () => {
       color: "text-chart-4",
       bgColor: "bg-chart-4/10",
       subValue: `${stats.documentsAnalyzed} ${t('dashboard.analyzed')}`,
-      trend: "+12%",
+      trend: stats.sourcesGrowth,
     },
     {
       label: t('dashboard.networkLinks'),
@@ -69,8 +78,8 @@ export const DashboardStatsHeader = () => {
       icon: Network,
       color: "text-purple-500",
       bgColor: "bg-purple-500/10",
-      subValue: `${stats.inferredConnections} ${t('dashboard.aiInferred')}`,
-      trend: "+15%",
+      subValue: `${stats.inferredConnections} relationships`,
+      trend: stats.connectionsGrowth,
       hasAI: stats.inferredConnections > 0,
     },
     {
@@ -112,12 +121,7 @@ export const DashboardStatsHeader = () => {
               <div className={`w-9 h-9 rounded-xl ${stat.bgColor} flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-3`}>
                 <Icon className={`w-4 h-4 ${stat.color} ${stat.pulse ? 'animate-pulse' : ''}`} />
               </div>
-              {stat.trend && (
-                <Badge variant="secondary" className="text-[10px] gap-0.5 bg-emerald-500/10 text-emerald-600 border-0">
-                  <TrendingUp className="w-2.5 h-2.5" />
-                  {stat.trend}
-                </Badge>
-              )}
+              {renderTrend(stat.trend)}
             </div>
             <p className="text-2xl font-bold text-foreground mb-0.5 tracking-tight">{stat.value}</p>
             <p className="text-xs font-medium text-foreground/70 mb-1">{stat.label}</p>

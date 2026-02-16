@@ -306,8 +306,9 @@ const CasesList = () => {
     }, 300);
   }, []);
 
-  const featuredCase = cases?.find((c) => c.case_number === "CF-001");
-  const otherCases = cases?.filter((c) => c.case_number !== "CF-001");
+  // Feature the first case (oldest) if available
+  const featuredCase = cases && cases.length > 0 ? cases[0] : undefined;
+  const otherCases = cases?.filter((c) => c.id !== featuredCase?.id);
 
   const filteredOtherCases = otherCases?.filter(
     (c) =>

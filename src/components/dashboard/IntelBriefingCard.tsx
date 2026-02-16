@@ -3,18 +3,35 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
   FileText, 
-  ExternalLink, 
-  Fingerprint, 
-  Users, 
-  Eye, 
-  Shield,
   ArrowRight
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { intelligenceBriefing, briefingStats } from "@/data/intelligenceBriefingData";
+import { useCaseFilter } from "@/contexts/CaseFilterContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const IntelBriefingCard = () => {
-  // Show first 4 briefing sections as preview
+  const { selectedCaseId } = useCaseFilter();
+
+  // Only show for CF-001 case (the Danish Thanvi case that has the static briefing data)
+  const { data: cf001Case } = useQuery({
+    queryKey: ["cf001-case-id"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("cases")
+        .select("id")
+        .eq("case_number", "CF-001")
+        .maybeSingle();
+      return data?.id || null;
+    },
+    staleTime: Infinity,
+  });
+
+  // Show briefing only when viewing CF-001 or "All Cases"
+  const shouldShow = !selectedCaseId || selectedCaseId === cf001Case;
+  if (!shouldShow || !cf001Case) return null;
+
   const previewSections = intelligenceBriefing.slice(0, 4);
 
   return (
@@ -35,7 +52,6 @@ export const IntelBriefingCard = () => {
         </p>
       </CardHeader>
       <CardContent>
-        {/* Preview Grid */}
         <div className="grid md:grid-cols-2 gap-3 mb-4">
           {previewSections.map((section) => {
             const Icon = section.icon;
@@ -58,7 +74,6 @@ export const IntelBriefingCard = () => {
           })}
         </div>
 
-        {/* Key Themes */}
         <div className="flex flex-wrap gap-1.5 mb-4">
           {briefingStats.keyThemes.slice(0, 4).map((theme) => (
             <Badge key={theme} variant="secondary" className="text-xs">
@@ -70,7 +85,6 @@ export const IntelBriefingCard = () => {
           </Badge>
         </div>
 
-        {/* CTA */}
         <Link to="/intel-briefing">
           <Button className="w-full" variant="default">
             <span>View Full Intelligence Briefing</span>
