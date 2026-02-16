@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
@@ -27,7 +27,6 @@ export const CriticalAlertsPanel = () => {
   const { t } = useTranslation();
 
   const alerts = [
-    // Only show static key findings when no case is selected
     ...(!selectedCaseId ? keyFindings
       .filter(f => f.severity === "critical" || f.severity === "high")
       .slice(0, 3)
@@ -53,7 +52,7 @@ export const CriticalAlertsPanel = () => {
   const criticalCount = alerts.filter(a => a.severity === "critical").length;
 
   return (
-    <Card className="glass-card border-destructive/20">
+    <div className="widget-card border-destructive/20">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -107,6 +106,6 @@ export const CriticalAlertsPanel = () => {
           </div>
         </ScrollArea>
       </CardContent>
-    </Card>
+    </div>
   );
 };

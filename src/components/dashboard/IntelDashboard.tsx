@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   BarChart3,
@@ -33,14 +33,14 @@ export const IntelDashboard = () => {
     <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-6 space-y-6">
       {/* Greeting + AI Status Row */}
       <div className="flex flex-col lg:flex-row gap-4">
-        <Card className="glass-card flex-1">
+        <div className="widget-card flex-1">
           <CardContent className="p-0">
             <GreetingBanner className="rounded-lg" />
           </CardContent>
-        </Card>
+        </div>
 
         {(platformStats.aiExtractedEvents > 0 || platformStats.aiExtractedEntities > 0) && (
-          <Card className="glass-card border-amber-500/20 shrink-0">
+          <div className="stat-card border-amber-500/20 shrink-0">
             <CardContent className="p-3 flex items-center gap-3">
               <div className="p-1.5 rounded-md bg-amber-500/20">
                 <Sparkles className="w-4 h-4 text-amber-500" />
@@ -50,12 +50,12 @@ export const IntelDashboard = () => {
                 <strong className="text-foreground">{platformStats.aiExtractedEntities}</strong> entities
               </span>
             </CardContent>
-          </Card>
+          </div>
         )}
       </div>
 
       {/* Platform Overview Stats */}
-      <Card className="glass-card">
+      <div className="widget-card">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
             <LayoutGrid className="w-4 h-4 text-primary" />
@@ -67,15 +67,21 @@ export const IntelDashboard = () => {
         <CardContent className="pt-0">
           <DashboardStatsHeader />
         </CardContent>
-      </Card>
+      </div>
+
+      {/* Separator */}
+      <div className="section-divider" />
 
       {/* Quick Navigation */}
       <section>
         <QuickNavigationGrid />
       </section>
 
+      {/* Separator */}
+      <div className="section-divider" />
+
       {/* Entity Analytics - Full Width */}
-      <Card className="glass-card">
+      <div className="widget-card">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
             <BarChart3 className="w-4 h-4 text-primary" />
@@ -117,7 +123,10 @@ export const IntelDashboard = () => {
             </TabsContent>
           </Tabs>
         </CardContent>
-      </Card>
+      </div>
+
+      {/* Separator */}
+      <div className="section-divider" />
 
       {/* Main Content: Two-column layout */}
       <div className="grid lg:grid-cols-12 gap-6">
@@ -133,11 +142,11 @@ export const IntelDashboard = () => {
           <IntelBriefingCard />
 
           {/* Key Findings */}
-          <Card className="glass-card">
+          <div className="widget-card">
             <CardContent className="p-6">
               <KeyFindingsGrid />
             </CardContent>
-          </Card>
+          </div>
         </div>
 
         {/* Secondary Column - Monitoring Sidebar */}
@@ -151,8 +160,12 @@ export const IntelDashboard = () => {
             <CriticalAlertsPanel />
           </section>
 
+          <div className="section-divider" />
+
           {/* Timeline */}
           <TimelineSparkline />
+
+          <div className="section-divider" />
 
           {/* Activity Feed */}
           <ActivityFeed />

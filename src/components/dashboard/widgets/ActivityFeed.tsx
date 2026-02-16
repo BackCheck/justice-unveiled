@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
@@ -116,7 +116,7 @@ export const ActivityFeed = () => {
     .slice(0, 8);
 
   return (
-    <Card className="glass-card">
+    <div className="widget-card">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -132,7 +132,7 @@ export const ActivityFeed = () => {
       </CardHeader>
       <CardContent className="p-0">
         <ScrollArea className="h-[300px]">
-          <div className="px-4 pb-4 space-y-1.5">
+          <div className="px-4 pb-4 space-y-1">
             {activities.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground text-sm">
                 {t('dashboard.noRecentActivity')}
@@ -164,6 +164,6 @@ export const ActivityFeed = () => {
           </div>
         </ScrollArea>
       </CardContent>
-    </Card>
+    </div>
   );
 };

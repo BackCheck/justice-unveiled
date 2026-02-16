@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   AreaChart,
@@ -16,7 +16,6 @@ export const TimelineSparkline = () => {
   const { events, isLoading } = useCombinedTimeline();
 
   const chartData = useMemo(() => {
-    // Group events by year
     const yearCounts: Record<number, { total: number; categories: Record<string, number> }> = {};
     
     events.forEach(event => {
@@ -29,7 +28,6 @@ export const TimelineSparkline = () => {
         (yearCounts[year].categories[event.category] || 0) + 1;
     });
 
-    // Create data array sorted by year
     const years = Object.keys(yearCounts).map(Number).sort();
     return years.map(year => ({
       year: year.toString(),
@@ -48,16 +46,16 @@ export const TimelineSparkline = () => {
 
   if (isLoading) {
     return (
-      <Card className="glass-card">
+      <div className="widget-card">
         <CardContent className="pt-6">
           <div className="h-[180px] animate-pulse bg-muted rounded" />
         </CardContent>
-      </Card>
+      </div>
     );
   }
 
   return (
-    <Card className="glass-card">
+    <div className="widget-card">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -114,8 +112,9 @@ export const TimelineSparkline = () => {
           </ResponsiveContainer>
         </div>
         
-        {/* Category Legend - More compact */}
-        <div className="flex flex-wrap gap-3 mt-3 justify-center pt-2 border-t border-border/30">
+        <div className="section-divider my-3" />
+
+        <div className="flex flex-wrap gap-3 justify-center">
           <div className="flex items-center gap-1.5 text-[10px]">
             <span className="w-2 h-2 rounded-full bg-red-500" />
             <span className="text-foreground/60">Harassment</span>
@@ -134,6 +133,6 @@ export const TimelineSparkline = () => {
           </div>
         </div>
       </CardContent>
-    </Card>
+    </div>
   );
 };

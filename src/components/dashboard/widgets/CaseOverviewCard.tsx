@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -46,12 +46,12 @@ export const CaseOverviewCard = () => {
   ];
 
   return (
-    <Card className="glass-card overflow-hidden relative">
+    <div className="widget-card overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-50" />
       <CardHeader className="relative pb-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/10">
+            <div className="p-2 rounded-xl bg-primary/10">
               <Scale className="w-5 h-5 text-primary" />
             </div>
             <div>
@@ -68,15 +68,21 @@ export const CaseOverviewCard = () => {
         <p className="text-sm text-foreground/80 leading-relaxed line-clamp-3">
           {caseDescription}
         </p>
+
+        <div className="section-divider" />
+
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {categoryStats.map((cat) => (
-            <div key={cat.label} className={`p-3 rounded-lg ${cat.bgColor} border ${cat.borderColor} hover:brightness-110 transition-all`}>
+            <div key={cat.label} className={`stat-card p-3 border ${cat.borderColor} ${cat.bgColor}`}>
               <p className={`text-xl font-bold ${cat.color}`}>{cat.value}</p>
               <p className="text-xs text-foreground/70 mt-0.5">{cat.label}</p>
             </div>
           ))}
         </div>
-        <div className="flex flex-wrap items-center justify-between pt-4 border-t border-border/50">
+
+        <div className="section-divider" />
+
+        <div className="flex flex-wrap items-center justify-between">
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2 text-xs text-foreground/70"><Calendar className="w-3.5 h-3.5" /><span>{timelineSpan}</span></div>
             <div className="flex items-center gap-2 text-xs text-foreground/70"><Users className="w-3.5 h-3.5" /><span>{stats.totalEntities} {t('pages.entities')}</span></div>
@@ -91,6 +97,6 @@ export const CaseOverviewCard = () => {
           </Link>
         </div>
       </CardContent>
-    </Card>
+    </div>
   );
 };
