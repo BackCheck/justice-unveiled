@@ -13,6 +13,7 @@ import {
 import { 
   FileAudio, 
   FileText, 
+  FileVideo,
   File, 
   Download, 
   Trash2, 
@@ -41,6 +42,7 @@ const categoryColors: Record<string, string> = {
   commentary: "bg-purple-500",
   legal_document: "bg-emerald-500",
   audio_evidence: "bg-amber-500",
+  video_evidence: "bg-indigo-500",
   witness_statement: "bg-blue-500",
   court_record: "bg-cyan-500",
   media_coverage: "bg-rose-500",
@@ -115,6 +117,7 @@ export const EvidenceFileList = ({ refreshTrigger }: { refreshTrigger?: number }
   };
 
   const getFileIcon = (fileType: string, fileName: string) => {
+    if (fileType.includes('video') || fileName.endsWith('.mp4')) return FileVideo;
     if (fileType.includes('audio') || fileName.endsWith('.mp3')) return FileAudio;
     if (fileType.includes('pdf')) return FileText;
     return File;
@@ -122,6 +125,9 @@ export const EvidenceFileList = ({ refreshTrigger }: { refreshTrigger?: number }
 
   const isAudio = (fileType: string, fileName: string) => 
     fileType.includes('audio') || fileName.endsWith('.mp3');
+
+  const isVideo = (fileType: string, fileName: string) =>
+    fileType.includes('video') || fileName.endsWith('.mp4');
 
   return (
     <Card>
@@ -191,7 +197,7 @@ export const EvidenceFileList = ({ refreshTrigger }: { refreshTrigger?: number }
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-end gap-1">
-                        {isAudio(file.file_type, file.file_name) && (
+                        {(isAudio(file.file_type, file.file_name) || isVideo(file.file_type, file.file_name)) && (
                           <Button
                             variant="ghost"
                             size="icon"
@@ -243,18 +249,32 @@ export const EvidenceFileList = ({ refreshTrigger }: { refreshTrigger?: number }
           </Table>
         )}
 
-        {/* Audio Player */}
-        {playingAudio && (
-          <div className="mt-4 p-4 rounded-lg bg-muted">
-            <audio
-              src={files.find(f => f.id === playingAudio)?.public_url}
-              controls
-              autoPlay
-              className="w-full"
-              onEnded={() => setPlayingAudio(null)}
-            />
-          </div>
-        )}
+        {/* Audio/Video Player */}
+        {playingAudio && (() => {
+          const activeFile = files.find(f => f.id === playingAudio);
+          const isVid = activeFile && isVideo(activeFile.file_type, activeFile.file_name);
+          return (
+            <div className="mt-4 p-4 rounded-lg bg-muted">
+              {isVid ? (
+                <video
+                  src={activeFile?.public_url}
+                  controls
+                  autoPlay
+                  className="w-full max-h-[400px] rounded"
+                  onEnded={() => setPlayingAudio(null)}
+                />
+              ) : (
+                <audio
+                  src={activeFile?.public_url}
+                  controls
+                  autoPlay
+                  className="w-full"
+                  onEnded={() => setPlayingAudio(null)}
+                />
+              )}
+            </div>
+          );
+        })()}
       </CardContent>
     </Card>
   );

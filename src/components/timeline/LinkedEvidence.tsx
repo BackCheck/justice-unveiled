@@ -19,6 +19,7 @@ const categoryColors: Record<string, string> = {
 };
 
 const getFileIcon = (fileType: string, fileName: string) => {
+  if (fileType.includes('video') || fileName.endsWith('.mp4')) return FileAudio;
   if (fileType.includes('audio') || fileName.endsWith('.mp3')) return FileAudio;
   if (fileType.includes('pdf')) return FileText;
   return File;
