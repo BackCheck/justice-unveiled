@@ -4,6 +4,7 @@ import { timelineData, TimelineEvent } from "@/data/timelineData";
 import { useExtractedEvents, useAllExtractedEvents } from "./useExtractedEvents";
 import { useUserRole } from "./useUserRole";
 import { supabase } from "@/integrations/supabase/client";
+import { useCaseFilter } from "@/contexts/CaseFilterContext";
 
 // Generate a unique key for a static event based on its properties
 export const generateEventKey = (date: string, category: string, index: number): string => {
@@ -21,9 +22,10 @@ export interface CombinedTimelineEvent extends TimelineEvent {
 
 export const useCombinedTimeline = (includeHidden: boolean = false) => {
   const { isAdmin } = useUserRole();
+  const { selectedCaseId } = useCaseFilter();
   
   // Use appropriate query based on whether we need all events or just visible ones
-  const { data: visibleEvents, isLoading: visibleLoading, error: visibleError } = useExtractedEvents();
+  const { data: visibleEvents, isLoading: visibleLoading, error: visibleError } = useExtractedEvents(selectedCaseId);
   const { data: allEvents, isLoading: allLoading, error: allError } = useAllExtractedEvents();
   
   // Fetch hidden static events directly here to avoid hook ordering issues
@@ -51,8 +53,8 @@ export const useCombinedTimeline = (includeHidden: boolean = false) => {
   }, [hiddenStaticEvents]);
 
   const combinedEvents = useMemo(() => {
-    // Start with static timeline data
-    const staticEvents: CombinedTimelineEvent[] = timelineData.map((event, index) => {
+    // Start with static timeline data (only when no case filter is active)
+    const staticEvents: CombinedTimelineEvent[] = !selectedCaseId ? timelineData.map((event, index) => {
       const eventKey = generateEventKey(event.date, event.category, index);
       const isHidden = hiddenStaticKeys.has(eventKey);
       
@@ -64,10 +66,9 @@ export const useCombinedTimeline = (includeHidden: boolean = false) => {
         originalIndex: index,
       };
     }).filter(event => {
-      // Filter hidden static events for non-admins
       if (!isAdmin && event.isHidden) return false;
       return true;
-    });
+    }) : [];
 
     // Add extracted events if available
     const aiEvents: CombinedTimelineEvent[] = (extractedEvents || [])
@@ -94,7 +95,7 @@ export const useCombinedTimeline = (includeHidden: boolean = false) => {
     });
 
     return allCombinedEvents;
-  }, [extractedEvents, isAdmin, hiddenStaticKeys]);
+  }, [extractedEvents, isAdmin, hiddenStaticKeys, selectedCaseId]);
 
   const stats = useMemo(() => {
     const extracted = combinedEvents.filter(e => e.isExtracted).length;

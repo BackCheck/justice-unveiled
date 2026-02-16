@@ -59,7 +59,7 @@ export interface AnalysisJob {
   created_at: string;
 }
 
-export const useExtractedEvents = () => {
+export const useExtractedEvents = (caseId?: string | null) => {
   const queryClient = useQueryClient();
 
   // Subscribe to realtime changes
@@ -75,7 +75,6 @@ export const useExtractedEvents = () => {
         },
         (payload) => {
           console.log('Realtime event received:', payload);
-          // Invalidate the query to refetch data
           queryClient.invalidateQueries({ queryKey: ["extracted-events"] });
         }
       )
@@ -87,14 +86,19 @@ export const useExtractedEvents = () => {
   }, [queryClient]);
 
   return useQuery({
-    queryKey: ["extracted-events"],
+    queryKey: ["extracted-events", caseId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("extracted_events")
         .select("*")
         .eq("is_approved", true)
         .order("date", { ascending: true });
 
+      if (caseId) {
+        query = query.eq("case_id", caseId);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data as ExtractedEvent[];
     },
@@ -142,30 +146,40 @@ export const useToggleEventVisibility = () => {
   });
 };
 
-export const useExtractedEntities = () => {
+export const useExtractedEntities = (caseId?: string | null) => {
   return useQuery({
-    queryKey: ["extracted-entities"],
+    queryKey: ["extracted-entities", caseId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("extracted_entities")
         .select("*")
         .order("name", { ascending: true });
 
+      if (caseId) {
+        query = query.eq("case_id", caseId);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data as ExtractedEntity[];
     },
   });
 };
 
-export const useExtractedDiscrepancies = () => {
+export const useExtractedDiscrepancies = (caseId?: string | null) => {
   return useQuery({
-    queryKey: ["extracted-discrepancies"],
+    queryKey: ["extracted-discrepancies", caseId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("extracted_discrepancies")
         .select("*")
         .order("created_at", { ascending: false });
 
+      if (caseId) {
+        query = query.eq("case_id", caseId);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data as ExtractedDiscrepancy[];
     },
