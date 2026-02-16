@@ -118,11 +118,11 @@ serve(async (req) => {
   }
 
   try {
-    const { uploadId, documentContent, fileName, documentType, caseId } = await req.json();
+    const { uploadId, documentContent, fileName, documentType, caseId, storagePath } = await req.json();
 
-    if (!uploadId || !documentContent) {
+    if (!uploadId) {
       return new Response(
-        JSON.stringify({ error: "uploadId and documentContent are required" }),
+        JSON.stringify({ error: "uploadId is required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -168,6 +168,66 @@ serve(async (req) => {
     const jobId = job?.id;
     if (jobError) {
       console.error("Job creation error:", jobError);
+    }
+
+    // Determine if we need to fetch the file from storage for binary files (PDF, images)
+    let actualContent = documentContent || '';
+    let fileBase64: string | null = null;
+    let fileMimeType: string | null = null;
+    const isPdf = fileName?.toLowerCase().endsWith('.pdf');
+    const isImage = /\.(png|jpg|jpeg|gif|webp|bmp|tiff)$/i.test(fileName || '');
+    const needsBinaryFetch = (isPdf || isImage) && storagePath;
+
+    if (needsBinaryFetch) {
+      console.log(`Fetching binary file from storage: ${storagePath}`);
+      try {
+        const { data: fileData, error: downloadError } = await supabase.storage
+          .from('evidence')
+          .download(storagePath);
+        
+        if (downloadError) {
+          console.error('Storage download error:', downloadError);
+        } else if (fileData) {
+          const arrayBuffer = await fileData.arrayBuffer();
+          const bytes = new Uint8Array(arrayBuffer);
+          // Convert to base64
+          let binary = '';
+          const chunkSize = 8192;
+          for (let i = 0; i < bytes.length; i += chunkSize) {
+            const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
+            binary += String.fromCharCode(...chunk);
+          }
+          fileBase64 = btoa(binary);
+          fileMimeType = isPdf ? 'application/pdf' : 'image/png';
+          console.log(`Successfully fetched file, base64 length: ${fileBase64.length}`);
+        }
+      } catch (fetchErr) {
+        console.error('Failed to fetch file from storage:', fetchErr);
+      }
+    }
+
+    // If we couldn't get binary content and have no text content, skip
+    if (!fileBase64 && (!actualContent || actualContent.startsWith('[PDF Document:') || actualContent.startsWith('[Video File:') || actualContent.startsWith('[Audio File:'))) {
+      console.log('No extractable content available for analysis');
+      if (jobId) {
+        await supabase.from("document_analysis_jobs").update({
+          status: "completed",
+          events_extracted: 0,
+          entities_extracted: 0,
+          discrepancies_extracted: 0,
+          completed_at: new Date().toISOString()
+        }).eq("id", jobId);
+      }
+      return new Response(
+        JSON.stringify({
+          success: true,
+          eventsExtracted: 0, entitiesExtracted: 0, discrepanciesExtracted: 0,
+          claimsExtracted: 0, complianceViolationsExtracted: 0, financialHarmExtracted: 0,
+          events: [], entities: [], discrepancies: [], claims: [], complianceViolations: [], financialHarm: [],
+          note: 'No extractable text content. Server-side binary extraction was attempted.'
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     const systemPrompt = `You are an expert legal analyst specializing in case investigation, evidence analysis, human rights documentation, and financial harm assessment. Your task is to extract comprehensive structured intelligence from legal documents.
@@ -216,14 +276,39 @@ EXTRACTION REQUIREMENTS:
 
 Be thorough but accurate. Only extract information explicitly stated or clearly implied. Assign confidence scores based on clarity of evidence.`;
 
-    // Truncate document content to avoid exceeding token limits (~4 chars per token, limit ~1M tokens, leave room for prompt)
-    const MAX_CONTENT_CHARS = 500000;
-    let truncatedContent = documentContent;
-    let truncationNote = '';
-    if (documentContent.length > MAX_CONTENT_CHARS) {
-      truncatedContent = documentContent.substring(0, MAX_CONTENT_CHARS);
-      truncationNote = `\n\n[NOTE: Document was truncated from ${documentContent.length} to ${MAX_CONTENT_CHARS} characters due to size limits. Analysis covers the first portion only.]`;
-      console.log(`Document truncated from ${documentContent.length} to ${MAX_CONTENT_CHARS} chars`);
+    // Build the user message parts - use multimodal if we have base64
+    let userMessageParts: any[];
+    if (fileBase64) {
+      // Use Gemini multimodal: send the actual file as inline_data
+      userMessageParts = [
+        {
+          type: "text",
+          text: `Analyze this ${documentType || "document"} (${fileName || "uploaded file"}) and extract ALL intelligence including timeline events, entities, discrepancies, LEGAL CLAIMS, COMPLIANCE VIOLATIONS, and FINANCIAL HARM.`
+        },
+        {
+          type: "image_url",
+          image_url: {
+            url: `data:${fileMimeType};base64,${fileBase64}`
+          }
+        }
+      ];
+      console.log('Using multimodal analysis with binary file content');
+    } else {
+      // Use text content directly
+      const MAX_CONTENT_CHARS = 500000;
+      let truncatedContent = actualContent;
+      let truncationNote = '';
+      if (actualContent.length > MAX_CONTENT_CHARS) {
+        truncatedContent = actualContent.substring(0, MAX_CONTENT_CHARS);
+        truncationNote = `\n\n[NOTE: Document was truncated from ${actualContent.length} to ${MAX_CONTENT_CHARS} characters due to size limits. Analysis covers the first portion only.]`;
+        console.log(`Document truncated from ${actualContent.length} to ${MAX_CONTENT_CHARS} chars`);
+      }
+      userMessageParts = [
+        {
+          type: "text", 
+          text: `Analyze this ${documentType || "document"} (${fileName || "uploaded file"}) and extract ALL intelligence including timeline events, entities, discrepancies, LEGAL CLAIMS, COMPLIANCE VIOLATIONS, and FINANCIAL HARM:\n\n${truncatedContent}${truncationNote}`
+        }
+      ];
     }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -238,7 +323,7 @@ Be thorough but accurate. Only extract information explicitly stated or clearly 
           { role: "system", content: systemPrompt },
           { 
             role: "user", 
-            content: `Analyze this ${documentType || "document"} (${fileName || "uploaded file"}) and extract ALL intelligence including timeline events, entities, discrepancies, LEGAL CLAIMS, COMPLIANCE VIOLATIONS, and FINANCIAL HARM:\n\n${truncatedContent}${truncationNote}` 
+            content: userMessageParts
           }
         ],
         tools: [
