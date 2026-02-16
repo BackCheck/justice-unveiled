@@ -9,6 +9,7 @@ import { RefreshCw, FolderOpen, Sparkles, CheckCircle, AlertCircle, Loader2 } fr
 import { supabase } from "@/integrations/supabase/client";
 import { useCases } from "@/hooks/useCases";
 import { toast } from "@/hooks/use-toast";
+import { createNotification } from "@/hooks/useNotifications";
 import { useQuery } from "@tanstack/react-query";
 
 interface FileStatus {
@@ -108,6 +109,13 @@ export const ReanalyzeButton = () => {
     toast({
       title: "Re-analysis Complete",
       description: `Processed ${caseFiles.length} files: ${successCount} succeeded, ${errorCount} failed.`,
+    });
+
+    await createNotification({
+      type: "analysis",
+      title: "Batch Re-analysis Complete",
+      message: `Processed ${caseFiles.length} files: ${successCount} succeeded, ${errorCount} failed.`,
+      caseId: selectedCaseId,
     });
   };
 

@@ -16,6 +16,7 @@ import { Upload, FileAudio, FileText, File, X, CheckCircle, AlertCircle, Sparkle
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
+import { createNotification } from "@/hooks/useNotifications";
 import { cn } from "@/lib/utils";
 import { EventSelector } from "./EventSelector";
 import { useCases } from "@/hooks/useCases";
@@ -261,6 +262,23 @@ export const EvidenceUploader = ({
           title: "Upload successful",
           description: `${file.name} has been uploaded and analyzed.${extractedItems}`,
         });
+
+        // Create real notifications
+        await createNotification({
+          type: "upload",
+          title: "Evidence Uploaded",
+          message: `${file.name} uploaded successfully.`,
+          caseId: caseId || null,
+        });
+
+        if (analysisResult && (analysisResult.events + analysisResult.claims + analysisResult.violations + analysisResult.harm) > 0) {
+          await createNotification({
+            type: "analysis",
+            title: "Document Analysis Complete",
+            message: `${file.name}: ${analysisResult.events} events, ${analysisResult.claims} claims, ${analysisResult.violations} violations extracted.`,
+            caseId: caseId || null,
+          });
+        }
 
       } catch (error: any) {
         console.error('Upload error:', error);
