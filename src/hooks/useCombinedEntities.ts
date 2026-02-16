@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useExtractedEntities, useExtractedEvents, ExtractedEntity } from "./useExtractedEvents";
 import { entities as staticEntities, connections as staticConnections, Entity, EntityConnection, EntityType } from "@/data/entitiesData";
+import { useCaseFilter } from "@/contexts/CaseFilterContext";
 
 export interface CombinedEntity extends Entity {
   isAIExtracted?: boolean;
@@ -46,18 +47,18 @@ const getCategory = (entity: ExtractedEntity): "protagonist" | "antagonist" | "n
 };
 
 export const useCombinedEntities = () => {
-  const { data: extractedEntities, isLoading: entitiesLoading } = useExtractedEntities();
-  const { data: extractedEvents, isLoading: eventsLoading } = useExtractedEvents();
+  const { selectedCaseId } = useCaseFilter();
+  const { data: extractedEntities, isLoading: entitiesLoading } = useExtractedEntities(selectedCaseId);
+  const { data: extractedEvents, isLoading: eventsLoading } = useExtractedEvents(selectedCaseId);
 
   const combinedData = useMemo(() => {
-    // Start with static entities
-    const combined: CombinedEntity[] = staticEntities.map(e => ({
-      ...e,
-      isAIExtracted: false
-    }));
+    // Start with static entities only when no case filter
+    const combined: CombinedEntity[] = !selectedCaseId 
+      ? staticEntities.map(e => ({ ...e, isAIExtracted: false }))
+      : [];
 
-    // Track existing entity names to avoid duplicates (case-insensitive)
-    const existingNames = new Set(staticEntities.map(e => e.name.toLowerCase()));
+    // Track existing entity names to avoid duplicates
+    const existingNames = new Set(combined.map(e => e.name.toLowerCase()));
 
     // Add extracted entities
     if (extractedEntities) {
@@ -83,11 +84,10 @@ export const useCombinedEntities = () => {
       });
     }
 
-    // Start with static connections
-    const combinedConnections: CombinedConnection[] = staticConnections.map(c => ({
-      ...c,
-      isInferred: false
-    }));
+    // Start with static connections only when no case filter
+    const combinedConnections: CombinedConnection[] = !selectedCaseId
+      ? staticConnections.map(c => ({ ...c, isInferred: false }))
+      : [];
 
     // Infer connections from shared events
     if (extractedEntities && extractedEvents) {
@@ -149,7 +149,7 @@ export const useCombinedEntities = () => {
       entities: combined,
       connections: combinedConnections
     };
-  }, [extractedEntities, extractedEvents]);
+  }, [extractedEntities, extractedEvents, selectedCaseId]);
 
   return {
     entities: combinedData.entities,

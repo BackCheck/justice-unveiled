@@ -9,6 +9,7 @@ import { GlobalSearch } from "./GlobalSearch";
 import { NotificationCenter } from "./NotificationCenter";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, FileText, Github, Newspaper, Code } from "lucide-react";
+import { CaseSelector } from "./CaseSelector";
 
 interface PlatformLayoutProps {
   children: ReactNode;
@@ -94,6 +95,11 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
               )}
 
               <div className="flex-1" />
+
+              {/* Case Selector */}
+              {!isHomePage && (
+                <CaseSelector />
+              )}
 
               {/* Right Side Actions */}
               <div className="flex items-center gap-2">
