@@ -280,22 +280,7 @@ export const ThreatProfiler = () => {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold flex items-center gap-2">
-            <Shield className="w-5 h-5 text-red-500" />
-            AI Threat Profiler
-          </h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Generate comprehensive adversary profiles using AI analysis
-          </p>
-        </div>
-        <Badge variant="secondary" className="gap-1">
-          <Sparkles className="w-3 h-3" />
-          Gemini Powered
-        </Badge>
-      </div>
+      {/* Entity Selection */}
 
       <div className="grid lg:grid-cols-4 gap-6">
         {/* Entity Selection */}
