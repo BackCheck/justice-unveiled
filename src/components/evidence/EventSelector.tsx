@@ -1,17 +1,29 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { timelineData } from "@/data/timelineData";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Check, ChevronDown, Calendar, X } from "lucide-react";
+import { Check, ChevronDown, Calendar, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format, parseISO } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
+
+interface TimelineEventItem {
+  id: string;
+  date: string;
+  category: string;
+  description: string;
+  source: "static" | "extracted";
+  staticIndex?: number;
+}
 
 interface EventSelectorProps {
-  selectedEventIds: number[];
-  onSelectionChange: (ids: number[]) => void;
+  selectedEventIds: string[];
+  onSelectionChange: (ids: string[]) => void;
+  caseId?: string;
 }
 
 const categoryColors: Record<string, string> = {
@@ -21,20 +33,97 @@ const categoryColors: Record<string, string> = {
   "Criminal Allegation": "bg-purple-500",
 };
 
-export const EventSelector = ({ selectedEventIds, onSelectionChange }: EventSelectorProps) => {
+// The default/original case number for the static timeline data
+const DEFAULT_CASE_NUMBER = "CF-001";
+
+export const EventSelector = ({ selectedEventIds, onSelectionChange, caseId }: EventSelectorProps) => {
   const [open, setOpen] = useState(false);
 
-  const toggleEvent = (index: number) => {
-    if (selectedEventIds.includes(index)) {
-      onSelectionChange(selectedEventIds.filter(id => id !== index));
+  // Fetch case info to check if it's the default case
+  const { data: caseInfo } = useQuery({
+    queryKey: ["case-info", caseId],
+    queryFn: async () => {
+      if (!caseId) return null;
+      const { data, error } = await supabase
+        .from("cases")
+        .select("case_number")
+        .eq("id", caseId)
+        .single();
+      if (error) return null;
+      return data;
+    },
+    enabled: !!caseId,
+  });
+
+  // Fetch extracted events for the selected case
+  const { data: extractedEvents, isLoading } = useQuery({
+    queryKey: ["case-extracted-events", caseId],
+    queryFn: async () => {
+      if (!caseId) return [];
+      const { data, error } = await supabase
+        .from("extracted_events")
+        .select("id, date, category, description")
+        .eq("case_id", caseId)
+        .eq("is_approved", true)
+        .order("date", { ascending: true });
+      if (error) return [];
+      return data;
+    },
+    enabled: !!caseId,
+  });
+
+  // Build unified event list for this case
+  const events: TimelineEventItem[] = [];
+
+  // Include static timeline data only for the original case
+  const isDefaultCase = caseInfo?.case_number === DEFAULT_CASE_NUMBER;
+  if (isDefaultCase || !caseId) {
+    timelineData.forEach((event, index) => {
+      events.push({
+        id: `static-${index}`,
+        date: event.date,
+        category: event.category,
+        description: event.description,
+        source: "static",
+        staticIndex: index,
+      });
+    });
+  }
+
+  // Add extracted events
+  (extractedEvents || []).forEach((event) => {
+    events.push({
+      id: `extracted-${event.id}`,
+      date: event.date,
+      category: event.category,
+      description: event.description,
+      source: "extracted",
+    });
+  });
+
+  // Sort by date
+  events.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  const toggleEvent = (eventId: string) => {
+    if (selectedEventIds.includes(eventId)) {
+      onSelectionChange(selectedEventIds.filter(id => id !== eventId));
     } else {
-      onSelectionChange([...selectedEventIds, index]);
+      onSelectionChange([...selectedEventIds, eventId]);
     }
   };
 
   const clearSelection = () => {
     onSelectionChange([]);
   };
+
+  if (!caseId) {
+    return (
+      <div className="space-y-2">
+        <Label>Link to Timeline Events (optional)</Label>
+        <p className="text-sm text-muted-foreground">Select a case first to see available timeline events.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-2">
@@ -46,10 +135,18 @@ export const EventSelector = ({ selectedEventIds, onSelectionChange }: EventSele
             role="combobox"
             aria-expanded={open}
             className="w-full justify-between h-auto min-h-10 py-2"
+            disabled={isLoading}
           >
             <span className="text-left flex-1">
-              {selectedEventIds.length === 0 ? (
-                <span className="text-muted-foreground">Select events...</span>
+              {isLoading ? (
+                <span className="text-muted-foreground flex items-center gap-2">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  Loading events...
+                </span>
+              ) : selectedEventIds.length === 0 ? (
+                <span className="text-muted-foreground">
+                  {events.length === 0 ? "No events for this case" : "Select events..."}
+                </span>
               ) : (
                 <span>{selectedEventIds.length} event(s) selected</span>
               )}
@@ -68,14 +165,19 @@ export const EventSelector = ({ selectedEventIds, onSelectionChange }: EventSele
           </div>
           <ScrollArea className="h-[300px]">
             <div className="p-2 space-y-1">
-              {timelineData.map((event, index) => {
-                const isSelected = selectedEventIds.includes(index);
+              {events.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  No timeline events found for this case.
+                </p>
+              )}
+              {events.map((event) => {
+                const isSelected = selectedEventIds.includes(event.id);
                 const formattedDate = format(parseISO(event.date), "MMM d, yyyy");
                 
                 return (
                   <button
-                    key={index}
-                    onClick={() => toggleEvent(index)}
+                    key={event.id}
+                    onClick={() => toggleEvent(event.id)}
                     className={cn(
                       "w-full text-left p-2 rounded-md flex items-start gap-2 transition-colors",
                       isSelected 
@@ -103,6 +205,9 @@ export const EventSelector = ({ selectedEventIds, onSelectionChange }: EventSele
                         >
                           {event.category}
                         </Badge>
+                        {event.source === "extracted" && (
+                          <Badge variant="outline" className="text-xs">AI</Badge>
+                        )}
                       </div>
                       <p className="text-sm line-clamp-2">{event.description}</p>
                     </div>
@@ -117,12 +222,12 @@ export const EventSelector = ({ selectedEventIds, onSelectionChange }: EventSele
       {/* Selected Events Preview */}
       {selectedEventIds.length > 0 && (
         <div className="flex flex-wrap gap-1.5 pt-1">
-          {selectedEventIds.map(index => {
-            const event = timelineData[index];
+          {selectedEventIds.map(eventId => {
+            const event = events.find(e => e.id === eventId);
             if (!event) return null;
             return (
               <Badge 
-                key={index} 
+                key={eventId} 
                 variant="secondary" 
                 className="flex items-center gap-1 pr-1"
               >
@@ -130,7 +235,7 @@ export const EventSelector = ({ selectedEventIds, onSelectionChange }: EventSele
                   {format(parseISO(event.date), "MMM yyyy")}
                 </span>
                 <button 
-                  onClick={() => toggleEvent(index)}
+                  onClick={() => toggleEvent(eventId)}
                   className="hover:bg-muted-foreground/20 rounded p-0.5"
                 >
                   <X className="w-3 h-3" />
