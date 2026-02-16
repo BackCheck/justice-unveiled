@@ -22,6 +22,7 @@ import { EventSelector } from "./EventSelector";
 const ACCEPTED_TYPES = {
   "audio/mpeg": { ext: "mp3", icon: FileAudio, label: "Audio" },
   "audio/mp3": { ext: "mp3", icon: FileAudio, label: "Audio" },
+  "video/mp4": { ext: "mp4", icon: FileAudio, label: "Video" },
   "application/pdf": { ext: "pdf", icon: FileText, label: "Document" },
   "text/markdown": { ext: "md", icon: File, label: "Markdown" },
   "text/plain": { ext: "txt", icon: File, label: "Text" },
@@ -31,6 +32,7 @@ const CATEGORIES = [
   { value: "commentary", label: "Commentary" },
   { value: "legal_document", label: "Legal Document" },
   { value: "audio_evidence", label: "Audio Evidence" },
+  { value: "video_evidence", label: "Video Evidence" },
   { value: "witness_statement", label: "Witness Statement" },
   { value: "court_record", label: "Court Record" },
   { value: "media_coverage", label: "Media Coverage" },
@@ -79,14 +81,14 @@ export const EvidenceUploader = ({
     
     for (const file of Array.from(files)) {
       const isAccepted = Object.keys(ACCEPTED_TYPES).includes(file.type) || 
-        file.name.endsWith('.md') || file.name.endsWith('.txt');
+        file.name.endsWith('.md') || file.name.endsWith('.txt') || file.name.endsWith('.mp4');
       
       if (isAccepted) {
         newUploads.push({ file, progress: 0, status: "pending" });
       } else {
         toast({
           title: "Invalid file type",
-          description: `${file.name} is not a supported file type. Please upload MP3, PDF, or MD files.`,
+          description: `${file.name} is not a supported file type. Please upload MP3, MP4, PDF, or MD files.`,
           variant: "destructive",
         });
       }
@@ -123,10 +125,17 @@ export const EvidenceUploader = ({
     }
     
     // For PDFs, we can't read directly in browser - would need backend processing
-    // Return null to skip AI analysis for binary files
     if (file.type === 'application/pdf') {
-      // Return a placeholder indicating PDF needs server-side processing
       return `[PDF Document: ${file.name}]\n\nThis PDF document requires server-side text extraction for full analysis. File size: ${(file.size / 1024).toFixed(1)} KB`;
+    }
+
+    // For video/audio files, provide metadata for AI context
+    if (file.type === 'video/mp4' || file.type.startsWith('video/') || file.name.endsWith('.mp4')) {
+      return `[Video File: ${file.name}]\n\nThis is an MP4 video file (${(file.size / (1024 * 1024)).toFixed(1)} MB). Please analyze any available metadata and context. The video may contain visual and audio evidence relevant to the investigation. Server-side audio transcription would be needed for full content extraction.`;
+    }
+
+    if (file.type.startsWith('audio/') || file.name.endsWith('.mp3')) {
+      return `[Audio File: ${file.name}]\n\nThis is an audio file (${(file.size / 1024).toFixed(1)} KB). Server-side audio transcription would be needed for full content extraction.`;
     }
     
     return null;
@@ -309,7 +318,7 @@ export const EvidenceUploader = ({
             Drop files here or click to browse
           </p>
           <p className="text-xs text-muted-foreground mt-1">
-            Supports MP3, PDF, MD, TXT files
+            Supports MP3, MP4, PDF, MD, TXT files
           </p>
           {autoAnalyze && (
             <p className="text-xs text-primary mt-2 flex items-center justify-center gap-1">
@@ -321,7 +330,7 @@ export const EvidenceUploader = ({
             ref={fileInputRef}
             type="file"
             multiple
-            accept=".mp3,.pdf,.md,.txt,audio/mpeg,application/pdf,text/markdown,text/plain"
+            accept=".mp3,.mp4,.pdf,.md,.txt,audio/mpeg,video/mp4,application/pdf,text/markdown,text/plain"
             onChange={(e) => handleFiles(e.target.files)}
             className="hidden"
           />
