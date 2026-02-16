@@ -15,6 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { useTranslation } from "react-i18next";
+import { useCaseFilter } from "@/contexts/CaseFilterContext";
 
 const activityIcons = {
   upload: Upload,
@@ -38,15 +39,18 @@ const activityColors = {
 
 export const ActivityFeed = () => {
   const { t } = useTranslation();
+  const { selectedCaseId } = useCaseFilter();
 
   const { data: uploads } = useQuery({
-    queryKey: ["recent-uploads-activity"],
+    queryKey: ["recent-uploads-activity", selectedCaseId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("evidence_uploads")
         .select("id, file_name, created_at")
         .order("created_at", { ascending: false })
         .limit(3);
+      if (selectedCaseId) query = query.eq("case_id", selectedCaseId);
+      const { data, error } = await query;
       if (error) throw error;
       return data || [];
     },
@@ -54,13 +58,15 @@ export const ActivityFeed = () => {
   });
 
   const { data: events } = useQuery({
-    queryKey: ["recent-events-activity"],
+    queryKey: ["recent-events-activity", selectedCaseId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("extracted_events")
         .select("id, description, created_at")
         .order("created_at", { ascending: false })
         .limit(3);
+      if (selectedCaseId) query = query.eq("case_id", selectedCaseId);
+      const { data, error } = await query;
       if (error) throw error;
       return data || [];
     },
@@ -68,13 +74,15 @@ export const ActivityFeed = () => {
   });
 
   const { data: entities } = useQuery({
-    queryKey: ["recent-entities-activity"],
+    queryKey: ["recent-entities-activity", selectedCaseId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("extracted_entities")
         .select("id, name, created_at")
         .order("created_at", { ascending: false })
         .limit(3);
+      if (selectedCaseId) query = query.eq("case_id", selectedCaseId);
+      const { data, error } = await query;
       if (error) throw error;
       return data || [];
     },

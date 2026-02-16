@@ -12,6 +12,7 @@ import { keyFindings } from "@/data/keyFindingsData";
 import { useExtractedDiscrepancies } from "@/hooks/useExtractedEvents";
 import { formatDistanceToNow } from "date-fns";
 import { useTranslation } from "react-i18next";
+import { useCaseFilter } from "@/contexts/CaseFilterContext";
 
 const severityConfig = {
   critical: { icon: AlertTriangle, color: "text-destructive", bg: "bg-destructive/10", border: "border-destructive/30" },
@@ -21,11 +22,13 @@ const severityConfig = {
 };
 
 export const CriticalAlertsPanel = () => {
-  const { data: discrepancies } = useExtractedDiscrepancies();
+  const { selectedCaseId } = useCaseFilter();
+  const { data: discrepancies } = useExtractedDiscrepancies(selectedCaseId);
   const { t } = useTranslation();
 
   const alerts = [
-    ...keyFindings
+    // Only show static key findings when no case is selected
+    ...(!selectedCaseId ? keyFindings
       .filter(f => f.severity === "critical" || f.severity === "high")
       .slice(0, 3)
       .map(f => ({
@@ -34,7 +37,7 @@ export const CriticalAlertsPanel = () => {
         severity: f.severity as "critical" | "high" | "medium" | "low",
         source: t('dashboard.staticIntel'),
         time: t('dashboard.caseFile'),
-      })),
+      })) : []),
     ...(discrepancies || [])
       .filter(d => d.severity === "critical" || d.severity === "high")
       .slice(0, 3)

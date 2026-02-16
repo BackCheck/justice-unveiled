@@ -21,10 +21,14 @@ export const DashboardStatsHeader = () => {
   const criticalFindings = keyFindings.filter(f => f.severity === "critical").length;
   const highFindings = keyFindings.filter(f => f.severity === "high").length;
 
+  const timelineSpanLabel = stats.timelineMinYear && stats.timelineMaxYear
+    ? `${stats.timelineMinYear}–${stats.timelineMaxYear}`
+    : "—";
+
   const statCards = [
     {
       label: t('dashboard.timelineSpan'),
-      value: "2015–2025",
+      value: timelineSpanLabel,
       icon: Calendar,
       color: "text-primary",
       bgColor: "bg-primary/10",

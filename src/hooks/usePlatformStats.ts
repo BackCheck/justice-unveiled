@@ -14,6 +14,8 @@ export interface PlatformStats {
   totalConnections: number;
   yearsDocumented: number;
   internationalFrameworks: number;
+  timelineMinYear: number | null;
+  timelineMaxYear: number | null;
   
   // Breakdown by source
   staticSources: number;
@@ -48,7 +50,7 @@ export const usePlatformStats = (explicitCaseId?: string | null) => {
   const { data: extractedEvents, isLoading: eventsLoading } = useQuery({
     queryKey: ["platform-extracted-events", caseId],
     queryFn: async () => {
-      let query = supabase.from("extracted_events").select("id, category");
+      let query = supabase.from("extracted_events").select("id, category, date");
       if (caseId) query = query.eq("case_id", caseId);
       const { data, error } = await query;
       if (error) throw error;
@@ -162,11 +164,17 @@ export const usePlatformStats = (explicitCaseId?: string | null) => {
     const inferredConnections = Math.floor(aiEntityCount * 0.5);
     const totalConnections = staticConnectionCount + inferredConnections;
 
-    const years = [...new Set([
+    // Compute actual timeline years from all event dates
+    const allYears: number[] = [
       ...(!caseId ? timelineData.map(e => new Date(e.date).getFullYear()) : []),
-      ...(extractedEvents || []).map(() => 2024)
-    ])];
-    const yearsDocumented = years.length > 0 ? Math.max(...years) - Math.min(...years) + 1 : 10;
+      ...(extractedEvents || []).map(e => {
+        const y = new Date(e.date).getFullYear();
+        return isNaN(y) ? null : y;
+      }).filter((y): y is number => y !== null),
+    ];
+    const timelineMinYear = allYears.length > 0 ? Math.min(...allYears) : null;
+    const timelineMaxYear = allYears.length > 0 ? Math.max(...allYears) : null;
+    const yearsDocumented = timelineMinYear && timelineMaxYear ? timelineMaxYear - timelineMinYear + 1 : 0;
 
     const eventsByCategory: Record<string, number> = {};
     if (!caseId) {
@@ -194,6 +202,8 @@ export const usePlatformStats = (explicitCaseId?: string | null) => {
       totalConnections,
       yearsDocumented,
       internationalFrameworks: 6,
+      timelineMinYear,
+      timelineMaxYear,
       
       staticSources: staticSourceCount,
       aiExtractedSources: aiUploadCount,

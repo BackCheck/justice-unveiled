@@ -5,9 +5,12 @@ import { Link } from "react-router-dom";
 import { Target, ChevronRight, Lightbulb } from "lucide-react";
 import { keyFindings, severityColors, findingCategoryColors } from "@/data/keyFindingsData";
 import { useTranslation } from "react-i18next";
+import { useCaseFilter } from "@/contexts/CaseFilterContext";
 
 export const KeyFindingsGrid = () => {
-  const displayFindings = keyFindings.slice(0, 6);
+  const { selectedCaseId } = useCaseFilter();
+  // Static findings only shown for "All Cases"
+  const displayFindings = selectedCaseId ? [] : keyFindings.slice(0, 6);
   const { t } = useTranslation();
 
   return (
