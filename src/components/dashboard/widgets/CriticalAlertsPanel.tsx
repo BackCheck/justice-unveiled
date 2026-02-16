@@ -8,7 +8,6 @@ import {
   Clock,
   ChevronRight 
 } from "lucide-react";
-import { keyFindings } from "@/data/keyFindingsData";
 import { useExtractedDiscrepancies } from "@/hooks/useExtractedEvents";
 import { formatDistanceToNow } from "date-fns";
 import { useTranslation } from "react-i18next";
@@ -26,28 +25,16 @@ export const CriticalAlertsPanel = () => {
   const { data: discrepancies } = useExtractedDiscrepancies(selectedCaseId);
   const { t } = useTranslation();
 
-  const alerts = [
-    ...(!selectedCaseId ? keyFindings
-      .filter(f => f.severity === "critical" || f.severity === "high")
-      .slice(0, 3)
-      .map(f => ({
-        id: f.id,
-        title: f.title,
-        severity: f.severity as "critical" | "high" | "medium" | "low",
-        source: t('dashboard.staticIntel'),
-        time: t('dashboard.caseFile'),
-      })) : []),
-    ...(discrepancies || [])
-      .filter(d => d.severity === "critical" || d.severity === "high")
-      .slice(0, 3)
-      .map(d => ({
-        id: d.id,
-        title: d.title,
-        severity: d.severity as "critical" | "high" | "medium" | "low",
-        source: t('dashboard.aiAnalysis'),
-        time: formatDistanceToNow(new Date(d.created_at), { addSuffix: true }),
-      })),
-  ].slice(0, 6);
+  const alerts = (discrepancies || [])
+    .filter(d => d.severity === "critical" || d.severity === "high")
+    .slice(0, 6)
+    .map(d => ({
+      id: d.id,
+      title: d.title,
+      severity: d.severity as "critical" | "high" | "medium" | "low",
+      source: t('dashboard.aiAnalysis'),
+      time: formatDistanceToNow(new Date(d.created_at), { addSuffix: true }),
+    }));
 
   const criticalCount = alerts.filter(a => a.severity === "critical").length;
 

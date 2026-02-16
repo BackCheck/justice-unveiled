@@ -14,26 +14,35 @@ export const CaseOverviewCard = () => {
   const { t } = useTranslation();
   const { selectedCaseId } = useCaseFilter();
 
+  // Fetch the selected case or the first available case
   const { data: selectedCase } = useQuery({
     queryKey: ["case-overview-detail", selectedCaseId],
     queryFn: async () => {
-      if (!selectedCaseId) return null;
+      if (selectedCaseId) {
+        const { data, error } = await supabase
+          .from("cases")
+          .select("*")
+          .eq("id", selectedCaseId)
+          .maybeSingle();
+        if (error) throw error;
+        return data;
+      }
+      // When "All Cases" is selected, show the first case
       const { data, error } = await supabase
         .from("cases")
         .select("*")
-        .eq("id", selectedCaseId)
+        .order("created_at", { ascending: true })
+        .limit(1)
         .maybeSingle();
       if (error) throw error;
       return data;
     },
-    enabled: !!selectedCaseId,
   });
 
-  const caseTitle = selectedCase?.title || "Danish Thanvi vs. Agencies";
-  const caseNumber = selectedCase?.case_number || "Case File #001";
-  const caseDescription = selectedCase?.description ||
-    "A decade-long pattern of systematic harassment, evidence fabrication, and regulatory abuse targeting a business executive, culminating in full acquittal after procedural violations and document forgeries were exposed.";
-  const caseStatus = selectedCase?.status || "active";
+  const caseTitle = selectedCase?.title || "No cases yet";
+  const caseNumber = selectedCase?.case_number || "—";
+  const caseDescription = selectedCase?.description || "Create a case and upload documents to begin analysis.";
+  const caseStatus = selectedCase?.status || "—";
   const timelineSpan = stats.timelineMinYear && stats.timelineMaxYear
     ? `${stats.timelineMinYear} – ${stats.timelineMaxYear}`
     : "—";
@@ -44,6 +53,12 @@ export const CaseOverviewCard = () => {
     { label: t('dashboard.legalProceedings'), value: stats.eventsByCategory["Legal Proceeding"] || 0, color: "text-blue-600", bgColor: "bg-blue-500/10", borderColor: "border-blue-500/20" },
     { label: t('dashboard.criminalAllegations'), value: stats.eventsByCategory["Criminal Allegation"] || 0, color: "text-purple-600", bgColor: "bg-purple-500/10", borderColor: "border-purple-500/20" },
   ];
+
+  const caseLink = selectedCaseId 
+    ? `/cases/${selectedCaseId}` 
+    : selectedCase?.id 
+      ? `/cases/${selectedCase.id}` 
+      : "/cases";
 
   return (
     <div className="widget-card overflow-hidden relative">
@@ -56,12 +71,14 @@ export const CaseOverviewCard = () => {
             </div>
             <div>
               <CardTitle className="text-lg font-semibold text-foreground">{caseTitle}</CardTitle>
-              <p className="text-sm text-muted-foreground">{caseNumber} • {selectedCaseId ? caseStatus.toUpperCase() : t('dashboard.primaryInvestigation')}</p>
+              <p className="text-sm text-muted-foreground">{caseNumber} • {caseStatus.toUpperCase()}</p>
             </div>
           </div>
-          <Badge className="bg-emerald-500/15 text-emerald-600 border-emerald-500/30 font-medium">
-            {caseStatus.toUpperCase()}
-          </Badge>
+          {selectedCase && (
+            <Badge className="bg-emerald-500/15 text-emerald-600 border-emerald-500/30 font-medium">
+              {caseStatus.toUpperCase()}
+            </Badge>
+          )}
         </div>
       </CardHeader>
       <CardContent className="relative space-y-5">
@@ -89,7 +106,7 @@ export const CaseOverviewCard = () => {
             <div className="flex items-center gap-2 text-xs text-foreground/70"><FileText className="w-3.5 h-3.5" /><span>{stats.totalSources} {t('pages.sources')}</span></div>
             <div className="flex items-center gap-2 text-xs text-foreground/70"><Network className="w-3.5 h-3.5" /><span>{stats.totalConnections} links</span></div>
           </div>
-          <Link to={selectedCaseId ? `/cases/${selectedCaseId}` : "/cases/case-001"}>
+          <Link to={caseLink}>
             <Button variant="ghost" size="sm" className="gap-1 text-xs text-primary hover:text-primary">
               {t('dashboard.viewFullProfile')}
               <ArrowRight className="w-3 h-3" />

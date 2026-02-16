@@ -1,13 +1,9 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { timelineData } from "@/data/timelineData";
-import { sources } from "@/data/sourcesData";
-import { entities as staticEntities, connections as staticConnections } from "@/data/entitiesData";
 import { useCaseFilter } from "@/contexts/CaseFilterContext";
 
 export interface PlatformStats {
-  // Core metrics
   totalSources: number;
   totalEvents: number;
   totalEntities: number;
@@ -17,40 +13,38 @@ export interface PlatformStats {
   timelineMinYear: number | null;
   timelineMaxYear: number | null;
   
-  // Breakdown by source
-  staticSources: number;
   aiExtractedSources: number;
-  staticEvents: number;
   aiExtractedEvents: number;
-  staticEntities: number;
   aiExtractedEntities: number;
   inferredConnections: number;
   
-  // Category breakdown
   eventsByCategory: Record<string, number>;
   
-  // Additional insights
   criticalDiscrepancies: number;
   totalDiscrepancies: number;
   documentsAnalyzed: number;
   
-  // Legal Intelligence metrics
   verifiedPrecedents: number;
   totalPrecedents: number;
   legalStatutes: number;
   appealSummaries: number;
   complianceViolations: number;
+
+  // Growth metrics (week-over-week)
+  eventsGrowth: number | null;
+  entitiesGrowth: number | null;
+  sourcesGrowth: number | null;
+  connectionsGrowth: number | null;
 }
 
 export const usePlatformStats = (explicitCaseId?: string | null) => {
   const { selectedCaseId } = useCaseFilter();
   const caseId = explicitCaseId !== undefined ? explicitCaseId : selectedCaseId;
 
-  // Fetch dynamic data from database
   const { data: extractedEvents, isLoading: eventsLoading } = useQuery({
     queryKey: ["platform-extracted-events", caseId],
     queryFn: async () => {
-      let query = supabase.from("extracted_events").select("id, category, date");
+      let query = supabase.from("extracted_events").select("id, category, date, created_at");
       if (caseId) query = query.eq("case_id", caseId);
       const { data, error } = await query;
       if (error) throw error;
@@ -62,7 +56,7 @@ export const usePlatformStats = (explicitCaseId?: string | null) => {
   const { data: extractedEntities, isLoading: entitiesLoading } = useQuery({
     queryKey: ["platform-extracted-entities", caseId],
     queryFn: async () => {
-      let query = supabase.from("extracted_entities").select("id");
+      let query = supabase.from("extracted_entities").select("id, created_at");
       if (caseId) query = query.eq("case_id", caseId);
       const { data, error } = await query;
       if (error) throw error;
@@ -86,7 +80,7 @@ export const usePlatformStats = (explicitCaseId?: string | null) => {
   const { data: uploads, isLoading: uploadsLoading } = useQuery({
     queryKey: ["platform-uploads", caseId],
     queryFn: async () => {
-      let query = supabase.from("evidence_uploads").select("id");
+      let query = supabase.from("evidence_uploads").select("id, created_at");
       if (caseId) query = query.eq("case_id", caseId);
       const { data, error } = await query;
       if (error) throw error;
@@ -95,7 +89,18 @@ export const usePlatformStats = (explicitCaseId?: string | null) => {
     staleTime: 1000 * 60 * 5,
   });
 
-  // Legal Intelligence metrics
+  const { data: entityRelationships } = useQuery({
+    queryKey: ["platform-relationships", caseId],
+    queryFn: async () => {
+      let query = supabase.from("entity_relationships").select("id, created_at");
+      if (caseId) query = query.eq("case_id", caseId);
+      const { data, error } = await query;
+      if (error) throw error;
+      return data || [];
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+
   const { data: precedents, isLoading: precedentsLoading } = useQuery({
     queryKey: ["platform-precedents"],
     queryFn: async () => {
@@ -120,7 +125,7 @@ export const usePlatformStats = (explicitCaseId?: string | null) => {
     staleTime: 1000 * 60 * 5,
   });
 
-  const { data: appealSummaries, isLoading: appealsLoading } = useQuery({
+  const { data: appealSummariesData, isLoading: appealsLoading } = useQuery({
     queryKey: ["platform-appeal-summaries", caseId],
     queryFn: async () => {
       let query = supabase.from("appeal_summaries").select("id");
@@ -132,7 +137,7 @@ export const usePlatformStats = (explicitCaseId?: string | null) => {
     staleTime: 1000 * 60 * 5,
   });
 
-  const { data: complianceViolations, isLoading: complianceLoading } = useQuery({
+  const { data: complianceViolationsData, isLoading: complianceLoading } = useQuery({
     queryKey: ["platform-compliance-violations", caseId],
     queryFn: async () => {
       let query = supabase.from("compliance_violations").select("id");
@@ -144,44 +149,37 @@ export const usePlatformStats = (explicitCaseId?: string | null) => {
     staleTime: 1000 * 60 * 5,
   });
 
-  const stats = useMemo<PlatformStats>(() => {
-    // Static data counts (only included when no case filter is active)
-    const staticSourceCount = !caseId ? (sources?.length || 123) : 0;
-    const staticEventCount = !caseId ? (timelineData?.length || 0) : 0;
-    const staticEntityCount = !caseId ? (staticEntities?.length || 0) : 0;
-    const staticConnectionCount = !caseId ? (staticConnections?.length || 0) : 0;
+  // Count international frameworks from legal_statutes
+  const { data: frameworks } = useQuery({
+    queryKey: ["platform-frameworks"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("legal_statutes")
+        .select("framework");
+      if (error) throw error;
+      const unique = new Set((data || []).map(s => s.framework));
+      return unique.size;
+    },
+    staleTime: 1000 * 60 * 10,
+  });
 
-    // AI-extracted counts
+  const stats = useMemo<PlatformStats>(() => {
     const aiEventCount = extractedEvents?.length || 0;
     const aiEntityCount = extractedEntities?.length || 0;
     const aiUploadCount = uploads?.length || 0;
+    const relationshipCount = entityRelationships?.length || 0;
 
-    // Combined totals
-    const totalSources = staticSourceCount + aiUploadCount;
-    const totalEvents = staticEventCount + aiEventCount;
-    const totalEntities = staticEntityCount + aiEntityCount;
-    
-    const inferredConnections = Math.floor(aiEntityCount * 0.5);
-    const totalConnections = staticConnectionCount + inferredConnections;
+    // Compute actual timeline years from event dates
+    const allYears: number[] = (extractedEvents || []).map(e => {
+      const y = new Date(e.date).getFullYear();
+      return isNaN(y) ? null : y;
+    }).filter((y): y is number => y !== null);
 
-    // Compute actual timeline years from all event dates
-    const allYears: number[] = [
-      ...(!caseId ? timelineData.map(e => new Date(e.date).getFullYear()) : []),
-      ...(extractedEvents || []).map(e => {
-        const y = new Date(e.date).getFullYear();
-        return isNaN(y) ? null : y;
-      }).filter((y): y is number => y !== null),
-    ];
     const timelineMinYear = allYears.length > 0 ? Math.min(...allYears) : null;
     const timelineMaxYear = allYears.length > 0 ? Math.max(...allYears) : null;
     const yearsDocumented = timelineMinYear && timelineMaxYear ? timelineMaxYear - timelineMinYear + 1 : 0;
 
     const eventsByCategory: Record<string, number> = {};
-    if (!caseId) {
-      timelineData.forEach(event => {
-        eventsByCategory[event.category] = (eventsByCategory[event.category] || 0) + 1;
-      });
-    }
     (extractedEvents || []).forEach(event => {
       eventsByCategory[event.category] = (eventsByCategory[event.category] || 0) + 1;
     });
@@ -192,26 +190,41 @@ export const usePlatformStats = (explicitCaseId?: string | null) => {
     const verifiedPrecedents = precedents?.filter(p => p.verified === true).length || 0;
     const totalPrecedents = precedents?.length || 0;
     const legalStatutesCount = statutes?.length || 0;
-    const appealSummariesCount = appealSummaries?.length || 0;
-    const complianceViolationsCount = complianceViolations?.length || 0;
+    const appealSummariesCount = appealSummariesData?.length || 0;
+    const complianceViolationsCount = complianceViolationsData?.length || 0;
+
+    // Calculate week-over-week growth
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const twoWeeksAgo = new Date();
+    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+
+    const calcGrowth = (items: { created_at: string }[] | undefined): number | null => {
+      if (!items || items.length === 0) return null;
+      const thisWeek = items.filter(i => new Date(i.created_at) >= oneWeekAgo).length;
+      const lastWeek = items.filter(i => {
+        const d = new Date(i.created_at);
+        return d >= twoWeeksAgo && d < oneWeekAgo;
+      }).length;
+      if (lastWeek === 0 && thisWeek === 0) return null;
+      if (lastWeek === 0) return thisWeek > 0 ? 100 : null;
+      return Math.round(((thisWeek - lastWeek) / lastWeek) * 100);
+    };
 
     return {
-      totalSources,
-      totalEvents,
-      totalEntities,
-      totalConnections,
+      totalSources: aiUploadCount,
+      totalEvents: aiEventCount,
+      totalEntities: aiEntityCount,
+      totalConnections: relationshipCount,
       yearsDocumented,
-      internationalFrameworks: 6,
+      internationalFrameworks: frameworks || 0,
       timelineMinYear,
       timelineMaxYear,
       
-      staticSources: staticSourceCount,
       aiExtractedSources: aiUploadCount,
-      staticEvents: staticEventCount,
       aiExtractedEvents: aiEventCount,
-      staticEntities: staticEntityCount,
       aiExtractedEntities: aiEntityCount,
-      inferredConnections,
+      inferredConnections: relationshipCount,
       
       eventsByCategory,
       
@@ -224,8 +237,13 @@ export const usePlatformStats = (explicitCaseId?: string | null) => {
       legalStatutes: legalStatutesCount,
       appealSummaries: appealSummariesCount,
       complianceViolations: complianceViolationsCount,
+
+      eventsGrowth: calcGrowth(extractedEvents),
+      entitiesGrowth: calcGrowth(extractedEntities),
+      sourcesGrowth: calcGrowth(uploads),
+      connectionsGrowth: calcGrowth(entityRelationships),
     };
-  }, [extractedEvents, extractedEntities, discrepancies, uploads, precedents, statutes, appealSummaries, complianceViolations, caseId]);
+  }, [extractedEvents, extractedEntities, discrepancies, uploads, entityRelationships, precedents, statutes, appealSummariesData, complianceViolationsData, caseId, frameworks]);
 
   return {
     stats,
@@ -235,7 +253,6 @@ export const usePlatformStats = (explicitCaseId?: string | null) => {
 
 // Simple formatted stats for landing page display
 export const useLandingStats = () => {
-  // Landing page always shows all cases (pass null explicitly)
   const { stats, isLoading } = usePlatformStats(null);
 
   const landingStats = useMemo(() => [
