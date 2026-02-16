@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import {
@@ -8,7 +7,6 @@ import {
   Brain,
   Shield,
   BarChart3,
-  ArrowRight,
   Compass,
 } from "lucide-react";
 import { usePlatformStats } from "@/hooks/usePlatformStats";
@@ -91,23 +89,21 @@ export const QuickNavigationGrid = () => {
           const Icon = module.icon;
           return (
             <Link key={module.title} to={module.href}>
-              <Card 
-                className="glass-card card-hover cursor-pointer group h-full opacity-0 animate-fade-in-up border-transparent hover:border-primary/20"
+              <div 
+                className="nav-card p-3 flex flex-col items-center text-center cursor-pointer group h-full opacity-0 animate-fade-in-up"
                 style={{ animationDelay: `${index * 0.03}s`, animationFillMode: 'forwards' }}
               >
-                <CardContent className="p-3 flex flex-col items-center text-center">
-                  <div className={`p-2.5 rounded-lg ${module.bgColor} ${module.hoverBg} transition-all mb-2`}>
-                    <Icon className={`w-5 h-5 ${module.color}`} />
-                  </div>
-                  <h3 className="text-sm font-medium text-foreground/90 mb-0.5">{module.title}</h3>
-                  <p className="text-[10px] text-muted-foreground">{module.description}</p>
-                  {module.badge && (
-                    <Badge variant="secondary" className="text-[9px] px-1.5 mt-1.5 bg-amber-500/10 text-amber-600 border-0">
-                      {module.badge}
-                    </Badge>
-                  )}
-                </CardContent>
-              </Card>
+                <div className={`p-2.5 rounded-xl ${module.bgColor} ${module.hoverBg} transition-all mb-2 group-hover:scale-110 group-hover:rotate-3`}>
+                  <Icon className={`w-5 h-5 ${module.color}`} />
+                </div>
+                <h3 className="text-sm font-medium text-foreground/90 mb-0.5">{module.title}</h3>
+                <p className="text-[10px] text-muted-foreground">{module.description}</p>
+                {module.badge && (
+                  <Badge variant="secondary" className="text-[9px] px-1.5 mt-1.5 bg-amber-500/10 text-amber-600 border-0">
+                    {module.badge}
+                  </Badge>
+                )}
+              </div>
             </Link>
           );
         })}

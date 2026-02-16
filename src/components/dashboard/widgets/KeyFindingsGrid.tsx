@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -9,7 +9,6 @@ import { useCaseFilter } from "@/contexts/CaseFilterContext";
 
 export const KeyFindingsGrid = () => {
   const { selectedCaseId } = useCaseFilter();
-  // Static findings only shown for "All Cases"
   const displayFindings = selectedCaseId ? [] : keyFindings.slice(0, 6);
   const { t } = useTranslation();
 
@@ -32,14 +31,14 @@ export const KeyFindingsGrid = () => {
         {displayFindings.map((finding, index) => {
           const Icon = finding.icon;
           return (
-            <Card 
+            <div 
               key={finding.id} 
-              className="glass-card card-hover opacity-0 animate-fade-in-up"
+              className="stat-card p-0 opacity-0 animate-fade-in-up group"
               style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'forwards' }}
             >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-3">
-                  <div className={`p-2 rounded-lg ${findingCategoryColors[finding.category]}`}>
+                  <div className={`p-2 rounded-xl ${findingCategoryColors[finding.category]} transition-transform group-hover:scale-110`}>
                     <Icon className="w-4 h-4" />
                   </div>
                   <Badge className={`${severityColors[finding.severity]} text-[10px] font-medium`} variant="secondary">
@@ -52,6 +51,7 @@ export const KeyFindingsGrid = () => {
               </CardHeader>
               <CardContent className="pt-0">
                 <p className="text-xs text-foreground/70 mb-3 line-clamp-2 leading-relaxed">{finding.summary}</p>
+                <div className="section-divider mb-3" />
                 <ul className="space-y-1.5">
                   {finding.details.slice(0, 2).map((detail, i) => (
                     <li key={i} className="flex items-start gap-2 text-[11px] text-muted-foreground">
@@ -61,7 +61,7 @@ export const KeyFindingsGrid = () => {
                   ))}
                 </ul>
               </CardContent>
-            </Card>
+            </div>
           );
         })}
       </div>
