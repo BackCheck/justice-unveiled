@@ -71,7 +71,7 @@ export const EvidenceUploader = ({
   const [uploads, setUploads] = useState<UploadState[]>([]);
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("general");
-  const [selectedEventIds, setSelectedEventIds] = useState<number[]>([]);
+  const [selectedEventIds, setSelectedEventIds] = useState<string[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
   const [selectedCaseId, setSelectedCaseId] = useState<string>(externalCaseId || "");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -229,7 +229,7 @@ export const EvidenceUploader = ({
             description: description || null,
             category,
             case_id: caseId || null,
-            related_event_ids: selectedEventIds.length > 0 ? selectedEventIds : null,
+            related_event_ids: selectedEventIds.length > 0 ? selectedEventIds.filter(id => id.startsWith('static-')).map(id => parseInt(id.replace('static-', ''), 10)) : null,
             uploaded_by: user?.id || null,
           })
           .select()
@@ -478,6 +478,7 @@ export const EvidenceUploader = ({
             <EventSelector
               selectedEventIds={selectedEventIds}
               onSelectionChange={setSelectedEventIds}
+              caseId={caseId}
             />
 
             <Button onClick={uploadFiles} className="w-full" disabled={!caseId}>
