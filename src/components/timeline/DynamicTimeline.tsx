@@ -185,23 +185,9 @@ export const DynamicTimeline = ({ events, isPrintMode = false }: DynamicTimeline
   );
 };
 
-// Helper function to generate year summaries
+// Helper function to generate year summaries dynamically
 function getYearSummary(year: string, events: TimelineEvent[]): string {
   const categories = events.map(e => e.category);
   const uniqueCategories = [...new Set(categories)];
-  
-  const summaries: Record<string, string> = {
-    "2015": "Genesis of the professional relationship",
-    "2016": "Escalation of harassment and first legal attacks",
-    "2017": "FIR registration and FIA involvement begins",
-    "2018": "Investigation deepens with witness intimidation",
-    "2019": "Midnight raid and arrest phase",
-    "2021": "FIA corruption exposed internally",
-    "2022": "Forensic analysis reveals chain of custody failures",
-    "2023": "Handwriting expert confirms forgeries",
-    "2024": "Trial conviction and subsequent bail granted",
-    "2025": "Full acquittal and ongoing regulatory battles"
-  };
-
-  return summaries[year] || `Key developments: ${uniqueCategories.join(", ")}`;
+  return `${events.length} events: ${uniqueCategories.join(", ")}`;
 }
