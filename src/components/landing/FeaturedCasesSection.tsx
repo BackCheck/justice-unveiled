@@ -31,12 +31,18 @@ const FeaturedCasesSection = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("cases")
-        .select("id, case_number, title, description, status, severity, category, location, total_sources, total_events, total_entities")
+        .select("id, case_number, title, description, status, severity, category, location, total_sources, total_events, total_entities, is_featured")
         .eq("status", "active")
         .order("created_at", { ascending: true })
         .limit(6);
       if (error) throw error;
-      return data || [];
+      // Always put featured case first
+      const sorted = (data || []).sort((a, b) => {
+        if (a.is_featured && !b.is_featured) return -1;
+        if (!a.is_featured && b.is_featured) return 1;
+        return 0;
+      });
+      return sorted;
     },
     staleTime: 1000 * 60 * 5,
   });
@@ -85,6 +91,9 @@ const FeaturedCasesSection = () => {
                       <Badge variant="outline" className="text-primary border-primary/30">{primaryCase.category}</Badge>
                     )}
                     <Badge className="bg-chart-2/20 text-chart-2 border-chart-2/30">Active</Badge>
+                    {primaryCase.is_featured && (
+                      <Badge className="bg-primary/20 text-primary border-primary/30 animate-pulse">⭐ Featured</Badge>
+                    )}
                   </div>
                   <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
                     {primaryCase.title}

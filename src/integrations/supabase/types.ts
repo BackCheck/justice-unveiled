@@ -383,6 +383,7 @@ export type Database = {
           date_opened: string | null
           description: string | null
           id: string
+          is_featured: boolean | null
           lead_investigator: string | null
           location: string | null
           severity: string | null
@@ -402,6 +403,7 @@ export type Database = {
           date_opened?: string | null
           description?: string | null
           id?: string
+          is_featured?: boolean | null
           lead_investigator?: string | null
           location?: string | null
           severity?: string | null
@@ -421,6 +423,7 @@ export type Database = {
           date_opened?: string | null
           description?: string | null
           id?: string
+          is_featured?: boolean | null
           lead_investigator?: string | null
           location?: string | null
           severity?: string | null
@@ -1680,6 +1683,41 @@ export type Database = {
           },
         ]
       }
+      precedent_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          precedent_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          precedent_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          precedent_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "precedent_comments_precedent_id_fkey"
+            columns: ["precedent_id"]
+            isOneToOne: false
+            referencedRelation: "case_law_precedents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       procedural_requirements: {
         Row: {
           created_at: string
@@ -1875,6 +1913,38 @@ export type Database = {
             columns: ["requirement_id"]
             isOneToOne: false
             referencedRelation: "evidence_requirements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saved_precedents: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          precedent_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          precedent_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          precedent_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_precedents_precedent_id_fkey"
+            columns: ["precedent_id"]
+            isOneToOne: false
+            referencedRelation: "case_law_precedents"
             referencedColumns: ["id"]
           },
         ]
