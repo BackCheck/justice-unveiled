@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Phone, Mail, MapPin, Github, Code, BookOpen } from "lucide-react";
+import { Phone, Mail, MapPin, Github, Code, BookOpen, History } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import hrpmLogo from "@/assets/human-rights-logo.png";
@@ -55,6 +55,9 @@ const LandingFooter = () => {
               </Link>
               <Link to="/api" className="hover:text-primary transition-all duration-300 flex items-center gap-1">
                 <Code className="w-3.5 h-3.5" /> {t('footer.api')}
+              </Link>
+              <Link to="/changelog" className="hover:text-primary transition-all duration-300 flex items-center gap-1">
+                <History className="w-3.5 h-3.5" /> Changelog
               </Link>
               <a href="https://github.com/BackCheck/justice-unveiled" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-all duration-300 flex items-center gap-1">
                 <Github className="w-3.5 h-3.5" /> {t('footer.openSource')}
