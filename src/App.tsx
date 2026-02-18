@@ -39,6 +39,7 @@ import Api from "./pages/Api";
 import HowToUse from "./pages/HowToUse";
 import Documentation from "./pages/Documentation";
 import ThreatProfilerPage from "./pages/ThreatProfilerPage";
+import Changelog from "./pages/Changelog";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -77,6 +78,7 @@ const App = () => (
             <Route path="/how-to-use" element={<HowToUse />} />
             <Route path="/docs" element={<Documentation />} />
             <Route path="/threat-profiler" element={<ThreatProfilerPage />} />
+            <Route path="/changelog" element={<Changelog />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/events/:eventId" element={<EventDetail />} />
             <Route path="/violations/:type/:violationId" element={<ViolationDetail />} />
