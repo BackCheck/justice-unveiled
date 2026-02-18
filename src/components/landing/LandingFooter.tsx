@@ -89,7 +89,6 @@ const LandingFooter = () => {
                 <Phone className="w-4 h-4 mt-0.5 text-primary shrink-0" />
                 <div>
                   <p>+65 31 290 390</p>
-                  <p>+92-21-35891281-83</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -101,13 +100,6 @@ const LandingFooter = () => {
                 <div>
                   <p className="font-medium text-foreground/80">{t('footer.headOffice')}</p>
                   <p>36 Robinson Road, #20-01 City House, Singapore 068877</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2">
-                <MapPin className="w-4 h-4 mt-0.5 text-primary shrink-0" />
-                <div>
-                  <p className="font-medium text-foreground/80">{t('footer.karachiOffice')}</p>
-                  <p>Ground Floor, Zamzam Tower, Building # 1-C, 16th Commercial Street, DHA Phase 2 Extension, Karachi 75500</p>
                 </div>
               </div>
             </div>

@@ -67,7 +67,6 @@ const Contact = () => {
                   <div>
                     <h4 className="font-medium text-foreground">Phone</h4>
                     <p className="text-muted-foreground">+65 31 290 390</p>
-                    <p className="text-muted-foreground">+92-21-35891281-83</p>
                   </div>
                 </div>
 
@@ -114,31 +113,15 @@ const Contact = () => {
               </CardContent>
             </Card>
 
-            {/* Karachi Office */}
-            <Card className="border-primary/20">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-primary" />
-                  Karachi Office - Pakistan
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                    <MapPin className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground">
-                      Ground Floor, Zamzam Tower, Building # 1-C
-                    </p>
-                    <p className="text-muted-foreground">
-                      16th Commercial Street, DHA Phase 2 Extension
-                    </p>
-                    <p className="text-muted-foreground">
-                      Karachi 75500
-                    </p>
-                  </div>
-                </div>
+            {/* Mission Statement - moved here */}
+            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+              <CardContent className="py-8 text-center">
+                <h3 className="text-xl font-semibold mb-3">Our Mission</h3>
+                <p className="text-muted-foreground">
+                  The Human Rights Protection Movement is dedicated to documenting injustice, 
+                  demanding accountability, and providing litigation-grade investigative tools 
+                  for human rights cases worldwide.
+                </p>
               </CardContent>
             </Card>
           </div>
