@@ -23,6 +23,8 @@ import TypingText from "@/components/landing/TypingText";
 import SpotlightEffect from "@/components/landing/SpotlightEffect";
 import TrustMetrics from "@/components/landing/TrustMetrics";
 import InteractiveHeroModules from "@/components/landing/InteractiveHeroModules";
+import FeaturedCasesSection from "@/components/landing/FeaturedCasesSection";
+import ViolationMetrics from "@/components/landing/ViolationMetrics";
 import BottomCTA from "@/components/landing/BottomCTA";
 import LandingFooter from "@/components/landing/LandingFooter";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -205,7 +207,13 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Interactive Module Explorer - replaces single featured case */}
+      {/* Featured Cases - data driven */}
+      <FeaturedCasesSection />
+
+      {/* Violation Metrics Dashboard */}
+      <ViolationMetrics />
+
+      {/* Interactive Module Explorer */}
       <InteractiveHeroModules />
 
       {/* Bottom CTA */}
