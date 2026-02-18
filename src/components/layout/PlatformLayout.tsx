@@ -59,8 +59,8 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background relative">
-        {/* Ambient background glow */}
-        <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        {/* Ambient background glow - hidden on mobile for performance */}
+        <div className="fixed inset-0 pointer-events-none overflow-hidden hidden sm:block">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse-glow" />
           <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent/5 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: '1s' }} />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/3 rounded-full blur-3xl" />
@@ -69,12 +69,12 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
         <AppSidebar />
         <div className="flex-1 flex flex-col min-w-0 relative z-10">
           {/* Enhanced Header with breadcrumbs, search, and quick actions */}
-          <header className="sticky top-0 z-40 glass-header border-b border-border/30">
+         <header className="sticky top-0 z-40 glass-header border-b border-border/30">
             {/* Main Header Row */}
-            <div className="px-4 py-3 flex items-center gap-4">
+            <div className="px-3 py-2 sm:px-4 sm:py-3 flex items-center gap-2 sm:gap-4">
               <SidebarTrigger className="h-8 w-8 hover-glow-primary rounded-lg shrink-0" />
               
-              {/* Page Title - Desktop */}
+              {/* Page Title - visible on tablet+ */}
               {!isHomePage && (
                 <div className="hidden md:flex items-center gap-3 min-w-0">
                   <div className="flex flex-col min-w-0">
@@ -94,25 +94,35 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
                 </div>
               )}
 
-              <div className="flex-1" />
-
-              {/* Case Selector */}
+              {/* Mobile page title - compact */}
               {!isHomePage && (
-                <CaseSelector />
+                <h1 className="md:hidden text-sm font-semibold text-foreground truncate min-w-0 flex-shrink">
+                  {pageTitle}
+                </h1>
+              )}
+
+              <div className="flex-1 min-w-0" />
+
+              {/* Case Selector - hidden on mobile, shown on tablet+ */}
+              {!isHomePage && (
+                <div className="hidden sm:block">
+                  <CaseSelector />
+                </div>
               )}
 
               {/* Right Side Actions */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                 <GlobalSearch />
-                <QuickActions />
-                
+                <div className="hidden sm:block">
+                  <QuickActions />
+                </div>
                 <NotificationCenter />
               </div>
             </div>
 
-            {/* Breadcrumb Row - Only on inner pages */}
+            {/* Breadcrumb Row - Only on inner pages, hidden on mobile */}
             {!isHomePage && (
-              <div className="px-4 pb-2 pt-0">
+              <div className="hidden sm:block px-4 pb-2 pt-0">
                 <Breadcrumbs />
               </div>
             )}
@@ -121,20 +131,19 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
           <main className="flex-1">{children}</main>
           
           {/* Footer */}
-          <footer className="border-t border-border/30 bg-card/30 backdrop-blur px-4 py-4">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
-              <p>© {new Date().getFullYear()} Human Rights Protection Movement</p>
-              <div className="flex items-center gap-4">
+          <footer className="border-t border-border/30 bg-card/30 backdrop-blur px-3 py-3 sm:px-4 sm:py-4">
+            <div className="flex flex-col items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
                 <Link to="/blog" className="flex items-center gap-1.5 hover:text-primary transition-colors">
-                  <Newspaper className="w-4 h-4" />
+                  <Newspaper className="w-3.5 h-3.5" />
                   {t('pages.blog')}
                 </Link>
                 <Link to="/docs" className="flex items-center gap-1.5 hover:text-primary transition-colors">
-                  <FileText className="w-4 h-4" />
+                  <FileText className="w-3.5 h-3.5" />
                   {t('pages.docs')}
                 </Link>
                 <Link to="/api" className="flex items-center gap-1.5 hover:text-primary transition-colors">
-                  <Code className="w-4 h-4" />
+                  <Code className="w-3.5 h-3.5" />
                   {t('pages.api')}
                 </Link>
                 <a 
@@ -143,10 +152,11 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
                   rel="noopener noreferrer" 
                   className="flex items-center gap-1.5 hover:text-primary transition-colors"
                 >
-                  <Github className="w-4 h-4" />
+                  <Github className="w-3.5 h-3.5" />
                   GitHub
                 </a>
               </div>
+              <p className="text-[11px] sm:text-xs">© {new Date().getFullYear()} Human Rights Protection Movement</p>
             </div>
           </footer>
         </div>

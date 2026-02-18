@@ -20,7 +20,7 @@ export const CaseSelector = () => {
         value={selectedCaseId || "all"}
         onValueChange={(val) => setSelectedCaseId(val === "all" ? null : val)}
       >
-        <SelectTrigger className="w-[180px] h-8 text-xs bg-background/50 border-border/50">
+        <SelectTrigger className="w-[140px] sm:w-[180px] h-8 text-xs bg-background/50 border-border/50">
           <SelectValue placeholder={isLoading ? "Loading..." : "All Cases"} />
         </SelectTrigger>
         <SelectContent>
