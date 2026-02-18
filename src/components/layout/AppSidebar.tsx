@@ -70,26 +70,31 @@ import {
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
+// Items marked as 'new' will show a badge
+const NEW_ITEMS = new Set([
+  "/threat-profiler",
+  "/legal-intelligence",
+  "/legal-research",
+  "/correlation",
+  "/regulatory-harm",
+  "/compliance",
+]);
+
 const coreNavItems = [
   { path: "/", labelKey: "nav.home", icon: Home },
   { path: "/cases", labelKey: "nav.caseFiles", icon: FolderOpen },
+  { path: "/investigations", labelKey: "nav.investigations", icon: Target },
+  { path: "/analyze", labelKey: "nav.aiAnalyzer", icon: Brain },
   { path: "/timeline", labelKey: "nav.timeline", icon: Clock },
-  { path: "/", labelKey: "nav.intelDashboard", icon: BarChart3 },
   { path: "/network", labelKey: "nav.entityNetwork", icon: Network },
 ];
 
-const investigationNavItems = [
-  { path: "/investigations", labelKey: "nav.investigations", icon: Target },
-  { path: "/analyze", labelKey: "nav.aiAnalyzer", icon: Brain },
-  { path: "/threat-profiler", labelKey: "nav.threatProfiler", icon: Shield },
-  { path: "/evidence", labelKey: "nav.evidenceMatrix", icon: FileText },
-  { path: "/watchlist", labelKey: "nav.watchlist", icon: Eye },
-];
-
 const analysisNavItems = [
+  { path: "/evidence", labelKey: "nav.evidenceMatrix", icon: FileText },
   { path: "/reconstruction", labelKey: "nav.reconstruction", icon: GitBranch },
   { path: "/correlation", labelKey: "nav.correlation", icon: Scale },
   { path: "/compliance", labelKey: "nav.complianceChecker", icon: ClipboardCheck },
+  { path: "/threat-profiler", labelKey: "nav.threatProfiler", icon: Shield },
   { path: "/regulatory-harm", labelKey: "nav.harm", icon: TrendingDown },
   { path: "/legal-intelligence", labelKey: "nav.legal", icon: Gavel },
   { path: "/international", labelKey: "nav.international", icon: Scale },
@@ -113,8 +118,7 @@ const systemNavItems = [
 
 const navGroups = [
   { labelKey: "nav.core", items: coreNavItems, defaultOpen: true },
-  { labelKey: "nav.investigation", items: investigationNavItems, defaultOpen: true },
-  { labelKey: "nav.analysis", items: analysisNavItems, defaultOpen: false },
+  { labelKey: "nav.analysis", items: analysisNavItems, defaultOpen: true },
   { labelKey: "nav.resources", items: resourcesNavItems, defaultOpen: false },
   { labelKey: "nav.system", items: systemNavItems, defaultOpen: false },
 ];
@@ -156,6 +160,7 @@ export function AppSidebar() {
     const Icon = item.icon;
     const active = isActive(item.path);
     const label = t(item.labelKey);
+    const isNew = NEW_ITEMS.has(item.path);
     
     return (
       <SidebarMenuItem>
@@ -174,7 +179,12 @@ export function AppSidebar() {
               active && "text-primary"
             )} />
             <span className={cn("truncate text-sm", collapsed && "sr-only")}>{label}</span>
-            {active && (
+            {isNew && !collapsed && (
+              <span className="ml-auto text-[9px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full leading-none animate-pulse">
+                new
+              </span>
+            )}
+            {active && !isNew && (
               <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
             )}
           </Link>
@@ -345,6 +355,10 @@ export function AppSidebar() {
                 <p className="text-xs text-muted-foreground">{userEmail}</p>
               </div>
               <DropdownMenuSeparator />
+              <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/watchlist")}>
+                <Eye className="mr-2 h-4 w-4" />
+                My Watchlist
+              </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer">
                 <User className="mr-2 h-4 w-4" />
                 Profile
