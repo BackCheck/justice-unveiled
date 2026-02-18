@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CaseFilterProvider } from "@/contexts/CaseFilterContext";
 import { CookieConsent } from "@/components/CookieConsent";
-import Landing from "./pages/Landing";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import NetworkPage from "./pages/Network";
@@ -52,16 +51,17 @@ const App = () => (
           <CaseFilterProvider>
           <Routes>
             <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={<Landing />} />
+            <Route path="/" element={<Dashboard />} />
             <Route path="/cases" element={<CasesList />} />
             <Route path="/cases/:caseId" element={<CaseProfile />} />
             <Route path="/timeline" element={<Index />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/who-what-why" element={<About />} />
             <Route path="/network" element={<NetworkPage />} />
             <Route path="/evidence" element={<EvidencePage />} />
             <Route path="/uploads" element={<UploadsPage />} />
             <Route path="/intel-briefing" element={<IntelBriefing />} />
             <Route path="/about" element={<About />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/international" element={<InternationalAnalysis />} />
             <Route path="/analyze" element={<Analyze />} />

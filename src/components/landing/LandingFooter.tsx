@@ -44,12 +44,12 @@ const LandingFooter = () => {
           <div className="space-y-4">
             <h4 className="font-semibold text-foreground">{t('footer.quickLinks')}</h4>
             <div className="flex flex-col gap-2 text-sm text-foreground/70">
-              <Link to="/about" className="hover:text-primary transition-all duration-300">{t('nav.about')}</Link>
+              <Link to="/who-what-why" className="hover:text-primary transition-all duration-300">{t('nav.about')}</Link>
               <Link to="/how-to-use" className="hover:text-primary transition-all duration-300 flex items-center gap-1">
                 <BookOpen className="w-3.5 h-3.5" /> {t('footer.howToUse')}
               </Link>
               <Link to="/cases" className="hover:text-primary transition-all duration-300">{t('cases.title')}</Link>
-              <Link to="/dashboard" className="hover:text-primary transition-all duration-300">{t('nav.dashboard')}</Link>
+              <Link to="/" className="hover:text-primary transition-all duration-300">{t('nav.dashboard')}</Link>
               <Link to="/docs" className="hover:text-primary transition-all duration-300 flex items-center gap-1">
                 <BookOpen className="w-3.5 h-3.5" /> {t('footer.fullDocs')}
               </Link>
@@ -114,8 +114,8 @@ const LandingFooter = () => {
              © {new Date().getFullYear()} Human Rights Protection Movement. Open-source & non-profit. {t('footer.copyright')}
           </p>
           <div className="flex items-center gap-4 text-xs text-foreground/50">
-            <Link to="/about" className="hover:text-primary transition-colors">{t('footer.privacy')}</Link>
-            <Link to="/about" className="hover:text-primary transition-colors">{t('footer.terms')}</Link>
+            <Link to="/who-what-why" className="hover:text-primary transition-colors">{t('footer.privacy')}</Link>
+            <Link to="/who-what-why" className="hover:text-primary transition-colors">{t('footer.terms')}</Link>
           </div>
         </div>
       </div>
