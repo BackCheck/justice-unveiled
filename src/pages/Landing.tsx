@@ -1,16 +1,10 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   ArrowRight, 
-  Shield, 
-  Scale, 
-  Users,
-  FileText,
   Sparkles,
-  Zap,
   Target,
   Eye,
   Plus,
@@ -23,16 +17,13 @@ import { cn } from "@/lib/utils";
 import hrpmLogo from "@/assets/human-rights-logo.png";
 import ParticleField from "@/components/landing/ParticleField";
 import GlowingOrb from "@/components/landing/GlowingOrb";
-import FloatingIcon from "@/components/landing/FloatingIcon";
 import ScrollReveal from "@/components/landing/ScrollReveal";
 import GradientText from "@/components/landing/GradientText";
 import TypingText from "@/components/landing/TypingText";
 import SpotlightEffect from "@/components/landing/SpotlightEffect";
 import TrustMetrics from "@/components/landing/TrustMetrics";
-import FeaturedCaseSection from "@/components/landing/FeaturedCaseSection";
-import CapabilitiesSection from "@/components/landing/CapabilitiesSection";
+import InteractiveHeroModules from "@/components/landing/InteractiveHeroModules";
 import BottomCTA from "@/components/landing/BottomCTA";
-
 import LandingFooter from "@/components/landing/LandingFooter";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/contexts/AuthContext";
@@ -52,19 +43,9 @@ const Landing = () => {
     }
   };
 
-  const values = [
-    { icon: Scale, title: t('landing.values.justice'), description: t('landing.values.justiceDesc') },
-    { icon: Shield, title: t('landing.values.protection'), description: t('landing.values.protectionDesc') },
-    { icon: FileText, title: t('landing.values.transparency'), description: t('landing.values.transparencyDesc') },
-    { icon: Users, title: t('landing.values.solidarity'), description: t('landing.values.solidarityDesc') }
-  ];
-
   return (
     <div className="min-h-screen bg-background overflow-hidden relative">
-      {/* Mouse-following spotlight - entire page */}
       <SpotlightEffect size={500} intensity={0.2} />
-      
-      {/* Particle Background */}
       <ParticleField />
 
       {/* Navigation */}
@@ -135,22 +116,13 @@ const Landing = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative min-h-[85vh] flex items-center">
-        {/* Animated background orbs */}
+      {/* Hero Section - Compact */}
+      <section className="relative min-h-[70vh] flex items-center">
         <GlowingOrb color="primary" size="xl" className="top-20 -left-32" delay={0} />
         <GlowingOrb color="accent" size="lg" className="bottom-20 -right-20" delay={1} />
-        <GlowingOrb color="chart-2" size="md" className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" delay={2} />
 
-        {/* Floating decorative icons */}
-        <FloatingIcon icon={Shield} className="top-32 left-[15%] hidden lg:block" delay={0} />
-        <FloatingIcon icon={Eye} className="top-48 right-[12%] hidden lg:block" delay={0.5} />
-        <FloatingIcon icon={Target} className="bottom-32 left-[8%] hidden lg:block" delay={1} />
-        <FloatingIcon icon={Zap} className="bottom-48 right-[18%] hidden lg:block" delay={1.5} />
-
-        <div className="relative max-w-7xl mx-auto px-4 py-16 md:py-24 z-10">
+        <div className="relative max-w-7xl mx-auto px-4 py-12 md:py-20 z-10">
           <div className="text-center max-w-4xl mx-auto">
-            {/* Badge */}
             <ScrollReveal delay={100}>
               <Badge 
                 variant="outline" 
@@ -164,7 +136,6 @@ const Landing = () => {
               </Badge>
             </ScrollReveal>
 
-            {/* Main Headline */}
             <ScrollReveal delay={200}>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
                 <span className="text-foreground">{t('landing.hero.title1')}</span>
@@ -177,7 +148,6 @@ const Landing = () => {
               </h1>
             </ScrollReveal>
 
-            {/* Typewriter tagline */}
             <ScrollReveal delay={300}>
               <div className="text-lg md:text-xl text-foreground/80 mb-4 font-medium">
                 <span className="text-foreground">{t('landing.hero.typingPrefix')} </span>
@@ -190,14 +160,12 @@ const Landing = () => {
               </div>
             </ScrollReveal>
 
-            {/* Plain-language Subtitle */}
             <ScrollReveal delay={400}>
               <p className="text-base md:text-lg text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
                 {t('landing.hero.description')}
               </p>
             </ScrollReveal>
 
-            {/* CTA Buttons */}
             <ScrollReveal delay={500}>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button size="lg" className="group relative overflow-hidden" asChild>
@@ -221,15 +189,15 @@ const Landing = () => {
             </ScrollReveal>
           </div>
 
-          {/* Trust Metrics - Moved higher */}
-          <ScrollReveal delay={500}>
-            <div className="mt-16 md:mt-20 max-w-4xl mx-auto">
+          {/* Trust Metrics */}
+          <ScrollReveal delay={600}>
+            <div className="mt-14 max-w-4xl mx-auto">
               <TrustMetrics />
             </div>
           </ScrollReveal>
 
           {/* Scroll indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 animate-bounce">
             <div className="w-6 h-10 rounded-full border-2 border-primary/30 flex items-start justify-center p-2">
               <div className="w-1 h-2 bg-primary rounded-full animate-pulse" />
             </div>
@@ -237,77 +205,10 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Featured Case Section */}
-      <FeaturedCaseSection />
+      {/* Interactive Module Explorer - replaces single featured case */}
+      <InteractiveHeroModules />
 
-
-      {/* Capabilities Section - Grouped into 3 clusters */}
-      <CapabilitiesSection />
-
-      {/* Values Section */}
-      <section className="py-20 md:py-28 bg-gradient-to-b from-background via-secondary/20 to-background relative overflow-hidden">
-        {/* Animated grid background */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)`,
-            backgroundSize: '50px 50px'
-          }} />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 relative z-10">
-          <ScrollReveal>
-            <div className="text-center mb-12">
-              <Badge variant="outline" className="mb-4 bg-background border-border/50">{t('landing.values.sectionBadge')}</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                {t('landing.values.sectionTitle')} <GradientText>{t('landing.values.sectionTitleHighlight')}</GradientText>
-              </h2>
-              <p className="text-foreground/70 max-w-2xl mx-auto text-base leading-relaxed">
-                {t('landing.values.sectionDescription')}
-              </p>
-            </div>
-          </ScrollReveal>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((value, index) => (
-              <ScrollReveal key={value.title} delay={index * 100} direction="scale">
-                <Card 
-                  className={cn(
-                    "border-border/50 bg-card/80 backdrop-blur text-center",
-                    "hover:border-primary/30 transition-all duration-500",
-                    "group cursor-default hover:-translate-y-2"
-                  )}
-                >
-                  <CardContent className="p-6">
-                    <div className={cn(
-                      "w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4",
-                      "group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300",
-                      "group-hover:shadow-[0_0_30px_hsl(var(--primary)/0.3)]"
-                    )}>
-                      <value.icon className="w-7 h-7 text-primary" />
-                    </div>
-                    <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors text-foreground">{value.title}</h3>
-                    <p className="text-sm text-foreground/60">{value.description}</p>
-                  </CardContent>
-                </Card>
-              </ScrollReveal>
-            ))}
-          </div>
-
-          <ScrollReveal delay={400}>
-            <div className="text-center mt-10">
-              <Link to="/about">
-                <Button variant="outline" className="group hover:border-primary/50">
-                  {t('landing.values.learnMore')}
-                  <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </Link>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
-
-
-      {/* Bottom CTA Section */}
+      {/* Bottom CTA */}
       <BottomCTA />
 
       {/* Footer */}
