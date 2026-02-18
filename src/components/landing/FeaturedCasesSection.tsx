@@ -32,17 +32,11 @@ const FeaturedCasesSection = () => {
       const { data, error } = await supabase
         .from("cases")
         .select("id, case_number, title, description, status, severity, category, location, total_sources, total_events, total_entities, is_featured")
+        .eq("is_featured", true)
         .eq("status", "active")
-        .order("created_at", { ascending: true })
-        .limit(6);
+        .limit(1);
       if (error) throw error;
-      // Always put featured case first
-      const sorted = (data || []).sort((a, b) => {
-        if (a.is_featured && !b.is_featured) return -1;
-        if (!a.is_featured && b.is_featured) return 1;
-        return 0;
-      });
-      return sorted;
+      return data || [];
     },
     staleTime: 1000 * 60 * 5,
   });
@@ -50,7 +44,6 @@ const FeaturedCasesSection = () => {
   if (!cases || cases.length === 0) return null;
 
   const primaryCase = cases[0];
-  const secondaryCases = cases.slice(1);
 
   return (
     <section className="py-16 md:py-24 relative">
@@ -136,47 +129,6 @@ const FeaturedCasesSection = () => {
           </Card>
         </ScrollReveal>
 
-        {/* Secondary cases grid */}
-        {secondaryCases.length > 0 && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {secondaryCases.map((c, idx) => (
-              <ScrollReveal key={c.id} delay={200 + idx * 100}>
-                <Link to={`/cases/${c.id}`} className="block group">
-                  <Card className="h-full border-border/50 hover:border-primary/30 hover:shadow-[0_0_30px_hsl(var(--primary)/0.1)] transition-all duration-300">
-                    <CardContent className="p-5">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Badge variant="secondary" className="font-mono text-[10px]">{c.case_number}</Badge>
-                        {c.severity && (
-                          <Badge variant="outline" className={cn(
-                            "text-[10px]",
-                            severityConfig[c.severity]?.color || "text-foreground"
-                          )}>
-                            {severityConfig[c.severity]?.label || c.severity}
-                          </Badge>
-                        )}
-                      </div>
-                      <h4 className="font-bold text-foreground group-hover:text-primary transition-colors mb-2 line-clamp-2">
-                        {c.title}
-                      </h4>
-                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{c.description}</p>
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" /> {c.total_events || 0}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Users className="w-3 h-3" /> {c.total_entities || 0}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <FileText className="w-3 h-3" /> {c.total_sources || 0}
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </ScrollReveal>
-            ))}
-          </div>
-        )}
 
         <ScrollReveal delay={500}>
           <div className="text-center mt-8">
