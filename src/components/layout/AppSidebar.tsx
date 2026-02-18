@@ -30,7 +30,8 @@ import {
   Phone,
   HelpCircle,
   Code,
-  Search
+  Search,
+  Rocket
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -98,6 +99,7 @@ const analysisNavItems = [
 const resourcesNavItems = [
   { path: "/intel-briefing", labelKey: "nav.intelBriefing", icon: BookOpen },
   { path: "/blog", labelKey: "nav.blogNews", icon: Newspaper },
+  { path: "/changelog", labelKey: "nav.changelog", icon: Rocket },
   { path: "/docs", labelKey: "nav.documentation", icon: FileText },
   { path: "/api", labelKey: "nav.developerApi", icon: Code },
   { path: "/how-to-use", labelKey: "nav.howToUse", icon: HelpCircle },

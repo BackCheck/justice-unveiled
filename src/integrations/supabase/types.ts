@@ -433,6 +433,45 @@ export type Database = {
         }
         Relationships: []
       }
+      changelog_entries: {
+        Row: {
+          category: string
+          changes: Json
+          created_at: string
+          description: string | null
+          id: string
+          is_published: boolean | null
+          release_date: string
+          title: string
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          category?: string
+          changes?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean | null
+          release_date?: string
+          title: string
+          updated_at?: string
+          version: string
+        }
+        Update: {
+          category?: string
+          changes?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean | null
+          release_date?: string
+          title?: string
+          updated_at?: string
+          version?: string
+        }
+        Relationships: []
+      }
       claim_evidence_links: {
         Row: {
           claim_id: string
