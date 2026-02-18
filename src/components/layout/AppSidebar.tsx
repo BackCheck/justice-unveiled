@@ -74,7 +74,7 @@ const coreNavItems = [
   { path: "/", labelKey: "nav.home", icon: Home },
   { path: "/cases", labelKey: "nav.caseFiles", icon: FolderOpen },
   { path: "/timeline", labelKey: "nav.timeline", icon: Clock },
-  { path: "/dashboard", labelKey: "nav.intelDashboard", icon: BarChart3 },
+  { path: "/", labelKey: "nav.intelDashboard", icon: BarChart3 },
   { path: "/network", labelKey: "nav.entityNetwork", icon: Network },
 ];
 
@@ -107,7 +107,7 @@ const resourcesNavItems = [
 
 const systemNavItems = [
   { path: "/uploads", labelKey: "nav.uploads", icon: Upload },
-  { path: "/about", labelKey: "nav.about", icon: Info },
+  { path: "/who-what-why", labelKey: "nav.about", icon: Info },
   { path: "/contact", labelKey: "nav.contact", icon: Phone },
 ];
 

@@ -21,15 +21,15 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import hrpmLogo from "@/assets/human-rights-logo.png";
 
 const navItems = [
-  { path: "/", label: "Timeline", icon: Clock },
-  { path: "/dashboard", label: "Intel Dashboard", icon: BarChart3 },
+  { path: "/timeline", label: "Timeline", icon: Clock },
+  { path: "/", label: "Intel Dashboard", icon: BarChart3 },
   { path: "/intel-briefing", label: "Briefing", icon: BookOpen },
   { path: "/network", label: "Entity Network", icon: Network },
   { path: "/evidence", label: "Evidence Matrix", icon: FileText },
   { path: "/international", label: "International Rights", icon: Scale },
   { path: "/uploads", label: "Uploads", icon: Upload },
   { path: "/docs", label: "Docs", icon: BookOpen },
-  { path: "/about", label: "About", icon: Info },
+  { path: "/who-what-why", label: "About", icon: Info },
 ];
 
 export const PlatformHeader = () => {
