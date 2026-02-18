@@ -6,6 +6,13 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { useGraphData, GraphNode, NodeType, RiskLevel } from "@/hooks/useGraphData";
 import { useEntityClusters } from "@/hooks/useEntityClusters";
 import { useCombinedEntities } from "@/hooks/useCombinedEntities";
+import {
+  AnalysisMode,
+  PathResult,
+  CentralityResult,
+  Community,
+  filterByDateRange,
+} from "@/hooks/useGraphAnalysis";
 import { EnhancedForceGraph } from "./EnhancedForceGraph";
 import { GraphMinimap } from "./GraphMinimap";
 import { FloatingLegend } from "./FloatingLegend";
@@ -14,6 +21,7 @@ import { FloatingStatsBar } from "./FloatingStatsBar";
 import { EntitySearchBar } from "./EntitySearchBar";
 import { NodeDetailsPanel } from "./NodeDetailsPanel";
 import { PowerNetworkLegend } from "./PowerNetworkLegend";
+import { GraphAnalysisToolbar } from "./GraphAnalysisToolbar";
 import { toast } from "sonner";
 import { 
   Network, Loader2, Bookmark, X, ChevronRight
@@ -50,6 +58,13 @@ export const IntelGraph = () => {
   const [showWatchlist, setShowWatchlist] = useState(false);
   const [graphDimensions, setGraphDimensions] = useState({ width: 1200, height: 700 });
   
+  // Analysis state
+  const [analysisMode, setAnalysisMode] = useState<AnalysisMode>("none");
+  const [pathResult, setPathResult] = useState<PathResult | null>(null);
+  const [centralityResults, setCentralityResults] = useState<CentralityResult[]>([]);
+  const [communities, setCommunities] = useState<Community[]>([]);
+  const [dateRange, setDateRange] = useState<{ start: string | null; end: string | null }>({ start: null, end: null });
+
   // Layer and risk filters
   const [activeLayers, setActiveLayers] = useState<Set<NodeType>>(
     new Set(["person", "organization", "event", "violation"])
@@ -57,6 +72,14 @@ export const IntelGraph = () => {
   const [activeRiskLevels, setActiveRiskLevels] = useState<Set<RiskLevel>>(
     new Set(["critical", "high", "medium", "low"])
   );
+
+  // Apply timeline filter
+  const { nodes: timelineFilteredNodes, links: timelineFilteredLinks } = useMemo(() => {
+    if (analysisMode !== "timeline" || (!dateRange.start && !dateRange.end)) {
+      return { nodes, links };
+    }
+    return filterByDateRange(nodes, links, dateRange.start, dateRange.end);
+  }, [nodes, links, analysisMode, dateRange]);
 
   // Calculate graph dimensions based on container
   useEffect(() => {
@@ -119,6 +142,11 @@ export const IntelGraph = () => {
     setZoom(1);
     setActiveLayers(new Set(["person", "organization", "event", "violation"]));
     setActiveRiskLevels(new Set(["critical", "high", "medium", "low"]));
+    setAnalysisMode("none");
+    setPathResult(null);
+    setCentralityResults([]);
+    setCommunities([]);
+    setDateRange({ start: null, end: null });
     toast.success("Graph reset");
   }, []);
 
@@ -131,6 +159,10 @@ export const IntelGraph = () => {
 
   const handleToggleFullscreen = useCallback(() => {
     setIsFullscreen(prev => !prev);
+  }, []);
+
+  const handleDateRangeChange = useCallback((start: string | null, end: string | null) => {
+    setDateRange({ start, end });
   }, []);
 
   const watchlistNodes = useMemo(() => {
@@ -194,6 +226,20 @@ export const IntelGraph = () => {
         </div>
       </div>
 
+      {/* Left: Analysis Toolbar */}
+      <div className="absolute top-24 left-4 z-20 pointer-events-auto">
+        <GraphAnalysisToolbar
+          nodes={timelineFilteredNodes}
+          links={timelineFilteredLinks}
+          activeMode={analysisMode}
+          onModeChange={setAnalysisMode}
+          onPathResult={setPathResult}
+          onCentralityResult={setCentralityResults}
+          onCommunitiesResult={setCommunities}
+          onDateRangeChange={handleDateRangeChange}
+        />
+      </div>
+
       {/* Bottom Bar: Legend + Power Network + Zoom */}
       <div className="absolute bottom-4 left-4 right-4 z-20 flex items-end justify-between gap-4 pointer-events-none">
         {/* Left: Legends */}
@@ -222,8 +268,8 @@ export const IntelGraph = () => {
       {/* Graph Canvas */}
       <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-background via-muted/10 to-background">
         <EnhancedForceGraph
-          nodes={nodes}
-          links={links}
+          nodes={timelineFilteredNodes}
+          links={timelineFilteredLinks}
           selectedNode={selectedNode}
           onSelectNode={setSelectedNode}
           watchlist={watchlist}
@@ -233,6 +279,10 @@ export const IntelGraph = () => {
           width={graphDimensions.width}
           height={graphDimensions.height}
           highlightedNodeId={highlightedNodeId}
+          analysisMode={analysisMode}
+          pathResult={pathResult}
+          centralityResults={centralityResults}
+          communities={communities}
         />
       </div>
 
