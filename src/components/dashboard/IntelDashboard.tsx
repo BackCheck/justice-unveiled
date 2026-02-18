@@ -30,7 +30,7 @@ export const IntelDashboard = () => {
   const { stats: platformStats, isLoading } = usePlatformStats();
 
   return (
-    <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-6 space-y-6">
+    <div className="max-w-[1600px] mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
       {/* Greeting + AI Status Row */}
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="widget-card flex-1">
@@ -143,7 +143,7 @@ export const IntelDashboard = () => {
 
           {/* Key Findings */}
           <div className="widget-card">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <KeyFindingsGrid />
             </CardContent>
           </div>
