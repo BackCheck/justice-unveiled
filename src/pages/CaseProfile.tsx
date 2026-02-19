@@ -26,9 +26,11 @@ import {
   ChevronRight,
   Upload,
   GitBranch,
-  ClipboardCheck
+  ClipboardCheck,
+  Rss
 } from "lucide-react";
 import { useCase, useCaseEvents, useCaseEntities, useCaseDiscrepancies, useCaseEvidence } from "@/hooks/useCases";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { EvidenceRepositoryCard } from "@/components/evidence/EvidenceRepositoryCard";
 import { CaseReconstructionTab } from "@/components/reconstruction/CaseReconstructionTab";
 import { CaseCorrelationTab } from "@/components/correlation/CaseCorrelationTab";
@@ -174,6 +176,29 @@ const CaseProfile = () => {
                     <span>{caseData.lead_investigator}</span>
                   </div>
                 )}
+              </div>
+
+              {/* RSS Feed Subscribe */}
+              <div className="mt-4">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a
+                        href={`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/case-rss-feed?caseId=${caseId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Button variant="outline" size="sm" className="gap-2">
+                          <Rss className="w-4 h-4 text-orange-500" />
+                          Subscribe to RSS Feed
+                        </Button>
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Get updates for this case via RSS</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </div>
 

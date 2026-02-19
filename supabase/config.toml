@@ -32,3 +32,6 @@ verify_jwt = false
 
 [functions.public-api]
 verify_jwt = false
+
+[functions.case-rss-feed]
+verify_jwt = false

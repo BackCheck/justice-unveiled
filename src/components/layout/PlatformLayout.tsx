@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -8,7 +9,7 @@ import { QuickActions } from "./QuickActions";
 import { GlobalSearch } from "./GlobalSearch";
 import { NotificationCenter } from "./NotificationCenter";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, FileText, Github, Newspaper, Code, Phone, Mail, MapPin, BookOpen, History } from "lucide-react";
+import { Sparkles, FileText, Github, Code, BookOpen, History, Rss } from "lucide-react";
 import { CaseSelector } from "./CaseSelector";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -140,100 +141,84 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
 
           <main className="flex-1">{children}</main>
           
-          {/* Enhanced Footer */}
-          <footer className="border-t border-border/30 bg-card/30 backdrop-blur py-8 sm:py-12">
+          {/* Compact Footer */}
+          <footer className="border-t border-border/30 bg-card/30 backdrop-blur py-4">
             <div className="max-w-7xl mx-auto px-4">
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+              {/* Top row: Brand + Recent Posts */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 {/* Brand */}
-                <div className="col-span-2 sm:col-span-1 space-y-3">
-                  <div className="flex items-center gap-2.5 group">
-                    <img src={hrpmLogo} alt="HRPM Logo" className="w-8 h-8 sm:w-10 sm:h-10 transition-transform group-hover:scale-110" />
-                    <div>
-                      <p className="font-semibold text-foreground text-sm sm:text-base">HRPM.org</p>
-                      <p className="text-[10px] sm:text-xs text-muted-foreground">Open-Source · Non-Profit</p>
-                    </div>
-                  </div>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                    <span className="block font-medium text-foreground/80 mb-0.5">{t('footer.tagline')}</span>
-                    {t('footer.description')}
-                  </p>
-                </div>
-
-                {/* Quick Links */}
-                <div className="space-y-3">
-                  <h4 className="text-xs sm:text-sm font-semibold text-foreground">{t('footer.quickLinks')}</h4>
-                  <div className="flex flex-col gap-1.5 text-xs sm:text-sm text-muted-foreground">
-                    <Link to="/who-what-why" className="hover:text-primary transition-colors">{t('nav.about')}</Link>
-                    <Link to="/how-to-use" className="hover:text-primary transition-colors flex items-center gap-1">
-                      <BookOpen className="w-3 h-3" /> {t('footer.howToUse')}
-                    </Link>
-                    <Link to="/cases" className="hover:text-primary transition-colors">{t('cases.title')}</Link>
-                    <Link to="/docs" className="hover:text-primary transition-colors flex items-center gap-1">
-                      <FileText className="w-3 h-3" /> {t('pages.docs')}
-                    </Link>
-                    <Link to="/api" className="hover:text-primary transition-colors flex items-center gap-1">
-                      <Code className="w-3 h-3" /> {t('pages.api')}
-                    </Link>
-                    <Link to="/changelog" className="hover:text-primary transition-colors flex items-center gap-1">
-                      <History className="w-3 h-3" /> Changelog
-                    </Link>
-                    <a href="https://github.com/BackCheck/justice-unveiled" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-center gap-1">
-                      <Github className="w-3 h-3" /> {t('footer.openSource')}
-                    </a>
+                <div className="flex items-center gap-2.5 group">
+                  <img src={hrpmLogo} alt="HRPM Logo" className="w-8 h-8 transition-transform group-hover:scale-110" />
+                  <div>
+                    <p className="font-semibold text-foreground text-sm">HRPM.org</p>
+                    <p className="text-[10px] text-muted-foreground">Open-Source · Non-Profit</p>
                   </div>
                 </div>
 
-                {/* Recent Posts */}
-                <div className="space-y-3">
-                  <h4 className="text-xs sm:text-sm font-semibold text-foreground">{t('footer.recentPosts')}</h4>
-                  <div className="flex flex-col gap-1.5 text-xs sm:text-sm text-muted-foreground">
-                    {recentPosts && recentPosts.length > 0 ? (
-                      recentPosts.map((post) => (
-                        <Link key={post.slug} to={`/blog/${post.slug}`} className="hover:text-primary transition-colors line-clamp-1">
-                          {post.title}
-                        </Link>
-                      ))
-                    ) : (
-                      <Link to="/blog" className="hover:text-primary transition-colors">{t('footer.visitBlog')}</Link>
-                    )}
-                    <Link to="/blog" className="text-primary hover:text-primary/80 transition-colors font-medium mt-1">
-                      {t('footer.viewAllPosts')} →
-                    </Link>
-                  </div>
-                </div>
-
-                {/* Contact */}
-                <div className="space-y-3">
-                  <h4 className="text-xs sm:text-sm font-semibold text-foreground">{t('footer.contact')}</h4>
-                  <div className="flex flex-col gap-2.5 text-xs sm:text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1.5">
-                      <Phone className="w-3 h-3 text-primary shrink-0" />
-                      <span>+65 31 290 390</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Mail className="w-3 h-3 text-primary shrink-0" />
-                      <a href="mailto:info@hrpm.org" className="hover:text-primary transition-colors">info@hrpm.org</a>
-                    </div>
-                    <div className="flex items-start gap-1.5">
-                      <MapPin className="w-3 h-3 mt-0.5 text-primary shrink-0" />
-                      <div>
-                        <p className="font-medium text-foreground/80">{t('footer.headOffice')}</p>
-                        <p className="text-[11px] sm:text-xs">36 Robinson Road, #20-01 City House, Singapore 068877</p>
-                      </div>
-                    </div>
-                  </div>
+                {/* Quick Links as text */}
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                  <Link to="/who-what-why" className="hover:text-primary transition-colors">{t('nav.about')}</Link>
+                  <Link to="/how-to-use" className="hover:text-primary transition-colors">{t('footer.howToUse')}</Link>
+                  <Link to="/cases" className="hover:text-primary transition-colors">{t('cases.title')}</Link>
+                  <Link to="/blog" className="hover:text-primary transition-colors">{t('nav.blogNews')}</Link>
+                  <Link to="/contact" className="hover:text-primary transition-colors">{t('footer.contact')}</Link>
                 </div>
               </div>
 
-              {/* Bottom Bar */}
-              <div className="mt-8 pt-6 border-t border-border/30 flex flex-col sm:flex-row items-center justify-between gap-3">
+              {/* Bottom Bar: Copyright + Icon links */}
+              <div className="pt-3 border-t border-border/30 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <p className="text-[10px] sm:text-xs text-muted-foreground">
-                  © {new Date().getFullYear()} Human Rights Protection Movement. Open-source & non-profit. {t('footer.copyright')}
+                  © {new Date().getFullYear()} Human Rights Protection Movement. {t('footer.copyright')}
                 </p>
-                <div className="flex items-center gap-4 text-[10px] sm:text-xs text-muted-foreground">
-                  <Link to="/who-what-why" className="hover:text-primary transition-colors">{t('footer.privacy')}</Link>
-                  <Link to="/who-what-why" className="hover:text-primary transition-colors">{t('footer.terms')}</Link>
-                </div>
+                <TooltipProvider delayDuration={200}>
+                  <div className="flex items-center gap-3 text-muted-foreground">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Link to="/docs" className="hover:text-primary transition-colors">
+                          <BookOpen className="w-3.5 h-3.5" />
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent><p>{t('pages.docs')}</p></TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Link to="/api" className="hover:text-primary transition-colors">
+                          <Code className="w-3.5 h-3.5" />
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent><p>{t('pages.api')}</p></TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Link to="/changelog" className="hover:text-primary transition-colors">
+                          <History className="w-3.5 h-3.5" />
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent><p>Changelog</p></TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <a href={`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/case-rss-feed`} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                          <Rss className="w-3.5 h-3.5" />
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent><p>RSS Feed</p></TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <a href="https://github.com/BackCheck/justice-unveiled" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                          <Github className="w-3.5 h-3.5" />
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent><p>{t('footer.openSource')}</p></TooltipContent>
+                    </Tooltip>
+
+                    <span className="text-border">|</span>
+
+                    <Link to="/who-what-why" className="text-[10px] sm:text-xs hover:text-primary transition-colors">{t('footer.privacy')}</Link>
+                    <Link to="/who-what-why" className="text-[10px] sm:text-xs hover:text-primary transition-colors">{t('footer.terms')}</Link>
+                  </div>
+                </TooltipProvider>
               </div>
             </div>
           </footer>
