@@ -121,12 +121,12 @@ export const EntityCharts = () => {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+        <h2 className="text-lg sm:text-xl font-bold flex items-center gap-2">
           <Network className="w-5 h-5 text-primary" />
           Entity Analytics
         </h2>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {aiEntityCount > 0 && (
             <Badge variant="outline" className="bg-primary/10 border-primary/30 gap-1">
               <Sparkles className="w-3 h-3" />
@@ -148,15 +148,15 @@ export const EntityCharts = () => {
         activeMetric={activeMetric}
       />
 
-      {/* Main Charts Grid */}
-      <div className="grid md:grid-cols-3 gap-4">
+      {/* Charts - stacked on mobile, grid on desktop */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <EntityTypePieChart data={typeData} onSliceClick={handleTypeClick} />
         <RoleDistributionChart data={categoryData} onBarClick={handleTypeClick} />
         <ConnectionRadarChart data={connectionStrengthData} />
       </div>
 
-      {/* Advanced Visualizations */}
-      <div className="grid md:grid-cols-4 gap-4">
+      {/* Advanced Visualizations - stacked on mobile */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <ConnectionSankeyChart 
           entities={entities}
           connections={connections}
