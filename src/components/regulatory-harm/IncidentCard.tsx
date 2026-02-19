@@ -38,7 +38,9 @@ const incidentIcons = {
   banking: Landmark,
   regulatory_notice: FileWarning,
   license: Award,
-  contract: FileText
+  contract: FileText,
+  account_freeze: Landmark,
+  other: FileWarning
 };
 
 const formatCurrency = (amount: number) => {
