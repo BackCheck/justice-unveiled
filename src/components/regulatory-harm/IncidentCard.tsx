@@ -55,9 +55,9 @@ export const IncidentCard = ({
 }: IncidentCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   
-  const typeConfig = incidentTypeConfig[incident.incident_type];
-  const statConfig = statusConfig[incident.status];
-  const sevConfig = severityConfig[incident.severity];
+  const typeConfig = incidentTypeConfig[incident.incident_type] || { label: incident.incident_type, icon: 'FileWarning', color: 'text-muted-foreground' };
+  const statConfig = statusConfig[incident.status] || { label: incident.status, color: 'text-muted-foreground', bgColor: 'bg-muted' };
+  const sevConfig = severityConfig[incident.severity] || { label: incident.severity, color: 'text-muted-foreground', bgColor: 'bg-muted' };
   const Icon = incidentIcons[incident.incident_type] || FileWarning;
 
   const totalLosses = incident.financial_losses?.reduce((s, l) => s + Number(l.amount), 0) || 0;
@@ -146,7 +146,7 @@ export const IncidentCard = ({
                 </h4>
                 <div className="grid gap-2">
                   {incident.financial_losses.map(loss => {
-                    const catConfig = lossCategoryConfig[loss.loss_category];
+                    const catConfig = lossCategoryConfig[loss.loss_category] || { label: loss.loss_category, color: 'text-muted-foreground' };
                     return (
                       <div 
                         key={loss.id}
