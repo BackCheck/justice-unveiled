@@ -157,6 +157,7 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
 
                 {/* Quick Links as text */}
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                  <Link to="/who-what-why" className="hover:text-primary transition-colors">Who, What & Why</Link>
                   <Link to="/who-what-why" className="hover:text-primary transition-colors">{t('nav.about')}</Link>
                   <Link to="/how-to-use" className="hover:text-primary transition-colors">{t('footer.howToUse')}</Link>
                   <Link to="/cases" className="hover:text-primary transition-colors">{t('cases.title')}</Link>
