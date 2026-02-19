@@ -1,8 +1,8 @@
 // Regulatory & Economic Harm Tracker Types
 
-export type IncidentType = 'banking' | 'regulatory_notice' | 'license' | 'contract';
+export type IncidentType = 'banking' | 'regulatory_notice' | 'license' | 'contract' | 'account_freeze' | 'other';
 export type InstitutionType = 'bank' | 'regulator' | 'vendor' | 'client' | 'government';
-export type IncidentStatus = 'active' | 'resolved' | 'escalated' | 'legal_action';
+export type IncidentStatus = 'active' | 'resolved' | 'escalated' | 'legal_action' | 'documented';
 export type Severity = 'critical' | 'high' | 'medium' | 'low';
 
 export type LossCategory = 
@@ -12,7 +12,11 @@ export type LossCategory =
   | 'operational_cost' 
   | 'asset_loss' 
   | 'reputation_damage' 
-  | 'compliance_cost';
+  | 'compliance_cost'
+  | 'direct_financial'
+  | 'lost_income'
+  | 'reputational'
+  | 'legal_costs';
 
 export type DocumentType = 
   | 'affidavit' 
@@ -132,6 +136,8 @@ export const incidentTypeConfig: Record<IncidentType, { label: string; icon: str
   regulatory_notice: { label: 'Regulatory Notice', icon: 'FileWarning', color: 'text-orange-500' },
   license: { label: 'License & Permits', icon: 'Award', color: 'text-purple-500' },
   contract: { label: 'Contract & Relations', icon: 'FileText', color: 'text-emerald-500' },
+  account_freeze: { label: 'Account Freeze', icon: 'Landmark', color: 'text-red-500' },
+  other: { label: 'Other', icon: 'FileWarning', color: 'text-muted-foreground' },
 };
 
 export const lossCategoryConfig: Record<LossCategory, { label: string; color: string }> = {
@@ -142,6 +148,10 @@ export const lossCategoryConfig: Record<LossCategory, { label: string; color: st
   asset_loss: { label: 'Asset Loss', color: 'bg-orange-500/20 text-orange-700 dark:text-orange-300' },
   reputation_damage: { label: 'Reputation Damage', color: 'bg-pink-500/20 text-pink-700 dark:text-pink-300' },
   compliance_cost: { label: 'Compliance Cost', color: 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' },
+  direct_financial: { label: 'Direct Financial', color: 'bg-red-500/20 text-red-700 dark:text-red-300' },
+  lost_income: { label: 'Lost Income', color: 'bg-amber-500/20 text-amber-700 dark:text-amber-300' },
+  reputational: { label: 'Reputational', color: 'bg-pink-500/20 text-pink-700 dark:text-pink-300' },
+  legal_costs: { label: 'Legal Costs', color: 'bg-purple-500/20 text-purple-700 dark:text-purple-300' },
 };
 
 export const statusConfig: Record<IncidentStatus, { label: string; color: string; bgColor: string }> = {
@@ -149,6 +159,7 @@ export const statusConfig: Record<IncidentStatus, { label: string; color: string
   resolved: { label: 'Resolved', color: 'text-emerald-600', bgColor: 'bg-emerald-500/20' },
   escalated: { label: 'Escalated', color: 'text-red-600', bgColor: 'bg-red-500/20' },
   legal_action: { label: 'Legal Action', color: 'text-purple-600', bgColor: 'bg-purple-500/20' },
+  documented: { label: 'Documented', color: 'text-blue-600', bgColor: 'bg-blue-500/20' },
 };
 
 export const severityConfig: Record<Severity, { label: string; color: string; bgColor: string }> = {
