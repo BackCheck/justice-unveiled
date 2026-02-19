@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useCaseFilter } from "@/contexts/CaseFilterContext";
-import { useCombinedEntities } from "./useCombinedEntities";
+
 
 export interface PlatformStats {
   totalSources: number;
@@ -41,7 +41,7 @@ export interface PlatformStats {
 export const usePlatformStats = (explicitCaseId?: string | null) => {
   const { selectedCaseId } = useCaseFilter();
   const caseId = explicitCaseId !== undefined ? explicitCaseId : selectedCaseId;
-  const { connections: inferredConnections, isLoading: connectionsLoading } = useCombinedEntities();
+  
 
   const { data: extractedEvents, isLoading: eventsLoading } = useQuery({
     queryKey: ["platform-extracted-events", caseId],
@@ -169,7 +169,7 @@ export const usePlatformStats = (explicitCaseId?: string | null) => {
     const aiEventCount = extractedEvents?.length || 0;
     const aiEntityCount = extractedEntities?.length || 0;
     const aiUploadCount = uploads?.length || 0;
-    const relationshipCount = (entityRelationships?.length || 0) + (inferredConnections?.length || 0);
+    const relationshipCount = entityRelationships?.length || 0;
 
     // Compute actual timeline years from event dates
     const allYears: number[] = (extractedEvents || []).map(e => {
@@ -245,11 +245,11 @@ export const usePlatformStats = (explicitCaseId?: string | null) => {
       sourcesGrowth: calcGrowth(uploads),
       connectionsGrowth: calcGrowth(entityRelationships),
     };
-  }, [extractedEvents, extractedEntities, discrepancies, uploads, entityRelationships, inferredConnections, precedents, statutes, appealSummariesData, complianceViolationsData, caseId, frameworks]);
+  }, [extractedEvents, extractedEntities, discrepancies, uploads, entityRelationships, precedents, statutes, appealSummariesData, complianceViolationsData, caseId, frameworks]);
 
   return {
     stats,
-    isLoading: eventsLoading || entitiesLoading || discrepanciesLoading || uploadsLoading || precedentsLoading || statutesLoading || appealsLoading || complianceLoading || connectionsLoading,
+    isLoading: eventsLoading || entitiesLoading || discrepanciesLoading || uploadsLoading || precedentsLoading || statutesLoading || appealsLoading || complianceLoading,
   };
 };
 

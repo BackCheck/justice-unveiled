@@ -83,14 +83,15 @@ const NEW_ITEMS = new Set([
 const coreNavItems = [
   { path: "/", labelKey: "nav.home", icon: Home },
   { path: "/cases", labelKey: "nav.caseFiles", icon: FolderOpen },
-  { path: "/investigations", labelKey: "nav.investigations", icon: Target },
-  { path: "/analyze", labelKey: "nav.aiAnalyzer", icon: Brain },
   { path: "/timeline", labelKey: "nav.timeline", icon: Clock },
   { path: "/network", labelKey: "nav.entityNetwork", icon: Network },
+  { path: "/evidence", labelKey: "nav.evidenceMatrix", icon: FileText },
+  { path: "/analyze", labelKey: "nav.aiAnalyzer", icon: Brain },
+  { path: "/investigations", labelKey: "nav.investigations", icon: Target },
+  { path: "/blog", labelKey: "nav.blogNews", icon: Newspaper },
 ];
 
-const analysisNavItems = [
-  { path: "/evidence", labelKey: "nav.evidenceMatrix", icon: FileText },
+const moreToolsItems = [
   { path: "/reconstruction", labelKey: "nav.reconstruction", icon: GitBranch },
   { path: "/correlation", labelKey: "nav.correlation", icon: Scale },
   { path: "/compliance", labelKey: "nav.complianceChecker", icon: ClipboardCheck },
@@ -99,28 +100,19 @@ const analysisNavItems = [
   { path: "/legal-intelligence", labelKey: "nav.legal", icon: Gavel },
   { path: "/international", labelKey: "nav.international", icon: Scale },
   { path: "/legal-research", labelKey: "nav.legalResearch", icon: Search },
-];
-
-const resourcesNavItems = [
   { path: "/intel-briefing", labelKey: "nav.intelBriefing", icon: BookOpen },
-  { path: "/blog", labelKey: "nav.blogNews", icon: Newspaper },
-  { path: "/changelog", labelKey: "nav.changelog", icon: Rocket },
+  { path: "/uploads", labelKey: "nav.uploads", icon: Upload },
   { path: "/docs", labelKey: "nav.documentation", icon: FileText },
   { path: "/api", labelKey: "nav.developerApi", icon: Code },
   { path: "/how-to-use", labelKey: "nav.howToUse", icon: HelpCircle },
-];
-
-const systemNavItems = [
-  { path: "/uploads", labelKey: "nav.uploads", icon: Upload },
+  { path: "/changelog", labelKey: "nav.changelog", icon: Rocket },
   { path: "/who-what-why", labelKey: "nav.about", icon: Info },
   { path: "/contact", labelKey: "nav.contact", icon: Phone },
 ];
 
 const navGroups = [
   { labelKey: "nav.core", items: coreNavItems, defaultOpen: true },
-  { labelKey: "nav.analysis", items: analysisNavItems, defaultOpen: true },
-  { labelKey: "nav.resources", items: resourcesNavItems, defaultOpen: false },
-  { labelKey: "nav.system", items: systemNavItems, defaultOpen: false },
+  { labelKey: "More Tools", items: moreToolsItems, defaultOpen: false },
 ];
 
 export function AppSidebar() {
