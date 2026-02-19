@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,40 +7,50 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CaseFilterProvider } from "@/contexts/CaseFilterContext";
 import { CookieConsent } from "@/components/CookieConsent";
-import Index from "./pages/Index";
-import Dashboard from "./pages/Dashboard";
-import NetworkPage from "./pages/Network";
-import EvidencePage from "./pages/Evidence";
-import UploadsPage from "./pages/Uploads";
-import IntelBriefing from "./pages/IntelBriefing";
-import About from "./pages/About";
-import InternationalAnalysis from "./pages/InternationalAnalysis";
-import Auth from "./pages/Auth";
-import AdminPanel from "./pages/AdminPanel";
-import Analyze from "./pages/Analyze";
-import CasesList from "./pages/CasesList";
-import CaseProfile from "./pages/CaseProfile";
-import Investigations from "./pages/Investigations";
-import NotFound from "./pages/NotFound";
-import EventDetail from "./pages/EventDetail";
-import ViolationDetail from "./pages/ViolationDetail";
-import Watchlist from "./pages/Watchlist";
-import EntityDetail from "./pages/EntityDetail";
-import Reconstruction from "./pages/Reconstruction";
-import Correlation from "./pages/Correlation";
-import Compliance from "./pages/Compliance";
-import RegulatoryHarm from "./pages/RegulatoryHarm";
-import Contact from "./pages/Contact";
-import LegalIntelligence from "./pages/LegalIntelligence";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import LegalResearch from "./pages/LegalResearch";
-import Api from "./pages/Api";
-import HowToUse from "./pages/HowToUse";
-import Documentation from "./pages/Documentation";
-import ThreatProfilerPage from "./pages/ThreatProfilerPage";
-import Changelog from "./pages/Changelog";
+import { LogoSpinner } from "@/components/ui/LogoSpinner";
+
+// Lazy-load all pages for code splitting
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Index = lazy(() => import("./pages/Index"));
+const NetworkPage = lazy(() => import("./pages/Network"));
+const EvidencePage = lazy(() => import("./pages/Evidence"));
+const UploadsPage = lazy(() => import("./pages/Uploads"));
+const IntelBriefing = lazy(() => import("./pages/IntelBriefing"));
+const About = lazy(() => import("./pages/About"));
+const InternationalAnalysis = lazy(() => import("./pages/InternationalAnalysis"));
+const Auth = lazy(() => import("./pages/Auth"));
+const AdminPanel = lazy(() => import("./pages/AdminPanel"));
+const Analyze = lazy(() => import("./pages/Analyze"));
+const CasesList = lazy(() => import("./pages/CasesList"));
+const CaseProfile = lazy(() => import("./pages/CaseProfile"));
+const Investigations = lazy(() => import("./pages/Investigations"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const EventDetail = lazy(() => import("./pages/EventDetail"));
+const ViolationDetail = lazy(() => import("./pages/ViolationDetail"));
+const Watchlist = lazy(() => import("./pages/Watchlist"));
+const EntityDetail = lazy(() => import("./pages/EntityDetail"));
+const Reconstruction = lazy(() => import("./pages/Reconstruction"));
+const Correlation = lazy(() => import("./pages/Correlation"));
+const Compliance = lazy(() => import("./pages/Compliance"));
+const RegulatoryHarm = lazy(() => import("./pages/RegulatoryHarm"));
+const Contact = lazy(() => import("./pages/Contact"));
+const LegalIntelligence = lazy(() => import("./pages/LegalIntelligence"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const LegalResearch = lazy(() => import("./pages/LegalResearch"));
+const Api = lazy(() => import("./pages/Api"));
+const HowToUse = lazy(() => import("./pages/HowToUse"));
+const Documentation = lazy(() => import("./pages/Documentation"));
+const ThreatProfilerPage = lazy(() => import("./pages/ThreatProfilerPage"));
+const Changelog = lazy(() => import("./pages/Changelog"));
+
 const queryClient = new QueryClient();
+
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen bg-background">
+    <LogoSpinner size="lg" />
+  </div>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -49,6 +60,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <CaseFilterProvider>
+          <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/auth" element={<Auth />} />
             <Route path="/" element={<Dashboard />} />
@@ -87,6 +99,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </Suspense>
           <CookieConsent />
           </CaseFilterProvider>
         </AuthProvider>

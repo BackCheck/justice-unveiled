@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,11 +10,11 @@ import {
   LayoutGrid,
   AlertCircle,
 } from "lucide-react";
+const EntityCharts = lazy(() => import("./EntityCharts").then(m => ({ default: m.EntityCharts })));
+const IntelChat = lazy(() => import("./IntelChat").then(m => ({ default: m.IntelChat })));
+const IntelReports = lazy(() => import("./IntelReports").then(m => ({ default: m.IntelReports })));
 import { IntelBriefingCard } from "./IntelBriefingCard";
 import { CaseProfileBadges } from "./CaseProfileBadges";
-import { EntityCharts } from "./EntityCharts";
-import { IntelChat } from "./IntelChat";
-import { IntelReports } from "./IntelReports";
 import { usePlatformStats } from "@/hooks/usePlatformStats";
 import {
   DashboardStatsHeader,
@@ -25,12 +26,16 @@ import {
   KeyFindingsGrid,
 } from "./widgets";
 import { GreetingBanner } from "@/components/GreetingBanner";
+import { DashboardHero } from "./DashboardHero";
 
 export const IntelDashboard = () => {
   const { stats: platformStats, isLoading } = usePlatformStats();
 
   return (
     <div className="max-w-[1600px] mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
+      {/* Purpose Hero */}
+      <DashboardHero />
+
       {/* Greeting + AI Status Row */}
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="widget-card flex-1">
@@ -158,15 +163,21 @@ export const IntelDashboard = () => {
             </TabsList>
             
             <TabsContent value="charts" className="mt-4">
-              <EntityCharts />
+              <Suspense fallback={<div className="h-64 flex items-center justify-center text-muted-foreground">Loading charts…</div>}>
+                <EntityCharts />
+              </Suspense>
             </TabsContent>
             
             <TabsContent value="chat" className="mt-4">
-              <IntelChat />
+              <Suspense fallback={<div className="h-64 flex items-center justify-center text-muted-foreground">Loading chat…</div>}>
+                <IntelChat />
+              </Suspense>
             </TabsContent>
             
             <TabsContent value="reports" className="mt-4">
-              <IntelReports />
+              <Suspense fallback={<div className="h-64 flex items-center justify-center text-muted-foreground">Loading reports…</div>}>
+                <IntelReports />
+              </Suspense>
             </TabsContent>
           </Tabs>
         </CardContent>
