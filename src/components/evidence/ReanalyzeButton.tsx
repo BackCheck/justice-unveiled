@@ -115,6 +115,7 @@ export const ReanalyzeButton = () => {
       type: "analysis",
       title: "Batch Re-analysis Complete",
       message: `Processed ${caseFiles.length} files: ${successCount} succeeded, ${errorCount} failed.`,
+      link: "/analysis-history",
       caseId: selectedCaseId,
     });
   };
