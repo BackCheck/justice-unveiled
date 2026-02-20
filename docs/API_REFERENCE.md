@@ -603,6 +603,83 @@ The function searches for:
 
 ---
 
+### 10. OSINT Entity Enrichment
+
+**Endpoint:** `POST /osint-enrich-entity`
+
+Generates AI-powered intelligence dossiers for entities using case data and known connections.
+
+#### Request
+
+```json
+{
+  "entityId": "uuid",
+  "caseId": "uuid (optional)"
+}
+```
+
+#### Response
+
+```json
+{
+  "dossier": {
+    "summary": "High-influence entity with documented connections to...",
+    "background": "Known affiliations and organizational ties...",
+    "connections": ["Entity A", "Entity B"],
+    "riskFactors": ["Multiple aliases", "Cross-border operations"],
+    "searchPivots": {
+      "google": "https://google.com/search?q=...",
+      "linkedin": "https://linkedin.com/search?q=..."
+    },
+    "recommendations": ["Monitor financial transactions", "Cross-reference with..."]
+  }
+}
+```
+
+---
+
+### 11. Dark Web Artifact Analyzer
+
+**Endpoint:** `POST /analyze-dark-web-artifact`
+
+Analyzes pre-collected dark web/deep web artifacts using AI to extract threat intelligence.
+
+#### Request
+
+```json
+{
+  "content": "Raw artifact text content...",
+  "artifactType": "paste_dump | forum_post | marketplace_listing | chat_log | other",
+  "sourceDescription": "Found on paste site XYZ",
+  "caseId": "uuid (optional)"
+}
+```
+
+#### Response
+
+```json
+{
+  "threatLevel": "high",
+  "entities": [
+    { "name": "john_doe", "type": "username", "context": "Forum moderator" }
+  ],
+  "cryptoAddresses": [
+    { "address": "1A1zP1...", "currency": "Bitcoin", "context": "Payment address" }
+  ],
+  "onionUrls": [
+    { "url": "http://example.onion", "context": "Linked marketplace" }
+  ],
+  "analysis": {
+    "summary": "High-threat artifact containing PII and cryptocurrency references...",
+    "details": "Detailed analysis...",
+    "crossReferences": ["Matches entity 'X' from case CF-001"],
+    "indicators": ["email@example.com", "1A1zP1..."]
+  }
+}
+```
+
+---
+
 ## Rate Limits
 
 | Endpoint | Rate Limit |

@@ -79,6 +79,15 @@ const steps = [
     link: "/international",
     linkLabel: "Rights Audit",
   },
+  {
+    number: "07",
+    title: "Use the OSINT Intelligence Toolkit",
+    description:
+      "Leverage the OSINT toolkit for digital forensics — extract EXIF metadata from images, compute file hashes for chain-of-custody, enrich entity profiles with AI-powered dossiers, archive web evidence before it disappears, and analyze dark web artifacts for threat intelligence.",
+    icon: Search,
+    link: "/osint-toolkit",
+    linkLabel: "OSINT Toolkit",
+  },
 ];
 
 const features = [

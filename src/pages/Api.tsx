@@ -219,12 +219,12 @@ const Api = () => {
                     </div>
                   </CardContent>
                 </Card>
-                <Card className="bg-card/60 border-border/40">
+              <Card className="bg-card/60 border-border/40">
                   <CardContent className="p-4 flex items-start gap-3">
                     <Database className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                     <div>
-                      <p className="font-semibold text-foreground text-sm">12 Resources</p>
-                      <p className="text-xs text-foreground/55">Cases, events, entities, claims, and more</p>
+                      <p className="font-semibold text-foreground text-sm">14 Resources</p>
+                      <p className="text-xs text-foreground/55">Cases, events, entities, OSINT, claims, and more</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -642,6 +642,8 @@ curl -X POST '${BASE_URL.replace('public-api', 'analyze-document')}' \\
                   { name: "analyze-rights-violations", method: "POST", desc: "Map text against UDHR, ICCPR, and other international frameworks", body: '{ "text": "...", "frameworks": ["UDHR", "ICCPR"] }' },
                   { name: "fetch-legal-precedents", method: "POST", desc: "Search external case law databases (CourtListener)", body: '{ "query": "due process", "jurisdiction": "Pakistan" }' },
                   { name: "generate-appeal-summary", method: "POST", desc: "Generate appeal briefs with AI source citations", body: '{ "caseId": "uuid", "summaryType": "comprehensive" }' },
+                  { name: "osint-enrich-entity", method: "POST", desc: "Generate AI intelligence dossiers and search pivots for entities", body: '{ "entityId": "uuid", "caseId": "uuid" }' },
+                  { name: "analyze-dark-web-artifact", method: "POST", desc: "Analyze pre-collected dark web artifacts for PII, crypto addresses, and threat intel", body: '{ "content": "artifact text...", "artifactType": "paste_dump", "caseId": "uuid" }' },
                 ].map((ep) => (
                   <Card key={ep.name} className="bg-card/60 border-border/40">
                     <CardContent className="p-4">

@@ -13,6 +13,13 @@
 5. [Interactive Timeline](#interactive-timeline)
 6. [Entity Network](#entity-network)
 7. [Investigation Hub](#investigation-hub)
+8. [OSINT Intelligence Toolkit](#osint-intelligence-toolkit)
+9. [Legal Intelligence](#legal-intelligence)
+10. [Evidence Management](#evidence-management)
+11. [International Rights Analysis](#international-rights-analysis)
+12. [Watchlist & Tracking](#watchlist--tracking)
+13. [Reports & Export](#reports--export)
+7. [Investigation Hub](#investigation-hub)
 8. [Legal Intelligence](#legal-intelligence)
 9. [Evidence Management](#evidence-management)
 10. [International Rights Analysis](#international-rights-analysis)
@@ -73,6 +80,7 @@ The platform features a collapsible sidebar with the following sections:
 #### 🔧 Tools
 - **Analyze** - AI document analyzer
 - **Legal Research** - Statute and precedent browser
+- **OSINT Toolkit** - Digital forensics, entity enrichment, web archiving, dark web analysis
 
 ### Quick Actions
 
@@ -355,6 +363,75 @@ Create formal investigation reports.
 3. Add additional context
 4. Click **"Generate Report"**
 5. Export as Markdown
+
+---
+
+## OSINT Intelligence Toolkit
+
+### Overview (`/osint-toolkit`)
+
+The OSINT Intelligence Toolkit provides five specialized modules for open-source intelligence gathering, digital forensics, and investigative enrichment.
+
+### Module 1: Forensics Lab
+
+Extract and verify metadata from uploaded evidence files — all processing happens client-side for privacy.
+
+**Features:**
+- **EXIF/Metadata Extraction** - Parse GPS coordinates, camera model, timestamps, software from images
+- **File Hash Calculator** - Generate SHA-256 and MD5 hashes for evidence integrity and chain-of-custody
+- **Timestamp Forensics** - Detect timezone inconsistencies, creation vs modification date anomalies
+- **Findings Persistence** - Save forensic analysis to the `artifact_forensics` table linked to evidence uploads
+
+**How to Use:**
+1. Navigate to **OSINT Toolkit** → **Forensics Lab**
+2. Upload an image or document file
+3. View extracted metadata (EXIF, GPS, camera info)
+4. Copy file hashes for chain-of-custody records
+5. Save findings to the case database
+
+### Module 2: Entity Enrichment
+
+Extend existing entity profiles with structured OSINT pivots and AI-generated intelligence dossiers.
+
+**Features:**
+- **Search Pivot Generator** - Auto-generate search queries for Google, LinkedIn, court records, corporate registries
+- **AI Dossier Generation** - Create comprehensive intelligence dossiers using AI analysis
+- **Alias Cross-Reference** - Map name variants and transliterations across languages
+
+**How to Use:**
+1. Select an entity from the dropdown
+2. Click **Generate Search Pivots** for external search links
+3. Click **Generate AI Dossier** for a comprehensive intelligence report
+4. Review and save findings
+
+### Module 3: Web Archiver
+
+Preserve web-based evidence before it disappears using Firecrawl scraping and Wayback Machine integration.
+
+**Features:**
+- **URL Snapshot** - Scrape and archive web pages as markdown with content hashing
+- **Wayback Machine Integration** - Query the Internet Archive for historical snapshots
+- **Tampering Detection** - Compare current vs archived versions to detect content changes
+
+### Module 4: Dark Web Analyzer
+
+Process artifacts already collected from dark web and deep web sources using AI analysis.
+
+**Features:**
+- **PII Extraction** - Identify emails, credentials, and personal information mentions
+- **Cryptocurrency Tracking** - Parse Bitcoin/Ethereum/Monero addresses with blockchain explorer links
+- **Onion URL Cataloging** - Catalog .onion addresses found in evidence
+- **Threat Intelligence** - AI cross-references mentions with known case entities
+
+**Note:** This module does NOT access the dark web directly — it analyzes artifacts already collected by investigators.
+
+### Module 5: Communications Analyzer
+
+Analyze communication metadata from uploaded evidence.
+
+**Features:**
+- **Phone Number Intelligence** - Parse and validate phone numbers, identify country/carrier
+- **Email Header Forensics** - Analyze routing paths, detect SPF/DKIM/DMARC spoofing indicators
 
 ---
 
