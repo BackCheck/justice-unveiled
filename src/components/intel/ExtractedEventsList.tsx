@@ -18,6 +18,7 @@ import {
 } from "@/hooks/useExtractedEvents";
 import { useUserRole } from "@/hooks/useUserRole";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 import {
   Tooltip,
   TooltipContent,
@@ -150,13 +151,17 @@ const ExtractedEventCard = ({
   isDeleting 
 }: ExtractedEventCardProps) => {
   const confidencePercent = Math.round((event.confidence_score || 0.85) * 100);
+  const navigate = useNavigate();
   
   return (
-    <div className={cn(
+    <div 
+      className={cn(
       "p-4 rounded-lg border transition-all",
-      "hover:shadow-md hover:border-primary/30",
-      "bg-gradient-to-r from-primary/5 via-transparent to-transparent"
-    )}>
+        "hover:shadow-md hover:border-primary/30 cursor-pointer",
+        "bg-gradient-to-r from-primary/5 via-transparent to-transparent"
+      )}
+      onClick={() => navigate(`/events/${event.id}`)}
+    >
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap mb-2">
@@ -215,7 +220,7 @@ const ExtractedEventCard = ({
                 variant="ghost"
                 size="icon"
                 className="shrink-0 text-muted-foreground hover:text-destructive"
-                onClick={onDelete}
+                onClick={(e) => { e.stopPropagation(); onDelete?.(); }}
                 disabled={isDeleting}
               >
                 <Trash2 className="w-4 h-4" />

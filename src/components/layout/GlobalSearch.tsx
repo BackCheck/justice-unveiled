@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { 
   Search, Clock, Network, FileText, Target, Brain, FolderOpen, ArrowRight, Command,
   BarChart3, BookOpen, Scale, Upload, Info, Eye, GitBranch, ClipboardCheck,
-  TrendingDown, Gavel, Shield, Home, Newspaper, Phone, HelpCircle, Code, Search as SearchIcon
+  TrendingDown, Gavel, Shield, Home, Newspaper, Phone, HelpCircle, Code, Search as SearchIcon,
+  Sparkles, AlertTriangle, Users, Calendar
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/command";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useExtractedEvents, useExtractedEntities, useExtractedDiscrepancies } from "@/hooks/useExtractedEvents";
 
 interface SearchResult {
   id: string;
@@ -66,8 +68,14 @@ const categoryKeys = ["nav.core", "nav.investigation", "nav.analysis", "nav.reso
 
 export const GlobalSearch = () => {
   const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  // Fetch database records for search
+  const { data: events } = useExtractedEvents();
+  const { data: entities } = useExtractedEntities();
+  const { data: discrepancies } = useExtractedDiscrepancies();
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -80,9 +88,55 @@ export const GlobalSearch = () => {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
+  // Filter database records based on search query
+  const filteredEvents = useMemo(() => {
+    if (!searchQuery || searchQuery.length < 2) return [];
+    const q = searchQuery.toLowerCase();
+    return (events || []).filter(e =>
+      e.description.toLowerCase().includes(q) ||
+      e.category.toLowerCase().includes(q) ||
+      e.individuals.toLowerCase().includes(q) ||
+      e.sources.toLowerCase().includes(q)
+    ).slice(0, 8);
+  }, [events, searchQuery]);
+
+  const filteredEntities = useMemo(() => {
+    if (!searchQuery || searchQuery.length < 2) return [];
+    const q = searchQuery.toLowerCase();
+    return (entities || []).filter(e =>
+      e.name.toLowerCase().includes(q) ||
+      (e.role || "").toLowerCase().includes(q) ||
+      (e.description || "").toLowerCase().includes(q) ||
+      e.entity_type.toLowerCase().includes(q)
+    ).slice(0, 8);
+  }, [entities, searchQuery]);
+
+  const filteredDiscrepancies = useMemo(() => {
+    if (!searchQuery || searchQuery.length < 2) return [];
+    const q = searchQuery.toLowerCase();
+    return (discrepancies || []).filter(d =>
+      d.title.toLowerCase().includes(q) ||
+      d.description.toLowerCase().includes(q) ||
+      d.discrepancy_type.toLowerCase().includes(q) ||
+      (d.legal_reference || "").toLowerCase().includes(q)
+    ).slice(0, 8);
+  }, [discrepancies, searchQuery]);
+
+  const hasDbResults = filteredEvents.length > 0 || filteredEntities.length > 0 || filteredDiscrepancies.length > 0;
+
   const handleSelect = (path: string) => {
     setOpen(false);
+    setSearchQuery("");
     navigate(path);
+  };
+
+  const getSeverityIcon = (severity: string) => {
+    switch (severity) {
+      case "critical": return "🔴";
+      case "high": return "🟠";
+      case "medium": return "🟡";
+      default: return "🔵";
+    }
   };
 
   return (
@@ -103,16 +157,122 @@ export const GlobalSearch = () => {
         </kbd>
       </Button>
 
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder={t('pages.searchPlaceholder')} />
+      <CommandDialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setSearchQuery(""); }}>
+        <CommandInput 
+          placeholder={t('pages.searchPlaceholder')} 
+          value={searchQuery}
+          onValueChange={setSearchQuery}
+        />
         <CommandList className="max-h-[400px]">
           <CommandEmpty>{t('pages.noResults')}</CommandEmpty>
+
+          {/* Database Results - Events */}
+          {filteredEvents.length > 0 && (
+            <>
+              <CommandGroup heading={`Extracted Events (${filteredEvents.length})`}>
+                {filteredEvents.map((event) => (
+                  <CommandItem
+                    key={`event-${event.id}`}
+                    value={`event ${event.description} ${event.category} ${event.individuals}`}
+                    onSelect={() => handleSelect(`/events/${event.id}`)}
+                    className="flex items-center gap-3 p-2 cursor-pointer"
+                  >
+                    <div className="w-7 h-7 rounded-md flex items-center justify-center shrink-0 bg-primary/10">
+                      <Calendar className="w-3.5 h-3.5 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm truncate">{event.description.slice(0, 60)}{event.description.length > 60 ? '...' : ''}</span>
+                        <Badge variant="outline" className="h-4 px-1.5 text-[10px] shrink-0">
+                          {event.category}
+                        </Badge>
+                      </div>
+                      <div className="text-xs text-muted-foreground truncate">
+                        {event.date} · {event.individuals}
+                      </div>
+                    </div>
+                    <Sparkles className="w-3 h-3 text-amber-500 shrink-0" />
+                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+              <CommandSeparator />
+            </>
+          )}
+
+          {/* Database Results - Entities */}
+          {filteredEntities.length > 0 && (
+            <>
+              <CommandGroup heading={`Extracted Entities (${filteredEntities.length})`}>
+                {filteredEntities.map((entity) => (
+                  <CommandItem
+                    key={`entity-${entity.id}`}
+                    value={`entity ${entity.name} ${entity.role} ${entity.entity_type} ${entity.description}`}
+                    onSelect={() => handleSelect(`/entities/ai-${entity.id}`)}
+                    className="flex items-center gap-3 p-2 cursor-pointer"
+                  >
+                    <div className="w-7 h-7 rounded-md flex items-center justify-center shrink-0 bg-accent/50">
+                      <Users className="w-3.5 h-3.5 text-accent-foreground" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm">{entity.name}</span>
+                        <Badge variant="secondary" className="h-4 px-1.5 text-[10px] shrink-0">
+                          {entity.entity_type}
+                        </Badge>
+                      </div>
+                      <div className="text-xs text-muted-foreground truncate">
+                        {entity.role || entity.description || 'No description'}
+                      </div>
+                    </div>
+                    <Sparkles className="w-3 h-3 text-amber-500 shrink-0" />
+                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+              <CommandSeparator />
+            </>
+          )}
+
+          {/* Database Results - Discrepancies/Violations */}
+          {filteredDiscrepancies.length > 0 && (
+            <>
+              <CommandGroup heading={`Violations & Discrepancies (${filteredDiscrepancies.length})`}>
+                {filteredDiscrepancies.map((disc) => (
+                  <CommandItem
+                    key={`disc-${disc.id}`}
+                    value={`violation ${disc.title} ${disc.description} ${disc.discrepancy_type} ${disc.legal_reference}`}
+                    onSelect={() => handleSelect(`/analysis-history`)}
+                    className="flex items-center gap-3 p-2 cursor-pointer"
+                  >
+                    <div className="w-7 h-7 rounded-md flex items-center justify-center shrink-0 bg-destructive/10">
+                      <AlertTriangle className="w-3.5 h-3.5 text-destructive" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm truncate">{disc.title}</span>
+                        <Badge variant="outline" className="h-4 px-1.5 text-[10px] shrink-0">
+                          {getSeverityIcon(disc.severity)} {disc.severity}
+                        </Badge>
+                      </div>
+                      <div className="text-xs text-muted-foreground truncate">
+                        {disc.discrepancy_type} · {disc.legal_reference || disc.description.slice(0, 50)}
+                      </div>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+              <CommandSeparator />
+            </>
+          )}
           
+          {/* Page Navigation */}
           {categoryKeys.map((catKey, idx) => {
             const items = allPages.filter(p => p.categoryKey === catKey);
             return (
               <div key={catKey}>
-                {idx > 0 && <CommandSeparator />}
+                {(idx > 0 || hasDbResults) && <CommandSeparator />}
                 <CommandGroup heading={t(catKey)}>
                   {items.map((item) => (
                     <CommandItem
