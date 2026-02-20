@@ -131,11 +131,18 @@ export const useCombinedEntities = () => {
             );
             
             if (!exists) {
+              // Infer connection type from event category
+              const inferredType = event.category?.toLowerCase().includes("family") ? "family"
+                : event.category?.toLowerCase().includes("profession") || event.category?.toLowerCase().includes("business") ? "professional"
+                : event.category?.toLowerCase().includes("harass") || event.category?.toLowerCase().includes("threat") ? "adversarial"
+                : event.category?.toLowerCase().includes("official") || event.category?.toLowerCase().includes("government") ? "official"
+                : "legal";
+              
               combinedConnections.push({
                 source,
                 target,
                 relationship: `Mentioned in: ${event.description.slice(0, 30)}...`,
-                type: "legal",
+                type: inferredType,
                 strength: 2,
                 isInferred: true
               });
