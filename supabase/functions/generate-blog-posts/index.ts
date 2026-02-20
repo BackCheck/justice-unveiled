@@ -29,6 +29,59 @@ serve(async (req) => {
       // cron calls may have empty or minimal body
     }
 
+    // Fetch real case data for context-rich generation
+    const { data: cases } = await supabase
+      .from("cases")
+      .select("id, title, case_number, category, description, status, location, severity");
+
+    const { data: entities } = await supabase
+      .from("extracted_entities")
+      .select("name, entity_type, role, organization_affiliation, case_id")
+      .not("case_id", "is", null)
+      .limit(50);
+
+    const { data: events } = await supabase
+      .from("extracted_events")
+      .select("date, description, category, legal_action, individuals, case_id")
+      .not("case_id", "is", null)
+      .order("date", { ascending: false })
+      .limit(30);
+
+    const { data: violations } = await supabase
+      .from("compliance_violations")
+      .select("title, description, severity, violation_type, case_id")
+      .limit(20);
+
+    const { data: discrepancies } = await supabase
+      .from("extracted_discrepancies")
+      .select("title, description, severity, discrepancy_type, legal_reference, case_id")
+      .limit(20);
+
+    // Build case context summaries
+    const caseContexts = (cases || []).map(c => {
+      const caseEntities = (entities || []).filter(e => e.case_id === c.id);
+      const caseEvents = (events || []).filter(e => e.case_id === c.id);
+      const caseViolations = (violations || []).filter(v => v.case_id === c.id);
+      const caseDiscrepancies = (discrepancies || []).filter(d => d.case_id === c.id);
+
+      return {
+        title: c.title,
+        case_number: c.case_number,
+        category: c.category,
+        description: c.description,
+        status: c.status,
+        severity: c.severity,
+        location: c.location,
+        key_persons: caseEntities.filter(e => e.entity_type === "Person").map(e => `${e.name} (${e.role})`).slice(0, 10),
+        institutions: caseEntities.filter(e => e.entity_type === "Official Body").map(e => `${e.name} (${e.role})`).slice(0, 5),
+        recent_events: caseEvents.map(e => `${e.date}: ${e.description}`).slice(0, 5),
+        violations: caseViolations.map(v => `[${v.severity}] ${v.title}: ${v.description}`).slice(0, 5),
+        discrepancies: caseDiscrepancies.map(d => `[${d.severity}] ${d.title} — ${d.legal_reference || "No ref"}`).slice(0, 5),
+      };
+    });
+
+    const caseDataBlock = JSON.stringify(caseContexts, null, 2);
+
     const systemPrompt = `You are a senior investigative journalist and human rights researcher with expertise in documenting systemic abuses worldwide. Your work is strictly non-partisan and non-politically motivated. You focus exclusively on:
 
 - Documented human rights violations backed by verifiable data
@@ -36,45 +89,55 @@ serve(async (req) => {
 - Justice delayed or denied cases with procedural analysis
 - Abuse of power by state and non-state actors
 
-Your reporting style is evidence-driven, citing specific laws, conventions (UDHR, ICCPR, CAT, CRC), and documented incidents. You never take political sides or promote any political agenda. Your sole mission is accountability and justice.`;
+Your reporting style is evidence-driven, citing specific laws, conventions (UDHR, ICCPR, CAT, CRC), and documented incidents. You never take political sides or promote any political agenda. Your sole mission is accountability and justice.
 
-    const topics = [
-      "enforced disappearances and extrajudicial actions in Pakistan",
-      "systematic corruption in judiciary and law enforcement in South Asia",
-      "justice delayed: case backlogs and procedural failures in Pakistan's courts",
-      "abuse of power by security forces and institutional impunity worldwide",
-      "digital surveillance overreach and PECA misuse against journalists and activists in Pakistan",
-      "custodial torture and deaths in police custody across South Asia",
-      "land grabbing and forced evictions by powerful entities in Pakistan",
-      "child labor exploitation and trafficking networks in South Asia",
-      "religious minority persecution and blasphemy law misuse in Pakistan",
-      "women's rights violations including honor killings and forced marriages",
-      "press freedom violations and attacks on journalists worldwide",
-      "refugee rights violations and stateless populations globally",
-      "prison conditions and overcrowding crisis in Pakistan",
-      "environmental rights violations by industrial polluters in developing nations",
-      "modern slavery and bonded labor in brick kilns and agriculture in Pakistan",
+IMPORTANT: You have access to REAL CASE DATA from the HRPM platform. Use it to write deeply contextualized, case-specific investigative reports that directly reference documented entities, events, violations, and procedural discrepancies from these cases.`;
+
+    const anglePool = [
+      "entity profile deep-dive on a key person or institution from the case data",
+      "timeline analysis connecting documented events to human rights violations",
+      "procedural failures and compliance violations documented in the case",
+      "legal framework analysis comparing domestic law breaches with international conventions",
+      "investigative spotlight on documented discrepancies and evidence gaps",
+      "institutional accountability analysis of official bodies involved in the cases",
+      "victim impact assessment based on documented violations",
+      "comparative analysis of case patterns with global human rights precedents",
+      "systemic corruption patterns revealed through cross-case entity connections",
+      "judicial independence and rule of law analysis through documented procedural violations",
     ];
 
-    const selectedTopic = topic || topics[Math.floor(Math.random() * topics.length)];
+    // Pick random angles for diversity
+    const selectedAngles = anglePool
+      .sort(() => Math.random() - 0.5)
+      .slice(0, count)
+      .map((a, i) => `${i + 1}. ${a}`)
+      .join("\n");
 
-    const userPrompt = `Generate ${count} unique, well-researched investigative blog post(s) about: "${selectedTopic}".
+    const userPrompt = `Generate ${count} unique investigative blog post(s) using the following REAL CASE DATA from the HRPM platform:
+
+=== CASE DATA ===
+${caseDataBlock}
+=== END CASE DATA ===
+
+${topic ? `Focus topic: "${topic}"` : `Use these investigative angles (one per post):\n${selectedAngles}`}
 
 CRITICAL RULES:
-- Each post MUST be a genuine investigation report, NOT opinion or political commentary
-- Focus on documented facts, statistics, legal frameworks, and real patterns of abuse
-- Reference specific laws, international conventions, and institutional mechanisms
-- Include context from Pakistan AND relevant global parallels
-- Vary the angles: one could be a case study, another a systemic analysis, another a legal framework review
-- Each post should stand alone as a publishable investigation
+- Each post MUST directly reference real entities, events, and violations from the case data above
+- Name specific individuals, institutions, dates, and legal references from the data
+- Connect documented facts to specific articles of UDHR, ICCPR, CAT, CRC, Pakistan Constitution, PPC, CrPC
+- Include the case number (e.g., ${cases?.[0]?.case_number || "CF-001"}) for traceability
+- Structure as genuine investigative journalism, NOT opinion or commentary
+- Each post must enrich understanding of the cases and their human rights implications
+- Vary angles: entity profiles, timeline analyses, legal framework reviews, violation spotlights
+- Include "Read the full case file on HRPM" call-to-action references
 
 For each post return a JSON array of objects with these fields:
-- title: compelling investigative headline (max 100 chars)
+- title: compelling investigative headline referencing case specifics (max 120 chars)
 - slug: URL-friendly slug (unique, include date context like month-year)
-- excerpt: 1-2 sentence investigation summary (max 250 chars)
-- content: full HTML investigation report (1000-1500 words) using <h2>, <h3>, <p>, <ul>, <ol>, <blockquote>, <strong>, <em> tags. Structure with: Executive Summary, Key Findings, Evidence & Data, Legal Framework, Recommendations
-- category: one of "Investigative", "Human Rights", "Legal Analysis", "Accountability", "South Asia"
-- tags: array of 4-6 relevant tags
+- excerpt: 1-2 sentence summary naming key entities/violations (max 280 chars)
+- content: full HTML investigation report (1200-2000 words) using <h2>, <h3>, <p>, <ul>, <ol>, <blockquote>, <strong>, <em> tags. Structure with: Executive Summary, Key Findings, Evidence & Data, Legal Framework, Recommendations
+- category: one of "Investigative", "Human Rights", "Legal Analysis", "Accountability", "Entity Profile"
+- tags: array of 5-7 relevant tags including case names and entity names from the data
 
 Return ONLY the JSON array, no other text.`;
 
@@ -151,7 +214,7 @@ Return ONLY the JSON array, no other text.`;
       inserted.push(data);
     }
 
-    console.log(`Generated ${inserted.length} investigation reports`);
+    console.log(`Generated ${inserted.length} case-enriched investigation reports`);
 
     return new Response(
       JSON.stringify({ success: true, posts: inserted }),
