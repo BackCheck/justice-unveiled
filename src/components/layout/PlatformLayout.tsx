@@ -48,6 +48,10 @@ const pageTitleKeys: Record<string, { titleKey: string; subtitleKey?: string; is
   "/api": { titleKey: "nav.developerApi", subtitleKey: "pages.apiSub" },
   "/how-to-use": { titleKey: "nav.howToUse", subtitleKey: "pages.howToUseSub" },
   "/contact": { titleKey: "nav.contact", subtitleKey: "pages.contactSub" },
+  "/osint-toolkit": { titleKey: "nav.osintToolkit", subtitleKey: "pages.osintToolkitSub", isAI: true },
+  "/changelog": { titleKey: "nav.changelog", subtitleKey: "pages.changelogSub" },
+  "/analysis-history": { titleKey: "nav.analysisHistory", subtitleKey: "pages.analysisHistorySub", isAI: true },
+  "/who-what-why": { titleKey: "nav.about", subtitleKey: "pages.aboutSub" },
 };
 
 export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
@@ -153,7 +157,6 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
                 {/* Quick Links as text */}
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                   <Link to="/who-what-why" className="hover:text-primary transition-colors">Who, What & Why</Link>
-                  <Link to="/who-what-why" className="hover:text-primary transition-colors">{t('nav.about')}</Link>
                   <Link to="/how-to-use" className="hover:text-primary transition-colors">{t('footer.howToUse')}</Link>
                   <Link to="/cases" className="hover:text-primary transition-colors">{t('cases.title')}</Link>
                   <Link to="/blog" className="hover:text-primary transition-colors">{t('nav.blogNews')}</Link>
@@ -211,8 +214,8 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
 
                     <span className="text-border">|</span>
 
-                    <Link to="/who-what-why" className="text-[10px] sm:text-xs hover:text-primary transition-colors">{t('footer.privacy')}</Link>
-                    <Link to="/who-what-why" className="text-[10px] sm:text-xs hover:text-primary transition-colors">{t('footer.terms')}</Link>
+                    <Link to="/who-what-why#privacy" className="text-[10px] sm:text-xs hover:text-primary transition-colors">{t('footer.privacy')}</Link>
+                    <Link to="/who-what-why#terms" className="text-[10px] sm:text-xs hover:text-primary transition-colors">{t('footer.terms')}</Link>
                   </div>
                 </TooltipProvider>
               </div>

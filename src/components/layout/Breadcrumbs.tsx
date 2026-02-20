@@ -38,6 +38,10 @@ const routeConfig: Record<string, { labelKey: string; parent?: string }> = {
   "/docs": { labelKey: "nav.documentation", parent: "/" },
   "/api": { labelKey: "nav.developerApi", parent: "/docs" },
   "/how-to-use": { labelKey: "nav.howToUse", parent: "/docs" },
+  "/osint-toolkit": { labelKey: "nav.osintToolkit", parent: "/investigations" },
+  "/changelog": { labelKey: "nav.changelog", parent: "/" },
+  "/analysis-history": { labelKey: "nav.analysisHistory", parent: "/" },
+  "/who-what-why": { labelKey: "nav.about", parent: "/" },
 };
 
 export const Breadcrumbs = () => {

@@ -356,11 +356,11 @@ export function AppSidebar() {
                 <Eye className="mr-2 h-4 w-4" />
                 My Watchlist
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/who-what-why")}>
                 <User className="mr-2 h-4 w-4" />
                 Profile
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem className="cursor-pointer" onClick={() => toast.info("Settings are available in the sidebar footer (language & theme).")}>
                 <Settings className="mr-2 h-4 w-4" />
                 {t('nav.settings')}
               </DropdownMenuItem>
