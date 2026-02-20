@@ -45,7 +45,7 @@ export const ViolationsSummaryWidget = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {/* Local Laws Widget */}
-      <Link to="/international-analysis" className="block group">
+      <Link to="/international" className="block group">
         <div className="widget-card h-full border-l-4 border-l-amber-500/60 hover:border-l-amber-500 transition-all hover:shadow-lg hover:shadow-amber-500/5">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
@@ -89,7 +89,7 @@ export const ViolationsSummaryWidget = () => {
       </Link>
 
       {/* International Frameworks Widget */}
-      <Link to="/international-analysis" className="block group">
+      <Link to="/international" className="block group">
         <div className="widget-card h-full border-l-4 border-l-blue-500/60 hover:border-l-blue-500 transition-all hover:shadow-lg hover:shadow-blue-500/5">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
