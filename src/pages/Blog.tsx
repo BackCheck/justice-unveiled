@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-
+import { useSEO } from "@/hooks/useSEO";
 interface BlogPost {
   id: string;
   title: string;
@@ -57,6 +57,14 @@ interface NewsArticle {
 
 const Blog = () => {
   const { t } = useTranslation();
+
+  useSEO({
+    title: "Blog & News - Human Rights Awareness",
+    description: "Read investigative reports, human rights awareness articles, and global news on legal abuse, institutional failures, and systemic injustice.",
+    url: "https://hrpm.org/blog",
+    canonicalUrl: "https://hrpm.org/blog",
+    keywords: ["human rights blog", "investigative reports", "legal abuse", "awareness", "justice news"],
+  });
   const [activeTab, setActiveTab] = useState("blog");
   const [searchQuery, setSearchQuery] = useState("");
 

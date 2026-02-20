@@ -33,6 +33,12 @@ import { cn } from "@/lib/utils";
 type ViewMode = "track" | "agency" | "case";
 
 const Reconstruction = () => {
+  useSEO({
+    title: "Case Reconstruction",
+    description: "Multi-track parallel timeline reconstruction with contradiction detection, delay alerts, and institutional response analysis.",
+    url: "https://hrpm.org/reconstruction",
+    keywords: ["case reconstruction", "timeline analysis", "contradiction detection", "institutional response"],
+  });
   const [viewMode, setViewMode] = useState<ViewMode>("track");
   const [selectedCaseId, setSelectedCaseId] = useState<string>("");
   const [selectedEvent, setSelectedEvent] = useState<ReconstructedEvent | null>(null);

@@ -11,6 +11,7 @@ import {
   Zap, BarChart3, Globe, Printer, Share2
 } from "lucide-react";
 import { SocialShareButtons } from "@/components/sharing/SocialShareButtons";
+import { useSEO } from "@/hooks/useSEO";
 import { CaseReportPrint } from "@/components/export/CaseReportPrint";
 import { useCases, Case } from "@/hooks/useCases";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -219,6 +220,22 @@ const CaseCard = ({ caseItem, onPrint }: { caseItem: Case; onPrint: (c: Case) =>
 
 const CasesList = () => {
   const { data: cases, isLoading, error } = useCases();
+
+  useSEO({
+    title: "Case Files - Active Investigations",
+    description: "Browse active human rights investigations with documented evidence, entity networks, and AI-powered analysis. Each case includes timelines, sources, and legal frameworks.",
+    url: "https://hrpm.org/cases",
+    canonicalUrl: "https://hrpm.org/cases",
+    keywords: ["human rights cases", "active investigations", "case files", "evidence documentation", "legal analysis"],
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "HRPM Case Files",
+      "description": "Active human rights investigations with documented evidence and AI analysis.",
+      "url": "https://hrpm.org/cases",
+      "publisher": { "@type": "Organization", "name": "HRPM.org" }
+    },
+  });
   const { canEdit } = useUserRole();
   const [searchQuery, setSearchQuery] = useState("");
   const [printCase, setPrintCase] = useState<Case | null>(null);

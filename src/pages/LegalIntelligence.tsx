@@ -7,8 +7,15 @@ import { Badge } from "@/components/ui/badge";
 import { BookOpen, Scale, Gavel, FolderOpen } from "lucide-react";
 import { useCases } from "@/hooks/useCases";
 import { CaseLegalTab } from "@/components/legal-intelligence";
+import { useSEO } from "@/hooks/useSEO";
 
 const LegalIntelligence = () => {
+  useSEO({
+    title: "Legal Intelligence",
+    description: "AI-powered legal research with case law precedents, statute analysis, doctrine mapping, and appeal summary generation.",
+    url: "https://hrpm.org/legal-intelligence",
+    keywords: ["legal intelligence", "case law", "statute analysis", "doctrine mapping", "legal research"],
+  });
   const navigate = useNavigate();
   const [selectedCaseId, setSelectedCaseId] = useState<string>("");
   const { data: cases, isLoading: casesLoading } = useCases();
