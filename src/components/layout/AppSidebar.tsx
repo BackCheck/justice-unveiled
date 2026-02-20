@@ -78,6 +78,7 @@ const NEW_ITEMS = new Set([
   "/correlation",
   "/regulatory-harm",
   "/compliance",
+  "/analysis-history",
 ]);
 
 const coreNavItems = [
@@ -87,6 +88,7 @@ const coreNavItems = [
   { path: "/network", labelKey: "nav.entityNetwork", icon: Network },
   { path: "/evidence", labelKey: "nav.evidenceMatrix", icon: FileText },
   { path: "/analyze", labelKey: "nav.aiAnalyzer", icon: Brain },
+  { path: "/analysis-history", labelKey: "nav.analysisHistory", icon: Clock },
   { path: "/investigations", labelKey: "nav.investigations", icon: Target },
   { path: "/blog", labelKey: "nav.blogNews", icon: Newspaper },
 ];
