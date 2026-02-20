@@ -52,6 +52,7 @@ const tocItems = [
   { id: "network", label: "Entity Network" },
   { id: "evidence", label: "Evidence Management" },
   { id: "investigations", label: "Investigation Hub" },
+  { id: "osint", label: "OSINT Toolkit" },
   { id: "legal", label: "Legal Intelligence" },
   { id: "compliance", label: "Compliance Auditing" },
   { id: "international", label: "International Rights" },
@@ -177,6 +178,7 @@ const Documentation = () => {
                   <li><strong>Compliance:</strong> procedural_requirements, compliance_checks, compliance_violations</li>
                   <li><strong>Harm:</strong> regulatory_harm_incidents, financial_losses, financial_affidavits</li>
                   <li><strong>Content:</strong> blog_posts, news_articles, appeal_summaries</li>
+                  <li><strong>OSINT:</strong> artifact_forensics, web_archives, osint_searches, dark_web_artifacts</li>
                   <li><strong>System:</strong> audit_logs, hidden_static_events, entity_aliases, entity_relationships</li>
                 </ul>
               </SubSection>
@@ -343,6 +345,33 @@ const Documentation = () => {
                   The hub includes real-time stats grids, severity meters, category breakdowns, 
                   entity distribution charts, entity watchlists, recent extractions feeds, and 
                   quick action panels for streamlined workflow.
+                </p>
+              </SubSection>
+            </Section>
+
+            <Separator className="border-border/30" />
+
+            {/* OSINT Toolkit */}
+            <Section id="osint" icon={Search} title="OSINT Intelligence Toolkit">
+              <p>
+                The OSINT Toolkit (<strong>/osint-toolkit</strong>) is a centralized hub for open-source intelligence 
+                gathering, digital forensics, and investigative enrichment — enabling investigators to verify evidence 
+                integrity, enrich entity profiles, and preserve critical web-based evidence.
+              </p>
+              <SubSection title="Modules">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <FeatureCard icon={Shield} title="Forensics Lab" description="Client-side EXIF/metadata extraction, GPS coordinate parsing, SHA-256/MD5 file hashing for chain-of-custody verification." />
+                  <FeatureCard icon={Users} title="Entity Enrichment" description="AI-powered intelligence dossiers, automated search pivot generation across Google, LinkedIn, court records, and corporate registries." />
+                  <FeatureCard icon={Globe} title="Web Archiver" description="Preserve URLs via Firecrawl scraping and Wayback Machine integration with content hashing and tampering detection." />
+                  <FeatureCard icon={AlertTriangle} title="Dark Web Analyzer" description="Process pre-collected artifacts to extract PII, cryptocurrency addresses, onion URLs, and threat intelligence using AI." />
+                  <FeatureCard icon={MessageSquare} title="Comms Analyzer" description="Phone number validation with carrier identification and email header forensics for SPF/DKIM/DMARC spoofing detection." />
+                </div>
+              </SubSection>
+              <SubSection title="Data Persistence">
+                <p>
+                  All OSINT findings are stored in dedicated database tables (<code className="bg-muted/60 px-1.5 py-0.5 rounded text-xs">artifact_forensics</code>, 
+                  <code className="bg-muted/60 px-1.5 py-0.5 rounded text-xs">web_archives</code>, <code className="bg-muted/60 px-1.5 py-0.5 rounded text-xs">osint_searches</code>, 
+                  <code className="bg-muted/60 px-1.5 py-0.5 rounded text-xs">dark_web_artifacts</code>) and are integrated into the global search, entity network, and case profiles.
                 </p>
               </SubSection>
             </Section>
@@ -534,6 +563,8 @@ const Documentation = () => {
                       <tr className="border-b border-border/20"><td className="py-2 pr-4 font-mono text-xs">analyze-rights-violations</td><td className="py-2 pr-4">POST</td><td className="py-2">Map events to international rights frameworks</td></tr>
                       <tr className="border-b border-border/20"><td className="py-2 pr-4 font-mono text-xs">fetch-legal-precedents</td><td className="py-2 pr-4">POST</td><td className="py-2">Search external case law databases</td></tr>
                       <tr className="border-b border-border/20"><td className="py-2 pr-4 font-mono text-xs">generate-appeal-summary</td><td className="py-2 pr-4">POST</td><td className="py-2">Generate appeal briefs with citations</td></tr>
+                      <tr className="border-b border-border/20"><td className="py-2 pr-4 font-mono text-xs">osint-enrich-entity</td><td className="py-2 pr-4">POST</td><td className="py-2">AI-powered entity enrichment and dossier generation</td></tr>
+                      <tr className="border-b border-border/20"><td className="py-2 pr-4 font-mono text-xs">analyze-dark-web-artifact</td><td className="py-2 pr-4">POST</td><td className="py-2">Analyze dark web artifacts for threat intelligence</td></tr>
                       <tr><td className="py-2 pr-4 font-mono text-xs">fetch-news</td><td className="py-2 pr-4">POST</td><td className="py-2">Retrieve relevant news articles</td></tr>
                     </tbody>
                   </table>

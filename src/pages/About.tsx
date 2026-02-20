@@ -51,7 +51,8 @@ const About = () => {
      "Support individuals navigating complex legal systems",
      "Advocate for systemic reforms to protect fundamental rights",
      "Connect victims with resources, legal aid, and support networks",
-     "Publish all source code openly for community audit and contribution"
+     "Publish all source code openly for community audit and contribution",
+     "Provide OSINT tools for digital forensics, entity enrichment, and evidence preservation"
    ];
 
   return (
