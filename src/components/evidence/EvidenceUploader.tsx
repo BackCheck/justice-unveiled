@@ -268,6 +268,7 @@ export const EvidenceUploader = ({
           type: "upload",
           title: "Evidence Uploaded",
           message: `${file.name} uploaded successfully.`,
+          link: "/evidence",
           caseId: caseId || null,
         });
 
@@ -276,6 +277,7 @@ export const EvidenceUploader = ({
             type: "analysis",
             title: "Document Analysis Complete",
             message: `${file.name}: ${analysisResult.events} events, ${analysisResult.claims} claims, ${analysisResult.violations} violations extracted.`,
+            link: "/analysis-history",
             caseId: caseId || null,
           });
         }

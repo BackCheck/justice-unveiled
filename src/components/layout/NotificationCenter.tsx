@@ -10,6 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useNotifications, type Notification } from "@/hooks/useNotifications";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -30,6 +31,7 @@ const getNotificationIcon = (type: Notification["type"]) => {
 
 export const NotificationCenter = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const {
     notifications,
@@ -39,6 +41,14 @@ export const NotificationCenter = () => {
     markAllAsRead,
     dismissNotification,
   } = useNotifications();
+
+  const handleNotificationClick = (notification: Notification) => {
+    markAsRead(notification.id);
+    if (notification.link) {
+      setIsOpen(false);
+      navigate(notification.link);
+    }
+  };
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -94,7 +104,7 @@ export const NotificationCenter = () => {
                     "flex gap-3 px-4 py-3 hover:bg-muted/50 transition-colors cursor-pointer group relative",
                     !notification.read && "bg-primary/5"
                   )}
-                  onClick={() => markAsRead(notification.id)}
+                  onClick={() => handleNotificationClick(notification)}
                 >
                   <div className="shrink-0 mt-0.5">
                     {getNotificationIcon(notification.type)}
@@ -133,7 +143,12 @@ export const NotificationCenter = () => {
         </ScrollArea>
 
         <div className="border-t px-4 py-2">
-          <Button variant="ghost" size="sm" className="w-full h-8 text-xs text-muted-foreground">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="w-full h-8 text-xs text-muted-foreground"
+            onClick={() => { setIsOpen(false); navigate("/analysis-history"); }}
+          >
             View all notifications
           </Button>
         </div>
