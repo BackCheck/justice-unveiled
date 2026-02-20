@@ -70,6 +70,12 @@
     <priority>0.7</priority>
   </url>
 
+  <url>
+    <loc>https://hrpm.org/analysis-history</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- Blog & Content -->
   <url>
     <loc>https://hrpm.org/blog</loc>
