@@ -2,7 +2,7 @@ import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Target, ChevronRight, Lightbulb, AlertTriangle, AlertCircle, Info } from "lucide-react";
+import { Target, ChevronRight, Lightbulb, AlertTriangle, AlertCircle, Info, ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useCaseFilter } from "@/contexts/CaseFilterContext";
 import { useExtractedDiscrepancies } from "@/hooks/useExtractedEvents";
@@ -38,13 +38,15 @@ export const KeyFindingsGrid = () => {
     <div>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Lightbulb className="w-4 h-4 text-muted-foreground" />
+          <div className="p-1.5 rounded-lg bg-amber-500/10">
+            <Lightbulb className="w-4 h-4 text-amber-600" />
+          </div>
           <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">{t('dashboard.keyIntelFindings')}</h2>
         </div>
         <Link to="/evidence">
           <Button variant="ghost" size="sm" className="gap-1 text-xs text-primary hover:text-primary">
             {t('dashboard.viewAll')}
-            <ChevronRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4" />
           </Button>
         </Link>
       </div>
@@ -60,36 +62,40 @@ export const KeyFindingsGrid = () => {
             const catColor = categoryColors[finding.discrepancy_type] || categoryColors.default;
             const sevColor = severityColors[finding.severity] || severityColors.medium;
             return (
-              <div 
-                key={finding.id} 
-                className="stat-card p-0 opacity-0 animate-fade-in-up group"
-                style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'forwards' }}
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className={`p-2 rounded-xl ${catColor} transition-transform group-hover:scale-110`}>
-                      <Icon className="w-4 h-4" />
+              <Link to="/compliance" key={finding.id}>
+                <div 
+                  className="stat-card p-0 opacity-0 animate-fade-in-up group hover:shadow-lg transition-shadow h-full"
+                  style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'forwards' }}
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className={`p-2 rounded-xl ${catColor} transition-transform group-hover:scale-110`}>
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Badge className={`${sevColor} text-[10px] font-medium`} variant="secondary">
+                          {finding.severity.toUpperCase()}
+                        </Badge>
+                        <ChevronRight className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                      </div>
                     </div>
-                    <Badge className={`${sevColor} text-[10px] font-medium`} variant="secondary">
-                      {finding.severity.toUpperCase()}
-                    </Badge>
-                  </div>
-                  <CardTitle className="text-sm font-medium mt-3 leading-snug line-clamp-2 text-foreground/90">
-                    {finding.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-xs text-foreground/70 mb-3 line-clamp-3 leading-relaxed">{finding.description}</p>
-                  {finding.legal_reference && (
-                    <>
-                      <div className="section-divider mb-3" />
-                      <p className="text-[11px] text-muted-foreground">
-                        <span className="font-medium">Ref:</span> {finding.legal_reference}
-                      </p>
-                    </>
-                  )}
-                </CardContent>
-              </div>
+                    <CardTitle className="text-sm font-medium mt-3 leading-snug line-clamp-2 text-foreground/90">
+                      {finding.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <p className="text-xs text-foreground/70 mb-3 line-clamp-3 leading-relaxed">{finding.description}</p>
+                    {finding.legal_reference && (
+                      <>
+                        <div className="section-divider mb-3" />
+                        <p className="text-[11px] text-muted-foreground">
+                          <span className="font-medium">Ref:</span> {finding.legal_reference}
+                        </p>
+                      </>
+                    )}
+                  </CardContent>
+                </div>
+              </Link>
             );
           })}
         </div>

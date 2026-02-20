@@ -1,6 +1,8 @@
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Link, useNavigate } from "react-router-dom";
 import { 
   Activity,
   FileText,
@@ -10,6 +12,7 @@ import {
   Calendar,
   Upload,
   CheckCircle,
+  ArrowRight,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -37,9 +40,16 @@ const activityColors = {
   complete: "text-emerald-500 bg-emerald-500/10",
 };
 
+const activityLinks: Record<string, string> = {
+  upload: "/evidence",
+  entity: "/network",
+  event: "/",
+};
+
 export const ActivityFeed = () => {
   const { t } = useTranslation();
   const { selectedCaseId } = useCaseFilter();
+  const navigate = useNavigate();
 
   const { data: uploads } = useQuery({
     queryKey: ["recent-uploads-activity", selectedCaseId],
@@ -96,6 +106,7 @@ export const ActivityFeed = () => {
       title: u.file_name,
       description: t('dashboard.documentUploaded'),
       time: u.created_at,
+      link: "/evidence",
     })),
     ...(events || []).map(e => ({
       id: `event-${e.id}`,
@@ -103,6 +114,7 @@ export const ActivityFeed = () => {
       title: e.description.slice(0, 50) + (e.description.length > 50 ? "..." : ""),
       description: t('dashboard.aiExtractedEvent'),
       time: e.created_at,
+      link: "/",
     })),
     ...(entities || []).map(e => ({
       id: `entity-${e.id}`,
@@ -110,17 +122,20 @@ export const ActivityFeed = () => {
       title: e.name,
       description: t('dashboard.entityIdentified'),
       time: e.created_at,
+      link: `/entity/ai-${e.id}`,
     })),
   ]
     .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
     .slice(0, 8);
 
   return (
-    <div className="widget-card">
+    <div className="widget-card hover:shadow-lg transition-shadow">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Activity className="w-4 h-4 text-primary" />
+            <div className="p-1.5 rounded-lg bg-primary/10">
+              <Activity className="w-4 h-4 text-primary" />
+            </div>
             {t('dashboard.recentActivityTitle')}
           </CardTitle>
           {activities.length > 0 && (
@@ -144,14 +159,15 @@ export const ActivityFeed = () => {
                 return (
                   <div
                     key={activity.id}
-                    className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-muted/50 transition-colors opacity-0 animate-fade-in-up"
+                    onClick={() => navigate(activity.link)}
+                    className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer opacity-0 animate-fade-in-up group"
                     style={{ animationDelay: `${index * 0.04}s`, animationFillMode: 'forwards' }}
                   >
                     <div className={`p-1.5 rounded-lg ${colorClass} flex-shrink-0`}>
                       <Icon className="w-3.5 h-3.5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground/90 truncate">{activity.title}</p>
+                      <p className="text-sm font-medium text-foreground/90 truncate group-hover:text-primary transition-colors">{activity.title}</p>
                       <p className="text-[11px] text-muted-foreground">{activity.description}</p>
                     </div>
                     <span className="text-[10px] text-muted-foreground flex-shrink-0 whitespace-nowrap">
@@ -163,6 +179,16 @@ export const ActivityFeed = () => {
             )}
           </div>
         </ScrollArea>
+        {activities.length > 0 && (
+          <div className="px-4 pb-3 pt-1 border-t border-border/50">
+            <Link to="/evidence">
+              <Button variant="ghost" size="sm" className="w-full gap-1 text-xs text-primary hover:text-primary">
+                View all activity
+                <ArrowRight className="w-3 h-3" />
+              </Button>
+            </Link>
+          </div>
+        )}
       </CardContent>
     </div>
   );

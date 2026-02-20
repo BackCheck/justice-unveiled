@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 import {
   AreaChart,
   Area,
@@ -55,7 +56,8 @@ export const TimelineSparkline = () => {
   }
 
   return (
-    <div className="widget-card">
+    <Link to="/" className="block group">
+    <div className="widget-card hover:shadow-lg transition-shadow">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -134,5 +136,6 @@ export const TimelineSparkline = () => {
         </div>
       </CardContent>
     </div>
+    </Link>
   );
 };

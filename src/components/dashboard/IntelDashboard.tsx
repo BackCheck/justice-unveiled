@@ -24,6 +24,7 @@ import {
   QuickNavigationGrid,
   CaseOverviewCard,
   KeyFindingsGrid,
+  ViolationsSummaryWidget,
 } from "./widgets";
 import { GreetingBanner } from "@/components/GreetingBanner";
 import { DashboardHero } from "./DashboardHero";
@@ -106,6 +107,8 @@ export const IntelDashboard = () => {
           </div>
         </div>
 
+        {/* Keep the sidebar as-is */}
+
         {/* Secondary Column - Monitoring Sidebar */}
         <aside className="lg:col-span-4 space-y-6">
           {/* Critical Alerts */}
@@ -128,6 +131,9 @@ export const IntelDashboard = () => {
           <ActivityFeed />
         </aside>
       </div>
+
+      {/* Legal Violations Summary */}
+      <ViolationsSummaryWidget />
 
       {/* Separator */}
       <div className="section-divider" />

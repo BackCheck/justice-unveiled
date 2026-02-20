@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 import {
   Calendar,
   AlertTriangle,
@@ -12,6 +13,15 @@ import {
 } from "lucide-react";
 import { usePlatformStats } from "@/hooks/usePlatformStats";
 import { useTranslation } from "react-i18next";
+
+const statLinks: Record<string, string> = {
+  timelineSpan: "/",
+  criticalIssues: "/compliance",
+  entitiesTracked: "/network",
+  verifiedSources: "/evidence",
+  networkLinks: "/network",
+  rightsFrameworks: "/international-analysis",
+};
 
 export const DashboardStatsHeader = () => {
   const { stats, isLoading } = usePlatformStats();
@@ -35,6 +45,7 @@ export const DashboardStatsHeader = () => {
 
   const statCards = [
     {
+      key: "timelineSpan",
       label: t('dashboard.timelineSpan'),
       value: timelineSpanLabel,
       icon: Calendar,
@@ -44,6 +55,7 @@ export const DashboardStatsHeader = () => {
       trend: stats.eventsGrowth,
     },
     {
+      key: "criticalIssues",
       label: t('dashboard.criticalIssues'),
       value: stats.criticalDiscrepancies,
       icon: AlertTriangle,
@@ -54,6 +66,7 @@ export const DashboardStatsHeader = () => {
       pulse: stats.criticalDiscrepancies > 0,
     },
     {
+      key: "entitiesTracked",
       label: t('dashboard.entitiesTracked'),
       value: stats.totalEntities,
       icon: Users,
@@ -64,6 +77,7 @@ export const DashboardStatsHeader = () => {
       hasAI: stats.aiExtractedEntities > 0,
     },
     {
+      key: "verifiedSources",
       label: t('dashboard.verifiedSources'),
       value: stats.totalSources,
       icon: FileCheck,
@@ -73,6 +87,7 @@ export const DashboardStatsHeader = () => {
       trend: stats.sourcesGrowth,
     },
     {
+      key: "networkLinks",
       label: t('dashboard.networkLinks'),
       value: stats.totalConnections,
       icon: Network,
@@ -83,6 +98,7 @@ export const DashboardStatsHeader = () => {
       hasAI: stats.inferredConnections > 0,
     },
     {
+      key: "rightsFrameworks",
       label: t('dashboard.rightsFrameworks'),
       value: stats.internationalFrameworks,
       icon: Shield,
@@ -111,25 +127,27 @@ export const DashboardStatsHeader = () => {
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
       {statCards.map((stat, index) => {
         const Icon = stat.icon;
+        const link = statLinks[stat.key] || "/";
         return (
-          <div 
-            key={stat.label} 
-            className="stat-card p-4 group opacity-0 animate-fade-in-up"
-            style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'forwards' }}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <div className={`w-9 h-9 rounded-xl ${stat.bgColor} flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-3`}>
-                <Icon className={`w-4 h-4 ${stat.color} ${stat.pulse ? 'animate-pulse' : ''}`} />
+          <Link to={link} key={stat.label}>
+            <div 
+              className="stat-card p-4 group opacity-0 animate-fade-in-up cursor-pointer hover:shadow-lg hover:border-primary/20 transition-all h-full"
+              style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'forwards' }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div className={`w-9 h-9 rounded-xl ${stat.bgColor} flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-3`}>
+                  <Icon className={`w-4 h-4 ${stat.color} ${stat.pulse ? 'animate-pulse' : ''}`} />
+                </div>
+                {renderTrend(stat.trend)}
               </div>
-              {renderTrend(stat.trend)}
+              <p className="text-2xl font-bold text-foreground mb-0.5 tracking-tight">{stat.value}</p>
+              <p className="text-xs font-medium text-foreground/70 mb-1">{stat.label}</p>
+              <div className="flex items-center gap-1">
+                {stat.hasAI && <Sparkles className="w-3 h-3 text-amber-500" />}
+                <p className="text-[11px] text-muted-foreground">{stat.subValue}</p>
+              </div>
             </div>
-            <p className="text-2xl font-bold text-foreground mb-0.5 tracking-tight">{stat.value}</p>
-            <p className="text-xs font-medium text-foreground/70 mb-1">{stat.label}</p>
-            <div className="flex items-center gap-1">
-              {stat.hasAI && <Sparkles className="w-3 h-3 text-amber-500" />}
-              <p className="text-[11px] text-muted-foreground">{stat.subValue}</p>
-            </div>
-          </div>
+          </Link>
         );
       })}
     </div>
