@@ -141,7 +141,7 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
           <main className="flex-1">{children}</main>
           
           {/* Compact Footer */}
-          <footer className="border-t border-border/30 bg-card/30 backdrop-blur py-4">
+          <footer className="border-t border-border/20 bg-card/40 backdrop-blur-xl backdrop-saturate-150 py-4">
             <div className="max-w-7xl mx-auto px-4">
               {/* Top row: Brand + Recent Posts */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
