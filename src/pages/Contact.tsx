@@ -7,8 +7,15 @@ import { Label } from "@/components/ui/label";
 import { Mail, Phone, MapPin, Send, Building2, Globe } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useSEO } from "@/hooks/useSEO";
 
 const Contact = () => {
+  useSEO({
+    title: "Contact Us",
+    description: "Get in touch with the Human Rights Protection Movement. Report human rights violations, request support, or collaborate on investigations.",
+    url: "https://hrpm.org/contact",
+    keywords: ["contact HRPM", "report violation", "human rights support", "collaboration"],
+  });
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({

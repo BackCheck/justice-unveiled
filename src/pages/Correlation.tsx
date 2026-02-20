@@ -32,8 +32,15 @@ import {
   Loader2
 } from "lucide-react";
 import type { LegalClaim, ClaimType, ClaimStatus, LegalFramework } from "@/types/correlation";
+import { useSEO } from "@/hooks/useSEO";
 
 const CorrelationPage = () => {
+  useSEO({
+    title: "Evidence Correlation Engine",
+    description: "Map legal claims to evidence with hierarchical exhibit management and support scoring for human rights investigations.",
+    url: "https://hrpm.org/correlation",
+    keywords: ["evidence correlation", "legal claims", "exhibit management", "support scoring"],
+  });
   const {
     claims,
     requirements,

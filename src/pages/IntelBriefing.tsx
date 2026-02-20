@@ -26,7 +26,15 @@ import { DocumentAnalyzer } from "@/components/intel/DocumentAnalyzer";
 import { ExtractedEventsList } from "@/components/intel/ExtractedEventsList";
 import { SocialShareButtons } from "@/components/sharing";
 
+import { useSEO } from "@/hooks/useSEO";
+
 const IntelBriefing = () => {
+  useSEO({
+    title: "Intelligence Briefing",
+    description: "Comprehensive threat intelligence briefing with forensic evidence analysis, digital surveillance findings, and actionable recommendations.",
+    url: "https://hrpm.org/intel-briefing",
+    keywords: ["intelligence briefing", "threat analysis", "forensic evidence", "surveillance", "human rights"],
+  });
   const [expandedSection, setExpandedSection] = useState<string | undefined>("forensic-digital-evidence");
 
   return (

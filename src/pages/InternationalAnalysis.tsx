@@ -21,6 +21,7 @@ import { timelineData } from "@/data/timelineData";
 import { violationStats } from "@/data/violationsData";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useSEO } from "@/hooks/useSEO";
 import {
   ViolationStatsHeader,
   LocalViolationsTable,
@@ -96,6 +97,12 @@ const categoryIcons: Record<string, typeof Scale> = {
 };
 
 const InternationalAnalysis = () => {
+  useSEO({
+    title: "International Rights Analysis",
+    description: "AI-powered analysis of human rights violations against international frameworks including UDHR, ICCPR, ECHR, and local statutes.",
+    url: "https://hrpm.org/international",
+    keywords: ["international law", "UDHR violations", "ICCPR", "ECHR", "human rights frameworks", "rights analysis"],
+  });
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("documented");

@@ -31,8 +31,29 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useSEO } from "@/hooks/useSEO";
 
 const Landing = () => {
+  useSEO({
+    title: "Documenting Injustice, Demanding Accountability",
+    description: "HRPM is an open-source, non-profit investigative intelligence platform exposing human rights violations through verified evidence and AI-powered analysis.",
+    url: "https://hrpm.org/",
+    canonicalUrl: "https://hrpm.org/",
+    keywords: ["human rights platform", "investigative intelligence", "open source justice", "evidence analysis", "rights violations"],
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "HRPM.org",
+      "alternateName": "Human Rights Protection Movement",
+      "url": "https://hrpm.org",
+      "description": "Open-source investigative intelligence platform documenting injustice and demanding accountability.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": { "@type": "EntryPoint", "urlTemplate": "https://hrpm.org/cases?q={search_term_string}" },
+        "query-input": "required name=search_term_string"
+      }
+    },
+  });
   const { t } = useTranslation();
   const { user } = useAuth();
 
