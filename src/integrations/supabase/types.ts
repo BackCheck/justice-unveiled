@@ -70,6 +70,84 @@ export type Database = {
           },
         ]
       }
+      artifact_forensics: {
+        Row: {
+          analyst_findings: string | null
+          analyzed_by: string | null
+          camera_model: string | null
+          case_id: string | null
+          created_at: string
+          creation_date: string | null
+          evidence_upload_id: string | null
+          exif_data: Json | null
+          file_hash_md5: string | null
+          file_hash_sha256: string | null
+          forensic_notes: string | null
+          gps_lat: number | null
+          gps_lng: number | null
+          id: string
+          metadata_raw: Json | null
+          modification_date: string | null
+          software_used: string | null
+          timezone_anomaly: boolean | null
+        }
+        Insert: {
+          analyst_findings?: string | null
+          analyzed_by?: string | null
+          camera_model?: string | null
+          case_id?: string | null
+          created_at?: string
+          creation_date?: string | null
+          evidence_upload_id?: string | null
+          exif_data?: Json | null
+          file_hash_md5?: string | null
+          file_hash_sha256?: string | null
+          forensic_notes?: string | null
+          gps_lat?: number | null
+          gps_lng?: number | null
+          id?: string
+          metadata_raw?: Json | null
+          modification_date?: string | null
+          software_used?: string | null
+          timezone_anomaly?: boolean | null
+        }
+        Update: {
+          analyst_findings?: string | null
+          analyzed_by?: string | null
+          camera_model?: string | null
+          case_id?: string | null
+          created_at?: string
+          creation_date?: string | null
+          evidence_upload_id?: string | null
+          exif_data?: Json | null
+          file_hash_md5?: string | null
+          file_hash_sha256?: string | null
+          forensic_notes?: string | null
+          gps_lat?: number | null
+          gps_lng?: number | null
+          id?: string
+          metadata_raw?: Json | null
+          modification_date?: string | null
+          software_used?: string | null
+          timezone_anomaly?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artifact_forensics_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "artifact_forensics_evidence_upload_id_fkey"
+            columns: ["evidence_upload_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_uploads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -684,6 +762,59 @@ export type Database = {
             columns: ["compliance_check_id"]
             isOneToOne: false
             referencedRelation: "compliance_checks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dark_web_artifacts: {
+        Row: {
+          ai_analysis: Json | null
+          analyzed_by: string | null
+          artifact_type: string
+          case_id: string | null
+          content_text: string | null
+          created_at: string
+          crypto_addresses: Json | null
+          extracted_entities: Json | null
+          id: string
+          onion_urls: Json | null
+          source_description: string | null
+          threat_level: string | null
+        }
+        Insert: {
+          ai_analysis?: Json | null
+          analyzed_by?: string | null
+          artifact_type: string
+          case_id?: string | null
+          content_text?: string | null
+          created_at?: string
+          crypto_addresses?: Json | null
+          extracted_entities?: Json | null
+          id?: string
+          onion_urls?: Json | null
+          source_description?: string | null
+          threat_level?: string | null
+        }
+        Update: {
+          ai_analysis?: Json | null
+          analyzed_by?: string | null
+          artifact_type?: string
+          case_id?: string | null
+          content_text?: string | null
+          created_at?: string
+          crypto_addresses?: Json | null
+          extracted_entities?: Json | null
+          id?: string
+          onion_urls?: Json | null
+          source_description?: string | null
+          threat_level?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dark_web_artifacts_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
             referencedColumns: ["id"]
           },
         ]
@@ -1683,6 +1814,53 @@ export type Database = {
           },
         ]
       }
+      osint_searches: {
+        Row: {
+          case_id: string | null
+          created_at: string
+          created_by: string | null
+          entity_id: string | null
+          findings_summary: string | null
+          id: string
+          query: string
+          results: Json | null
+          search_type: string
+          source_platform: string | null
+        }
+        Insert: {
+          case_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          entity_id?: string | null
+          findings_summary?: string | null
+          id?: string
+          query: string
+          results?: Json | null
+          search_type: string
+          source_platform?: string | null
+        }
+        Update: {
+          case_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          entity_id?: string | null
+          findings_summary?: string | null
+          id?: string
+          query?: string
+          results?: Json | null
+          search_type?: string
+          source_platform?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "osint_searches_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       precedent_comments: {
         Row: {
           content: string
@@ -2091,6 +2269,59 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      web_archives: {
+        Row: {
+          archived_by: string | null
+          archived_content: string | null
+          archived_screenshot_url: string | null
+          case_id: string | null
+          content_hash: string | null
+          created_at: string
+          entity_id: string | null
+          id: string
+          is_changed: boolean | null
+          scrape_method: string | null
+          url: string
+          wayback_url: string | null
+        }
+        Insert: {
+          archived_by?: string | null
+          archived_content?: string | null
+          archived_screenshot_url?: string | null
+          case_id?: string | null
+          content_hash?: string | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          is_changed?: boolean | null
+          scrape_method?: string | null
+          url: string
+          wayback_url?: string | null
+        }
+        Update: {
+          archived_by?: string | null
+          archived_content?: string | null
+          archived_screenshot_url?: string | null
+          case_id?: string | null
+          content_hash?: string | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          is_changed?: boolean | null
+          scrape_method?: string | null
+          url?: string
+          wayback_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "web_archives_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

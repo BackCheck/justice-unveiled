@@ -31,7 +31,8 @@ import {
   HelpCircle,
   Code,
   Search,
-  Rocket
+  Rocket,
+  Radar
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -79,6 +80,7 @@ const NEW_ITEMS = new Set([
   "/regulatory-harm",
   "/compliance",
   "/analysis-history",
+  "/osint-toolkit",
 ]);
 
 const coreNavItems = [
@@ -90,6 +92,7 @@ const coreNavItems = [
   { path: "/analyze", labelKey: "nav.aiAnalyzer", icon: Brain },
   { path: "/analysis-history", labelKey: "nav.analysisHistory", icon: Clock },
   { path: "/investigations", labelKey: "nav.investigations", icon: Target },
+  { path: "/osint-toolkit", labelKey: "nav.osintToolkit", icon: Radar },
   { path: "/blog", labelKey: "nav.blogNews", icon: Newspaper },
 ];
 

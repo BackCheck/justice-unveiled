@@ -35,3 +35,9 @@ verify_jwt = false
 
 [functions.case-rss-feed]
 verify_jwt = false
+
+[functions.osint-enrich-entity]
+verify_jwt = false
+
+[functions.analyze-dark-web-artifact]
+verify_jwt = false

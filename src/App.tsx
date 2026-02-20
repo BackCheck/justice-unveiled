@@ -44,6 +44,7 @@ const Documentation = lazy(() => import("./pages/Documentation"));
 const ThreatProfilerPage = lazy(() => import("./pages/ThreatProfilerPage"));
 const Changelog = lazy(() => import("./pages/Changelog"));
 const AnalysisHistory = lazy(() => import("./pages/AnalysisHistory"));
+const OsintToolkit = lazy(() => import("./pages/OsintToolkit"));
 
 const queryClient = new QueryClient();
 
@@ -93,6 +94,7 @@ const App = () => (
             <Route path="/threat-profiler" element={<ThreatProfilerPage />} />
             <Route path="/changelog" element={<Changelog />} />
             <Route path="/analysis-history" element={<AnalysisHistory />} />
+            <Route path="/osint-toolkit" element={<OsintToolkit />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/events/:eventId" element={<EventDetail />} />
             <Route path="/violations/:type/:violationId" element={<ViolationDetail />} />
