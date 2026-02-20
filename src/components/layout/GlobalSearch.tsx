@@ -61,7 +61,13 @@ const allPages: SearchResult[] = [
   // System
   { id: "uploads", titleKey: "nav.uploads", descriptionKey: "pages.uploadsSub", path: "/uploads", icon: Upload, categoryKey: "nav.system" },
   { id: "about", titleKey: "nav.about", descriptionKey: "pages.aboutSub", path: "/about", icon: Info, categoryKey: "nav.system" },
+  { id: "who-what-why", titleKey: "nav.about", descriptionKey: "pages.aboutSub", path: "/who-what-why", icon: Info, categoryKey: "nav.system" },
   { id: "contact", titleKey: "nav.contact", descriptionKey: "pages.contactSub", path: "/contact", icon: Phone, categoryKey: "nav.system" },
+  // Investigation - additional
+  { id: "osint-toolkit", titleKey: "nav.osintToolkit", descriptionKey: "pages.osintToolkitSub", path: "/osint-toolkit", icon: Search, categoryKey: "nav.investigation", badge: "AI" },
+  { id: "analysis-history", titleKey: "nav.analysisHistory", descriptionKey: "pages.analysisHistorySub", path: "/analysis-history", icon: Clock, categoryKey: "nav.investigation", badge: "AI" },
+  // Resources - additional
+  { id: "changelog", titleKey: "nav.changelog", descriptionKey: "pages.changelogSub", path: "/changelog", icon: Clock, categoryKey: "nav.resources" },
 ];
 
 const categoryKeys = ["nav.core", "nav.investigation", "nav.analysis", "nav.resources", "nav.system"];
@@ -208,7 +214,7 @@ export const GlobalSearch = () => {
                   <CommandItem
                     key={`entity-${entity.id}`}
                     value={`entity ${entity.name} ${entity.role} ${entity.entity_type} ${entity.description}`}
-                    onSelect={() => handleSelect(`/entities/ai-${entity.id}`)}
+                    onSelect={() => handleSelect(`/entities/${entity.id}`)}
                     className="flex items-center gap-3 p-2 cursor-pointer"
                   >
                     <div className="w-7 h-7 rounded-md flex items-center justify-center shrink-0 bg-accent/50">

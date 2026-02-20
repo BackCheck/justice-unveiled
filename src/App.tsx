@@ -45,6 +45,7 @@ const ThreatProfilerPage = lazy(() => import("./pages/ThreatProfilerPage"));
 const Changelog = lazy(() => import("./pages/Changelog"));
 const AnalysisHistory = lazy(() => import("./pages/AnalysisHistory"));
 const OsintToolkit = lazy(() => import("./pages/OsintToolkit"));
+const Landing = lazy(() => import("./pages/Landing"));
 
 const queryClient = new QueryClient();
 
@@ -100,6 +101,7 @@ const App = () => (
             <Route path="/violations/:type/:violationId" element={<ViolationDetail />} />
             <Route path="/watchlist" element={<Watchlist />} />
             <Route path="/entities/:entityId" element={<EntityDetail />} />
+            <Route path="/welcome" element={<Landing />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

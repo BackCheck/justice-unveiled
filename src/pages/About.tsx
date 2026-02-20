@@ -268,6 +268,35 @@ const About = () => {
           </div>
         </section>
 
+        {/* Privacy Policy Section */}
+        <section id="privacy" className="py-16 border-b border-border">
+          <div className="max-w-5xl mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Privacy Policy</h2>
+            <div className="prose prose-sm text-muted-foreground max-w-none space-y-4">
+              <p>HRPM is committed to protecting user privacy. We collect minimal data necessary to operate the platform.</p>
+              <p><strong className="text-foreground">Data Collection:</strong> We do not track visitors with third-party analytics. Authentication data is stored securely and never shared. Evidence uploads are stored with encryption at rest.</p>
+              <p><strong className="text-foreground">Cookies:</strong> We use only essential cookies for authentication and session management. No advertising or tracking cookies are used.</p>
+              <p><strong className="text-foreground">Data Retention:</strong> Case data and evidence are retained as long as needed for the investigation. Users may request deletion of their account and personal data at any time by contacting us.</p>
+              <p><strong className="text-foreground">Open Source:</strong> Our entire codebase is publicly auditable, so you can verify exactly how your data is handled.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Terms of Service Section */}
+        <section id="terms" className="py-16 border-b border-border">
+          <div className="max-w-5xl mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Terms of Service</h2>
+            <div className="prose prose-sm text-muted-foreground max-w-none space-y-4">
+              <p>By using HRPM, you agree to the following terms:</p>
+              <p><strong className="text-foreground">Purpose:</strong> This platform is designed for documenting human rights cases, legal research, and public interest advocacy. It must not be used for harassment, doxxing, or any unlawful purpose.</p>
+              <p><strong className="text-foreground">Accuracy:</strong> Users are responsible for the accuracy of information they upload. AI-generated analysis should be verified by qualified professionals before use in legal proceedings.</p>
+              <p><strong className="text-foreground">No Legal Advice:</strong> HRPM does not provide legal advice. Content on this platform is for informational and research purposes only.</p>
+              <p><strong className="text-foreground">Intellectual Property:</strong> The platform code is open-source. Case data contributed to public investigations is made available under open-access principles.</p>
+              <p><strong className="text-foreground">Limitation of Liability:</strong> HRPM is provided "as is" without warranty. We are not liable for decisions made based on information presented on this platform.</p>
+            </div>
+          </div>
+        </section>
+
         {/* Footer Note */}
         <section className="py-12 border-t border-border">
           <div className="max-w-5xl mx-auto px-4 text-center">
