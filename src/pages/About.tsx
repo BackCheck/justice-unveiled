@@ -320,7 +320,7 @@ const About = () => {
               </h2>
               <p className="text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                 Our inaugural investigation documents a multi-year pattern of harassment, business 
-                interference, and legal abuse targeting Danish Thanvi and his family in Denmark. 
+                interference, and legal abuse targeting Danish Thanvi and his family in Pakistan. 
                 Built from 123+ primary sources, this case file demonstrates how institutional failures 
                 can devastate lives—and why transparency matters.
               </p>
@@ -333,7 +333,7 @@ const About = () => {
                 <CardContent className="space-y-3 text-sm text-muted-foreground">
                   <p>• <strong className="text-foreground">Reconstructing the timeline</strong> — AI-extracted events from court filings, police reports, and correspondence reveal a clear pattern of escalation and procedural failures spanning multiple years.</p>
                   <p>• <strong className="text-foreground">Mapping the network</strong> — Entity relationship analysis exposes how individuals, institutions, and legal actors are interconnected, revealing influence structures and conflicts of interest.</p>
-                  <p>• <strong className="text-foreground">Auditing compliance</strong> — Every procedural step is checked against Danish legal requirements and international human rights standards (ECHR, ICCPR), identifying where authorities failed their obligations.</p>
+                  <p>• <strong className="text-foreground">Auditing compliance</strong> — Every procedural step is checked against Pakistani legal requirements and international human rights standards (ECHR, ICCPR), identifying where authorities failed their obligations.</p>
                   <p>• <strong className="text-foreground">Preserving evidence</strong> — All documents are hashed, metadata-extracted, and stored with full chain-of-custody records. OSINT tools scan for phone numbers, emails, and digital artifacts across all submissions.</p>
                   <p>• <strong className="text-foreground">Generating legal intelligence</strong> — The platform maps violations to relevant case law precedents and statutes, producing court-ready appeal summaries and legal memos with verified citations.</p>
                 </CardContent>
@@ -349,7 +349,7 @@ const About = () => {
                   </div>
                   <div className="flex justify-between items-center p-2 rounded bg-muted/50">
                     <span>Location</span>
-                    <span className="font-semibold text-foreground">Denmark</span>
+                    <span className="font-semibold text-foreground">Pakistan</span>
                   </div>
                   <div className="flex justify-between items-center p-2 rounded bg-muted/50">
                     <span>Categories</span>
