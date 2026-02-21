@@ -67,7 +67,7 @@ Generate a structured OSINT dossier covering:
 
 Format as a clear, actionable intelligence brief. Be specific and cite the data provided.`;
 
-    const response = await fetch("https://api.lovable.dev/v1/chat/completions", {
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${lovableApiKey}`,
