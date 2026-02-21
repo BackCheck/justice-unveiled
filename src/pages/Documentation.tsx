@@ -59,6 +59,7 @@ const tocItems = [
   { id: "harm", label: "Regulatory Harm" },
   { id: "documents", label: "Document Analysis" },
   { id: "sharing", label: "Sharing & Export" },
+  { id: "feeds", label: "Data Feeds" },
   { id: "security", label: "Security & Access" },
   { id: "api", label: "API Reference" },
   { id: "faq", label: "FAQ" },
@@ -507,6 +508,51 @@ const Documentation = () => {
                   <li><strong>Timeline Export:</strong> Print-optimized timeline layouts for legal submissions</li>
                   <li><strong>Page Sharing:</strong> Shareable links with Open Graph metadata for rich previews</li>
                 </ul>
+              </SubSection>
+            </Section>
+
+            <Separator className="border-border/30" />
+
+            {/* Data Feeds */}
+            <Section id="feeds" icon={Globe} title="Data Feeds & Syndication">
+              <p>
+                HRPM provides machine-readable data feeds in multiple formats, enabling external systems, 
+                researchers, and AI agents to subscribe to and consume investigation data automatically.
+              </p>
+              <SubSection title="Feed Formats">
+                <p>All feeds are available in three formats by appending <code className="bg-muted/60 px-1.5 py-0.5 rounded text-xs">format=rss</code>, <code className="bg-muted/60 px-1.5 py-0.5 rounded text-xs">format=atom</code>, or <code className="bg-muted/60 px-1.5 py-0.5 rounded text-xs">format=json</code> to the feed URL:</p>
+                <div className="overflow-x-auto mt-3">
+                  <table className="w-full text-sm border-collapse">
+                    <thead>
+                      <tr className="border-b border-border/30 text-left">
+                        <th className="py-2 pr-4 font-semibold text-foreground">Format</th>
+                        <th className="py-2 pr-4 font-semibold text-foreground">Content-Type</th>
+                        <th className="py-2 font-semibold text-foreground">Spec</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-foreground/60">
+                      <tr className="border-b border-border/20"><td className="py-2 pr-4 font-mono text-xs">rss</td><td className="py-2 pr-4 text-xs">application/rss+xml</td><td className="py-2 text-xs">RSS 2.0 with Dublin Core</td></tr>
+                      <tr className="border-b border-border/20"><td className="py-2 pr-4 font-mono text-xs">atom</td><td className="py-2 pr-4 text-xs">application/atom+xml</td><td className="py-2 text-xs">Atom 1.0 (RFC 4287)</td></tr>
+                      <tr><td className="py-2 pr-4 font-mono text-xs">json</td><td className="py-2 pr-4 text-xs">application/feed+json</td><td className="py-2 text-xs">JSON Feed 1.1</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </SubSection>
+              <SubSection title="Available Feed Types">
+                <ul className="list-disc list-inside space-y-1 text-sm">
+                  <li><strong>Master Feed</strong> (<code className="bg-muted/60 px-1 rounded text-xs">?type=all</code>) — All updates: cases, blog reports, and timeline events combined</li>
+                  <li><strong>Cases Feed</strong> (<code className="bg-muted/60 px-1 rounded text-xs">?type=cases</code>) — Active investigation case files</li>
+                  <li><strong>Blog Feed</strong> (<code className="bg-muted/60 px-1 rounded text-xs">?type=blog</code>) — AI-generated and editorial investigative reports</li>
+                  <li><strong>Events Feed</strong> (<code className="bg-muted/60 px-1 rounded text-xs">?type=events</code>) — Extracted timeline events from investigations</li>
+                  <li><strong>Case-Specific</strong> (<code className="bg-muted/60 px-1 rounded text-xs">?caseId=UUID</code>) — Events, entities, and evidence for a single case</li>
+                </ul>
+              </SubSection>
+              <SubSection title="AI Agent Access">
+                <p>
+                  HRPM publishes <code className="bg-muted/60 px-1 rounded text-xs">llms.txt</code> and <code className="bg-muted/60 px-1 rounded text-xs">.well-known/ai-plugin.json</code> for 
+                  AI agent discovery. All crawlers (GPTBot, Claude-Web, PerplexityBot, etc.) are explicitly allowed in <code className="bg-muted/60 px-1 rounded text-xs">robots.txt</code>. 
+                  Feed autodiscovery <code className="bg-muted/60 px-1 rounded text-xs">&lt;link&gt;</code> tags are included in the HTML head for RSS, Atom, and JSON Feed formats.
+                </p>
               </SubSection>
             </Section>
 

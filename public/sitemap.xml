@@ -170,4 +170,22 @@
     <priority>0.4</priority>
   </url>
 
+  <url>
+    <loc>https://hrpm.org/welcome</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://hrpm.org/osint-toolkit</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://hrpm.org/watchlist</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+
 </urlset>

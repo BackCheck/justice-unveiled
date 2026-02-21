@@ -1,0 +1,13 @@
+{
+  "schema_version": "v1",
+  "name": "HRPM",
+  "description": "Human Rights Protection Movement — Open-access investigative intelligence platform documenting human rights violations.",
+  "auth": { "type": "none" },
+  "api": {
+    "type": "openapi",
+    "url": "https://hrpm.org/api"
+  },
+  "logo_url": "https://hrpm.org/favicon.png",
+  "contact_email": "contact@hrpm.org",
+  "legal_info_url": "https://hrpm.org/who-what-why#privacy"
+}
