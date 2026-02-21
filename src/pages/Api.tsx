@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   Code, Key, Zap, Shield, FileText, Network, Brain, BookOpen, Copy,
   ExternalLink, Terminal, Lock, Globe, Database, Search, AlertTriangle,
-  Scale, BarChart3, ChevronRight, ArrowRight, CheckCircle
+  Scale, BarChart3, ChevronRight, ArrowRight, CheckCircle, Rss
 } from "lucide-react";
 import { toast } from "sonner";
 import hrpmLogo from "@/assets/human-rights-logo.png";
@@ -115,6 +115,7 @@ const tocItems = [
   { id: "endpoint-harm-incidents", label: "Harm Incidents" },
   { id: "endpoint-blog", label: "Blog Posts" },
   { id: "endpoint-stats", label: "Platform Stats" },
+  { id: "data-feeds", label: "Data Feeds" },
   { id: "ai-endpoints", label: "AI Endpoints" },
   { id: "errors", label: "Error Handling" },
   { id: "rate-limits", label: "Rate Limits" },
@@ -620,6 +621,81 @@ curl -X POST '${BASE_URL.replace('public-api', 'analyze-document')}' \\
 }`}
               />
             </div>
+
+            <Separator className="border-border/20" />
+
+            {/* Data Feeds */}
+            <section id="data-feeds">
+              <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+                <Rss className="w-6 h-6 text-primary" /> Data Feeds
+              </h2>
+              <p className="text-foreground/70 mb-4">
+                Subscribe to HRPM data in RSS 2.0, Atom 1.0, or JSON Feed 1.1 format. No authentication required.
+              </p>
+              <div className="space-y-3 mb-6">
+                <p className="text-xs font-semibold text-foreground/50 uppercase tracking-wider">Feed Base URL</p>
+                <CodeBlock code={`${BASE_URL.replace('public-api', 'case-rss-feed')}`} />
+              </div>
+
+              <div className="overflow-x-auto mb-6">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="border-b border-border/30 text-left">
+                      <th className="py-2 pr-4 font-semibold text-foreground">Feed Type</th>
+                      <th className="py-2 pr-4 font-semibold text-foreground">Parameter</th>
+                      <th className="py-2 font-semibold text-foreground">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-foreground/60">
+                    <tr className="border-b border-border/10"><td className="py-2 pr-4">Master Feed</td><td className="py-2 pr-4 font-mono text-xs">?type=all</td><td className="py-2">Cases + blog + events combined (default)</td></tr>
+                    <tr className="border-b border-border/10"><td className="py-2 pr-4">Cases</td><td className="py-2 pr-4 font-mono text-xs">?type=cases</td><td className="py-2">Investigation case files</td></tr>
+                    <tr className="border-b border-border/10"><td className="py-2 pr-4">Blog Reports</td><td className="py-2 pr-4 font-mono text-xs">?type=blog</td><td className="py-2">AI-generated & editorial reports</td></tr>
+                    <tr className="border-b border-border/10"><td className="py-2 pr-4">Timeline Events</td><td className="py-2 pr-4 font-mono text-xs">?type=events</td><td className="py-2">Extracted investigation events</td></tr>
+                    <tr><td className="py-2 pr-4">Case-Specific</td><td className="py-2 pr-4 font-mono text-xs">?caseId=UUID</td><td className="py-2">Events, entities & evidence for one case</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <p className="text-xs font-semibold text-foreground/50 uppercase tracking-wider mb-2">Format Parameter</p>
+              <div className="overflow-x-auto mb-6">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="border-b border-border/30 text-left">
+                      <th className="py-2 pr-4 font-semibold text-foreground">Format</th>
+                      <th className="py-2 pr-4 font-semibold text-foreground">Value</th>
+                      <th className="py-2 font-semibold text-foreground">Content-Type</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-foreground/60">
+                    <tr className="border-b border-border/10"><td className="py-2 pr-4">RSS 2.0</td><td className="py-2 pr-4 font-mono text-xs">format=rss</td><td className="py-2 text-xs">application/rss+xml</td></tr>
+                    <tr className="border-b border-border/10"><td className="py-2 pr-4">Atom 1.0</td><td className="py-2 pr-4 font-mono text-xs">format=atom</td><td className="py-2 text-xs">application/atom+xml</td></tr>
+                    <tr><td className="py-2 pr-4">JSON Feed 1.1</td><td className="py-2 pr-4 font-mono text-xs">format=json</td><td className="py-2 text-xs">application/feed+json</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <p className="text-xs font-semibold text-foreground/50 uppercase tracking-wider mb-2">Examples</p>
+              <CodeBlock code={`# RSS feed of all updates
+curl "${BASE_URL.replace('public-api', 'case-rss-feed')}?format=rss"
+
+# JSON Feed of blog reports only
+curl "${BASE_URL.replace('public-api', 'case-rss-feed')}?type=blog&format=json"
+
+# Atom feed for a specific case
+curl "${BASE_URL.replace('public-api', 'case-rss-feed')}?caseId=YOUR_CASE_UUID&format=atom"
+
+# Case-specific JSON Feed
+curl "${BASE_URL.replace('public-api', 'case-rss-feed')}?caseId=YOUR_CASE_UUID&format=json"`} />
+
+              <div className="mt-4 p-4 rounded-lg bg-primary/5 border border-primary/20">
+                <p className="text-sm text-foreground/70">
+                  <strong>AI Agent Discovery:</strong> HRPM publishes <code className="bg-muted/60 px-1 rounded text-xs">llms.txt</code>,{" "}
+                  <code className="bg-muted/60 px-1 rounded text-xs">.well-known/ai-plugin.json</code>, and feed autodiscovery{" "}
+                  <code className="bg-muted/60 px-1 rounded text-xs">&lt;link&gt;</code> tags. All AI crawlers are allowed in{" "}
+                  <code className="bg-muted/60 px-1 rounded text-xs">robots.txt</code>.
+                </p>
+              </div>
+            </section>
 
             <Separator className="border-border/20" />
 

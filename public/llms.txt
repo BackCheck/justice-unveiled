@@ -1,0 +1,64 @@
+# HRPM.org — Human Rights Protection Movement
+
+> Documenting injustice, demanding accountability.
+
+HRPM.org is a non-profit, open-source investigative intelligence platform dedicated to exposing human rights violations through verified evidence, legal documentation, and AI-powered analysis.
+
+## What This Platform Does
+
+- Documents institutional failures and human rights violations
+- Maps complex entity relationships (individuals, organizations, government bodies)
+- Provides litigation-grade intelligence for legal advocacy
+- Maintains a public case law library and legal research database
+- Publishes daily AI-generated investigative reports
+- Offers open-access REST APIs for all investigation data
+
+## Key Pages
+
+- Homepage: https://hrpm.org/
+- About / Mission: https://hrpm.org/who-what-why
+- Active Cases: https://hrpm.org/cases
+- Investigation Timeline: https://hrpm.org/timeline
+- Intel Dashboard: https://hrpm.org/dashboard
+- Entity Network: https://hrpm.org/network
+- Evidence Matrix: https://hrpm.org/evidence
+- Blog & Reports: https://hrpm.org/blog
+- Legal Research: https://hrpm.org/legal-research
+- International Rights Analysis: https://hrpm.org/international
+- Documentation: https://hrpm.org/docs
+- API Reference: https://hrpm.org/api
+- Contact: https://hrpm.org/contact
+
+## Data Access
+
+All investigation data is public domain and available via multiple channels:
+
+### REST API (JSON)
+- Base URL: https://ccdyqmjvzzoftzbzbqlu.supabase.co/functions/v1/public-api
+- No authentication required for read endpoints
+- Supports: cases, events, entities, violations, claims, precedents, blog posts, stats
+- Documentation: https://hrpm.org/api
+
+### Data Feeds
+- RSS 2.0: https://ccdyqmjvzzoftzbzbqlu.supabase.co/functions/v1/case-rss-feed?format=rss
+- Atom 1.0: https://ccdyqmjvzzoftzbzbqlu.supabase.co/functions/v1/case-rss-feed?format=atom
+- JSON Feed 1.1: https://ccdyqmjvzzoftzbzbqlu.supabase.co/functions/v1/case-rss-feed?format=json
+
+### Feed Types
+- All Updates: ?type=all (default)
+- Cases Only: ?type=cases
+- Blog Reports: ?type=blog
+- Timeline Events: ?type=events
+- Case-Specific: ?caseId={UUID}
+
+## Technology
+
+- Frontend: React, TypeScript, Tailwind CSS, D3.js
+- Backend: PostgreSQL, Edge Functions (Deno)
+- AI: Gemini-powered document analysis and report generation
+- Open Source: https://github.com/BackCheck/justice-unveiled
+
+## Contact
+
+- General: contact@hrpm.org
+- Security: security@hrpm.org
