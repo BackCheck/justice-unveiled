@@ -10,7 +10,15 @@ import {
   Target,
   CheckCircle,
   Github,
-  Code2
+  Code2,
+  Brain,
+  Network,
+  Search,
+  Languages,
+  BarChart3,
+  Lock,
+  Workflow,
+  FileSearch
 } from "lucide-react";
 import { SocialShareButtons } from "@/components/sharing";
 import { useSEO } from "@/hooks/useSEO";
@@ -21,6 +29,7 @@ const About = () => {
     description: "Human Rights Protection Movement - A non-profit organization dedicated to documenting cases of human rights abuse, legal persecution, and institutional failures.",
     type: "website",
   });
+
   const values = [
     {
       icon: Scale,
@@ -44,16 +53,59 @@ const About = () => {
     }
   ];
 
-   const whatWeDo = [
-     "Document and analyze cases of human rights violations and legal abuse",
-     "Build transparent, open-source evidence repositories accessible to the public",
-     "Identify patterns of procedural failures across institutions",
-     "Support individuals navigating complex legal systems",
-     "Advocate for systemic reforms to protect fundamental rights",
-     "Connect victims with resources, legal aid, and support networks",
-     "Publish all source code openly for community audit and contribution",
-     "Provide OSINT tools for digital forensics, entity enrichment, and evidence preservation"
-   ];
+  const platformFeatures = [
+    {
+      icon: Brain,
+      title: "AI-Powered Document Analysis",
+      description: "Upload legal documents, police reports, court filings, and testimonies. Our AI extracts events, entities, discrepancies, and timelines automatically—turning unstructured documents into structured, searchable intelligence."
+    },
+    {
+      icon: Network,
+      title: "Entity Relationship Network",
+      description: "Visualize how individuals, organizations, and institutions are connected across a case. Identify hidden influence patterns, power structures, and co-occurrence networks through interactive force-directed graphs."
+    },
+    {
+      icon: Workflow,
+      title: "Interactive Case Timelines",
+      description: "Reconstruct the full sequence of events with parallel timelines, contradiction detection, and delay alerts. Filter by category, severity, and source to see exactly how a case unfolded over time."
+    },
+    {
+      icon: FileSearch,
+      title: "Evidence Matrix & Artifacts Scanner",
+      description: "Cross-reference every piece of evidence with events and claims. Our OSINT toolkit automatically extracts phone numbers, email addresses, IP addresses, document hashes, and communication metadata from all uploaded files."
+    },
+    {
+      icon: Scale,
+      title: "Legal Intelligence & Case Law",
+      description: "Map constitutional violations, statutory breaches, and procedural failures to verified legal precedents. Generate court-safe appeal summaries and legal memos with full citation trails."
+    },
+    {
+      icon: BarChart3,
+      title: "Compliance & Rights Auditing",
+      description: "Audit cases against international human rights frameworks (ICCPR, ECHR, UDHR) and local procedural requirements. Track compliance status, identify violations, and generate regulatory harm assessments."
+    },
+    {
+      icon: Search,
+      title: "OSINT & Digital Forensics",
+      description: "Phone number intelligence, communication analysis, entity enrichment, web archiving, and dark web artifact analysis. Every finding links back to its source document for complete chain-of-custody."
+    },
+    {
+      icon: Lock,
+      title: "Threat Profiling & Pattern Detection",
+      description: "AI-driven behavioral analysis, risk assessment, and pattern detection across entities and events. Generate comprehensive threat profile reports with counter-strategies and evidence gap analysis."
+    },
+  ];
+
+  const whatWeDo = [
+    "Document and analyze cases of human rights violations and legal abuse",
+    "Build transparent, open-source evidence repositories accessible to the public",
+    "Identify patterns of procedural failures across institutions",
+    "Support individuals navigating complex legal systems",
+    "Advocate for systemic reforms to protect fundamental rights",
+    "Connect victims with resources, legal aid, and support networks",
+    "Publish all source code openly for community audit and contribution",
+    "Provide OSINT tools for digital forensics, entity enrichment, and evidence preservation"
+  ];
 
   return (
     <PlatformLayout>
@@ -67,10 +119,10 @@ const About = () => {
                   <Globe className="w-9 h-9 text-primary-foreground" />
                 </div>
                 <div>
-                   <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                     Human Rights Protection Movement
-                   </h1>
-                   <p className="text-muted-foreground font-medium">Open-source · Non-profit · Investigative Intelligence</p>
+                  <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                    Human Rights Protection Movement
+                  </h1>
+                  <p className="text-muted-foreground font-medium">Open-source · Non-profit · Investigative Intelligence</p>
                 </div>
               </div>
               <SocialShareButtons
@@ -80,12 +132,12 @@ const About = () => {
                 variant="compact"
               />
             </div>
-             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl leading-relaxed">
-               We are a <strong className="text-foreground">non-profit, open-source</strong> organization dedicated to documenting cases of human rights abuse, 
-               legal persecution, and institutional failures. Our mission is to bring transparency 
-               to systems that too often operate in darkness, and to support those whose fundamental 
-               rights have been violated. Every tool we build is freely available to the public.
-             </p>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl leading-relaxed">
+              We are a <strong className="text-foreground">non-profit, open-source</strong> organization dedicated to documenting cases of human rights abuse, 
+              legal persecution, and institutional failures. Our mission is to bring transparency 
+              to systems that too often operate in darkness, and to support those whose fundamental 
+              rights have been violated. Every tool we build is freely available to the public.
+            </p>
           </div>
         </section>
 
@@ -106,12 +158,12 @@ const About = () => {
                   the resources to fight back. Evidence is scattered, timelines are obscured, and 
                   patterns of misconduct remain hidden.
                 </p>
-                 <p className="text-muted-foreground leading-relaxed">
-                   HRPM exists to change that. As a non-profit, open-source initiative, we build comprehensive case files that synthesize 
-                   documents, testimonies, and evidence into actionable intelligence—bringing 
-                   clarity to complex situations and accountability to those who abuse their power. 
-                   Our entire codebase is publicly available for review, audit, and contribution.
-                 </p>
+                <p className="text-muted-foreground leading-relaxed">
+                  HRPM exists to change that. As a non-profit, open-source initiative, we build comprehensive case files that synthesize 
+                  documents, testimonies, and evidence into actionable intelligence—bringing 
+                  clarity to complex situations and accountability to those who abuse their power. 
+                  Our entire codebase is publicly available for review, audit, and contribution.
+                </p>
               </div>
               <Card className="border-border">
                 <CardHeader>
@@ -126,6 +178,85 @@ const About = () => {
                   <p>• Whistleblowers facing retaliation</p>
                   <p>• Communities affected by systemic abuse</p>
                   <p>• Journalists and researchers investigating misconduct</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Platform Features Section */}
+        <section className="py-16 bg-muted/30 border-b border-border">
+          <div className="max-w-5xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Platform Capabilities</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                HRPM is not just a website—it is a full-stack investigative intelligence platform built to transform raw evidence into litigation-grade case files.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              {platformFeatures.map((feature) => (
+                <Card key={feature.title} className="border-border hover:border-primary/30 transition-colors">
+                  <CardContent className="pt-6">
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <feature.icon className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-foreground mb-1">{feature.title}</h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Multilingual Section */}
+        <section className="py-16 border-b border-border">
+          <div className="max-w-5xl mx-auto px-4">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <Languages className="w-5 h-5 text-primary" />
+                  <span className="text-sm font-semibold text-primary uppercase tracking-wide">Multilingual Access</span>
+                </div>
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+                  Justice Without Language Barriers
+                </h2>
+                <p className="text-muted-foreground leading-relaxed mb-4">
+                  Human rights violations do not respect borders or languages. HRPM is built from the ground up to serve a global audience with full multilingual support across the entire platform.
+                </p>
+                <p className="text-muted-foreground leading-relaxed">
+                  Every navigation element, dashboard widget, investigative tool, and content page is fully translated and culturally adapted. RTL (Right-to-Left) layout rendering is natively supported for Arabic and Urdu, ensuring the platform is equally usable for communities most affected by the cases we document.
+                </p>
+              </div>
+              <Card className="border-border">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Globe className="w-5 h-5 text-primary" />
+                    Supported Languages
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4 text-muted-foreground">
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                    <span className="font-medium text-foreground">English</span>
+                    <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">LTR</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                    <span className="font-medium text-foreground font-arabic">اردو — Urdu</span>
+                    <span className="text-xs bg-accent/20 text-accent px-2 py-1 rounded">RTL</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                    <span className="font-medium text-foreground font-arabic">العربية — Arabic</span>
+                    <span className="text-xs bg-accent/20 text-accent px-2 py-1 rounded">RTL</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                    <span className="font-medium text-foreground">中文 — Chinese</span>
+                    <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">LTR</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground pt-2">Language preferences are saved automatically. Switch anytime using the globe icon in the header.</p>
                 </CardContent>
               </Card>
             </div>
@@ -180,27 +311,67 @@ const About = () => {
           </div>
         </section>
 
-        {/* Case File Section */}
-        <section className="py-16 bg-primary/5">
-          <div className="max-w-5xl mx-auto px-4 text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-              Case File #001: The Thanvi Investigation
-            </h2>
-            <p className="text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed">
-              Our inaugural investigation documents a multi-year pattern of harassment, business 
-              interference, and legal abuse targeting an individual and their family in Denmark. 
-              Built from 123 sources, this case file demonstrates how institutional failures 
-              can devastate lives—and why transparency matters.
-            </p>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-card border border-border text-sm text-muted-foreground">
-              <FileText className="w-4 h-4" />
-              <span>Explore the timeline, evidence matrix, and entity network above</span>
+        {/* Thanvi Investigation Section */}
+        <section className="py-16 bg-primary/5 border-b border-border">
+          <div className="max-w-5xl mx-auto px-4">
+            <div className="text-center mb-10">
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+                Case File #001: The Thanvi Investigation
+              </h2>
+              <p className="text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                Our inaugural investigation documents a multi-year pattern of harassment, business 
+                interference, and legal abuse targeting Danish Thanvi and his family in Denmark. 
+                Built from 123+ primary sources, this case file demonstrates how institutional failures 
+                can devastate lives—and why transparency matters.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card className="border-border">
+                <CardHeader>
+                  <CardTitle className="text-lg">How HRPM Is Helping</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3 text-sm text-muted-foreground">
+                  <p>• <strong className="text-foreground">Reconstructing the timeline</strong> — AI-extracted events from court filings, police reports, and correspondence reveal a clear pattern of escalation and procedural failures spanning multiple years.</p>
+                  <p>• <strong className="text-foreground">Mapping the network</strong> — Entity relationship analysis exposes how individuals, institutions, and legal actors are interconnected, revealing influence structures and conflicts of interest.</p>
+                  <p>• <strong className="text-foreground">Auditing compliance</strong> — Every procedural step is checked against Danish legal requirements and international human rights standards (ECHR, ICCPR), identifying where authorities failed their obligations.</p>
+                  <p>• <strong className="text-foreground">Preserving evidence</strong> — All documents are hashed, metadata-extracted, and stored with full chain-of-custody records. OSINT tools scan for phone numbers, emails, and digital artifacts across all submissions.</p>
+                  <p>• <strong className="text-foreground">Generating legal intelligence</strong> — The platform maps violations to relevant case law precedents and statutes, producing court-ready appeal summaries and legal memos with verified citations.</p>
+                </CardContent>
+              </Card>
+              <Card className="border-border">
+                <CardHeader>
+                  <CardTitle className="text-lg">Case at a Glance</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3 text-sm text-muted-foreground">
+                  <div className="flex justify-between items-center p-2 rounded bg-muted/50">
+                    <span>Primary Sources</span>
+                    <span className="font-semibold text-foreground">123+</span>
+                  </div>
+                  <div className="flex justify-between items-center p-2 rounded bg-muted/50">
+                    <span>Location</span>
+                    <span className="font-semibold text-foreground">Denmark</span>
+                  </div>
+                  <div className="flex justify-between items-center p-2 rounded bg-muted/50">
+                    <span>Categories</span>
+                    <span className="font-semibold text-foreground">Harassment, Legal Abuse, Business Interference</span>
+                  </div>
+                  <div className="flex justify-between items-center p-2 rounded bg-muted/50">
+                    <span>Status</span>
+                    <span className="font-semibold text-foreground">Active Investigation</span>
+                  </div>
+                  <div className="flex justify-between items-center p-2 rounded bg-muted/50">
+                    <span>Timespan</span>
+                    <span className="font-semibold text-foreground">Multi-year</span>
+                  </div>
+                  <p className="text-xs pt-2">Explore the full timeline, evidence matrix, entity network, and legal audit using the platform's investigative tools.</p>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>
 
         {/* Open Source Section */}
-        <section className="py-16 bg-primary/5 border-b border-border">
+        <section className="py-16 border-b border-border">
           <div className="max-w-5xl mx-auto px-4">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
@@ -245,25 +416,6 @@ const About = () => {
                   <p>• Non-profit — all resources directed to the mission</p>
                 </CardContent>
               </Card>
-            </div>
-          </div>
-        </section>
-
-        {/* Case File Section */}
-        <section className="py-16 bg-muted/30">
-          <div className="max-w-5xl mx-auto px-4 text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-              Case File #001: The Thanvi Investigation
-            </h2>
-            <p className="text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed">
-              Our inaugural investigation documents a multi-year pattern of harassment, business 
-              interference, and legal abuse targeting an individual and their family in Denmark. 
-              Built from 123 sources, this case file demonstrates how institutional failures 
-              can devastate lives—and why transparency matters.
-            </p>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-card border border-border text-sm text-muted-foreground">
-              <FileText className="w-4 h-4" />
-              <span>Explore the timeline, evidence matrix, and entity network above</span>
             </div>
           </div>
         </section>
