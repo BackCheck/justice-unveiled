@@ -958,6 +958,57 @@ export type Database = {
           },
         ]
       }
+      evidence_artifacts: {
+        Row: {
+          artifact_type: string
+          artifact_value: string
+          case_id: string | null
+          confidence: number | null
+          context_snippet: string | null
+          created_at: string
+          evidence_upload_id: string | null
+          id: string
+          metadata: Json | null
+        }
+        Insert: {
+          artifact_type: string
+          artifact_value: string
+          case_id?: string | null
+          confidence?: number | null
+          context_snippet?: string | null
+          created_at?: string
+          evidence_upload_id?: string | null
+          id?: string
+          metadata?: Json | null
+        }
+        Update: {
+          artifact_type?: string
+          artifact_value?: string
+          case_id?: string | null
+          confidence?: number | null
+          context_snippet?: string | null
+          created_at?: string
+          evidence_upload_id?: string | null
+          id?: string
+          metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_artifacts_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_artifacts_evidence_upload_id_fkey"
+            columns: ["evidence_upload_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_uploads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       evidence_requirements: {
         Row: {
           created_at: string

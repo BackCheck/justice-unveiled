@@ -44,3 +44,6 @@ verify_jwt = false
 
 [functions.stix2-export]
 verify_jwt = false
+
+[functions.extract-artifacts]
+verify_jwt = false
