@@ -70,6 +70,7 @@ import {
 } from "@/components/ui/collapsible";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useRecentActivity, sortByActivity } from "@/hooks/useRecentActivity";
 
 // Items marked as 'new' will show a badge
 const NEW_ITEMS = new Set([
@@ -115,7 +116,7 @@ const moreToolsItems = [
   { path: "/contact", labelKey: "nav.contact", icon: Phone },
 ];
 
-const navGroups = [
+const navGroupsDef = [
   { labelKey: "nav.core", items: coreNavItems, defaultOpen: true },
   { labelKey: "More Tools", items: moreToolsItems, defaultOpen: false },
 ];
@@ -127,6 +128,7 @@ export function AppSidebar() {
   const { state, toggleSidebar } = useSidebar();
   const { user, profile, signOut } = useAuth();
   const { role, canEdit, canUpload, isAdmin } = useUserRole();
+  const { data: activityMap = {} } = useRecentActivity();
   const collapsed = state === "collapsed";
 
   const isActive = (path: string) => location.pathname === path;
@@ -241,8 +243,9 @@ export function AppSidebar() {
         )}
 
         {/* Nav Groups with Collapsible sections */}
-        {navGroups.map((group) => {
-          const groupActive = isGroupActive(group.items);
+        {navGroupsDef.map((group) => {
+          const sortedItems = sortByActivity(group.items, activityMap);
+          const groupActive = isGroupActive(sortedItems);
           const groupLabel = t(group.labelKey);
           return (
             <SidebarGroup key={group.labelKey} className="mb-1">
@@ -251,7 +254,7 @@ export function AppSidebar() {
                   <SidebarGroupLabel className="sr-only">{groupLabel}</SidebarGroupLabel>
                   <SidebarGroupContent>
                     <SidebarMenu>
-                      {group.items.map((item) => (
+                      {sortedItems.map((item) => (
                         <NavItem key={item.path} item={item} />
                       ))}
                     </SidebarMenu>
@@ -271,7 +274,7 @@ export function AppSidebar() {
                   <CollapsibleContent>
                     <SidebarGroupContent>
                       <SidebarMenu className="mt-1">
-                        {group.items.map((item) => (
+                        {sortedItems.map((item) => (
                           <NavItem key={item.path} item={item} />
                         ))}
                       </SidebarMenu>
