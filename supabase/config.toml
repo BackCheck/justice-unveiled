@@ -41,3 +41,6 @@ verify_jwt = false
 
 [functions.analyze-dark-web-artifact]
 verify_jwt = false
+
+[functions.stix2-export]
+verify_jwt = false
