@@ -915,6 +915,73 @@ curl "${BASE_URL}?resource=events&page=3&limit=50"`} />
               </Tabs>
             </section>
 
+            {/* OpenCTI / STIX2 Integration */}
+            <section id="stix2">
+              <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+                <Shield className="w-6 h-6 text-primary" /> OpenCTI / STIX 2.1 Integration
+              </h2>
+              <p className="text-foreground/70 text-sm mb-4">
+                HRPM provides a dedicated STIX 2.1 export endpoint so threat intelligence platforms like <strong>OpenCTI</strong>, <strong>MISP</strong>, or any STIX-compatible tool can ingest HRPM investigations as structured threat intelligence.
+              </p>
+
+              <Card className="bg-card/60 border-border/40 mb-4">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center gap-3">
+                    <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/30 font-mono text-xs px-2.5">GET</Badge>
+                    <code className="text-sm font-mono text-foreground/80">/functions/v1/stix2-export</code>
+                  </div>
+                  <CardDescription>Returns a full STIX 2.1 Bundle with threat actors, identities, incidents, relationships, reports, and notes.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <p className="text-sm font-medium mb-2">Query Parameters</p>
+                    <div className="space-y-1 text-xs">
+                      <div className="flex gap-2"><code className="text-primary">case_id</code> <span className="text-foreground/60">— Filter to a specific case UUID</span></div>
+                      <div className="flex gap-2"><code className="text-primary">include</code> <span className="text-foreground/60">— Comma-separated: <code>entities</code>, <code>events</code>, <code>relationships</code>, <code>violations</code>, <code>discrepancies</code>, <code>cases</code>, or <code>all</code> (default)</span></div>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium mb-2">STIX Object Mapping</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                      <div className="flex items-center gap-2 p-2 rounded bg-muted/40"><Badge variant="outline" className="text-[10px]">threat-actor</Badge> Antagonist entities</div>
+                      <div className="flex items-center gap-2 p-2 rounded bg-muted/40"><Badge variant="outline" className="text-[10px]">identity</Badge> Protagonists, neutrals, officials</div>
+                      <div className="flex items-center gap-2 p-2 rounded bg-muted/40"><Badge variant="outline" className="text-[10px]">incident</Badge> Extracted timeline events</div>
+                      <div className="flex items-center gap-2 p-2 rounded bg-muted/40"><Badge variant="outline" className="text-[10px]">relationship</Badge> Entity connections</div>
+                      <div className="flex items-center gap-2 p-2 rounded bg-muted/40"><Badge variant="outline" className="text-[10px]">report</Badge> Case investigations</div>
+                      <div className="flex items-center gap-2 p-2 rounded bg-muted/40"><Badge variant="outline" className="text-[10px]">note</Badge> Violations &amp; discrepancies</div>
+                    </div>
+                  </div>
+                  <CodeBlock code={`# Full STIX2 bundle (all cases)
+curl "https://ccdyqmjvzzoftzbzbqlu.supabase.co/functions/v1/stix2-export"
+
+# Single case bundle
+curl "https://ccdyqmjvzzoftzbzbqlu.supabase.co/functions/v1/stix2-export?case_id=<UUID>"
+
+# Only threat actors and relationships
+curl "https://ccdyqmjvzzoftzbzbqlu.supabase.co/functions/v1/stix2-export?include=entities,relationships"
+
+# Import into OpenCTI via the Import API:
+curl -X POST "https://your-opencti/graphql" \\
+  -H "Authorization: Bearer YOUR_OPENCTI_TOKEN" \\
+  -H "Content-Type: application/json" \\
+  -d '{"query":"mutation { stixBundleImport(input: { bundle: \\"$(curl -s https://ccdyqmjvzzoftzbzbqlu.supabase.co/functions/v1/stix2-export)\\"}) { id }}"}'`} />
+                </CardContent>
+              </Card>
+
+              <Card className="bg-muted/30 border-border/30">
+                <CardContent className="p-4">
+                  <p className="text-sm font-medium mb-2">OpenCTI Connector Setup</p>
+                  <ol className="text-xs text-foreground/70 space-y-1 list-decimal list-inside">
+                    <li>In OpenCTI, go to <strong>Data → Connectors → External Import</strong></li>
+                    <li>Create a new connector using the <code>External Import - STIX Bundles</code> type</li>
+                    <li>Set the import URL to the STIX2 endpoint above</li>
+                    <li>Configure polling interval (e.g., every 6 hours)</li>
+                    <li>All HRPM entities, incidents, and relationships will appear in your OpenCTI instance</li>
+                  </ol>
+                </CardContent>
+              </Card>
+            </section>
+
             {/* Footer CTA */}
             <Card className="bg-primary/5 border-primary/20 mt-8">
               <CardContent className="p-8 text-center">
