@@ -43,6 +43,7 @@ export function EvidenceArtifactsPanel() {
   const scanMutation = useScanArtifacts();
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [scanProgress, setScanProgress] = useState<{ current: number; total: number; fileName: string } | null>(null);
 
   const filteredArtifacts = useMemo(() => {
     return artifacts.filter((a) => {
@@ -65,11 +66,18 @@ export function EvidenceArtifactsPanel() {
 
   const handleScanAll = async () => {
     try {
-      toast.info("Scanning all evidence documents for artifacts...");
-      const result = await scanMutation.mutateAsync({ scanAll: true });
+      setScanProgress({ current: 0, total: 0, fileName: "Loading..." });
+      const result = await scanMutation.mutateAsync({
+        scanAll: true,
+        onProgress: (current, total, fileName) => {
+          setScanProgress({ current, total, fileName });
+        },
+      });
       toast.success(`Scan complete: ${result.totalArtifacts} artifacts found across ${result.uploadsScanned} documents`);
     } catch (err: any) {
       toast.error(err.message || "Scan failed");
+    } finally {
+      setScanProgress(null);
     }
   };
 
@@ -90,7 +98,7 @@ export function EvidenceArtifactsPanel() {
             </div>
             <Button onClick={handleScanAll} disabled={scanMutation.isPending}>
               {scanMutation.isPending ? (
-                <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Scanning...</>
+                <><Loader2 className="h-4 w-4 animate-spin mr-2" /> {scanProgress ? `Scanning ${scanProgress.current}/${scanProgress.total}` : "Scanning..."}</>
               ) : (
                 <><ScanSearch className="h-4 w-4 mr-2" /> Scan All Documents</>
               )}

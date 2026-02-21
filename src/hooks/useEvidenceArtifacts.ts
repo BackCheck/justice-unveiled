@@ -40,16 +40,41 @@ export function useScanArtifacts() {
   const qc = useQueryClient();
   const { selectedCaseId } = useCaseFilter();
   return useMutation({
-    mutationFn: async (params: { uploadId?: string; scanAll?: boolean }) => {
-      const { data, error } = await supabase.functions.invoke("extract-artifacts", {
-        body: {
-          uploadId: params.uploadId,
-          caseId: selectedCaseId,
-          scanAll: params.scanAll || false,
-        },
-      });
-      if (error) throw error;
-      return data;
+    mutationFn: async (params: { uploadId?: string; scanAll?: boolean; onProgress?: (current: number, total: number, fileName: string) => void }) => {
+      if (params.uploadId) {
+        const { data, error } = await supabase.functions.invoke("extract-artifacts", {
+          body: { uploadId: params.uploadId, caseId: selectedCaseId, scanAll: false },
+        });
+        if (error) throw error;
+        return data;
+      }
+
+      // For scanAll: fetch uploads list, then process one at a time
+      let query = (supabase as any).from("evidence_uploads").select("id, file_name");
+      if (selectedCaseId) query = query.eq("case_id", selectedCaseId);
+      const { data: uploads, error: listErr } = await query;
+      if (listErr) throw listErr;
+      if (!uploads || uploads.length === 0) return { success: true, totalArtifacts: 0, uploadsScanned: 0 };
+
+      let totalArtifacts = 0;
+      let scanned = 0;
+
+      for (const upload of uploads) {
+        params.onProgress?.(scanned + 1, uploads.length, upload.file_name);
+        try {
+          const { data, error } = await supabase.functions.invoke("extract-artifacts", {
+            body: { uploadId: upload.id, caseId: selectedCaseId, scanAll: false },
+          });
+          if (!error && data?.totalArtifacts) totalArtifacts += data.totalArtifacts;
+        } catch (e) {
+          console.error(`Failed to scan ${upload.file_name}:`, e);
+        }
+        scanned++;
+        // Invalidate after each doc so UI updates progressively
+        qc.invalidateQueries({ queryKey: ["evidence-artifacts"] });
+      }
+
+      return { success: true, totalArtifacts, uploadsScanned: scanned };
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["evidence-artifacts"] });
