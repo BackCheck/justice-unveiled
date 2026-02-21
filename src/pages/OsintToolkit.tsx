@@ -5,7 +5,8 @@ import { EntityEnrichment } from "@/components/osint/EntityEnrichment";
 import { WebArchiver } from "@/components/osint/WebArchiver";
 import { DarkWebAnalyzer } from "@/components/osint/DarkWebAnalyzer";
 import { CommunicationAnalyzer } from "@/components/osint/CommunicationAnalyzer";
-import { FileSearch, Brain, Archive, Shield, Phone } from "lucide-react";
+import { EvidenceArtifactsPanel } from "@/components/osint/EvidenceArtifactsPanel";
+import { FileSearch, Brain, Archive, Shield, Phone, ScanSearch } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 
 export default function OsintToolkit() {
@@ -24,8 +25,13 @@ export default function OsintToolkit() {
           </p>
         </div>
 
-        <Tabs defaultValue="forensics" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 h-auto">
+        <Tabs defaultValue="artifacts" className="w-full">
+          <TabsList className="grid w-full grid-cols-6 h-auto">
+            <TabsTrigger value="artifacts" className="flex items-center gap-1.5 text-xs py-2">
+              <ScanSearch className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Evidence Artifacts</span>
+              <span className="sm:hidden">Artifacts</span>
+            </TabsTrigger>
             <TabsTrigger value="forensics" className="flex items-center gap-1.5 text-xs py-2">
               <FileSearch className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Forensics Lab</span>
@@ -53,6 +59,7 @@ export default function OsintToolkit() {
             </TabsTrigger>
           </TabsList>
 
+          <TabsContent value="artifacts" className="mt-6"><EvidenceArtifactsPanel /></TabsContent>
           <TabsContent value="forensics" className="mt-6"><ForensicsLab /></TabsContent>
           <TabsContent value="enrichment" className="mt-6"><EntityEnrichment /></TabsContent>
           <TabsContent value="archiver" className="mt-6"><WebArchiver /></TabsContent>
