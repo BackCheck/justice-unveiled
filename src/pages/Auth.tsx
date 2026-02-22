@@ -127,7 +127,7 @@ export default function Auth() {
           <div>
             <CardTitle className="text-2xl font-bold text-primary">HRPM</CardTitle>
             <CardDescription className="text-muted-foreground">
-              Human Rights Protection Movement
+              Human Rights Protection & Monitoring
             </CardDescription>
           </div>
         </CardHeader>

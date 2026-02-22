@@ -60,7 +60,7 @@ export const PDFCoverPage = ({ totalEvents, dateRange, caseTitle }: PDFCoverPage
           HRPM.org
         </h1>
         <p className="text-xl text-gray-600 font-medium">
-          Human Rights Protection Movement
+          Human Rights Protection & Monitoring
         </p>
         <div className="w-32 h-1 bg-[#0087C1] mx-auto mt-4 rounded-full" />
       </div>
@@ -119,7 +119,7 @@ export const PDFCoverPage = ({ totalEvents, dateRange, caseTitle }: PDFCoverPage
           Head Office
         </h3>
         <p className="text-gray-800 font-medium">
-          Human Rights Protection Movement
+          Human Rights Protection & Monitoring
         </p>
         <p className="text-gray-600">
           36 Robinson Road, #20-01 City House
@@ -137,7 +137,7 @@ export const PDFCoverPage = ({ totalEvents, dateRange, caseTitle }: PDFCoverPage
         <div>
           <p className="font-semibold uppercase tracking-wider mb-2">Disclaimer</p>
           <p className="leading-relaxed">
-            This document is prepared by the Human Rights Protection Movement (HRPM) for informational 
+            This document is prepared by Human Rights Protection & Monitoring (HRPM) for informational 
             and legal reference purposes only. All dates, events, and information contained herein are 
             based on official court documents, FIR records, and verified testimonies. This report does 
             not constitute legal advice. HRPM makes no representations or warranties regarding the 
@@ -157,7 +157,7 @@ export const PDFCoverPage = ({ totalEvents, dateRange, caseTitle }: PDFCoverPage
           <p className="font-semibold text-red-700 mb-2">
             Strictly Confidential – Only for Advocacy Work
           </p>
-          <p>© {currentDate.getFullYear()} Human Rights Protection Movement. All rights reserved.</p>
+          <p>© {currentDate.getFullYear()} Human Rights Protection & Monitoring. All rights reserved.</p>
           <p className="mt-1" style={{ color: "#0087C1" }}>
             Documenting injustice. Demanding accountability.
           </p>

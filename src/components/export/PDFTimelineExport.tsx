@@ -173,7 +173,7 @@ export const PDFTimelineExport = ({ events, stats, caseTitle = "Case Timeline" }
               Strictly Confidential – Only for Advocacy Work
             </p>
             <p className="text-xs text-gray-400">
-              © {new Date().getFullYear()} Human Rights Protection Movement
+              © {new Date().getFullYear()} Human Rights Protection & Monitoring
             </p>
             <p className="text-xs mt-1" style={{ color: "#0087C1" }}>
               Documenting injustice. Demanding accountability.

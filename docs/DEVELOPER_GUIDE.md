@@ -1,6 +1,6 @@
 # HRPM.org Developer Guide
 
-## Contributing to the Human Rights Protection Movement Platform
+## Contributing to the Human Rights Protection & Monitoring Platform
 
 ---
 

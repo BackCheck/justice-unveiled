@@ -50,7 +50,7 @@ export const PlatformHeader = () => {
               <div className="flex flex-col">
                 <span className="text-2xl font-bold text-primary tracking-tight leading-none">HRPM</span>
                 <span className="hidden sm:block text-[11px] font-medium text-muted-foreground tracking-wide uppercase mt-0.5">
-                  Human Rights Protection Movement
+                  Human Rights Protection & Monitoring
                 </span>
               </div>
             </div>

@@ -26,7 +26,7 @@ import { useSEO } from "@/hooks/useSEO";
 const About = () => {
   useSEO({
     title: "About HRPM",
-    description: "Human Rights Protection Movement - A non-profit organization dedicated to documenting cases of human rights abuse, legal persecution, and institutional failures.",
+    description: "Human Rights Protection & Monitoring - A non-profit organization dedicated to documenting cases of human rights abuse, legal persecution, and institutional failures.",
     type: "website",
   });
 
@@ -120,13 +120,13 @@ const About = () => {
                 </div>
                 <div>
                   <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                    Human Rights Protection Movement
+                    Human Rights Protection & Monitoring
                   </h1>
                   <p className="text-muted-foreground font-medium">Open-source · Non-profit · Investigative Intelligence</p>
                 </div>
               </div>
               <SocialShareButtons
-                title="About HRPM - Human Rights Protection Movement"
+                title="About HRPM - Human Rights Protection & Monitoring"
                 description="A non-profit organization dedicated to documenting cases of human rights abuse and institutional failures."
                 hashtags={["HumanRights", "HRPM", "Justice", "NonProfit"]}
                 variant="compact"

@@ -191,7 +191,7 @@ const Index = () => {
           "opacity-0 animate-fade-in-up"
         )} style={{ animationDelay: '0.7s', animationFillMode: 'forwards' }}>
           <p className="font-medium text-foreground mb-2 hover:text-primary transition-colors">
-            HRPM.org — Human Rights Protection Movement
+            HRPM.org — Human Rights Protection & Monitoring
           </p>
           <p>This case file is compiled from documented sources for legal reference purposes.</p>
           <p className="mt-2">All dates and events are based on official records and verified testimonies.</p>

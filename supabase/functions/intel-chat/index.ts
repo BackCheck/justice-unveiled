@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 // Case context for the AI to understand the investigation
-const CASE_CONTEXT = `You are an intelligence analyst assistant for the HRPM.org (Human Rights Protection Movement) investigative platform.
+const CASE_CONTEXT = `You are an intelligence analyst assistant for the HRPM.org (Human Rights Protection & Monitoring) investigative platform.
 
 You are analyzing Case File #001: Danish Thanvi vs. Agencies - a decade-long pattern of systematic harassment, evidence fabrication, and regulatory abuse targeting a business executive.
 

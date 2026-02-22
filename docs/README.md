@@ -1,6 +1,6 @@
 # HRPM.org Documentation
 
-## Human Rights Protection Movement - Investigative Intelligence Platform
+## Human Rights Protection & Monitoring - Investigative Intelligence Platform
 
 **Version:** 2.0  
 **Last Updated:** February 2026  
@@ -21,7 +21,7 @@
 
 ## 🎯 Platform Overview
 
-HRPM.org (Human Rights Protection Movement) is a comprehensive investigative intelligence platform designed to:
+HRPM.org (Human Rights Protection & Monitoring) is a comprehensive investigative intelligence platform designed to:
 
 - **Document** institutional failures and legal injustices
 - **Analyze** patterns of misconduct using AI-powered tools

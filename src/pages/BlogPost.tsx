@@ -97,7 +97,7 @@ const BlogPostPage = () => {
 
   useSEO({
     title: post.title,
-    description: post.excerpt || `Read ${post.title} on HRPM - Human Rights Protection Movement.`,
+    description: post.excerpt || `Read ${post.title} on HRPM - Human Rights Protection & Monitoring.`,
     image: post.cover_image_url || undefined,
     url: `https://hrpm.org/blog/${post.slug}`,
     canonicalUrl: `https://hrpm.org/blog/${post.slug}`,

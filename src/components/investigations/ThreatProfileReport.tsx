@@ -47,7 +47,7 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
               <img src={humanRightsLogo} alt="HRPM Logo" className="h-24 w-auto" style={{ filter: "none" }} />
             </div>
             <h1 className="text-4xl font-bold mb-2" style={{ color: "#0087C1" }}>HRPM.org</h1>
-            <p className="text-xl text-gray-600 font-medium">Human Rights Protection Movement</p>
+            <p className="text-xl text-gray-600 font-medium">Human Rights Protection & Monitoring</p>
             <div className="w-32 h-1 mx-auto mt-4 rounded-full" style={{ backgroundColor: "#0087C1" }} />
           </div>
 
@@ -406,13 +406,13 @@ const SectionHeader = ({ title, number }: { title: string; number: number }) => 
 const CoverFooter = ({ year }: { year: number }) => (
   <div className="border-t border-gray-200 pt-6 text-xs text-gray-500 space-y-3">
     <div className="text-center">
-      <p className="font-medium text-gray-800">Human Rights Protection Movement</p>
+      <p className="font-medium text-gray-800">Human Rights Protection & Monitoring</p>
       <p>36 Robinson Road, #20-01 City House, Singapore 068877</p>
       <p>Tel: +6531 290 390 | Email: info@hrpm.org</p>
     </div>
     <div className="text-center pt-3 border-t border-gray-100">
       <p className="font-semibold text-red-700 mb-1">Strictly Confidential – Only for Advocacy Work</p>
-      <p>© {year} Human Rights Protection Movement. All rights reserved.</p>
+      <p>© {year} Human Rights Protection & Monitoring. All rights reserved.</p>
       <p className="mt-1" style={{ color: "#0087C1" }}>Documenting injustice. Demanding accountability.</p>
     </div>
   </div>

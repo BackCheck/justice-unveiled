@@ -75,7 +75,7 @@ const LandingFooter = () => {
         {/* Bottom Bar: Copyright + Icon links */}
         <div className="mt-10 pt-6 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-foreground/50">
-            © {new Date().getFullYear()} Human Rights Protection Movement. Open-source & non-profit. {t('footer.copyright')}
+            © {new Date().getFullYear()} Human Rights Protection & Monitoring. Open-source & non-profit. {t('footer.copyright')}
           </p>
           <TooltipProvider delayDuration={200}>
             <div className="flex items-center gap-3 text-foreground/50">

@@ -20,7 +20,7 @@ interface SEOProps {
 const DEFAULT_IMAGE = "https://hrpm.org/og-image.png";
 const SITE_NAME = "HRPM.org";
 const BASE_URL = "https://hrpm.org";
-const DEFAULT_DESCRIPTION = "Human Rights Protection Movement - Documenting injustice, demanding accountability.";
+const DEFAULT_DESCRIPTION = "Human Rights Protection & Monitoring - Documenting injustice, demanding accountability.";
 const DEFAULT_KEYWORDS = [
   "human rights", "protection", "advocacy", "injustice", "accountability",
   "violations", "investigative journalism", "evidence", "legal documentation",
@@ -45,7 +45,7 @@ export const useSEO = ({
 }: SEOProps) => {
   useEffect(() => {
     // Title
-    const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} | Human Rights Protection Movement`;
+    const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} | Human Rights Protection & Monitoring`;
     document.title = fullTitle;
 
     const updateMetaTag = (property: string, content: string, isProperty = false) => {
@@ -127,7 +127,7 @@ export const useSEO = ({
 
     // Cleanup
     return () => {
-      document.title = `${SITE_NAME} | Human Rights Protection Movement`;
+      document.title = `${SITE_NAME} | Human Rights Protection & Monitoring`;
       if (jsonLdScript) jsonLdScript.remove();
     };
   }, [title, description, image, url, type, publishedTime, modifiedTime, author, section, tags, keywords, canonicalUrl, noindex, jsonLd]);

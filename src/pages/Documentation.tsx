@@ -80,7 +80,7 @@ const Documentation = () => {
             HRPM.org Documentation
           </h1>
           <p className="text-lg text-foreground/60 max-w-2xl mx-auto">
-            Complete guide to the Human Rights Protection Movement investigative intelligence platform — 
+            Complete guide to the Human Rights Protection & Monitoring investigative intelligence platform — 
             from case management to AI-powered analysis.
           </p>
           <p className="text-sm text-foreground/40 mt-3">Version 2.0 · Last updated February 2026</p>
@@ -111,7 +111,7 @@ const Documentation = () => {
             {/* Overview */}
             <Section id="overview" icon={Globe} title="Platform Overview">
               <p>
-                <strong>HRPM.org</strong> (Human Rights Protection Movement) is a non-profit, open-source investigative intelligence platform 
+                <strong>HRPM.org</strong> (Human Rights Protection & Monitoring) is a non-profit, open-source investigative intelligence platform 
                 designed to document institutional failures, map complex relationships between entities, and generate litigation-grade 
                 intelligence for legal advocacy and human rights protection.
               </p>

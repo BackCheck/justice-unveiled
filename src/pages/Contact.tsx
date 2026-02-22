@@ -12,7 +12,7 @@ import { useSEO } from "@/hooks/useSEO";
 const Contact = () => {
   useSEO({
     title: "Contact Us",
-    description: "Get in touch with the Human Rights Protection Movement. Report human rights violations, request support, or collaborate on investigations.",
+    description: "Get in touch with Human Rights Protection & Monitoring. Report human rights violations, request support, or collaborate on investigations.",
     url: "https://hrpm.org/contact",
     keywords: ["contact HRPM", "report violation", "human rights support", "collaboration"],
   });
