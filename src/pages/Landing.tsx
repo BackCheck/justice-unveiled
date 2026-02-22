@@ -45,7 +45,7 @@ const Landing = () => {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "HRPM.org",
-      "alternateName": "Human Rights Protection Movement",
+      "alternateName": "Human Rights Protection & Monitoring",
       "url": "https://hrpm.org",
       "description": "Open-source investigative intelligence platform documenting injustice and demanding accountability.",
       "potentialAction": {

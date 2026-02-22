@@ -1,5 +1,5 @@
 /* TEAM */
-Organization: Human Rights Protection Movement (HRPM)
+Organization: Human Rights Protection & Monitoring (HRPM)
 Site: https://hrpm.org
 Location: Global
 

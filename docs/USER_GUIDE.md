@@ -1,6 +1,6 @@
 # HRPM.org User Guide
 
-## Complete Guide to the Human Rights Protection Movement Platform
+## Complete Guide to the Human Rights Protection & Monitoring Platform
 
 ---
 

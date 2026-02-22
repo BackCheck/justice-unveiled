@@ -169,7 +169,7 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
               {/* Bottom Bar: Copyright + Icon links */}
               <div className="pt-3 border-t border-border/30 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <p className="text-[10px] sm:text-xs text-muted-foreground">
-                  © {new Date().getFullYear()} Human Rights Protection Movement. {t('footer.copyright')}
+                  © {new Date().getFullYear()} Human Rights Protection & Monitoring. {t('footer.copyright')}
                 </p>
                 <TooltipProvider delayDuration={200}>
                   <div className="flex items-center gap-3 text-muted-foreground">

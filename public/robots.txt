@@ -1,4 +1,4 @@
-# HRPM.org - Human Rights Protection Movement
+# HRPM.org - Human Rights Protection & Monitoring
 # Allow all search engines and AI bots to crawl
 
 # Major Search Engines

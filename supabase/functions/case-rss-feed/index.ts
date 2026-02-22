@@ -15,7 +15,7 @@ function escapeXml(str: string): string {
 }
 
 const SITE_URL = "https://hrpm.org";
-const FEED_TITLE = "HRPM - Human Rights Protection Movement";
+const FEED_TITLE = "HRPM - Human Rights Protection & Monitoring";
 const FEED_DESCRIPTION = "Documenting injustice, demanding accountability. Open-access investigative intelligence on human rights violations.";
 
 Deno.serve(async (req) => {
@@ -356,7 +356,7 @@ function renderJsonFeed(title: string, description: string, homeUrl: string, sel
     icon: `${SITE_URL}/favicon.png`,
     favicon: `${SITE_URL}/favicon.png`,
     language: "en",
-    authors: [{ name: "HRPM - Human Rights Protection Movement", url: SITE_URL }],
+    authors: [{ name: "HRPM - Human Rights Protection & Monitoring", url: SITE_URL }],
     items: items.map((i) => {
       const entry: any = {
         id: i.id,

@@ -216,7 +216,7 @@ export const EvidenceRepositoryCard = ({ file, caseNumber, caseTitle }: Evidence
         <img src="${hrpmLogo}" class="logo" alt="HRPM Logo" />
       </div>
       <div class="org-name">HRPM</div>
-      <div class="org-full">Human Rights Protection Movement</div>
+      <div class="org-full">Human Rights Protection & Monitoring</div>
     </div>
     
     <div class="content">
