@@ -174,7 +174,14 @@ Return ONLY the JSON array, no other text.`;
     let rawContent = aiResponse.choices?.[0]?.message?.content;
     if (!rawContent) throw new Error("No content generated");
 
+    // Clean up AI response — strip markdown fences & trailing garbage
     rawContent = rawContent.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+    
+    // Find the JSON array boundaries to handle trailing text
+    const firstBracket = rawContent.indexOf("[");
+    const lastBracket = rawContent.lastIndexOf("]");
+    if (firstBracket === -1 || lastBracket === -1) throw new Error("No JSON array found in response");
+    rawContent = rawContent.slice(firstBracket, lastBracket + 1);
 
     const posts = JSON.parse(rawContent);
 
