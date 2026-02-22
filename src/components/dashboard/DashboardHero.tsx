@@ -8,7 +8,7 @@ export const DashboardHero = () => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <div className="flex-1 min-w-0">
           <h2 className="text-lg sm:text-xl font-bold text-foreground mb-1">
-            Human Rights Protection Movement
+            Human Rights Protection & Monitoring
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
             Open-source investigative platform documenting human rights violations through AI-powered evidence analysis, 
