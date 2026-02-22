@@ -67,23 +67,35 @@ export const useNotifications = () => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, read: true } : n))
     );
-    await supabase.from("notifications").update({ read: true }).eq("id", id);
+    const { error } = await supabase.from("notifications").update({ read: true }).eq("id", id);
+    if (error) {
+      console.error("Failed to mark notification as read:", error);
+      await fetchNotifications(); // rollback optimistic update
+    }
   };
 
   const markAllAsRead = async () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
     if (user) {
-      await supabase
+      const { error } = await supabase
         .from("notifications")
         .update({ read: true })
         .eq("user_id", user.id)
         .eq("read", false);
+      if (error) {
+        console.error("Failed to mark all as read:", error);
+        await fetchNotifications(); // rollback optimistic update
+      }
     }
   };
 
   const dismissNotification = async (id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
-    await supabase.from("notifications").delete().eq("id", id);
+    const { error } = await supabase.from("notifications").delete().eq("id", id);
+    if (error) {
+      console.error("Failed to dismiss notification:", error);
+      await fetchNotifications(); // rollback optimistic update
+    }
   };
 
   return {
