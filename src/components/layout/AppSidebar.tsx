@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { 
   Clock, 
@@ -167,24 +168,36 @@ export function AppSidebar() {
           <Link 
             to={item.path}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-200 group/item",
+              "relative flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-200 group/item",
               active 
-                ? "bg-primary/10 text-primary border border-primary/20 shadow-sm" 
+                ? "text-primary" 
                 : "text-muted-foreground hover:text-foreground hover:bg-accent/20"
             )}
           >
+            {active && (
+              <motion.div
+                layoutId="sidebar-active-indicator"
+                className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-lg shadow-sm"
+                transition={{ type: "spring", stiffness: 350, damping: 30 }}
+              />
+            )}
             <Icon className={cn(
-              "h-4 w-4 shrink-0 transition-colors duration-200",
+              "h-4 w-4 shrink-0 transition-colors duration-200 relative z-10",
               active && "text-primary"
             )} />
-            <span className={cn("truncate text-sm", collapsed && "sr-only")}>{label}</span>
+            <span className={cn("truncate text-sm relative z-10", collapsed && "sr-only")}>{label}</span>
             {isNew && !collapsed && (
-              <span className="ml-auto text-[9px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full leading-none animate-pulse">
+              <span className="ml-auto text-[9px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full leading-none animate-pulse relative z-10">
                 new
               </span>
             )}
             {active && !isNew && (
-              <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              <motion.span 
+                className="ml-auto w-1.5 h-1.5 rounded-full bg-primary relative z-10"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 500, damping: 25 }}
+              />
             )}
           </Link>
         </SidebarMenuButton>

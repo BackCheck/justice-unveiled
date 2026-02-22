@@ -18,6 +18,7 @@ import hrpmLogo from "@/assets/human-rights-logo.png";
 import ParticleField from "@/components/landing/ParticleField";
 import GlowingOrb from "@/components/landing/GlowingOrb";
 import ScrollReveal from "@/components/landing/ScrollReveal";
+import { MotionScrollReveal } from "@/components/ui/motion-scroll-reveal";
 import GradientText from "@/components/landing/GradientText";
 import TypingText from "@/components/landing/TypingText";
 import SpotlightEffect from "@/components/landing/SpotlightEffect";
@@ -229,16 +230,24 @@ const Landing = () => {
       </section>
 
       {/* Featured Cases - data driven */}
-      <FeaturedCasesSection />
+      <MotionScrollReveal direction="up" delay={100}>
+        <FeaturedCasesSection />
+      </MotionScrollReveal>
 
       {/* Violation Metrics Dashboard */}
-      <ViolationMetrics />
+      <MotionScrollReveal direction="up" delay={150}>
+        <ViolationMetrics />
+      </MotionScrollReveal>
 
       {/* Interactive Module Explorer */}
-      <InteractiveHeroModules />
+      <MotionScrollReveal direction="scale" delay={100}>
+        <InteractiveHeroModules />
+      </MotionScrollReveal>
 
       {/* Bottom CTA */}
-      <BottomCTA />
+      <MotionScrollReveal direction="up" delay={200}>
+        <BottomCTA />
+      </MotionScrollReveal>
 
       {/* Footer */}
       <LandingFooter />

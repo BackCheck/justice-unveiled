@@ -9,6 +9,7 @@ import { QuickActions } from "./QuickActions";
 import { GlobalSearch } from "./GlobalSearch";
 import { NotificationCenter } from "./NotificationCenter";
 import { Badge } from "@/components/ui/badge";
+import { ScrollProgressBar } from "@/components/ui/scroll-progress-bar";
 import { Sparkles, FileText, Github, Code, BookOpen, History, Rss } from "lucide-react";
 import { CaseSelector } from "./CaseSelector";
 import { useQuery } from "@tanstack/react-query";
@@ -83,7 +84,8 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
         {/* Ambient glow removed for performance */}
         
         <AppSidebar />
-        <div className="flex-1 flex flex-col min-w-0 relative z-10">
+      <div className="flex-1 flex flex-col min-w-0 relative z-10">
+          <ScrollProgressBar />
           {/* Header */}
           <header className="sticky top-0 z-40 glass-header border-b border-border/30">
             <div className="px-3 py-2 sm:px-4 sm:py-3 flex items-center gap-2 sm:gap-4">
