@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { TimelineEvent } from "@/data/timelineData";
 import { TimelineCard } from "@/components/TimelineCard";
 import { TimelineSlider } from "./TimelineSlider";
@@ -16,7 +17,24 @@ export const DynamicTimeline = ({ events, isPrintMode = false }: DynamicTimeline
   const [activeYear, setActiveYear] = useState<string>("");
   const yearRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const containerRef = useRef<HTMLDivElement>(null);
+  const timelineContentRef = useRef<HTMLDivElement>(null);
   const isScrollingProgrammatically = useRef(false);
+  const [timelineHeight, setTimelineHeight] = useState(0);
+
+  // Measure timeline content height
+  useEffect(() => {
+    if (timelineContentRef.current) {
+      setTimelineHeight(timelineContentRef.current.getBoundingClientRect().height);
+    }
+  }, [events]);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start 20%", "end 80%"],
+  });
+
+  const heightTransform = useTransform(scrollYProgress, [0, 1], [0, timelineHeight]);
+  const opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
   // Group events by year
   const eventsByYear = useMemo(() => {
@@ -121,7 +139,17 @@ export const DynamicTimeline = ({ events, isPrintMode = false }: DynamicTimeline
       />
 
       {/* Timeline Content by Year */}
-      <div className="mt-8 space-y-12">
+      <div className="mt-8 space-y-12 relative" ref={timelineContentRef}>
+        {/* Scroll progress line */}
+        {!isPrintMode && (
+          <>
+            <div className="absolute left-0 md:left-4 top-0 bottom-0 w-[2px] bg-muted-foreground/10" />
+            <motion.div
+              className="absolute left-0 md:left-4 top-0 w-[2px] bg-gradient-to-t from-primary via-primary/80 to-transparent rounded-full"
+              style={{ height: heightTransform, opacity: opacityTransform }}
+            />
+          </>
+        )}
         {years.map((year) => (
           <div
             key={year}
