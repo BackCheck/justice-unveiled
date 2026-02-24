@@ -81,6 +81,7 @@ export type Database = {
           evidence_upload_id: string | null
           exif_data: Json | null
           file_hash_md5: string | null
+          file_hash_sha1: string | null
           file_hash_sha256: string | null
           forensic_notes: string | null
           gps_lat: number | null
@@ -101,6 +102,7 @@ export type Database = {
           evidence_upload_id?: string | null
           exif_data?: Json | null
           file_hash_md5?: string | null
+          file_hash_sha1?: string | null
           file_hash_sha256?: string | null
           forensic_notes?: string | null
           gps_lat?: number | null
@@ -121,6 +123,7 @@ export type Database = {
           evidence_upload_id?: string | null
           exif_data?: Json | null
           file_hash_md5?: string | null
+          file_hash_sha1?: string | null
           file_hash_sha256?: string | null
           forensic_notes?: string | null
           gps_lat?: number | null

@@ -1,0 +1,1 @@
+ALTER TABLE public.artifact_forensics ADD COLUMN file_hash_sha1 text;
