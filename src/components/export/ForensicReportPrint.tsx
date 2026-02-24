@@ -61,6 +61,8 @@ export function generateForensicReport(result: ForensicResult, notes?: string, c
     .integrity-notice { background: #ecfdf5; border: 2px solid #10b981; border-radius: 8px; padding: 16px; margin-bottom: 24px; }
     .integrity-title { color: #065f46; font-weight: 700; font-size: 14px; margin-bottom: 4px; }
     .integrity-text { color: #047857; font-size: 12px; }
+    .artifact-frame { max-width: 100%; max-height: 400px; border: 2px solid #e2e8f0; border-radius: 8px; display: block; margin: 12px auto; }
+    .artifact-frame-caption { text-align: center; font-size: 11px; color: #888; margin-top: 6px; font-style: italic; }
     @media print {
       body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .page { padding: 32px; }
@@ -176,6 +178,17 @@ export function generateForensicReport(result: ForensicResult, notes?: string, c
       </div>
       ${result.timezoneAnomaly ? `<div class="anomaly-alert" style="margin-top:12px;"><span class="anomaly-icon">⚠</span> Timezone Inconsistency Detected — Creation and modification timestamps do not align. This may indicate the file was edited or transferred across time zones.</div>` : ""}
     </div>
+
+    ${result.artifactFrameDataUrl ? `
+    <div class="section">
+      <h3 class="section-title">Artifact Visual Evidence</h3>
+      <p style="font-size:12px; color:#666; margin-bottom:8px;">
+        ${result.fileType.startsWith("video/") ? "Frame captured from video evidence at approximately 1 second mark." : "Visual capture of image evidence artifact."}
+        This frame is embedded for identification purposes and should be verified against the original file using the hash signatures above.
+      </p>
+      <img src="${result.artifactFrameDataUrl}" alt="Artifact frame capture" class="artifact-frame" />
+      <p class="artifact-frame-caption">Artifact Frame — ${result.fileName} (${result.fileType})</p>
+    </div>` : ""}
 
     ${notes ? `
     <div class="section">
