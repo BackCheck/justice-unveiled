@@ -71,6 +71,8 @@ serve(async (req) => {
       const isText = /\.(txt|md|csv|json|log)$/i.test(upload.file_name || "");
       const isAudio = /\.(mp3|wav|ogg|m4a|aac|flac)$/i.test(upload.file_name || "");
 
+      const MAX_FILE_BYTES = 4 * 1024 * 1024; // 4 MB limit to avoid memory exhaustion
+
       if (upload.storage_path) {
         try {
           const { data: fileData, error } = await supabase.storage.from("evidence").download(upload.storage_path);
@@ -78,10 +80,15 @@ serve(async (req) => {
             console.error(`Download error for ${upload.file_name}:`, error);
             continue;
           }
-          if (isText) {
-            textContent = await fileData.text();
+
+          const arrayBuffer = await fileData.arrayBuffer();
+
+          if (arrayBuffer.byteLength > MAX_FILE_BYTES) {
+            console.log(`Skipping ${upload.file_name} — ${(arrayBuffer.byteLength / 1024 / 1024).toFixed(1)} MB exceeds 4 MB limit`);
+            // Fall through to use description as fallback
+          } else if (isText) {
+            textContent = new TextDecoder().decode(arrayBuffer);
           } else if (isPdf || isImage || isAudio) {
-            const arrayBuffer = await fileData.arrayBuffer();
             const bytes = new Uint8Array(arrayBuffer);
             let binary = "";
             const chunkSize = 8192;
