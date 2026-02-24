@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Upload, Hash, MapPin, Camera, Clock, AlertTriangle, CheckCircle, FileSearch, Video, Mic, ImageIcon } from "lucide-react";
+import { Upload, Hash, MapPin, Camera, Clock, AlertTriangle, CheckCircle, FileSearch, Video, Mic, ImageIcon, FileDown } from "lucide-react";
 import { useArtifactForensics, useInsertForensics } from "@/hooks/useOsint";
 import { useCaseFilter } from "@/contexts/CaseFilterContext";
 import { format } from "date-fns";
@@ -13,6 +13,7 @@ import { computeHashes, extractMediaMetadata } from "./forensics/hashUtils";
 import { ForensicUseCaseBadges } from "./forensics/ForensicUseCaseBadges";
 import { HashComparisonTool } from "./forensics/HashComparisonTool";
 import { MediaPropertiesCard } from "./forensics/MediaPropertiesCard";
+import { generateForensicReport } from "@/components/export/ForensicReportPrint";
 import type { ForensicResult } from "./forensics/types";
 
 const MULTIMEDIA_ACCEPT = "image/*,video/*,audio/*,.mp4,.avi,.mkv,.mov,.wmv,.flv,.webm,.mp3,.wav,.aac,.ogg,.flac,.m4a,.jpg,.jpeg,.png,.gif,.bmp,.tiff,.webp";
@@ -324,9 +325,19 @@ export function ForensicsLab() {
             <Card className="md:col-span-2">
               <CardContent className="pt-6 space-y-3">
                 <Textarea placeholder="Add forensic notes or analyst findings..." value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} />
-                <Button onClick={saveToDatabase} disabled={insertForensics.isPending} className="w-full">
-                  {insertForensics.isPending ? "Saving..." : "Save Forensic Record to Case"}
-                </Button>
+                <div className="flex gap-3">
+                  <Button onClick={saveToDatabase} disabled={insertForensics.isPending} className="flex-1">
+                    {insertForensics.isPending ? "Saving..." : "Save Forensic Record to Case"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => generateForensicReport(result, notes)}
+                    className="flex items-center gap-2"
+                  >
+                    <FileDown className="h-4 w-4" />
+                    Export PDF Report
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
