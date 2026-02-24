@@ -18,6 +18,8 @@ export interface ForensicResult {
   mediaWidth?: number;
   mediaHeight?: number;
   mediaCodec?: string;
+  // Artifact frame capture (base64 data URL)
+  artifactFrameDataUrl?: string;
 }
 
 export type HashAlgorithm = "MD5" | "SHA-1" | "SHA-256";

@@ -10,6 +10,7 @@ import { useArtifactForensics, useInsertForensics } from "@/hooks/useOsint";
 import { useCaseFilter } from "@/contexts/CaseFilterContext";
 import { format } from "date-fns";
 import { computeHashes, extractMediaMetadata } from "./forensics/hashUtils";
+import { captureArtifactFrame } from "./forensics/frameCapture";
 import { ForensicUseCaseBadges } from "./forensics/ForensicUseCaseBadges";
 import { HashComparisonTool } from "./forensics/HashComparisonTool";
 import { MediaPropertiesCard } from "./forensics/MediaPropertiesCard";
@@ -35,7 +36,8 @@ export function ForensicsLab() {
       // Multimedia metadata extraction
       const mediaMeta = await extractMediaMetadata(file);
 
-      // EXIF extraction for images
+      // Capture artifact frame for images/videos
+      const artifactFrameDataUrl = await captureArtifactFrame(file);
       let exifData: Record<string, any> = {};
       let gpsLat: number | undefined;
       let gpsLng: number | undefined;
@@ -85,6 +87,7 @@ export function ForensicsLab() {
         mediaWidth: mediaMeta.width,
         mediaHeight: mediaMeta.height,
         mediaCodec: mediaMeta.codec,
+        artifactFrameDataUrl,
       });
       toast.success("Forensic analysis complete");
     } catch (err) {
