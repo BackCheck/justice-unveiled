@@ -1,12 +1,5 @@
-import { useEffect, useState } from "react";
 import humanRightsLogo from "@/assets/human-rights-logo.png";
 import type { ForensicResult } from "@/components/osint/forensics/types";
-
-interface ForensicReportPrintProps {
-  result: ForensicResult;
-  notes?: string;
-  caseTitle?: string;
-}
 
 export function generateForensicReport(result: ForensicResult, notes?: string, caseTitle?: string) {
   const now = new Date();
