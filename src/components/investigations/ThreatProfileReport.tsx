@@ -151,7 +151,7 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
         </div>
 
         {/* 2. MOTIVATIONS */}
-        <div className="p-12" style={{ pageBreakAfter: "always" }}>
+        <div className="p-12" style={{ pageBreakInside: "avoid" }}>
           <SectionHeader title="Suspected Motivations" number={2} />
           <div className="space-y-3">
             {profile.motivations.map((m, i) => (
@@ -164,7 +164,7 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
         </div>
 
         {/* 3. TACTICS */}
-        <div className="p-12" style={{ pageBreakAfter: "always" }}>
+        <div className="p-12" style={{ pageBreakInside: "avoid" }}>
           <SectionHeader title="Known Tactics & Patterns" number={3} />
           <div className="space-y-3">
             {profile.tactics.map((t, i) => (
@@ -178,7 +178,7 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
 
         {/* 4. BEHAVIORAL PATTERNS */}
         {(profile.behavioralPatterns || []).length > 0 && (
-          <div className="p-12" style={{ pageBreakAfter: "always" }}>
+          <div className="p-12" style={{ pageBreakInside: "avoid" }}>
             <SectionHeader title="Behavioral Patterns Analysis" number={4} />
             <p className="text-sm text-gray-600 mb-4">
               Identified behavioral patterns of {profile.entityName} with frequency and severity indicators.
@@ -218,7 +218,7 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
         )}
 
         {/* 5. CONNECTIONS */}
-        <div className="p-12" style={{ pageBreakAfter: "always" }}>
+        <div className="p-12" style={{ pageBreakInside: "avoid" }}>
           <SectionHeader title="Network Connections" number={5} />
           <p className="text-sm text-gray-600 mb-4">
             The following entities have been identified as connected to {profile.entityName} through documented interactions, relationships, or coordinated activities.
@@ -236,7 +236,7 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
         </div>
 
         {/* 6. VULNERABILITIES */}
-        <div className="p-12" style={{ pageBreakAfter: "always" }}>
+        <div className="p-12" style={{ pageBreakInside: "avoid" }}>
           <SectionHeader title="Exploitable Vulnerabilities" number={6} />
           <p className="text-sm text-gray-600 mb-4">
             Vulnerabilities identified through analysis of documentary evidence, procedural records, and behavioral patterns.
@@ -253,7 +253,7 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
 
         {/* 7. COUNTER-STRATEGIES */}
         {(profile.counterStrategies || []).length > 0 && (
-          <div className="p-12" style={{ pageBreakAfter: "always" }}>
+          <div className="p-12" style={{ pageBreakInside: "avoid" }}>
             <SectionHeader title="Counter-Strategies" number={7} />
             <p className="text-sm text-gray-600 mb-4">
               Recommended counter-measures for each identified tactic, with effectiveness ratings.
@@ -288,7 +288,7 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
 
         {/* 8. EVIDENCE GAPS */}
         {(profile.evidenceGaps || []).length > 0 && (
-          <div className="p-12" style={{ pageBreakAfter: "always" }}>
+          <div className="p-12" style={{ pageBreakInside: "avoid" }}>
             <SectionHeader title="Evidence Gaps & Investigation Priorities" number={8} />
             <p className="text-sm text-gray-600 mb-4">
               Critical evidence gaps that require investigation to strengthen the case.
@@ -316,7 +316,7 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
 
         {/* 9. HISTORICAL PRECEDENTS */}
         {(profile.historicalPrecedents || []).length > 0 && (
-          <div className="p-12" style={{ pageBreakAfter: "always" }}>
+          <div className="p-12" style={{ pageBreakInside: "avoid" }}>
             <SectionHeader title="Historical Precedents" number={9} />
             <p className="text-sm text-gray-600 mb-4">
               Relevant legal precedents that may inform strategy against {profile.entityName}.
@@ -338,7 +338,7 @@ export const ThreatProfileReport = forwardRef<HTMLDivElement, ThreatProfileRepor
         )}
 
         {/* 10. RECOMMENDATIONS */}
-        <div className="p-12" style={{ pageBreakAfter: "always" }}>
+        <div className="p-12" style={{ pageBreakInside: "avoid" }}>
           <SectionHeader title="Strategic Recommendations" number={10} />
           <p className="text-sm text-gray-600 mb-4">
             Based on the comprehensive threat assessment, the following strategic actions are recommended for investigators and legal advocates.
