@@ -467,6 +467,7 @@ export type Database = {
           is_featured: boolean | null
           lead_investigator: string | null
           location: string | null
+          report_downloads: number
           severity: string | null
           status: string
           title: string
@@ -487,6 +488,7 @@ export type Database = {
           is_featured?: boolean | null
           lead_investigator?: string | null
           location?: string | null
+          report_downloads?: number
           severity?: string | null
           status?: string
           title: string
@@ -507,6 +509,7 @@ export type Database = {
           is_featured?: boolean | null
           lead_investigator?: string | null
           location?: string | null
+          report_downloads?: number
           severity?: string | null
           status?: string
           title?: string
@@ -2399,6 +2402,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      increment_report_downloads: {
+        Args: { _case_id: string }
+        Returns: number
       }
     }
     Enums: {

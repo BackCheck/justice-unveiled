@@ -17,6 +17,7 @@ export interface Case {
   total_events: number;
   total_entities: number;
   cover_image_url: string | null;
+  report_downloads: number;
   created_at: string;
   updated_at: string;
 }

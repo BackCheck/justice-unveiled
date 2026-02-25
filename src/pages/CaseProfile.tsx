@@ -39,6 +39,8 @@ import { CaseReconstructionTab } from "@/components/reconstruction/CaseReconstru
 import { CaseCorrelationTab } from "@/components/correlation/CaseCorrelationTab";
 import { CaseComplianceTab } from "@/components/compliance/CaseComplianceTab";
 import { format } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 const severityColors: Record<string, string> = {
   critical: "bg-red-500/20 text-red-700 dark:text-red-300 border-red-500/30",
@@ -74,8 +76,9 @@ const CaseProfile = () => {
   const { data: discrepancies, isLoading: discrepanciesLoading } = useCaseDiscrepancies(caseId);
   const { data: evidence, isLoading: evidenceLoading } = useCaseEvidence(caseId);
   const [isExporting, setIsExporting] = useState(false);
+  const queryClient = useQueryClient();
 
-  const handleExportPDF = () => {
+  const handleExportPDF = async () => {
     if (!caseData) return;
     setIsExporting(true);
 
@@ -276,6 +279,11 @@ const CaseProfile = () => {
 
     reportWindow.document.write(html);
     reportWindow.document.close();
+
+    // Increment download counter
+    await supabase.rpc("increment_report_downloads", { _case_id: caseId });
+    queryClient.invalidateQueries({ queryKey: ["case", caseId] });
+
     setIsExporting(false);
   };
 
@@ -426,6 +434,11 @@ const CaseProfile = () => {
                     <FileDown className="w-4 h-4 text-primary" />
                   )}
                   Export Report PDF
+                  {caseData && caseData.report_downloads > 0 && (
+                    <Badge variant="secondary" className="ml-1 text-xs px-1.5 py-0">
+                      {caseData.report_downloads}
+                    </Badge>
+                  )}
                 </Button>
               </div>
             </div>
