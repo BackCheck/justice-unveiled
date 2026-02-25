@@ -60,6 +60,12 @@ const categoryColors: Record<string, string> = {
   "Criminal Allegation": "text-purple-600 dark:text-purple-400",
 };
 
+const isEmptyValue = (val: string | null | undefined): boolean => {
+  if (!val) return true;
+  const normalized = val.trim().toLowerCase();
+  return ["none", "n/a", "na", "none noted", "nil", "null", "undefined", "-", "—", ""].includes(normalized);
+};
+
 const CaseProfile = () => {
   const { caseId } = useParams<{ caseId: string }>();
   const { data: caseData, isLoading: caseLoading, error: caseError } = useCase(caseId);
@@ -105,9 +111,10 @@ const CaseProfile = () => {
           <td style="padding:8px;border-bottom:1px solid #e5e7eb;vertical-align:top;">
             <span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;background:#f0f9ff;color:#0369a1;margin-bottom:4px;">${e.category}</span>
             <div style="font-size:12px;color:#1f2937;margin-top:2px;">${e.description}</div>
-            ${e.individuals ? `<div style="font-size:11px;color:#6b7280;margin-top:4px;">Individuals: ${e.individuals}</div>` : ""}
-            ${e.legal_action && e.legal_action !== "None" ? `<div style="font-size:11px;color:#6b7280;">Legal Action: ${e.legal_action}</div>` : ""}
-            ${e.evidence_discrepancy && e.evidence_discrepancy !== "None noted" ? `<div style="font-size:11px;color:#dc2626;margin-top:4px;">⚠ ${e.evidence_discrepancy}</div>` : ""}
+            ${!isEmptyValue(e.individuals) ? `<div style="font-size:11px;color:#6b7280;margin-top:4px;">Individuals: ${e.individuals}</div>` : ""}
+            ${!isEmptyValue(e.legal_action) ? `<div style="font-size:11px;color:#6b7280;">Legal Action: ${e.legal_action}</div>` : ""}
+            ${!isEmptyValue(e.outcome) ? `<div style="font-size:11px;color:#6b7280;">Outcome: ${e.outcome}</div>` : ""}
+            ${!isEmptyValue(e.evidence_discrepancy) ? `<div style="font-size:11px;color:#dc2626;margin-top:4px;">⚠ ${e.evidence_discrepancy}</div>` : ""}
           </td>
         </tr>
       `).join("");
@@ -538,13 +545,13 @@ const CaseProfile = () => {
                                         )}
                                       </div>
                                       <p className="text-sm">{event.description}</p>
-                                      {event.individuals && (
+                                      {!isEmptyValue(event.individuals) && (
                                         <p className="text-xs text-muted-foreground mt-2">
                                           <Users className="w-3 h-3 inline mr-1" />
                                           {event.individuals}
                                         </p>
                                       )}
-                                      {event.evidence_discrepancy && event.evidence_discrepancy !== "None noted" && (
+                                      {!isEmptyValue(event.evidence_discrepancy) && (
                                         <div className="mt-2 p-2 rounded bg-destructive/10 border border-destructive/20">
                                           <p className="text-xs text-destructive">
                                             <AlertTriangle className="w-3 h-3 inline mr-1" />
