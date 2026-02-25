@@ -27,8 +27,11 @@ import {
   Upload,
   GitBranch,
   ClipboardCheck,
-  Rss
+  Rss,
+  FileDown,
+  Loader2
 } from "lucide-react";
+import { useState } from "react";
 import { useCase, useCaseEvents, useCaseEntities, useCaseDiscrepancies, useCaseEvidence } from "@/hooks/useCases";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { EvidenceRepositoryCard } from "@/components/evidence/EvidenceRepositoryCard";
@@ -64,6 +67,210 @@ const CaseProfile = () => {
   const { data: entities, isLoading: entitiesLoading } = useCaseEntities(caseId);
   const { data: discrepancies, isLoading: discrepanciesLoading } = useCaseDiscrepancies(caseId);
   const { data: evidence, isLoading: evidenceLoading } = useCaseEvidence(caseId);
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportPDF = () => {
+    if (!caseData) return;
+    setIsExporting(true);
+
+    // Build the full report HTML with the window.open() buffer strategy
+    const reportWindow = window.open("", "_blank");
+    if (!reportWindow) {
+      setIsExporting(false);
+      return;
+    }
+
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString("en-US", {
+      weekday: "long", year: "numeric", month: "long", day: "numeric",
+    });
+    const formattedTime = now.toLocaleTimeString("en-US", {
+      hour: "2-digit", minute: "2-digit", second: "2-digit", timeZoneName: "short",
+    });
+
+    // Build timeline HTML grouped by year
+    const eventsByYearForPDF = (events || []).reduce((acc, event) => {
+      const year = event.date?.split("-")[0] || "Unknown";
+      if (!acc[year]) acc[year] = [];
+      acc[year].push(event);
+      return acc;
+    }, {} as Record<string, any[]>);
+    const sortedPDFYears = Object.keys(eventsByYearForPDF).sort();
+
+    const timelineHTML = sortedPDFYears.map(year => {
+      const yearEvents = eventsByYearForPDF[year];
+      const eventsRows = yearEvents.map((e: any) => `
+        <tr>
+          <td style="padding:8px;border-bottom:1px solid #e5e7eb;white-space:nowrap;vertical-align:top;font-family:monospace;font-size:11px;">${e.date || "N/A"}</td>
+          <td style="padding:8px;border-bottom:1px solid #e5e7eb;vertical-align:top;">
+            <span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;background:#f0f9ff;color:#0369a1;margin-bottom:4px;">${e.category}</span>
+            <div style="font-size:12px;color:#1f2937;margin-top:2px;">${e.description}</div>
+            ${e.individuals ? `<div style="font-size:11px;color:#6b7280;margin-top:4px;">Individuals: ${e.individuals}</div>` : ""}
+            ${e.legal_action && e.legal_action !== "None" ? `<div style="font-size:11px;color:#6b7280;">Legal Action: ${e.legal_action}</div>` : ""}
+            ${e.evidence_discrepancy && e.evidence_discrepancy !== "None noted" ? `<div style="font-size:11px;color:#dc2626;margin-top:4px;">⚠ ${e.evidence_discrepancy}</div>` : ""}
+          </td>
+        </tr>
+      `).join("");
+      return `
+        <h3 style="font-size:16px;color:#0087C1;margin:24px 0 8px;border-bottom:1px solid #e5e7eb;padding-bottom:4px;">${year} — ${yearEvents.length} events</h3>
+        <table style="width:100%;border-collapse:collapse;">${eventsRows}</table>
+      `;
+    }).join("");
+
+    // Build entities HTML
+    const entitiesHTML = (entities || []).map(e => `
+      <div style="display:inline-block;padding:6px 12px;margin:4px;border:1px solid #e5e7eb;border-radius:8px;font-size:11px;">
+        <strong>${e.name}</strong>${e.role ? ` — ${e.role}` : ""}${e.entity_type ? ` <span style="color:#6b7280;">(${e.entity_type})</span>` : ""}
+      </div>
+    `).join("");
+
+    // Build discrepancies HTML
+    const discrepanciesHTML = (discrepancies || []).map(d => `
+      <div style="padding:10px;margin:8px 0;border-left:3px solid ${d.severity === "critical" ? "#dc2626" : d.severity === "high" ? "#ea580c" : "#ca8a04"};background:#fef2f2;border-radius:0 8px 8px 0;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:${d.severity === "critical" ? "#dc2626" : d.severity === "high" ? "#ea580c" : "#ca8a04"};">${d.severity}</div>
+        <div style="font-size:13px;font-weight:600;margin:4px 0;">${d.title}</div>
+        <div style="font-size:12px;color:#4b5563;">${d.description}</div>
+        ${d.legal_reference ? `<div style="font-size:11px;color:#0087C1;margin-top:4px;">📜 ${d.legal_reference}</div>` : ""}
+      </div>
+    `).join("");
+
+    const html = `<!DOCTYPE html>
+<html><head><title>Case Report — ${caseData.case_number}</title>
+<style>
+  @media print { @page { margin: 1cm; size: A4; } .no-print { display: none; } .page-break { page-break-after: always; } }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; color: #1f2937; margin: 0; padding: 0; background: #fff; }
+</style></head><body>
+<!-- COVER -->
+<div style="min-height:95vh;display:flex;flex-direction:column;justify-content:space-between;padding:48px;">
+  <div style="text-align:center;">
+    <h1 style="font-size:36px;color:#0087C1;margin:0;">HRPM.org</h1>
+    <p style="font-size:18px;color:#6b7280;">Human Rights Protection & Monitoring</p>
+    <div style="width:120px;height:4px;background:#0087C1;margin:16px auto;border-radius:4px;"></div>
+  </div>
+  <div style="text-align:center;margin:48px 0;">
+    <p style="font-size:12px;letter-spacing:3px;color:#9ca3af;text-transform:uppercase;">Official Case Intelligence Report</p>
+    <h2 style="font-size:28px;margin:12px 0;">${caseData.title}</h2>
+    <p style="font-family:monospace;color:#6b7280;font-size:16px;">${caseData.case_number}</p>
+    <div style="margin-top:24px;display:inline-flex;gap:32px;padding:16px 32px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;">
+      <div><span style="font-size:24px;font-weight:700;color:#0087C1;">${caseData.total_sources ?? 0}</span> <span style="color:#6b7280;">Sources</span></div>
+      <div style="color:#d1d5db;">|</div>
+      <div><span style="font-size:24px;font-weight:700;color:#0087C1;">${events?.length || 0}</span> <span style="color:#6b7280;">Events</span></div>
+      <div style="color:#d1d5db;">|</div>
+      <div><span style="font-size:24px;font-weight:700;color:#0087C1;">${entities?.length || 0}</span> <span style="color:#6b7280;">Entities</span></div>
+    </div>
+  </div>
+  <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:24px;">
+    <p style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#9ca3af;margin-bottom:12px;">Report Generation Details</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;">
+      <div><span style="color:#9ca3af;">Generated On:</span> ${formattedDate}</div>
+      <div><span style="color:#9ca3af;">Time:</span> ${formattedTime}</div>
+      <div><span style="color:#9ca3af;">Status:</span> ${(caseData.status || "N/A").toUpperCase()}</div>
+      <div><span style="color:#9ca3af;">Severity:</span> ${(caseData.severity || "N/A").toUpperCase()}</div>
+      <div><span style="color:#9ca3af;">Location:</span> ${caseData.location || "N/A"}</div>
+      <div><span style="color:#9ca3af;">Lead Investigator:</span> ${caseData.lead_investigator || "N/A"}</div>
+    </div>
+  </div>
+  <div style="text-align:center;border-top:1px solid #e5e7eb;padding-top:16px;font-size:11px;color:#6b7280;">
+    <p style="font-weight:600;color:#dc2626;">Strictly Confidential – Only for Advocacy Work</p>
+    <p>© ${now.getFullYear()} Human Rights Protection & Monitoring. All rights reserved.</p>
+  </div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- EXECUTIVE SUMMARY -->
+<div style="padding:48px;">
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid #0087C1;">
+    <div style="width:36px;height:36px;background:#0087C1;color:#fff;display:flex;align-items:center;justify-content:center;border-radius:8px;font-weight:700;">1</div>
+    <h2 style="font-size:22px;margin:0;">Executive Summary</h2>
+  </div>
+  <p style="font-size:13px;line-height:1.7;color:#374151;">${caseData.description || "No description available."}</p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- FULL TIMELINE -->
+<div style="padding:48px;">
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid #0087C1;">
+    <div style="width:36px;height:36px;background:#0087C1;color:#fff;display:flex;align-items:center;justify-content:center;border-radius:8px;font-weight:700;">2</div>
+    <h2 style="font-size:22px;margin:0;">Complete Case Timeline (${events?.length || 0} events)</h2>
+  </div>
+  ${(events?.length || 0) === 0 ? "<p style='color:#6b7280;'>No timeline events recorded.</p>" : timelineHTML}
+</div>
+
+<div class="page-break"></div>
+
+<!-- ENTITIES -->
+<div style="padding:48px;">
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid #0087C1;">
+    <div style="width:36px;height:36px;background:#0087C1;color:#fff;display:flex;align-items:center;justify-content:center;border-radius:8px;font-weight:700;">3</div>
+    <h2 style="font-size:22px;margin:0;">Entity Network (${entities?.length || 0} entities)</h2>
+  </div>
+  ${(entities?.length || 0) === 0 ? "<p style='color:#6b7280;'>No entities extracted.</p>" : entitiesHTML}
+</div>
+
+<div class="page-break"></div>
+
+<!-- DISCREPANCIES -->
+<div style="padding:48px;">
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid #0087C1;">
+    <div style="width:36px;height:36px;background:#0087C1;color:#fff;display:flex;align-items:center;justify-content:center;border-radius:8px;font-weight:700;">4</div>
+    <h2 style="font-size:22px;margin:0;">Discrepancies & Issues (${discrepancies?.length || 0})</h2>
+  </div>
+  ${(discrepancies?.length || 0) === 0 ? "<p style='color:#6b7280;'>No discrepancies identified.</p>" : discrepanciesHTML}
+</div>
+
+<div class="page-break"></div>
+
+<!-- EVIDENCE SUMMARY -->
+<div style="padding:48px;">
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid #0087C1;">
+    <div style="width:36px;height:36px;background:#0087C1;color:#fff;display:flex;align-items:center;justify-content:center;border-radius:8px;font-weight:700;">5</div>
+    <h2 style="font-size:22px;margin:0;">Evidence Repository (${evidence?.length || 0} files)</h2>
+  </div>
+  ${(evidence?.length || 0) === 0 ? "<p style='color:#6b7280;'>No evidence files uploaded.</p>" : `
+    <table style="width:100%;border-collapse:collapse;">
+      <thead><tr style="background:#f9fafb;">
+        <th style="padding:8px;text-align:left;font-size:11px;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;">File Name</th>
+        <th style="padding:8px;text-align:left;font-size:11px;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;">Type</th>
+        <th style="padding:8px;text-align:left;font-size:11px;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;">Category</th>
+      </tr></thead>
+      <tbody>${(evidence || []).map(f => `
+        <tr>
+          <td style="padding:8px;border-bottom:1px solid #e5e7eb;font-size:12px;">${f.file_name}</td>
+          <td style="padding:8px;border-bottom:1px solid #e5e7eb;font-size:12px;">${f.file_type}</td>
+          <td style="padding:8px;border-bottom:1px solid #e5e7eb;font-size:12px;">${f.category || "general"}</td>
+        </tr>
+      `).join("")}</tbody>
+    </table>
+  `}
+</div>
+
+<!-- CLOSING -->
+<div style="min-height:60vh;display:flex;align-items:center;justify-content:center;padding:48px;">
+  <div style="text-align:center;max-width:480px;">
+    <div style="width:60px;height:4px;background:#0087C1;margin:0 auto 24px;border-radius:4px;"></div>
+    <h2 style="font-size:22px;">End of Report</h2>
+    <p style="color:#6b7280;font-size:13px;margin:16px 0;">
+      This report summarizes intelligence gathered from ${caseData.total_sources ?? 0} verified sources
+      covering ${events?.length || 0} documented events and ${entities?.length || 0} mapped entities
+      for case ${caseData.case_number}.
+    </p>
+    <div style="border-top:1px solid #e5e7eb;padding-top:16px;font-size:11px;color:#6b7280;">
+      <p style="font-weight:600;color:#dc2626;">Strictly Confidential – Only for Advocacy Work</p>
+      <p>© ${now.getFullYear()} Human Rights Protection & Monitoring. All rights reserved.</p>
+      <p style="color:#0087C1;">Documenting injustice. Demanding accountability.</p>
+    </div>
+  </div>
+</div>
+
+<script>window.onload=function(){window.print();}</script>
+</body></html>`;
+
+    reportWindow.document.write(html);
+    reportWindow.document.close();
+    setIsExporting(false);
+  };
 
   if (caseLoading) {
     return (
@@ -178,8 +385,8 @@ const CaseProfile = () => {
                 )}
               </div>
 
-              {/* RSS Feed Subscribe */}
-              <div className="mt-4">
+              {/* Actions: RSS + Export PDF */}
+              <div className="mt-4 flex flex-wrap items-center gap-2">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -190,7 +397,7 @@ const CaseProfile = () => {
                       >
                         <Button variant="outline" size="sm" className="gap-2">
                           <Rss className="w-4 h-4 text-orange-500" />
-                          Subscribe to RSS Feed
+                          Subscribe to RSS
                         </Button>
                       </a>
                     </TooltipTrigger>
@@ -199,6 +406,20 @@ const CaseProfile = () => {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  disabled={isExporting}
+                  onClick={handleExportPDF}
+                >
+                  {isExporting ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <FileDown className="w-4 h-4 text-primary" />
+                  )}
+                  Export Report PDF
+                </Button>
               </div>
             </div>
 
