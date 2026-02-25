@@ -143,7 +143,7 @@ export const ThreatProfiler = () => {
         @media print { 
           body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
-        @page { margin: 0; }
+        @page { margin: 1cm; size: A4; }
       </style></head><body>${printContent}</body></html>`);
     win.document.close();
     setTimeout(() => { win.print(); }, 500);
