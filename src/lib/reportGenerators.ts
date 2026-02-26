@@ -3,7 +3,7 @@
  */
 
 import { buildReportShell } from './reportShell';
-import { buildBarChart, buildPieChart, buildStatGrid, buildTable, buildTimelineChart, buildSeverityMeter } from './reportCharts';
+import { buildBarChart, buildPieChart, buildStatGrid, buildTable, buildTimelineChart, buildSeverityMeter, buildDonutChart, buildHeatmapGrid, buildHierarchyMap, buildKeyValueGrid } from './reportCharts';
 import type { CombinedEntity, CombinedConnection } from '@/hooks/useCombinedEntities';
 import type { CombinedTimelineEvent } from '@/hooks/useCombinedTimeline';
 import type { PlatformStats } from '@/hooks/usePlatformStats';
@@ -53,7 +53,13 @@ export function generateNetworkReport(
         { label: 'Inferred Links', value: connections.filter(c => c.isInferred).length },
         { label: 'Entity Types', value: Object.keys(typeDist).length },
         { label: 'Avg Connections', value: entities.length ? (connections.length * 2 / entities.length).toFixed(1) : '0' },
-      ])
+      ]) +
+      buildDonutChart(
+        Object.entries(typeDist).map(([label, value]) => ({ label: label.charAt(0).toUpperCase() + label.slice(1), value })),
+        'Entity Type Breakdown'
+      ) +
+      buildSeverityMeter('Network Density', Math.min(connections.length, 100) / 10, 10) +
+      buildSeverityMeter('AI Coverage', entities.length > 0 ? Math.round((entities.filter(e => e.isAIExtracted).length / entities.length) * 10) : 0, 10)
     },
     {
       title: 'Entity Type Distribution',
@@ -378,6 +384,21 @@ export function generateReconstructionReport(
   const discBySeverity: Record<string, number> = {};
   discrepancies.forEach(d => { discBySeverity[d.severity] = (discBySeverity[d.severity] || 0) + 1; });
 
+  // Event-category x year heatmap
+  const topCats = Object.entries(byCategory).sort((a, b) => b[1] - a[1]).slice(0, 6).map(x => x[0]);
+  const topYears = Object.keys(byYear).sort().slice(-10);
+  const heatmapData: { row: string; col: string; value: number }[] = [];
+  topCats.forEach(cat => {
+    topYears.forEach(year => {
+      const count = events.filter(e => e.category === cat && e.date?.startsWith(year)).length;
+      heatmapData.push({ row: cat, col: year, value: count });
+    });
+  });
+
+  // Discrepancy types
+  const discByType: Record<string, number> = {};
+  discrepancies.forEach(d => { discByType[d.discrepancy_type || 'Other'] = (discByType[d.discrepancy_type || 'Other'] || 0) + 1; });
+
   const sections = [
     {
       title: 'Reconstruction Overview',
@@ -388,13 +409,26 @@ export function generateReconstructionReport(
         { label: 'Discrepancies', value: discrepancies.length, color: '#dc2626' },
         { label: 'Critical Issues', value: discrepancies.filter(d => d.severity === 'critical').length, color: '#dc2626' },
         { label: 'Years Covered', value: Object.keys(byYear).length },
-      ])
+      ]) +
+      buildDonutChart(
+        Object.entries(byCategory).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({ label, value })),
+        'Event Category Distribution'
+      ) +
+      buildBarChart(
+        Object.entries(byCategory).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({ label, value })),
+        'Events by Category'
+      )
     },
     {
       title: 'Temporal Distribution',
       content: buildTimelineChart(
         Object.entries(byYear).sort().map(([year, count]) => ({ year, count })),
         'Events per Year'
+      ) +
+      buildHeatmapGrid(heatmapData, 'Category × Year Activity Heatmap') +
+      buildBarChart(
+        Object.entries(byYear).sort().map(([year, count]) => ({ label: year, value: count })),
+        'Annual Event Volume'
       )
     },
     {
@@ -402,25 +436,51 @@ export function generateReconstructionReport(
       content: buildPieChart(
         Object.entries(byCategory).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({ label, value })),
         'Event Categories'
-      ) + buildBarChart(
-        Object.entries(byCategory).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({ label, value })),
-        'Events by Category'
+      ) +
+      buildTable(
+        ['Category', 'Count', 'Percentage'],
+        Object.entries(byCategory).sort((a, b) => b[1] - a[1]).map(([cat, count]) => [
+          cat, String(count), `${((count / events.length) * 100).toFixed(1)}%`
+        ]),
+        'Category Statistics'
       )
     },
     {
       title: 'Procedural Discrepancies & Failures',
-      content: buildPieChart(
-        Object.entries(discBySeverity).map(([label, value]) => ({ label: label.charAt(0).toUpperCase() + label.slice(1), value })),
-        'Discrepancy Severity Distribution'
-      ) + buildTable(
-        ['Title', 'Type', 'Severity', 'Legal Reference'],
-        discrepancies.map(d => [
-          d.title,
-          d.discrepancy_type || 'N/A',
-          d.severity,
-          d.legal_reference || 'N/A'
-        ])
-      )
+      content: (discrepancies.length > 0 ? (
+        buildStatGrid([
+          { label: 'Total Discrepancies', value: discrepancies.length, color: '#d97706' },
+          { label: 'Critical', value: discBySeverity['critical'] || 0, color: '#dc2626' },
+          { label: 'High', value: discBySeverity['high'] || 0, color: '#d97706' },
+          { label: 'Medium', value: discBySeverity['medium'] || 0 },
+        ]) +
+        buildPieChart(
+          Object.entries(discBySeverity).map(([label, value]) => ({ label: label.charAt(0).toUpperCase() + label.slice(1), value })),
+          'Discrepancy Severity Distribution'
+        ) +
+        buildBarChart(
+          Object.entries(discByType).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({ label: label.replace(/_/g, ' '), value })),
+          'Discrepancy Types'
+        ) +
+        buildTable(
+          ['Title', 'Type', 'Severity', 'Legal Reference'],
+          discrepancies.map(d => [
+            d.title,
+            d.discrepancy_type || 'N/A',
+            d.severity,
+            d.legal_reference || 'N/A'
+          ]),
+          'Complete Discrepancy Registry'
+        )
+      ) : '<p style="color:#059669;font-size:12px;">No discrepancies identified.</p>')
+    },
+    {
+      title: 'Severity Assessment',
+      content: 
+        buildSeverityMeter('Event Volume', Math.min(events.length, 1000) / 100, 10) +
+        buildSeverityMeter('Discrepancy Level', Math.min(discrepancies.length, 100) / 10, 10) +
+        buildSeverityMeter('Critical Issues', Math.min(discrepancies.filter(d => d.severity === 'critical').length, 10), 10) +
+        buildSeverityMeter('Category Diversity', Math.min(Object.keys(byCategory).length, 10), 10)
     },
     {
       title: 'Chronological Event Registry',
@@ -432,8 +492,9 @@ export function generateReconstructionReport(
           e.description.slice(0, 100) + (e.description.length > 100 ? '...' : ''),
           e.individuals?.slice(0, 50) || 'N/A',
           e.isExtracted ? 'AI' : 'Manual'
-        ])
-      ) + (events.length > 150 ? `<p style="color:#9ca3af;font-size:11px;text-align:center;">Showing 150 of ${events.length} events</p>` : '')
+        ]),
+        `Timeline Events (${events.length > 150 ? `showing 150 of ${events.length}` : `${events.length} events`})`
+      )
     }
   ];
 

@@ -176,7 +176,7 @@ export const DossierBuilder = () => {
   };
 
   // ── Step 4: Generate ──
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     setGenerating(true);
     try {
       const selectedAnnexures = annexures.filter(a => a.selected);
@@ -189,7 +189,7 @@ export const DossierBuilder = () => {
         sections,
         annexures: selectedAnnexures,
       });
-      openReportWindow(html);
+      await openReportWindow(html);
       toast({ title: "Dossier Generated", description: `${sections.length} sections, ${selectedAnnexures.length} annexures` });
     } catch (err) {
       console.error(err);
