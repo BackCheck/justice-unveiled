@@ -1,6 +1,7 @@
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSEO } from "@/hooks/useSEO";
 import { useCombinedEntities } from "@/hooks/useCombinedEntities";
 import { useCombinedTimeline } from "@/hooks/useCombinedTimeline";
@@ -10,6 +11,7 @@ import { useCaseFilter } from "@/contexts/CaseFilterContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ReportExportButton } from "@/components/reports/ReportExportButton";
+import { DossierBuilder } from "@/components/reports/DossierBuilder";
 import {
   generateNetworkReport,
   generateInternationalReport,
@@ -21,7 +23,7 @@ import {
   generateThreatProfilesReport,
 } from "@/lib/reportGenerators";
 import {
-  Network, Scale, TrendingDown, GitBranch, BookOpen, FileText, Target, Shield,
+  Network, Scale, TrendingDown, GitBranch, BookOpen, FileText, Target, Shield, Gavel,
 } from "lucide-react";
 
 const ReportCenter = () => {
@@ -160,32 +162,51 @@ const ReportCenter = () => {
   return (
     <PlatformLayout>
       <div className="space-y-6 p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {reportCards.map((report) => (
-            <Card key={report.id} className="glass-card hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <report.icon className={`w-5 h-5 ${report.color}`} />
-                    <CardTitle className="text-sm">{report.title}</CardTitle>
-                  </div>
-                  <Badge variant="secondary" className="text-[10px]">PDF</Badge>
-                </div>
-                <CardDescription className="text-xs">{report.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">{report.stats}</span>
-                  <ReportExportButton
-                    label="Generate"
-                    generateReport={report.generate}
-                    size="sm"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <Tabs defaultValue="reports" className="w-full">
+          <TabsList className="mb-4">
+            <TabsTrigger value="reports" className="gap-1.5">
+              <FileText className="w-4 h-4" /> Quick Reports
+            </TabsTrigger>
+            <TabsTrigger value="dossier" className="gap-1.5">
+              <Gavel className="w-4 h-4" /> Court Dossier Builder
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="reports">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {reportCards.map((report) => (
+                <Card key={report.id} className="glass-card hover:shadow-lg transition-shadow">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <report.icon className={`w-5 h-5 ${report.color}`} />
+                        <CardTitle className="text-sm">{report.title}</CardTitle>
+                      </div>
+                      <Badge variant="secondary" className="text-[10px]">PDF</Badge>
+                    </div>
+                    <CardDescription className="text-xs">{report.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">{report.stats}</span>
+                      <ReportExportButton
+                        label="Generate"
+                        generateReport={report.generate}
+                        size="sm"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="dossier">
+            <div className="max-w-3xl mx-auto">
+              <DossierBuilder />
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </PlatformLayout>
   );
