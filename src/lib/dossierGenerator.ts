@@ -126,7 +126,7 @@ export function generateDossierReport(opts: DossierOpts): string {
 <!-- COVER PAGE -->
 <div style="min-height:95vh;display:flex;flex-direction:column;justify-content:space-between;padding:48px;${isCourt ? 'border:3px double #1e3a5f;margin:12px;' : ''}">
   <div style="text-align:center;">
-    <img src="https://hrpm.lovable.app/favicon.png" alt="HRPM Logo" style="height:70px;width:auto;margin:0 auto 8px;display:block;" />
+    <img src="https://hrpm.lovable.app/human-rights-logo-blue.png" alt="HRPM Logo" style="height:70px;width:auto;margin:0 auto 8px;display:block;" />
     <h1 style="font-size:28px;color:${isCourt ? '#1e3a5f' : '#0087C1'};margin:0;">HRPM.org</h1>
     <p style="font-size:14px;color:#6b7280;">Human Rights Protection & Monitoring</p>
   </div>
