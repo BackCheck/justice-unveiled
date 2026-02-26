@@ -31,6 +31,12 @@ import { InvestigationWorkspace } from "@/components/investigations/Investigatio
 import { LinkAnalysis } from "@/components/investigations/LinkAnalysis";
 import { useSEO } from "@/hooks/useSEO";
 import { usePlatformStats } from "@/hooks/usePlatformStats";
+import { ReportExportButton } from "@/components/reports/ReportExportButton";
+import { generateInvestigationReport } from "@/lib/reportGenerators";
+import { useCombinedTimeline } from "@/hooks/useCombinedTimeline";
+import { useCombinedEntities } from "@/hooks/useCombinedEntities";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Investigations = () => {
   useSEO({
@@ -39,6 +45,22 @@ const Investigations = () => {
   });
 
   const { stats } = usePlatformStats();
+  const { events } = useCombinedTimeline(false);
+  const { entities, connections } = useCombinedEntities();
+  const { data: discrepancies } = useQuery({
+    queryKey: ["discrepancies-for-inv-report"],
+    queryFn: async () => {
+      const { data } = await supabase.from("extracted_discrepancies").select("*");
+      return data || [];
+    },
+  });
+  const { data: caseData } = useQuery({
+    queryKey: ["case-for-report-inv"],
+    queryFn: async () => {
+      const { data } = await supabase.from("cases").select("title, case_number").eq("is_featured", true).limit(1).maybeSingle();
+      return data;
+    },
+  });
   const [activeSection, setActiveSection] = useState<string>("workspace");
 
   const investigationModules = [
@@ -124,6 +146,10 @@ const Investigations = () => {
                   <span className="text-sm font-medium">{stats.totalDiscrepancies}</span>
                   <span className="text-xs text-muted-foreground">Issues</span>
                 </div>
+                <ReportExportButton
+                  label="Investigation Report"
+                  generateReport={() => generateInvestigationReport(events, entities, connections, discrepancies || [], stats, caseData?.title || "Active Investigation", caseData?.case_number)}
+                />
               </div>
             </div>
           </div>
