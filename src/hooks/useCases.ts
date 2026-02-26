@@ -66,6 +66,8 @@ export const useCaseEvents = (caseId: string | undefined) => {
         .from("extracted_events")
         .select("*")
         .eq("case_id", caseId)
+        .eq("is_hidden", false)
+        .eq("is_approved", true)
         .order("date", { ascending: true });
 
       if (error) throw error;

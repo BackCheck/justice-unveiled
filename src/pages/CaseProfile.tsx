@@ -62,11 +62,9 @@ const categoryColors: Record<string, string> = {
   "Criminal Allegation": "text-purple-600 dark:text-purple-400",
 };
 
-const isEmptyValue = (val: string | null | undefined): boolean => {
-  if (!val) return true;
-  const normalized = val.trim().toLowerCase();
-  return ["none", "n/a", "na", "none noted", "nil", "null", "undefined", "-", "—", ""].includes(normalized);
-};
+// Use shared isEmptyValue from the unified report engine
+import { isEmptyValue } from "@/hooks/useReportTimeline";
+
 
 const CaseProfile = () => {
   const { caseId } = useParams<{ caseId: string }>();

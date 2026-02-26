@@ -11,10 +11,10 @@ import { useCombinedTimeline } from "@/hooks/useCombinedTimeline";
 import { cn } from "@/lib/utils";
 import { SocialShareButtons } from "@/components/sharing";
 import { useSEO } from "@/hooks/useSEO";
-import { PDFTimelineExport } from "@/components/export";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCaseFilter } from "@/contexts/CaseFilterContext";
 import { useCases, useCase } from "@/hooks/useCases";
+import { buildFullTimelineReportHTML } from "@/hooks/useReportTimeline";
 
 const Index = () => {
   const [selectedCategories, setSelectedCategories] = useState<TimelineEvent["category"][]>([
@@ -47,24 +47,31 @@ const Index = () => {
     section: "Investigation",
     tags: ["Timeline", "Human Rights", "Investigation"],
   });
+
   const handleExportPDF = async () => {
-    // Invalidate and refetch to ensure fresh data (no cached hidden records)
+    // Invalidate and refetch to ensure fresh data
     await queryClient.invalidateQueries({ queryKey: ["hidden-static-events"] });
     await queryClient.invalidateQueries({ queryKey: ["extracted-events"] });
     await queryClient.invalidateQueries({ queryKey: ["all-extracted-events"] });
-    
-    // Small delay to allow React to re-render with fresh data
     await new Promise(resolve => setTimeout(resolve, 100));
-    
-    setIsPrintMode(true);
-    // Add light theme class for print and show PDF content
-    document.documentElement.classList.add("print-light-mode");
-    
-    setTimeout(() => {
-      window.print();
-      document.documentElement.classList.remove("print-light-mode");
-      setIsPrintMode(false);
-    }, 300);
+
+    // Use the unified report engine via window.open() buffer strategy
+    // Filter to only visible (non-hidden) events for the report
+    const reportEvents = allEvents.filter(e => !e.isHidden);
+    const reportStats = {
+      total: reportEvents.length,
+      byCategory: {} as Record<string, number>,
+    };
+    reportEvents.forEach(e => {
+      reportStats.byCategory[e.category] = (reportStats.byCategory[e.category] || 0) + 1;
+    });
+
+    const html = buildFullTimelineReportHTML(reportEvents, reportStats, caseTitle, caseNumber);
+    const reportWindow = window.open("", "_blank");
+    if (reportWindow) {
+      reportWindow.document.write(html);
+      reportWindow.document.close();
+    }
   };
 
   const handleCategoryToggle = (category: TimelineEvent["category"]) => {
@@ -171,8 +178,7 @@ const Index = () => {
           />
         </div>
 
-        {/* PDF Export Component - Only visible during print */}
-        <PDFTimelineExport events={filteredEvents} stats={stats} caseTitle={caseTitle} />
+        {/* PDF now uses window.open() strategy via handleExportPDF */}
 
         {/* Dynamic Timeline */}
         <div className={cn(
