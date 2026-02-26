@@ -1474,6 +1474,56 @@ export type Database = {
           },
         ]
       }
+      generated_reports: {
+        Row: {
+          annexures_count: number | null
+          case_id: string | null
+          created_at: string
+          description: string | null
+          generated_by: string | null
+          id: string
+          metadata: Json | null
+          report_type: string
+          sections_count: number | null
+          template: string | null
+          title: string
+        }
+        Insert: {
+          annexures_count?: number | null
+          case_id?: string | null
+          created_at?: string
+          description?: string | null
+          generated_by?: string | null
+          id?: string
+          metadata?: Json | null
+          report_type?: string
+          sections_count?: number | null
+          template?: string | null
+          title: string
+        }
+        Update: {
+          annexures_count?: number | null
+          case_id?: string | null
+          created_at?: string
+          description?: string | null
+          generated_by?: string | null
+          id?: string
+          metadata?: Json | null
+          report_type?: string
+          sections_count?: number | null
+          template?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generated_reports_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       harm_time_tracking: {
         Row: {
           activity_type: string

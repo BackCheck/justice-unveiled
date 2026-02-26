@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import hrpmLogo from "@/assets/human-rights-logo.png";
 
 interface LogoSpinnerProps {
   size?: "sm" | "md" | "lg" | "xl";
@@ -12,6 +11,13 @@ const sizeClasses = {
   md: "w-10 h-10",
   lg: "w-16 h-16",
   xl: "w-24 h-24",
+};
+
+const videoSizeClasses = {
+  sm: "w-8 h-8",
+  md: "w-14 h-14",
+  lg: "w-20 h-20",
+  xl: "w-32 h-32",
 };
 
 const textSizeClasses = {
@@ -28,43 +34,26 @@ export function LogoSpinner({ size = "md", className, showText = false }: LogoSp
         {/* Pulsing ring background */}
         <div 
           className={cn(
-            "absolute inset-0 rounded-full bg-primary/20 animate-ping",
+            "absolute inset-[-4px] rounded-full bg-primary/10 animate-ping",
             sizeClasses[size]
           )} 
-          style={{ animationDuration: "1.5s" }}
-        />
-        
-        {/* Rotating glow ring */}
-        <div 
-          className={cn(
-            "absolute inset-0 rounded-full",
-            "bg-gradient-to-r from-primary/40 via-transparent to-primary/40",
-            "animate-spin-slow",
-            sizeClasses[size]
-          )} 
-        />
-        
-        {/* Logo container with pulse */}
-        <div 
-          className={cn(
-            "relative flex items-center justify-center rounded-full",
-            "bg-background/80 backdrop-blur-sm",
-            "shadow-lg shadow-primary/20",
-            "animate-pulse",
-            sizeClasses[size]
-          )}
           style={{ animationDuration: "2s" }}
+        />
+        
+        {/* Animated logo video */}
+        <div 
+          className={cn(
+            "relative flex items-center justify-center rounded-full overflow-hidden",
+            videoSizeClasses[size]
+          )}
         >
-          <img 
-            src={hrpmLogo} 
-            alt="Loading..." 
-            className={cn(
-              "object-contain",
-              size === "sm" && "w-4 h-4",
-              size === "md" && "w-7 h-7",
-              size === "lg" && "w-12 h-12",
-              size === "xl" && "w-18 h-18"
-            )}
+          <video 
+            src="/loading-animation.mp4" 
+            autoPlay 
+            loop 
+            muted 
+            playsInline
+            className="w-full h-full object-cover rounded-full"
           />
         </div>
       </div>

@@ -55,7 +55,7 @@ export function buildReportShell(opts: ReportShellOptions): string {
 <!-- COVER PAGE -->
 <div style="min-height:95vh;display:flex;flex-direction:column;justify-content:space-between;padding:48px;">
   <div style="text-align:center;">
-    <img src="https://hrpm.lovable.app/favicon.png" alt="HRPM Logo" style="height:80px;width:auto;margin:0 auto 12px;display:block;" />
+    <img src="https://hrpm.lovable.app/human-rights-logo-blue.png" alt="HRPM Logo" style="height:80px;width:auto;margin:0 auto 12px;display:block;" />
     <h1 style="font-size:32px;color:#0087C1;margin:0;">HRPM.org</h1>
     <p style="font-size:16px;color:#6b7280;">Human Rights Protection & Monitoring</p>
     <div style="width:100px;height:3px;background:#0087C1;margin:12px auto;border-radius:4px;"></div>
