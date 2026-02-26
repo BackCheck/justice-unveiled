@@ -17,6 +17,8 @@ import { EntityAliasPanel } from "@/components/network/EntityAliasPanel";
 import { InfluenceNetworkPanel } from "@/components/network/InfluenceNetworkPanel";
 import { RoleTagsEditor } from "@/components/network/RoleTagsEditor";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const typeIcons: Record<EntityType, typeof Users> = {
   person: Users,
@@ -48,14 +50,52 @@ const EntityDetail = () => {
   const { data: enhancedEntities } = useEnhancedEntities();
   const updateProfile = useUpdateEntityProfile();
   const { role } = useUserRole();
+
+  // Direct DB fallback: fetch entity by raw UUID if not found in combined list
+  const { data: dbEntity, isLoading: dbLoading } = useQuery({
+    queryKey: ["entity-direct", entityId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("extracted_entities")
+        .select("*")
+        .eq("id", entityId!)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!entityId,
+  });
   
   const canEdit = role === "admin" || role === "editor";
 
-  // Find entity from combined entities (includes both static and AI-extracted)
-  const entity = combinedEntities.find(e => e.id === entityId);
+  // Find entity from combined entities (includes both static and AI-extracted with ai- prefix)
+  let entity: CombinedEntity | undefined = combinedEntities.find(e => e.id === entityId);
+  // Also try with ai- prefix
+  if (!entity) {
+    entity = combinedEntities.find(e => e.id === `ai-${entityId}`);
+  }
+  // Fallback to direct DB entity
+  if (!entity && dbEntity) {
+    const mapType = (t: string): EntityType => {
+      switch (t) { case "Person": return "person"; case "Organization": return "organization"; case "Official Body": return "agency"; case "Legal Entity": return "legal"; default: return "person"; }
+    };
+    entity = {
+      id: dbEntity.id,
+      name: dbEntity.name,
+      type: mapType(dbEntity.entity_type),
+      role: dbEntity.role || "Unknown Role",
+      description: dbEntity.description || "AI-extracted entity",
+      connections: [],
+      category: (dbEntity.category as any) || "neutral",
+      isAIExtracted: true,
+      sourceUploadId: dbEntity.source_upload_id,
+      relatedEventIds: dbEntity.related_event_ids || [],
+    };
+  }
   
   // Find enhanced entity data (from database with new fields)
-  const enhancedEntity = enhancedEntities?.find(e => e.id === entityId || `ai-${e.id}` === entityId);
+  const enhancedEntity = enhancedEntities?.find(e => e.id === entityId || `ai-${e.id}` === entityId) 
+    || (dbEntity ? dbEntity as any : undefined);
 
   // Get connections for this entity
   const entityConnections = combinedConnections.filter(
@@ -80,7 +120,7 @@ const EntityDetail = () => {
     });
   };
 
-  if (isLoading) {
+  if (isLoading || dbLoading) {
     return (
       <PlatformLayout>
         <div className="container mx-auto px-4 py-8">
