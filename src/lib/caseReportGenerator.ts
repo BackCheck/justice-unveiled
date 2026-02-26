@@ -394,5 +394,5 @@ export async function generateFullCaseReport(caseItem: Case, userIP: string = 'N
     sections
   });
 
-  openReportWindow(html);
+  await openReportWindow(html);
 }

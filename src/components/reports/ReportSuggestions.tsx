@@ -207,11 +207,11 @@ export const ReportSuggestions = () => {
 
   const allSuggestions = [...smartSuggestions, ...suggestions];
 
-  const handleGenerate = (suggestion: Suggestion) => {
+  const handleGenerate = async (suggestion: Suggestion) => {
     setGeneratingId(suggestion.id);
     try {
       const html = suggestion.generate();
-      openReportWindow(html);
+      await openReportWindow(html);
       logReport.mutate({
         title: suggestion.title,
         report_type: suggestion.reportType,

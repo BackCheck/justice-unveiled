@@ -1,5 +1,6 @@
 /**
  * Unified report shell — cover page, sections, closing for all report types.
+ * Logo is fetched and embedded as base64 to ensure visibility in popup windows.
  */
 
 interface ReportShellOptions {
@@ -10,6 +11,9 @@ interface ReportShellOptions {
   sections: { title: string; content: string }[];
   stats?: { label: string; value: string | number }[];
 }
+
+// Logo placeholder that gets replaced with base64 at runtime
+const LOGO_PLACEHOLDER = '%%LOGO_BASE64%%';
 
 export function buildReportShell(opts: ReportShellOptions): string {
   const now = new Date();
@@ -32,12 +36,12 @@ export function buildReportShell(opts: ReportShellOptions): string {
       `).join('')}
     </div>` : '';
 
+  // Sections flow continuously — NO forced page breaks between every section
   const sectionsHTML = opts.sections.map((s, i) => `
-    <div class="page-break"></div>
-    <div style="padding:48px;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid #0087C1;">
+    <div style="padding:32px 48px;page-break-inside:avoid;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #0087C1;">
         <span style="background:#0087C1;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;">${i + 1}</span>
-        <h2 style="font-size:20px;margin:0;color:#1f2937;">${s.title}</h2>
+        <h2 style="font-size:18px;margin:0;color:#1f2937;">${s.title}</h2>
       </div>
       ${s.content}
     </div>
@@ -46,16 +50,17 @@ export function buildReportShell(opts: ReportShellOptions): string {
   return `<!DOCTYPE html>
 <html><head><title>${opts.title} — ${opts.caseTitle}</title>
 <style>
-  @media print { @page { margin: 1cm; size: A4; } .page-break { page-break-after: always; } }
+  @media print { @page { margin: 0.8cm; size: A4; } .page-break { page-break-after: always; } }
   body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: #1f2937; margin: 0; padding: 0; background: #fff; line-height: 1.5; }
   table { page-break-inside: auto; }
   tr { page-break-inside: avoid; }
+  h4 { page-break-after: avoid; }
 </style></head><body>
 
 <!-- COVER PAGE -->
 <div style="min-height:95vh;display:flex;flex-direction:column;justify-content:space-between;padding:48px;">
   <div style="text-align:center;">
-    <img src="https://hrpm.lovable.app/human-rights-logo-blue.png" alt="HRPM Logo" style="height:80px;width:auto;margin:0 auto 12px;display:block;" />
+    <img src="${LOGO_PLACEHOLDER}" alt="HRPM Logo" style="height:80px;width:auto;margin:0 auto 12px;display:block;" />
     <h1 style="font-size:32px;color:#0087C1;margin:0;">HRPM.org</h1>
     <p style="font-size:16px;color:#6b7280;">Human Rights Protection & Monitoring</p>
     <div style="width:100px;height:3px;background:#0087C1;margin:12px auto;border-radius:4px;"></div>
@@ -97,13 +102,13 @@ export function buildReportShell(opts: ReportShellOptions): string {
   ${tocHTML}
 </div>
 
-${sectionsHTML}
-
 <div class="page-break"></div>
 
+${sectionsHTML}
+
 <!-- CLOSING -->
-<div style="min-height:50vh;display:flex;align-items:center;justify-content:center;padding:48px;">
-  <div style="text-align:center;max-width:440px;">
+<div style="padding:48px;margin-top:32px;">
+  <div style="text-align:center;max-width:440px;margin:0 auto;">
     <div style="width:60px;height:3px;background:#0087C1;margin:0 auto 24px;border-radius:4px;"></div>
     <h2 style="font-size:20px;">End of Report</h2>
     <p style="color:#6b7280;font-size:12px;margin:12px 0;">
@@ -124,12 +129,39 @@ ${sectionsHTML}
 </body></html>`;
 }
 
-export function openReportWindow(html: string) {
+/**
+ * Fetches the logo image and converts to base64 data URI.
+ */
+async function fetchLogoBase64(): Promise<string> {
+  try {
+    const response = await fetch('/human-rights-logo-blue.png');
+    const blob = await response.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = () => resolve('');
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return '';
+  }
+}
+
+let cachedLogoBase64: string | null = null;
+
+export async function openReportWindow(html: string) {
+  // Fetch logo as base64 (cached after first call)
+  if (!cachedLogoBase64) {
+    cachedLogoBase64 = await fetchLogoBase64();
+  }
+
+  const finalHtml = html.replace(new RegExp(LOGO_PLACEHOLDER.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), cachedLogoBase64 || '/human-rights-logo-blue.png');
+
   const w = window.open('', '_blank');
   if (!w) {
     alert('Please allow popups to generate reports.');
     return;
   }
-  w.document.write(html);
+  w.document.write(finalHtml);
   w.document.close();
 }

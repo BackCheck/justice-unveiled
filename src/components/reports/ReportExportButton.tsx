@@ -22,11 +22,11 @@ export const ReportExportButton = ({
   const [generating, setGenerating] = useState(false);
   const { toast } = useToast();
 
-  const handleExport = () => {
+  const handleExport = async () => {
     setGenerating(true);
     try {
       const html = generateReport();
-      openReportWindow(html);
+      await openReportWindow(html);
       toast({ title: "Report Generated", description: "Your report is ready for download." });
     } catch (err) {
       console.error("Report generation error:", err);

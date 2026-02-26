@@ -48,11 +48,10 @@ export function generateDossierReport(opts: DossierOpts): string {
     });
   }
 
-  // ── Sections ──
+  // ── Sections — flow continuously without forced page breaks ──
   const sectionsHTML = opts.sections.map((s, i) => `
-    <div class="page-break"></div>
-    <div style="padding:48px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;padding-bottom:12px;border-bottom:3px solid ${isCourt ? '#1e3a5f' : '#0087C1'};">
+    <div style="padding:32px 48px;page-break-inside:avoid;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:10px;border-bottom:3px solid ${isCourt ? '#1e3a5f' : '#0087C1'};">
         <div style="background:${isCourt ? '#1e3a5f' : '#0087C1'};color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;">${i + 1}</div>
         <h2 style="font-size:20px;margin:0;color:#1f2937;text-transform:${isCourt ? 'uppercase' : 'none'};letter-spacing:${isCourt ? '1px' : '0'};">${s.title}</h2>
       </div>
@@ -126,7 +125,7 @@ export function generateDossierReport(opts: DossierOpts): string {
 <!-- COVER PAGE -->
 <div style="min-height:95vh;display:flex;flex-direction:column;justify-content:space-between;padding:48px;${isCourt ? 'border:3px double #1e3a5f;margin:12px;' : ''}">
   <div style="text-align:center;">
-    <img src="https://hrpm.lovable.app/human-rights-logo-blue.png" alt="HRPM Logo" style="height:70px;width:auto;margin:0 auto 8px;display:block;" />
+    <img src="%%LOGO_BASE64%%" alt="HRPM Logo" style="height:70px;width:auto;margin:0 auto 8px;display:block;" />
     <h1 style="font-size:28px;color:${isCourt ? '#1e3a5f' : '#0087C1'};margin:0;">HRPM.org</h1>
     <p style="font-size:14px;color:#6b7280;">Human Rights Protection & Monitoring</p>
   </div>
