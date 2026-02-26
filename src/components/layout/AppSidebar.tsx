@@ -87,6 +87,7 @@ const NEW_ITEMS = new Set([
 
 const coreNavItems = [
   { path: "/", labelKey: "nav.home", icon: Home },
+  { path: "/reports", labelKey: "nav.reportBuilder", icon: FileText },
   { path: "/cases", labelKey: "nav.caseFiles", icon: FolderOpen },
   { path: "/timeline", labelKey: "nav.timeline", icon: Clock },
   { path: "/network", labelKey: "nav.entityNetwork", icon: Network },
@@ -96,7 +97,6 @@ const coreNavItems = [
   { path: "/investigations", labelKey: "nav.investigations", icon: Target },
   { path: "/osint-toolkit", labelKey: "nav.osintToolkit", icon: Radar },
   { path: "/blog", labelKey: "nav.blogNews", icon: Newspaper },
-  { path: "/reports", labelKey: "nav.reportCenter", icon: FileText },
 ];
 
 const moreToolsItems = [

@@ -8,7 +8,7 @@ import { DossierBuilder } from "@/components/reports/DossierBuilder";
 
 const ReportCenter = () => {
   useSEO({
-    title: "Report Center",
+    title: "Investigative Report Builder",
     description: "Generate comprehensive intelligence reports with AI-powered suggestions and court dossier builder.",
   });
 
