@@ -1,5 +1,7 @@
 import { useState, useMemo } from "react";
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
+import { ReportExportButton } from "@/components/reports/ReportExportButton";
+import { generateReconstructionReport } from "@/lib/reportGenerators";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -123,6 +125,10 @@ const Reconstruction = () => {
 
             {/* Controls */}
             <div className="flex items-center gap-3 flex-wrap">
+              <ReportExportButton
+                label="Reconstruction Report"
+                generateReport={() => generateReconstructionReport(events as any, contradictions as any, cases?.find(c => c.id === selectedCaseId)?.title || "Active Investigation", cases?.find(c => c.id === selectedCaseId)?.case_number)}
+              />
               {/* Case Filter */}
               <Select value={selectedCaseId || "all"} onValueChange={(val) => setSelectedCaseId(val === "all" ? "" : val)}>
                 <SelectTrigger className="w-[200px] glass-card">

@@ -68,6 +68,7 @@ const allPages: SearchResult[] = [
   { id: "analysis-history", titleKey: "nav.analysisHistory", descriptionKey: "pages.analysisHistorySub", path: "/analysis-history", icon: Clock, categoryKey: "nav.investigation", badge: "AI" },
   // Resources - additional
   { id: "changelog", titleKey: "nav.changelog", descriptionKey: "pages.changelogSub", path: "/changelog", icon: Clock, categoryKey: "nav.resources" },
+  { id: "reports", titleKey: "nav.reportCenter", descriptionKey: "pages.reportCenterSub", path: "/reports", icon: FileText, categoryKey: "nav.resources" },
 ];
 
 const categoryKeys = ["nav.core", "nav.investigation", "nav.analysis", "nav.resources", "nav.system"];

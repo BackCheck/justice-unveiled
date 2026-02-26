@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
+import { ReportExportButton } from "@/components/reports/ReportExportButton";
+import { generateInternationalReport } from "@/lib/reportGenerators";
+import { useCombinedTimeline } from "@/hooks/useCombinedTimeline";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -107,6 +110,7 @@ const InternationalAnalysis = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("documented");
   const { toast } = useToast();
+  const { events: timelineEvents } = useCombinedTimeline(false);
 
   const totalViolations = violationStats.local.total + violationStats.international.total;
   const totalCritical = violationStats.local.critical + violationStats.international.critical;
@@ -160,6 +164,10 @@ const InternationalAnalysis = () => {
                 </p>
               </div>
               <div className="flex items-center gap-3">
+                <ReportExportButton
+                  label="Violations Report"
+                  generateReport={() => generateInternationalReport(violationStats as any, timelineEvents, "Active Investigation")}
+                />
                 <div className="text-right">
                   <div className="text-3xl font-bold text-destructive">{totalViolations}</div>
                   <div className="text-xs text-muted-foreground">Total Violations</div>

@@ -61,7 +61,8 @@
     "core": "Core",
     "investigation": "Investigation",
     "resources": "Resources",
-    "system": "System"
+    "system": "System",
+    "reportCenter": "Report Center"
   },
   "pages": {
     "investigativeTimeline": "Chronological event documentation",
@@ -92,6 +93,7 @@
     "osintToolkitSub": "Digital forensics & entity enrichment",
     "analysisHistorySub": "Browse AI-analyzed intelligence archive",
     "changelogSub": "Feature releases & platform updates",
+    "reportCenterSub": "Generate comprehensive intelligence reports",
     "adminSub": "System administration",
     "searchIntel": "Search",
     "quickActions": "Quick Actions",

@@ -53,6 +53,7 @@ const pageTitleKeys: Record<string, { titleKey: string; subtitleKey?: string; is
   "/changelog": { titleKey: "nav.changelog", subtitleKey: "pages.changelogSub" },
   "/analysis-history": { titleKey: "nav.analysisHistory", subtitleKey: "pages.analysisHistorySub", isAI: true },
   "/who-what-why": { titleKey: "nav.about", subtitleKey: "pages.aboutSub" },
+  "/reports": { titleKey: "nav.reportCenter", subtitleKey: "pages.reportCenterSub" },
 };
 
 export const PlatformLayout = ({ children }: PlatformLayoutProps) => {

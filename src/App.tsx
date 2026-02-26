@@ -46,6 +46,7 @@ const Changelog = lazy(() => import("./pages/Changelog"));
 const AnalysisHistory = lazy(() => import("./pages/AnalysisHistory"));
 const OsintToolkit = lazy(() => import("./pages/OsintToolkit"));
 const Landing = lazy(() => import("./pages/Landing"));
+const ReportCenter = lazy(() => import("./pages/ReportCenter"));
 
 const queryClient = new QueryClient();
 
@@ -102,6 +103,7 @@ const App = () => (
             <Route path="/watchlist" element={<Watchlist />} />
             <Route path="/entities/:entityId" element={<EntityDetail />} />
             <Route path="/welcome" element={<Landing />} />
+            <Route path="/reports" element={<ReportCenter />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

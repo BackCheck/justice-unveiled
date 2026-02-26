@@ -96,6 +96,7 @@ const coreNavItems = [
   { path: "/investigations", labelKey: "nav.investigations", icon: Target },
   { path: "/osint-toolkit", labelKey: "nav.osintToolkit", icon: Radar },
   { path: "/blog", labelKey: "nav.blogNews", icon: Newspaper },
+  { path: "/reports", labelKey: "nav.reportCenter", icon: FileText },
 ];
 
 const moreToolsItems = [

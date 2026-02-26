@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ReportExportButton } from "@/components/reports/ReportExportButton";
+import { generateEconomicHarmReport } from "@/lib/reportGenerators";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -95,6 +97,10 @@ const RegulatoryHarm = () => {
               </div>
 
               <div className="flex items-center gap-3">
+                <ReportExportButton
+                  label="Economic Harm Report"
+                  generateReport={() => generateEconomicHarmReport(incidents, losses, stats, cases.find(c => c.id === selectedCaseId)?.title || "Active Investigation", cases.find(c => c.id === selectedCaseId)?.case_number)}
+                />
                 <Select value={selectedCaseId} onValueChange={setSelectedCaseId}>
                   <SelectTrigger className="w-[250px]">
                     <SelectValue placeholder="Select a case..." />

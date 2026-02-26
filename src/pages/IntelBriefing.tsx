@@ -25,6 +25,13 @@ import { ProceduralFailuresTimeline } from "@/components/intel/ProceduralFailure
 import { DocumentAnalyzer } from "@/components/intel/DocumentAnalyzer";
 import { ExtractedEventsList } from "@/components/intel/ExtractedEventsList";
 import { SocialShareButtons } from "@/components/sharing";
+import { ReportExportButton } from "@/components/reports/ReportExportButton";
+import { generateIntelBriefingReport } from "@/lib/reportGenerators";
+import { useCombinedTimeline } from "@/hooks/useCombinedTimeline";
+import { useCombinedEntities } from "@/hooks/useCombinedEntities";
+import { usePlatformStats } from "@/hooks/usePlatformStats";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 import { useSEO } from "@/hooks/useSEO";
 
@@ -36,7 +43,16 @@ const IntelBriefing = () => {
     keywords: ["intelligence briefing", "threat analysis", "forensic evidence", "surveillance", "human rights"],
   });
   const [expandedSection, setExpandedSection] = useState<string | undefined>("forensic-digital-evidence");
-
+  const { events } = useCombinedTimeline(false);
+  const { entities } = useCombinedEntities();
+  const { stats: platformStats } = usePlatformStats();
+  const { data: caseData } = useQuery({
+    queryKey: ["case-for-report-intel"],
+    queryFn: async () => {
+      const { data } = await supabase.from("cases").select("title, case_number").eq("is_featured", true).limit(1).maybeSingle();
+      return data;
+    },
+  });
   return (
     <PlatformLayout>
       {/* Hero Section */}
@@ -62,6 +78,10 @@ const IntelBriefing = () => {
               </p>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
+              <ReportExportButton
+                label="Intel Briefing Report"
+                generateReport={() => generateIntelBriefingReport(events, entities, platformStats, caseData?.title || "Active Investigation", caseData?.case_number)}
+              />
               <SocialShareButtons
                 title="Intelligence Briefing - HRPM"
                 description="Comprehensive analysis of forensic evidence, witness statements, and state surveillance misuse patterns."
