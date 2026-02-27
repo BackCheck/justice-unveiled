@@ -67,7 +67,7 @@ const App = () => (
           <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={<Landing />} />
+            <Route path="/" element={<Dashboard />} />
             <Route path="/cases" element={<CasesList />} />
             <Route path="/cases/:caseId" element={<CaseProfile />} />
             <Route path="/timeline" element={<Index />} />
@@ -103,7 +103,6 @@ const App = () => (
             <Route path="/watchlist" element={<Watchlist />} />
             <Route path="/entities/:entityId" element={<EntityDetail />} />
             <Route path="/welcome" element={<Landing />} />
-            <Route path="/home" element={<Dashboard />} />
             <Route path="/reports" element={<ReportCenter />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

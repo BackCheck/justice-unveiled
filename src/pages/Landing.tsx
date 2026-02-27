@@ -1,15 +1,26 @@
-import { lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { 
+  ArrowRight, 
+  Sparkles,
+  Target,
+  Eye,
+  Plus,
   LogOut,
   Code,
   BookOpen,
   Github
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import hrpmLogo from "@/assets/human-rights-logo.png";
+import ParticleField from "@/components/landing/ParticleField";
+import GlowingOrb from "@/components/landing/GlowingOrb";
+import ScrollReveal from "@/components/landing/ScrollReveal";
 import { MotionScrollReveal } from "@/components/ui/motion-scroll-reveal";
+import GradientText from "@/components/landing/GradientText";
+import TypingText from "@/components/landing/TypingText";
 import SpotlightEffect from "@/components/landing/SpotlightEffect";
 import TrustMetrics from "@/components/landing/TrustMetrics";
 import InteractiveHeroModules from "@/components/landing/InteractiveHeroModules";
@@ -17,15 +28,11 @@ import FeaturedCasesSection from "@/components/landing/FeaturedCasesSection";
 import ViolationMetrics from "@/components/landing/ViolationMetrics";
 import BottomCTA from "@/components/landing/BottomCTA";
 import LandingFooter from "@/components/landing/LandingFooter";
-import ScrollReveal from "@/components/landing/ScrollReveal";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useSEO } from "@/hooks/useSEO";
-
-const MountainHeroSection = lazy(() => import("@/components/landing/MountainHeroSection"));
-const GlobeHeroSection = lazy(() => import("@/components/landing/GlobeHeroSection"));
 
 const Landing = () => {
   useSEO({
@@ -62,16 +69,20 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-background overflow-hidden relative">
-      {/* Navigation - floating over mountain hero */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-background/40 backdrop-blur-xl border-b border-border/20">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <SpotlightEffect size={500} intensity={0.2} />
+      <ParticleField />
+
+      {/* Navigation */}
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/30">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
               <img 
                 src={hrpmLogo} 
                 alt="HRPM Logo" 
-                className="w-9 h-9 transition-all duration-300 group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]"
+                className="w-10 h-10 transition-all duration-300 group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]"
               />
+              <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
              <div className="flex flex-col">
                <span className="font-bold text-lg text-foreground tracking-tight">HRPM</span>
@@ -102,7 +113,7 @@ const Landing = () => {
             {user ? (
               <div className="flex items-center gap-2">
                 <Button size="sm" variant="outline" className="border-primary/50 hover:bg-primary hover:text-primary-foreground transition-all duration-300" asChild>
-                  <Link to="/home">Dashboard</Link>
+                  <Link to="/">Dashboard</Link>
                 </Button>
                 <Button size="sm" variant="ghost" onClick={handleSignOut} className="text-muted-foreground hover:text-foreground">
                   <LogOut className="w-4 h-4" />
@@ -118,7 +129,7 @@ const Landing = () => {
             <LanguageSwitcher />
             {user ? (
               <Button size="sm" asChild>
-                <Link to="/home">Dashboard</Link>
+                <Link to="/">Dashboard</Link>
               </Button>
             ) : (
               <Button size="sm" asChild>
@@ -129,52 +140,117 @@ const Landing = () => {
         </div>
       </header>
 
-      {/* Section 1: Full-screen Mountain Hero — immediate impact */}
-      <Suspense fallback={<div className="w-full h-screen bg-background" />}>
-        <MountainHeroSection />
-      </Suspense>
+      {/* Hero Section - Compact */}
+      <section className="relative min-h-[70vh] flex items-center">
+        <GlowingOrb color="primary" size="xl" className="top-20 -left-32" delay={0} />
+        <GlowingOrb color="accent" size="lg" className="bottom-20 -right-20" delay={1} />
 
-      {/* Everything below loads on scroll */}
-      <div className="relative">
-        <SpotlightEffect size={500} intensity={0.2} />
+        <div className="relative max-w-7xl mx-auto px-4 py-12 md:py-20 z-10">
+          <div className="text-center max-w-4xl mx-auto">
+            <ScrollReveal delay={100}>
+              <Badge 
+                variant="outline" 
+                className={cn(
+                  "mb-6 px-4 py-2 bg-primary/10 text-primary border-primary/30",
+                  "hover:bg-primary/20 transition-all duration-300 cursor-default"
+                )}
+              >
+                <Sparkles className="w-3.5 h-3.5 mr-2" />
+                {t('landing.hero.badge')}
+              </Badge>
+            </ScrollReveal>
 
-        {/* Section 2: Globe + Stats */}
-        <MotionScrollReveal direction="up" delay={100}>
-          <Suspense fallback={<div className="min-h-[85vh] bg-background" />}>
-            <GlobeHeroSection />
-          </Suspense>
-        </MotionScrollReveal>
+            <ScrollReveal delay={200}>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                <span className="text-foreground">{t('landing.hero.title1')}</span>
+                <br />
+                <span className="text-foreground">{t('landing.hero.title2')} </span>
+                <span className="text-primary relative">
+                  {t('landing.hero.title3')}
+                  <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
+                </span>
+              </h1>
+            </ScrollReveal>
 
-        {/* Trust Metrics */}
-        <ScrollReveal delay={100}>
-          <div className="max-w-4xl mx-auto px-4 pb-12">
-            <TrustMetrics />
+            <ScrollReveal delay={300}>
+              <div className="text-lg md:text-xl text-foreground/80 mb-4 font-medium">
+                <span className="text-foreground">{t('landing.hero.typingPrefix')} </span>
+                <TypingText 
+                  words={t('landing.hero.typingWords', { returnObjects: true }) as string[]}
+                  typingSpeed={80}
+                  deletingSpeed={40}
+                  pauseDuration={2500}
+                />
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal delay={400}>
+              <p className="text-base md:text-lg text-foreground/70 mb-8 max-w-2xl mx-auto leading-relaxed">
+                {t('landing.hero.description')}
+              </p>
+            </ScrollReveal>
+
+            <ScrollReveal delay={500}>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Button size="lg" className="group relative overflow-hidden" asChild>
+                  <Link to="/cases">
+                    <span className="relative z-10 flex items-center">
+                      {t('landing.hero.cta')}
+                      <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </Link>
+                </Button>
+                <Button size="lg" variant="outline" className="border-primary/50 hover:bg-primary hover:text-primary-foreground" asChild>
+                  <Link to="/auth">
+                    <Plus className="w-4 h-4 mr-2" />
+                    {t('landing.hero.startInvestigation')}
+                  </Link>
+                </Button>
+                <Button size="lg" variant="ghost" className="hover:bg-primary/5" asChild>
+                  <Link to="/">{t('landing.hero.secondaryCta')}</Link>
+                </Button>
+              </div>
+            </ScrollReveal>
           </div>
-        </ScrollReveal>
 
-        {/* Featured Cases */}
-        <MotionScrollReveal direction="up" delay={100}>
-          <FeaturedCasesSection />
-        </MotionScrollReveal>
+          {/* Trust Metrics */}
+          <ScrollReveal delay={600}>
+            <div className="mt-14 max-w-4xl mx-auto">
+              <TrustMetrics />
+            </div>
+          </ScrollReveal>
 
-        {/* Violation Metrics */}
-        <MotionScrollReveal direction="up" delay={150}>
-          <ViolationMetrics />
-        </MotionScrollReveal>
+          {/* Scroll indicator */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 animate-bounce">
+            <div className="w-6 h-10 rounded-full border-2 border-primary/30 flex items-start justify-center p-2">
+              <div className="w-1 h-2 bg-primary rounded-full animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </section>
 
-        {/* Interactive Module Explorer */}
-        <MotionScrollReveal direction="scale" delay={100}>
-          <InteractiveHeroModules />
-        </MotionScrollReveal>
+      {/* Featured Cases - data driven */}
+      <MotionScrollReveal direction="up" delay={100}>
+        <FeaturedCasesSection />
+      </MotionScrollReveal>
 
-        {/* Bottom CTA */}
-        <MotionScrollReveal direction="up" delay={200}>
-          <BottomCTA />
-        </MotionScrollReveal>
+      {/* Violation Metrics Dashboard */}
+      <MotionScrollReveal direction="up" delay={150}>
+        <ViolationMetrics />
+      </MotionScrollReveal>
 
-        {/* Footer */}
-        <LandingFooter />
-      </div>
+      {/* Interactive Module Explorer */}
+      <MotionScrollReveal direction="scale" delay={100}>
+        <InteractiveHeroModules />
+      </MotionScrollReveal>
+
+      {/* Bottom CTA */}
+      <MotionScrollReveal direction="up" delay={200}>
+        <BottomCTA />
+      </MotionScrollReveal>
+
+      {/* Footer */}
+      <LandingFooter />
     </div>
   );
 };
