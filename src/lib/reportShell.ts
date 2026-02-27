@@ -10,6 +10,9 @@ interface ReportShellOptions {
   caseNumber?: string;
   sections: { title: string; content: string }[];
   stats?: { label: string; value: string | number }[];
+  frontMatterHTML?: string;
+  appendicesHTML?: string;
+  courtMode?: boolean;
 }
 
 // Logo placeholder that gets replaced with base64 at runtime
@@ -102,9 +105,16 @@ export function buildReportShell(opts: ReportShellOptions): string {
   ${tocHTML}
 </div>
 
+${opts.frontMatterHTML ? `
+<div class="page-break"></div>
+${opts.frontMatterHTML}
+` : ''}
+
 <div class="page-break"></div>
 
 ${sectionsHTML}
+
+${opts.appendicesHTML || ''}
 
 <!-- CLOSING -->
 <div style="padding:48px;margin-top:32px;">
