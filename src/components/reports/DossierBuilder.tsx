@@ -23,6 +23,11 @@ import { validateCourtDossier, auditCitations, getReadinessLabel, type Validatio
 import { assertReportContext, type QAResult, type ReportQAContext } from "@/lib/reportQA";
 import { QAResultsModal } from "./QAResultsModal";
 import { buildLODAppendix, buildKeyIssuesAppendix } from "@/lib/reportBlocks";
+import { runSafetyGate } from "@/hooks/useSafetyGate";
+import { SafetyGateModal } from "@/components/safety/SafetyGateModal";
+import { SafetyBadge } from "@/components/safety/SafetyBadge";
+import type { SafetyGateResult } from "@/types/safety";
+import { buildSafetyFrontMatter, buildSafetyDisclaimers } from "@/lib/reportFrontMatter";
 import {
   FileText, Plus, Trash2, ChevronRight, ChevronLeft,
   Gavel, Search, Loader2, Sparkles, ArrowUp, ArrowDown,
@@ -76,6 +81,8 @@ export const DossierBuilder = () => {
   const [qaResult, setQaResult] = useState<QAResult | null>(null);
   const [qaOpen, setQaOpen] = useState(false);
   const [qaBypassed, setQaBypassed] = useState(false);
+  const [safetyResult, setSafetyResult] = useState<SafetyGateResult | null>(null);
+  const [safetyOpen, setSafetyOpen] = useState(false);
 
   // Court-specific state
   const [selectedCourt, setSelectedCourt] = useState<CourtId>("IHC");
@@ -385,10 +392,19 @@ export const DossierBuilder = () => {
           annexures: selectedAnnexures,
           includeWatermark,
         });
-        // Inject appendices before closing </body>
-        if (appendicesHTML) {
-          html = html.replace('</body>', appendicesHTML + '</body>');
-        }
+        // Inject safety front-matter + disclaimers
+        const frontMatter = buildSafetyFrontMatter({
+          mode: "court_mode",
+          courtStyle: selectedCourt as any,
+          filingType: "writ",
+          caseTitle: caseData?.title,
+          eventCount: (caseEvents || []).length,
+          sourceCount: (evidenceFiles || []).length,
+        });
+        const disclaimers = buildSafetyDisclaimers("court_mode");
+        // Inject appendices + front-matter before closing </body>
+        const injectHTML = disclaimers + frontMatter + appendicesHTML;
+        html = html.replace('</body>', injectHTML + '</body>');
       } else {
         html = generateDossierReport({
           template,
@@ -399,6 +415,23 @@ export const DossierBuilder = () => {
           sections,
           annexures: selectedAnnexures,
         });
+      }
+
+      // Run Safety Gate
+      const sgResult = runSafetyGate({
+        text: html.replace(/<[^>]*>/g, ' ').slice(0, 50000),
+        mode: template === "court" ? "court_mode" : "controlled_legal",
+        courtStyle: template === "court" ? (selectedCourt as any) : undefined,
+        filingType: template === "court" ? "writ" : undefined,
+        context: { entities: (caseEntities || []).map(e => ({ name: e.name, category: e.category || undefined })) },
+        isAdminOverride: bypassed,
+      });
+
+      if (sgResult.blockers.length > 0 && !bypassed) {
+        setSafetyResult(sgResult);
+        setSafetyOpen(true);
+        setGenerating(false);
+        return;
       }
 
       await openReportWindow(html);
@@ -955,6 +988,23 @@ export const DossierBuilder = () => {
         qaResult={qaResult}
         onProceedAnyway={() => executeGeneration(true)}
         onCancel={() => { setQaOpen(false); setQaResult(null); }}
+      />
+    )}
+
+    {safetyResult && (
+      <SafetyGateModal
+        open={safetyOpen}
+        onOpenChange={setSafetyOpen}
+        result={safetyResult}
+        onProceed={() => {
+          setSafetyOpen(false);
+          setSafetyResult(null);
+          executeGeneration(true);
+        }}
+        onCancel={() => {
+          setSafetyOpen(false);
+          setSafetyResult(null);
+        }}
       />
     )}
     </>
