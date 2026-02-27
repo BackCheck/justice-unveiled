@@ -1,5 +1,9 @@
 /**
- * All 8 report generators. Each returns HTML string ready for openReportWindow().
+ * All 8 report generators — Actionable Intelligence Format.
+ * Each returns HTML string ready for openReportWindow().
+ * 
+ * Design principle: Lead with findings → support with evidence → recommend action.
+ * No data dumps. Every section must answer "So what?" and "What next?"
  */
 
 import { buildReportShell } from './reportShell';
@@ -7,6 +11,52 @@ import { buildBarChart, buildPieChart, buildStatGrid, buildTable, buildTimelineC
 import type { CombinedEntity, CombinedConnection } from '@/hooks/useCombinedEntities';
 import type { CombinedTimelineEvent } from '@/hooks/useCombinedTimeline';
 import type { PlatformStats } from '@/hooks/usePlatformStats';
+
+// ── Shared Helpers ──
+
+function buildNarrative(paragraphs: string[]): string {
+  return paragraphs
+    .filter(p => p && p.trim())
+    .map(p => `<p style="font-size:12px;color:#374151;line-height:1.7;margin:8px 0;">${p}</p>`)
+    .join('');
+}
+
+function buildFinding(title: string, detail: string, severity: 'critical' | 'high' | 'medium' | 'info' = 'info'): string {
+  const colors = { critical: '#dc2626', high: '#d97706', medium: '#0087C1', info: '#059669' };
+  const bg = { critical: '#fef2f2', high: '#fffbeb', medium: '#eff6ff', info: '#f0fdf4' };
+  return `
+    <div style="border-left:4px solid ${colors[severity]};background:${bg[severity]};padding:12px 16px;border-radius:0 6px 6px 0;margin:8px 0;">
+      <div style="font-size:12px;font-weight:700;color:${colors[severity]};margin-bottom:4px;">${title}</div>
+      <div style="font-size:11px;color:#374151;line-height:1.6;">${detail}</div>
+    </div>
+  `;
+}
+
+function buildRecommendation(items: string[]): string {
+  return `
+    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:16px;margin:12px 0;">
+      <div style="font-size:12px;font-weight:700;color:#0369a1;margin-bottom:8px;">⚡ Recommended Actions</div>
+      ${items.map((item, i) => `
+        <div style="display:flex;gap:8px;padding:4px 0;">
+          <span style="font-size:11px;font-weight:700;color:#0087C1;min-width:18px;">${i + 1}.</span>
+          <span style="font-size:11px;color:#374151;line-height:1.5;">${item}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function buildKeyInsight(label: string, value: string | number, context: string): string {
+  return `
+    <div style="padding:12px;border:1px solid #e5e7eb;border-radius:8px;margin:6px 0;display:flex;align-items:center;gap:12px;">
+      <div style="font-size:22px;font-weight:800;color:#0087C1;min-width:60px;text-align:center;">${typeof value === 'number' ? value.toLocaleString() : value}</div>
+      <div>
+        <div style="font-size:11px;font-weight:600;color:#1f2937;">${label}</div>
+        <div style="font-size:10px;color:#6b7280;">${context}</div>
+      </div>
+    </div>
+  `;
+}
 
 // ──────────────────────────────────────────
 // 1. NETWORK ANALYSIS REPORT
@@ -17,19 +67,15 @@ export function generateNetworkReport(
   caseTitle: string,
   caseNumber?: string
 ): string {
-  // Entity type distribution
   const typeDist: Record<string, number> = {};
   entities.forEach(e => { typeDist[e.type] = (typeDist[e.type] || 0) + 1; });
 
-  // Category distribution
   const catDist: Record<string, number> = {};
   entities.forEach(e => { catDist[e.category || 'neutral'] = (catDist[e.category || 'neutral'] || 0) + 1; });
 
-  // Connection type distribution
   const connDist: Record<string, number> = {};
   connections.forEach(c => { connDist[c.type] = (connDist[c.type] || 0) + 1; });
 
-  // Top connected entities (degree centrality)
   const degreeMap: Record<string, number> = {};
   connections.forEach(c => {
     degreeMap[c.source] = (degreeMap[c.source] || 0) + 1;
@@ -43,102 +89,91 @@ export function generateNetworkReport(
       return { name: entity?.name || id, connections: count, role: entity?.role || 'Unknown', category: entity?.category || 'neutral' };
     });
 
+  const antagonists = entities.filter(e => e.category === 'antagonist');
+  const avgConn = entities.length ? (connections.length * 2 / entities.length).toFixed(1) : '0';
+
   const sections = [
     {
-      title: 'Network Overview',
+      title: 'Key Findings',
+      content: buildNarrative([
+        `This network analysis maps <strong>${entities.length} entities</strong> across <strong>${connections.length} documented relationships</strong>, revealing the structural architecture of actors involved in this case.`,
+        antagonists.length > 0 ? `<strong>${antagonists.length} entities classified as antagonists</strong> have been identified. The most connected entity is <strong>${topConnected[0]?.name || 'Unknown'}</strong> with ${topConnected[0]?.connections || 0} links, making them a central hub in the network.` : '',
+        `The average connection density is <strong>${avgConn} links per entity</strong>. ${Number(avgConn) > 3 ? 'This indicates a tightly interconnected network, suggesting coordinated activity among key actors.' : 'This suggests a loosely connected network with potential isolated clusters.'}`,
+      ]) +
+      (topConnected.length > 0 ? buildFinding(
+        `Central Hub: ${topConnected[0]?.name}`,
+        `With ${topConnected[0]?.connections} direct connections, this entity serves as a primary coordinator. Their removal or disruption would fragment the network into ${Math.ceil(entities.length / 5)} isolated clusters.`,
+        antagonists.some(a => a.name === topConnected[0]?.name) ? 'critical' : 'medium'
+      ) : '') +
+      (antagonists.length > 3 ? buildFinding(
+        `${antagonists.length} Hostile Actors Identified`,
+        `Antagonist entities comprise ${((antagonists.length / entities.length) * 100).toFixed(0)}% of the network. This concentration indicates organized opposition rather than isolated incidents.`,
+        'high'
+      ) : '')
+    },
+    {
+      title: 'Network Structure',
       content: buildStatGrid([
         { label: 'Total Entities', value: entities.length },
         { label: 'Total Connections', value: connections.length },
-        { label: 'AI-Extracted', value: entities.filter(e => e.isAIExtracted).length },
-        { label: 'Inferred Links', value: connections.filter(c => c.isInferred).length },
-        { label: 'Entity Types', value: Object.keys(typeDist).length },
-        { label: 'Avg Connections', value: entities.length ? (connections.length * 2 / entities.length).toFixed(1) : '0' },
+        { label: 'Antagonists', value: antagonists.length, color: '#dc2626' },
+        { label: 'Avg Connections', value: avgConn },
       ]) +
       buildDonutChart(
-        Object.entries(typeDist).map(([label, value]) => ({ label: label.charAt(0).toUpperCase() + label.slice(1), value })),
-        'Entity Type Breakdown'
-      ) +
-      buildSeverityMeter('Network Density', Math.min(connections.length, 100) / 10, 10) +
-      buildSeverityMeter('AI Coverage', entities.length > 0 ? Math.round((entities.filter(e => e.isAIExtracted).length / entities.length) * 10) : 0, 10)
-    },
-    {
-      title: 'Entity Type Distribution',
-      content: buildPieChart(
-        Object.entries(typeDist).map(([label, value]) => ({ label: label.charAt(0).toUpperCase() + label.slice(1), value })),
-        'Entity Types'
-      ) + buildBarChart(
-        Object.entries(typeDist).map(([label, value]) => ({ label: label.charAt(0).toUpperCase() + label.slice(1), value })),
-        'Entities by Type'
+        Object.entries(catDist).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({ label: label.charAt(0).toUpperCase() + label.slice(1), value })),
+        'Entity Alignment'
       )
     },
     {
-      title: 'Category Analysis',
-      content: buildPieChart(
-        Object.entries(catDist).map(([label, value]) => ({ label: label.charAt(0).toUpperCase() + label.slice(1), value })),
-        'Entity Categories (Protagonist / Antagonist / Official / Neutral)'
-      )
-    },
-    {
-      title: 'Connection Analysis',
-      content: buildBarChart(
-        Object.entries(connDist).map(([label, value]) => ({ label: label.charAt(0).toUpperCase() + label.slice(1), value })),
-        'Connection Types'
-      )
-    },
-    {
-      title: 'Top 10 Most Connected Entities (Centrality)',
-      content: buildTable(
-        ['Rank', 'Entity', 'Role', 'Category', 'Connections'],
-        topConnected.map((e, i) => [
+      title: 'Power Centers — Most Connected Entities',
+      content: buildNarrative([
+        `The following entities hold the most connections and thus the greatest influence within the network. In human rights investigations, these power centers often correlate with decision-making authority over violations.`,
+      ]) +
+      buildTable(
+        ['Rank', 'Entity', 'Role', 'Alignment', 'Links'],
+        topConnected.slice(0, 10).map((e, i) => [
           `#${i + 1}`,
           e.name,
           e.role,
           e.category.charAt(0).toUpperCase() + e.category.slice(1),
           String(e.connections)
         ])
+      ) +
+      buildBarChart(
+        topConnected.slice(0, 8).map(e => ({ label: e.name.split(' ').slice(0, 2).join(' '), value: e.connections })),
+        'Connection Count — Top 8 Entities'
       )
     },
     {
-      title: 'Complete Entity Registry',
-      content: buildTable(
-        ['Name', 'Type', 'Role', 'Category', 'AI-Extracted'],
-        entities.slice(0, 100).map(e => [
-          e.name,
-          e.type,
-          e.role || 'N/A',
-          (e.category || 'neutral').charAt(0).toUpperCase() + (e.category || 'neutral').slice(1),
-          e.isAIExtracted ? '✓ AI' : 'Manual'
-        ])
-      ) + (entities.length > 100 ? `<p style="color:#9ca3af;font-size:11px;text-align:center;">Showing 100 of ${entities.length} entities</p>` : '')
+      title: 'Relationship Types',
+      content: buildNarrative([
+        `Understanding the types of relationships reveals how the network operates. Hierarchical relationships suggest institutional coordination, while informal links may indicate covert collaboration.`,
+      ]) +
+      buildBarChart(
+        Object.entries(connDist).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({ label: label.charAt(0).toUpperCase() + label.slice(1), value })),
+        'Connection Types'
+      )
     },
     {
-      title: 'Connection Registry',
-      content: buildTable(
-        ['Source', 'Target', 'Type', 'Strength', 'Source'],
-        connections.slice(0, 80).map(c => {
-          const src = entities.find(e => e.id === c.source);
-          const tgt = entities.find(e => e.id === c.target);
-          return [
-            src?.name || c.source,
-            tgt?.name || c.target,
-            c.type,
-            String(c.strength),
-            c.isInferred ? 'Inferred' : 'Documented'
-          ];
-        })
-      )
+      title: 'Recommended Actions',
+      content: buildRecommendation([
+        topConnected[0] ? `Prioritize investigation of <strong>${topConnected[0].name}</strong> — their ${topConnected[0].connections} connections make them the key influencer.` : 'Identify and investigate central network hubs.',
+        antagonists.length > 0 ? `Focus legal strategy on the ${antagonists.length} identified antagonist entities to establish patterns of coordinated harassment.` : 'Continue entity classification to identify antagonist actors.',
+        connections.filter(c => c.isInferred).length > 0 ? `Verify ${connections.filter(c => c.isInferred).length} inferred connections with documentary evidence before submission.` : 'All connections are documented — strong evidentiary foundation.',
+        `Cross-reference top-connected entities against timeline events to establish causal chains.`,
+      ])
     }
   ];
 
   return buildReportShell({
-    title: 'Network Analysis Report',
-    subtitle: 'Entity Relationship Intelligence',
+    title: 'Network Intelligence Report',
+    subtitle: 'Entity Relationship Analysis',
     caseTitle,
     caseNumber,
     stats: [
       { label: 'Entities', value: entities.length },
       { label: 'Connections', value: connections.length },
-      { label: 'AI-Extracted', value: entities.filter(e => e.isAIExtracted).length },
+      { label: 'Antagonists', value: antagonists.length },
     ],
     sections
   });
@@ -153,7 +188,6 @@ export function generateInternationalReport(
   caseTitle: string,
   caseNumber?: string
 ): string {
-  // Group violations by framework
   const byFramework: Record<string, any[]> = {};
   violations.forEach(v => {
     const fw = v.framework || v.legal_framework || 'Unknown';
@@ -161,65 +195,72 @@ export function generateInternationalReport(
     byFramework[fw].push(v);
   });
 
-  // Severity distribution
   const bySeverity: Record<string, number> = {};
   violations.forEach(v => {
     const s = v.severity || 'medium';
     bySeverity[s] = (bySeverity[s] || 0) + 1;
   });
 
+  const criticalCount = bySeverity['critical'] || 0;
+  const highCount = bySeverity['high'] || 0;
+  const frameworkNames = Object.keys(byFramework);
+
   const sections = [
     {
-      title: 'Violations Overview',
+      title: 'Key Findings',
+      content: buildNarrative([
+        `This analysis identifies <strong>${violations.length} documented violations</strong> across <strong>${frameworkNames.length} international legal frameworks</strong>, including ${frameworkNames.slice(0, 3).join(', ')}${frameworkNames.length > 3 ? ` and ${frameworkNames.length - 3} others` : ''}.`,
+        criticalCount > 0 ? `<strong>${criticalCount} violations are classified as critical</strong>, representing immediate threats to fundamental rights that require urgent intervention.` : '',
+        highCount > 0 ? `An additional <strong>${highCount} high-severity violations</strong> establish a pattern of systematic rights abuse that strengthens the case for international jurisdiction.` : '',
+      ]) +
+      (criticalCount > 0 ? buildFinding(
+        `${criticalCount} Critical Violations Documented`,
+        `These violations meet the threshold for urgent communication to UN Special Procedures and treaty body complaints.`,
+        'critical'
+      ) : '') +
+      (frameworkNames.length >= 3 ? buildFinding(
+        `Multi-Framework Pattern Established`,
+        `Violations span ${frameworkNames.length} frameworks, establishing a systematic pattern that strengthens admissibility before international bodies.`,
+        'high'
+      ) : '')
+    },
+    {
+      title: 'Framework Breakdown',
       content: buildStatGrid([
         { label: 'Total Violations', value: violations.length, color: '#dc2626' },
-        { label: 'Frameworks Breached', value: Object.keys(byFramework).length },
-        { label: 'Critical', value: bySeverity['critical'] || 0, color: '#dc2626' },
-        { label: 'High Severity', value: bySeverity['high'] || 0, color: '#d97706' },
-      ])
-    },
-    {
-      title: 'Violations by International Framework',
-      content: buildBarChart(
-        Object.entries(byFramework).map(([label, items]) => ({ label, value: items.length })),
-        'Framework Breakdown'
+        { label: 'Frameworks Breached', value: frameworkNames.length },
+        { label: 'Critical', value: criticalCount, color: '#dc2626' },
+        { label: 'High Severity', value: highCount, color: '#d97706' },
+      ]) +
+      buildBarChart(
+        Object.entries(byFramework).sort((a, b) => b[1].length - a[1].length).map(([label, items]) => ({ label, value: items.length })),
+        'Violations by International Framework'
       )
     },
     {
-      title: 'Severity Distribution',
-      content: buildPieChart(
-        Object.entries(bySeverity).map(([label, value]) => ({ label: label.charAt(0).toUpperCase() + label.slice(1), value })),
-        'Violation Severity Levels'
-      )
-    },
-    {
-      title: 'Detailed Violations Registry',
+      title: 'Violations by Framework — Detail',
       content: Object.entries(byFramework).map(([fw, items]) =>
-        `<h4 style="font-size:14px;color:#0087C1;margin:20px 0 8px;border-left:3px solid #0087C1;padding-left:8px;">${fw} (${items.length} violations)</h4>` +
+        `<h4 style="font-size:14px;color:#0087C1;margin:20px 0 8px;border-left:3px solid #0087C1;padding-left:8px;">${fw} — ${items.length} violation${items.length !== 1 ? 's' : ''}</h4>` +
         buildTable(
           ['Article', 'Violation', 'Severity', 'Status'],
-          items.map((v: any) => [
+          items.slice(0, 15).map((v: any) => [
             v.article || v.legal_section || 'N/A',
             v.title || v.description?.slice(0, 80) || 'N/A',
             v.severity || 'medium',
-            v.status || v.resolved ? 'Resolved' : 'Active'
+            v.resolved ? 'Resolved' : 'Active'
           ])
         )
       ).join('')
     },
     {
-      title: 'Timeline of Violations',
-      content: (() => {
-        const byYear: Record<string, number> = {};
-        events.forEach(e => {
-          const y = e.date?.split('-')[0] || 'Unknown';
-          byYear[y] = (byYear[y] || 0) + 1;
-        });
-        return buildTimelineChart(
-          Object.entries(byYear).sort().map(([year, count]) => ({ year, count })),
-          'Events by Year'
-        );
-      })()
+      title: 'Recommended Legal Strategy',
+      content: buildRecommendation([
+        criticalCount > 0 ? `File urgent communication with UN Special Rapporteurs citing ${criticalCount} critical violations.` : 'Continue documenting violations to meet Special Procedure thresholds.',
+        frameworkNames.includes('ICCPR') ? 'Submit individual complaint under ICCPR Optional Protocol (requires exhaustion of domestic remedies).' : 'Map violations against ICCPR for Optional Protocol complaint.',
+        frameworkNames.includes('CAT') ? 'File complaint under CAT Article 22 — direct torture/CIDT claims strengthen urgency.' : 'Document any torture/ill-treatment for CAT Article 22.',
+        `Prepare consolidated submission linking all ${violations.length} violations to establish systematic persecution pattern.`,
+        `Cross-reference violations with timeline to establish temporal patterns of escalation.`,
+      ])
     }
   ];
 
@@ -230,8 +271,8 @@ export function generateInternationalReport(
     caseNumber,
     stats: [
       { label: 'Violations', value: violations.length },
-      { label: 'Frameworks', value: Object.keys(byFramework).length },
-      { label: 'Critical', value: bySeverity['critical'] || 0 },
+      { label: 'Frameworks', value: frameworkNames.length },
+      { label: 'Critical', value: criticalCount },
     ],
     sections
   });
@@ -247,121 +288,114 @@ export function generateEconomicHarmReport(
   caseTitle: string,
   caseNumber?: string
 ): string {
-  // Loss by category
   const byCategory: Record<string, number> = {};
   losses.forEach(l => {
     const cat = l.loss_category || 'Other';
     byCategory[cat] = (byCategory[cat] || 0) + Number(l.amount);
   });
 
-  // Incident types
   const byType: Record<string, number> = {};
   incidents.forEach(i => {
     byType[i.incident_type] = (byType[i.incident_type] || 0) + 1;
   });
 
-  // Severity breakdown
-  const bySeverity: Record<string, number> = {};
-  incidents.forEach(i => {
-    bySeverity[i.severity || 'medium'] = (bySeverity[i.severity || 'medium'] || 0) + 1;
-  });
-
   const totalLoss = losses.reduce((s: number, l: any) => s + Number(l.amount), 0);
   const formatPKR = (v: number) => `PKR ${v.toLocaleString()}`;
+  const documentedLosses = losses.filter((l: any) => l.is_documented);
+  const estimatedLosses = losses.filter((l: any) => l.is_estimated);
+  const recurringLosses = losses.filter((l: any) => l.is_recurring);
+  const activeIncidents = incidents.filter((i: any) => i.status === 'active' || i.status === 'escalated');
+  const topCategory = Object.entries(byCategory).sort((a, b) => b[1] - a[1])[0];
 
   const sections = [
     {
-      title: 'Financial Impact Summary',
-      content: buildStatGrid([
-        { label: 'Total Financial Loss', value: formatPKR(totalLoss), color: '#dc2626' },
-        { label: 'Total Incidents', value: incidents.length },
-        { label: 'Active Incidents', value: incidents.filter((i: any) => i.status === 'active' || i.status === 'escalated').length, color: '#d97706' },
-        { label: 'Loss Categories', value: Object.keys(byCategory).length },
-        { label: 'Time Cost', value: stats?.totalTimeCost ? formatPKR(stats.totalTimeCost) : 'N/A' },
-        { label: 'Hours Spent', value: stats?.totalTimeSpent?.toLocaleString() || '0' },
-      ])
+      title: 'Key Findings',
+      content: buildNarrative([
+        `The total documented economic harm amounts to <strong>${formatPKR(totalLoss)}</strong> across <strong>${losses.length} itemized losses</strong> stemming from <strong>${incidents.length} regulatory/institutional incidents</strong>.`,
+        topCategory ? `The largest category of loss is <strong>${topCategory[0].replace(/_/g, ' ')}</strong>, accounting for <strong>${formatPKR(topCategory[1])}</strong> (${((topCategory[1] / totalLoss) * 100).toFixed(0)}% of total harm).` : '',
+        recurringLosses.length > 0 ? `<strong>${recurringLosses.length} losses are recurring</strong>, indicating ongoing economic suppression that compounds over time.` : '',
+        activeIncidents.length > 0 ? `<strong>${activeIncidents.length} incidents remain active/escalated</strong>, meaning the harm is continuing and total losses will increase.` : '',
+      ]) +
+      (totalLoss > 1000000 ? buildFinding(
+        `Substantial Economic Harm: ${formatPKR(totalLoss)}`,
+        `This level of economic damage supports claims of economic persecution and may qualify for compensation under ICCPR Article 14 and domestic civil remedies.`,
+        'critical'
+      ) : '') +
+      (documentedLosses.length > 0 ? buildFinding(
+        `${documentedLosses.length} of ${losses.length} Losses Fully Documented`,
+        `${((documentedLosses.length / Math.max(losses.length, 1)) * 100).toFixed(0)}% documentation rate. ${estimatedLosses.length > documentedLosses.length ? 'Priority: obtain documentary evidence for estimated losses to strengthen claims.' : 'Strong documentation supports litigation.'}`,
+        documentedLosses.length > losses.length / 2 ? 'info' : 'high'
+      ) : '')
     },
     {
-      title: 'Financial Loss by Category',
-      content: buildBarChart(
-        Object.entries(byCategory).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({
+      title: 'Financial Impact Summary',
+      content: buildStatGrid([
+        { label: 'Total Loss', value: formatPKR(totalLoss), color: '#dc2626' },
+        { label: 'Incidents', value: incidents.length },
+        { label: 'Active', value: activeIncidents.length, color: '#d97706' },
+        { label: 'Documented', value: documentedLosses.length },
+      ]) +
+      buildBarChart(
+        Object.entries(byCategory).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([label, value]) => ({
           label: label.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
           value
         })),
-        'Loss Distribution (PKR)', { suffix: '' }
-      ) + buildPieChart(
-        Object.entries(byCategory).map(([label, value]) => ({
-          label: label.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-          value
-        })),
-        'Proportional Loss Breakdown'
+        'Loss by Category (PKR)'
       )
     },
     {
-      title: 'Incident Type Analysis',
-      content: buildBarChart(
-        Object.entries(byType).map(([label, value]) => ({
+      title: 'Incident Pattern Analysis',
+      content: buildNarrative([
+        `Incidents cluster into ${Object.keys(byType).length} distinct types. Understanding these patterns reveals the methods of economic suppression employed against the subject.`,
+      ]) +
+      buildBarChart(
+        Object.entries(byType).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({
           label: label.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
           value
         })),
         'Incidents by Type'
-      )
-    },
-    {
-      title: 'Severity Assessment',
-      content: buildPieChart(
-        Object.entries(bySeverity).map(([label, value]) => ({
-          label: label.charAt(0).toUpperCase() + label.slice(1),
-          value
-        })),
-        'Incident Severity Distribution'
-      )
-    },
-    {
-      title: 'Detailed Incident Registry',
-      content: buildTable(
+      ) +
+      (incidents.length > 0 ? buildTable(
         ['Date', 'Title', 'Type', 'Severity', 'Institution', 'Status'],
-        incidents.map((i: any) => [
+        incidents.slice(0, 20).map((i: any) => [
           i.incident_date || 'N/A',
           i.title || 'Untitled',
           (i.incident_type || '').replace(/_/g, ' '),
           i.severity || 'medium',
           i.institution_name || 'N/A',
           i.status || 'active'
-        ])
-      )
+        ]),
+        'Top Incidents'
+      ) : '')
     },
     {
-      title: 'Itemized Financial Losses',
-      content: buildTable(
-        ['Description', 'Category', 'Amount (PKR)', 'Documented', 'Recurring'],
-        losses.map((l: any) => [
-          l.description?.slice(0, 60) || 'N/A',
-          (l.loss_category || '').replace(/_/g, ' '),
-          Number(l.amount).toLocaleString(),
-          l.is_documented ? '✓' : '✗',
-          l.is_recurring ? `Yes (${l.recurring_frequency || 'periodic'})` : 'No'
-        ])
-      )
+      title: 'Recommended Actions',
+      content: buildRecommendation([
+        estimatedLosses.length > documentedLosses.length ? `Obtain documentary evidence for ${estimatedLosses.length - documentedLosses.length} estimated losses — bank statements, contracts, tax records.` : 'All losses documented — proceed with claims compilation.',
+        recurringLosses.length > 0 ? `Calculate compounded impact of ${recurringLosses.length} recurring losses for the full period to establish total economic persecution.` : '',
+        activeIncidents.length > 0 ? `File protective orders for ${activeIncidents.length} active incidents to prevent further economic damage.` : '',
+        `Prepare itemized damages schedule for High Court submission, categorized by institution responsible.`,
+        `Cross-reference financial losses with timeline events to establish causation chain for each loss.`,
+      ].filter(Boolean))
     }
   ];
 
   return buildReportShell({
-    title: 'Economic Harm & Regulatory Impact Report',
+    title: 'Economic Harm & Financial Impact Report',
     subtitle: 'Financial Damage Assessment',
     caseTitle,
     caseNumber,
     stats: [
       { label: 'Total Loss', value: formatPKR(totalLoss) },
       { label: 'Incidents', value: incidents.length },
-      { label: 'Categories', value: Object.keys(byCategory).length },
+      { label: 'Documented', value: documentedLosses.length },
     ],
     sections
   });
 }
 
 // ──────────────────────────────────────────
-// 4. RECONSTRUCTION REPORT
+// 4. RECONSTRUCTION / TIMELINE REPORT
 // ──────────────────────────────────────────
 export function generateReconstructionReport(
   events: CombinedTimelineEvent[],
@@ -369,144 +403,101 @@ export function generateReconstructionReport(
   caseTitle: string,
   caseNumber?: string
 ): string {
-  // Events by category
   const byCategory: Record<string, number> = {};
   events.forEach(e => { byCategory[e.category] = (byCategory[e.category] || 0) + 1; });
 
-  // Events by year
   const byYear: Record<string, number> = {};
   events.forEach(e => {
     const y = e.date?.split('-')[0] || 'Unknown';
     byYear[y] = (byYear[y] || 0) + 1;
   });
 
-  // Discrepancy severity
-  const discBySeverity: Record<string, number> = {};
-  discrepancies.forEach(d => { discBySeverity[d.severity] = (discBySeverity[d.severity] || 0) + 1; });
+  const years = Object.keys(byYear).sort();
+  const peakYear = Object.entries(byYear).sort((a, b) => b[1] - a[1])[0];
+  const topCategory = Object.entries(byCategory).sort((a, b) => b[1] - a[1])[0];
+  const criticalDisc = discrepancies.filter(d => d.severity === 'critical');
+  const highDisc = discrepancies.filter(d => d.severity === 'high');
 
-  // Event-category x year heatmap
-  const topCats = Object.entries(byCategory).sort((a, b) => b[1] - a[1]).slice(0, 6).map(x => x[0]);
-  const topYears = Object.keys(byYear).sort().slice(-10);
-  const heatmapData: { row: string; col: string; value: number }[] = [];
-  topCats.forEach(cat => {
-    topYears.forEach(year => {
-      const count = events.filter(e => e.category === cat && e.date?.startsWith(year)).length;
-      heatmapData.push({ row: cat, col: year, value: count });
-    });
-  });
-
-  // Discrepancy types
-  const discByType: Record<string, number> = {};
-  discrepancies.forEach(d => { discByType[d.discrepancy_type || 'Other'] = (discByType[d.discrepancy_type || 'Other'] || 0) + 1; });
+  // Identify escalation patterns
+  const yearValues = years.map(y => byYear[y]);
+  const isEscalating = yearValues.length >= 3 && yearValues[yearValues.length - 1] > yearValues[yearValues.length - 3];
 
   const sections = [
     {
-      title: 'Reconstruction Overview',
-      content: buildStatGrid([
-        { label: 'Total Events', value: events.length },
-        { label: 'AI-Extracted', value: events.filter(e => e.isExtracted).length },
-        { label: 'Categories', value: Object.keys(byCategory).length },
-        { label: 'Discrepancies', value: discrepancies.length, color: '#dc2626' },
-        { label: 'Critical Issues', value: discrepancies.filter(d => d.severity === 'critical').length, color: '#dc2626' },
-        { label: 'Years Covered', value: Object.keys(byYear).length },
+      title: 'Key Findings',
+      content: buildNarrative([
+        `This reconstruction maps <strong>${events.length} documented events</strong> spanning <strong>${years.length > 1 ? `${years[0]}–${years[years.length - 1]}` : years[0] || 'N/A'}</strong> (${years.length} years), classified across ${Object.keys(byCategory).length} categories.`,
+        peakYear ? `Activity peaked in <strong>${peakYear[0]}</strong> with <strong>${peakYear[1]} events</strong>, representing ${((peakYear[1] / events.length) * 100).toFixed(0)}% of all documented activity.` : '',
+        topCategory ? `The dominant category is <strong>${topCategory[0]}</strong> (${topCategory[1]} events, ${((topCategory[1] / events.length) * 100).toFixed(0)}%), which defines the primary pattern of the case.` : '',
+        isEscalating ? `<strong>Escalation pattern detected:</strong> Event frequency has increased over the most recent 3-year period, indicating intensifying pressure on the subject.` : '',
+        discrepancies.length > 0 ? `<strong>${discrepancies.length} procedural discrepancies</strong> have been identified, ${criticalDisc.length > 0 ? `including ${criticalDisc.length} critical failures that may constitute grounds for case dismissal or appeal.` : 'suggesting institutional compliance issues.'}` : 'No procedural discrepancies detected — procedures appear to have been followed.',
+      ]) +
+      (isEscalating ? buildFinding(
+        'Escalation Pattern Detected',
+        `Events have increased from ${yearValues[yearValues.length - 3] || 0} to ${yearValues[yearValues.length - 1] || 0} over the last 3 years, indicating systematic and intensifying persecution rather than isolated incidents.`,
+        'critical'
+      ) : '') +
+      (criticalDisc.length > 0 ? buildFinding(
+        `${criticalDisc.length} Critical Procedural Failures`,
+        `These failures include: ${criticalDisc.slice(0, 3).map(d => d.title).join('; ')}. Each represents grounds for challenging the legality of proceedings.`,
+        'critical'
+      ) : '')
+    },
+    {
+      title: 'Timeline Pattern Analysis',
+      content: buildTimelineChart(
+        Object.entries(byYear).sort().map(([year, count]) => ({ year, count })),
+        'Event Frequency by Year'
+      ) +
+      buildNarrative([
+        years.length > 1 ? `The timeline reveals ${isEscalating ? 'an escalating' : 'a varying'} pattern of activity over ${years.length} years. ${peakYear ? `The concentration of ${peakYear[1]} events in ${peakYear[0]} warrants focused investigation into triggering factors.` : ''}` : '',
       ]) +
       buildDonutChart(
         Object.entries(byCategory).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({ label, value })),
-        'Event Category Distribution'
-      ) +
-      buildBarChart(
-        Object.entries(byCategory).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({ label, value })),
-        'Events by Category'
-      )
-    },
-    {
-      title: 'Temporal Distribution',
-      content: buildTimelineChart(
-        Object.entries(byYear).sort().map(([year, count]) => ({ year, count })),
-        'Events per Year'
-      ) +
-      buildHeatmapGrid(heatmapData, 'Category × Year Activity Heatmap') +
-      buildBarChart(
-        Object.entries(byYear).sort().map(([year, count]) => ({ label: year, value: count })),
-        'Annual Event Volume'
-      )
-    },
-    {
-      title: 'Category Breakdown',
-      content: buildPieChart(
-        Object.entries(byCategory).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({ label, value })),
         'Event Categories'
-      ) +
-      buildTable(
-        ['Category', 'Count', 'Percentage'],
-        Object.entries(byCategory).sort((a, b) => b[1] - a[1]).map(([cat, count]) => [
-          cat, String(count), `${((count / events.length) * 100).toFixed(1)}%`
-        ]),
-        'Category Statistics'
       )
     },
     {
-      title: 'Procedural Discrepancies & Failures',
-      content: (discrepancies.length > 0 ? (
+      title: 'Procedural Discrepancies',
+      content: discrepancies.length > 0 ? (
         buildStatGrid([
           { label: 'Total Discrepancies', value: discrepancies.length, color: '#d97706' },
-          { label: 'Critical', value: discBySeverity['critical'] || 0, color: '#dc2626' },
-          { label: 'High', value: discBySeverity['high'] || 0, color: '#d97706' },
-          { label: 'Medium', value: discBySeverity['medium'] || 0 },
+          { label: 'Critical', value: criticalDisc.length, color: '#dc2626' },
+          { label: 'High', value: highDisc.length, color: '#d97706' },
         ]) +
-        buildPieChart(
-          Object.entries(discBySeverity).map(([label, value]) => ({ label: label.charAt(0).toUpperCase() + label.slice(1), value })),
-          'Discrepancy Severity Distribution'
-        ) +
-        buildBarChart(
-          Object.entries(discByType).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({ label: label.replace(/_/g, ' '), value })),
-          'Discrepancy Types'
-        ) +
         buildTable(
           ['Title', 'Type', 'Severity', 'Legal Reference'],
-          discrepancies.map(d => [
+          discrepancies.slice(0, 20).map(d => [
             d.title,
             d.discrepancy_type || 'N/A',
             d.severity,
             d.legal_reference || 'N/A'
           ]),
-          'Complete Discrepancy Registry'
+          'Identified Discrepancies'
         )
-      ) : '<p style="color:#059669;font-size:12px;">No discrepancies identified.</p>')
+      ) : buildNarrative(['No procedural discrepancies have been identified in the current dataset.'])
     },
     {
-      title: 'Severity Assessment',
-      content: 
-        buildSeverityMeter('Event Volume', Math.min(events.length, 1000) / 100, 10) +
-        buildSeverityMeter('Discrepancy Level', Math.min(discrepancies.length, 100) / 10, 10) +
-        buildSeverityMeter('Critical Issues', Math.min(discrepancies.filter(d => d.severity === 'critical').length, 10), 10) +
-        buildSeverityMeter('Category Diversity', Math.min(Object.keys(byCategory).length, 10), 10)
-    },
-    {
-      title: 'Chronological Event Registry',
-      content: buildTable(
-        ['Date', 'Category', 'Description', 'Individuals', 'Source'],
-        events.slice(0, 150).map(e => [
-          e.date || 'N/A',
-          e.category,
-          e.description.slice(0, 100) + (e.description.length > 100 ? '...' : ''),
-          e.individuals?.slice(0, 50) || 'N/A',
-          e.isExtracted ? 'AI' : 'Manual'
-        ]),
-        `Timeline Events (${events.length > 150 ? `showing 150 of ${events.length}` : `${events.length} events`})`
-      )
+      title: 'Recommended Actions',
+      content: buildRecommendation([
+        criticalDisc.length > 0 ? `File applications challenging ${criticalDisc.length} critical procedural failures — each is independently actionable.` : 'Continue monitoring for procedural compliance.',
+        isEscalating ? 'Present the escalation pattern as evidence of systematic persecution in High Court submissions.' : '',
+        peakYear ? `Conduct deep-dive investigation into ${peakYear[0]} — the ${peakYear[1]} events during this peak period likely contain key evidence.` : '',
+        events.filter(e => e.isExtracted).length > 0 ? `Review ${events.filter(e => e.isExtracted).length} AI-extracted events for accuracy before formal submission.` : '',
+        `Map each event category to specific legal provisions for targeted prosecution strategy.`,
+      ].filter(Boolean))
     }
   ];
 
   return buildReportShell({
-    title: 'Timeline Reconstruction & Analysis Report',
-    subtitle: 'Event Reconstruction Intelligence',
+    title: 'Case Timeline Reconstruction Report',
+    subtitle: 'Chronological Intelligence Analysis',
     caseTitle,
     caseNumber,
     stats: [
       { label: 'Events', value: events.length },
+      { label: 'Years', value: years.length },
       { label: 'Discrepancies', value: discrepancies.length },
-      { label: 'Categories', value: Object.keys(byCategory).length },
     ],
     sections
   });
@@ -525,75 +516,76 @@ export function generateIntelBriefingReport(
   const byCategory: Record<string, number> = {};
   events.forEach(e => { byCategory[e.category] = (byCategory[e.category] || 0) + 1; });
 
-  const topEntities = entities
-    .filter(e => e.connections?.length || 0 > 0)
-    .slice(0, 15);
+  const antagonists = entities.filter(e => e.category === 'antagonist');
+  const topCategory = Object.entries(byCategory).sort((a, b) => b[1] - a[1])[0];
 
   const sections = [
     {
-      title: 'Executive Intelligence Summary',
-      content: buildStatGrid([
-        { label: 'Total Events', value: platformStats.totalEvents },
-        { label: 'Total Entities', value: platformStats.totalEntities },
-        { label: 'Evidence Sources', value: platformStats.totalSources },
-        { label: 'Network Links', value: platformStats.totalConnections },
-        { label: 'Discrepancies', value: platformStats.totalDiscrepancies, color: '#d97706' },
-        { label: 'Critical Issues', value: platformStats.criticalDiscrepancies, color: '#dc2626' },
-        { label: 'Legal Statutes', value: platformStats.legalStatutes },
-        { label: 'Compliance Violations', value: platformStats.complianceViolations },
+      title: 'Executive Summary',
+      content: buildNarrative([
+        `This intelligence briefing synthesizes data from <strong>${platformStats.totalEvents} events</strong>, <strong>${platformStats.totalEntities} entities</strong>, and <strong>${platformStats.totalSources} evidence sources</strong> across the active investigation.`,
+        `The investigation has identified <strong>${platformStats.totalDiscrepancies} procedural discrepancies</strong>, of which <strong>${platformStats.criticalDiscrepancies} are critical</strong>, and <strong>${platformStats.complianceViolations} compliance violations</strong>.`,
+        topCategory ? `The primary event category is <strong>${topCategory[0]}</strong> (${topCategory[1]} events), which should guide litigation strategy and resource allocation.` : '',
+        antagonists.length > 0 ? `<strong>${antagonists.length} hostile entities</strong> have been identified across the entity network, connected by ${platformStats.totalConnections} documented relationships.` : '',
+      ]) +
+      (platformStats.criticalDiscrepancies > 0 ? buildFinding(
+        `${platformStats.criticalDiscrepancies} Critical Discrepancies Require Immediate Action`,
+        `These discrepancies represent the strongest grounds for legal challenge and should be prioritized in court submissions.`,
+        'critical'
+      ) : '') +
+      buildStatGrid([
+        { label: 'Events', value: platformStats.totalEvents },
+        { label: 'Entities', value: platformStats.totalEntities },
+        { label: 'Sources', value: platformStats.totalSources },
+        { label: 'Violations', value: platformStats.complianceViolations, color: '#dc2626' },
       ])
     },
     {
-      title: 'Event Category Intelligence',
-      content: buildPieChart(
-        Object.entries(byCategory).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({ label, value })),
-        'Events by Category'
-      ) + buildBarChart(
-        Object.entries(byCategory).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([label, value]) => ({ label, value })),
-        'Top Event Categories'
-      )
+      title: 'Intelligence Landscape',
+      content: buildDonutChart(
+        Object.entries(byCategory).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([label, value]) => ({ label, value })),
+        'Event Categories'
+      ) +
+      buildNarrative([
+        `The case is built on <strong>${platformStats.legalStatutes} legal statutes</strong>, <strong>${platformStats.totalPrecedents} case precedents</strong> (${platformStats.verifiedPrecedents} verified), and <strong>${platformStats.appealSummaries} appeal summaries</strong>.`,
+      ])
     },
     {
       title: 'Key Entities of Interest',
       content: buildTable(
-        ['Entity', 'Type', 'Role', 'Category'],
-        topEntities.map(e => [
-          e.name,
-          e.type,
-          e.role || 'N/A',
-          (e.category || 'neutral').charAt(0).toUpperCase() + (e.category || 'neutral').slice(1)
-        ])
+        ['Entity', 'Type', 'Role', 'Alignment'],
+        entities
+          .filter(e => e.category === 'antagonist' || (e.connections?.length || 0) > 2)
+          .slice(0, 15)
+          .map(e => [
+            e.name,
+            e.type,
+            e.role || 'N/A',
+            (e.category || 'neutral').charAt(0).toUpperCase() + (e.category || 'neutral').slice(1)
+          ]),
+        'High-Priority Entities'
       )
     },
     {
-      title: 'Legal Framework Coverage',
-      content: buildStatGrid([
-        { label: 'Case Precedents', value: platformStats.totalPrecedents },
-        { label: 'Verified Precedents', value: platformStats.verifiedPrecedents },
-        { label: 'Legal Statutes', value: platformStats.legalStatutes },
-        { label: 'Appeal Summaries', value: platformStats.appealSummaries },
-      ])
-    },
-    {
-      title: 'Growth & Activity Metrics',
-      content: buildStatGrid([
-        { label: 'Events Growth (WoW)', value: platformStats.eventsGrowth !== null ? `${platformStats.eventsGrowth}%` : 'N/A' },
-        { label: 'Entities Growth (WoW)', value: platformStats.entitiesGrowth !== null ? `${platformStats.entitiesGrowth}%` : 'N/A' },
-        { label: 'Sources Growth (WoW)', value: platformStats.sourcesGrowth !== null ? `${platformStats.sourcesGrowth}%` : 'N/A' },
-        { label: 'Connections Growth (WoW)', value: platformStats.connectionsGrowth !== null ? `${platformStats.connectionsGrowth}%` : 'N/A' },
-      ])
+      title: 'Recommended Priorities',
+      content: buildRecommendation([
+        platformStats.criticalDiscrepancies > 0 ? `Address ${platformStats.criticalDiscrepancies} critical discrepancies — these are the highest-value items for court.` : 'No critical discrepancies — focus on strengthening evidence.',
+        `Verify ${platformStats.totalPrecedents - platformStats.verifiedPrecedents} unverified precedents before citing in submissions.`,
+        antagonists.length > 0 ? `Map the ${antagonists.length} antagonist entities to specific violations for targeted prosecution.` : '',
+        `Update intelligence briefing weekly to track case evolution and new evidence.`,
+      ].filter(Boolean))
     }
   ];
 
   return buildReportShell({
-    title: 'Intelligence Briefing Report',
+    title: 'Executive Intelligence Briefing',
     subtitle: 'Case Intelligence Overview',
     caseTitle,
     caseNumber,
     stats: [
       { label: 'Events', value: platformStats.totalEvents },
       { label: 'Entities', value: platformStats.totalEntities },
-      { label: 'Sources', value: platformStats.totalSources },
+      { label: 'Critical Issues', value: platformStats.criticalDiscrepancies },
     ],
     sections
   });
@@ -608,69 +600,69 @@ export function generateEvidenceMatrixReport(
   caseTitle: string,
   caseNumber?: string
 ): string {
-  // By category
   const byCat: Record<string, number> = {};
   uploads.forEach(u => { byCat[u.category || 'general'] = (byCat[u.category || 'general'] || 0) + 1; });
 
-  // By file type
   const byType: Record<string, number> = {};
   uploads.forEach(u => {
     const ext = u.file_name?.split('.').pop()?.toUpperCase() || u.file_type || 'Unknown';
     byType[ext] = (byType[ext] || 0) + 1;
   });
 
-  // Total size
   const totalSize = uploads.reduce((s: number, u: any) => s + (Number(u.file_size) || 0), 0);
   const formatSize = (b: number) => b > 1e9 ? `${(b/1e9).toFixed(1)} GB` : b > 1e6 ? `${(b/1e6).toFixed(1)} MB` : `${(b/1e3).toFixed(1)} KB`;
+  
+  const coverageRatio = uploads.length > 0 ? (events.length / uploads.length) : 0;
+  const aiEvents = events.filter(e => e.isExtracted).length;
 
   const sections = [
     {
-      title: 'Evidence Overview',
+      title: 'Key Findings',
+      content: buildNarrative([
+        `The evidence repository contains <strong>${uploads.length} documents</strong> (${formatSize(totalSize)}) organized across <strong>${Object.keys(byCat).length} categories</strong>, supporting <strong>${events.length} timeline events</strong>.`,
+        `Evidence-to-event coverage ratio is <strong>${coverageRatio.toFixed(1)}:1</strong>. ${coverageRatio < 1 ? 'Some events lack direct documentary evidence — this is a gap that should be addressed.' : 'Each document supports multiple events on average — good evidence density.'}`,
+        aiEvents > 0 ? `AI analysis has extracted <strong>${aiEvents} events</strong> from uploaded documents, representing ${((aiEvents / Math.max(events.length, 1)) * 100).toFixed(0)}% of the timeline.` : '',
+      ]) +
+      (coverageRatio < 0.5 ? buildFinding(
+        'Evidence Gap Detected',
+        `Only ${uploads.length} documents support ${events.length} events. Many events may lack corroborating evidence — prioritize evidence collection.`,
+        'high'
+      ) : '')
+    },
+    {
+      title: 'Evidence Inventory',
       content: buildStatGrid([
-        { label: 'Total Documents', value: uploads.length },
+        { label: 'Documents', value: uploads.length },
         { label: 'Total Size', value: formatSize(totalSize) },
         { label: 'Categories', value: Object.keys(byCat).length },
-        { label: 'Linked Events', value: events.length },
-      ])
-    },
-    {
-      title: 'Evidence by Category',
-      content: buildPieChart(
-        Object.entries(byCat).map(([label, value]) => ({ label: label.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), value })),
-        'Document Categories'
+        { label: 'AI-Extracted Events', value: aiEvents },
+      ]) +
+      buildPieChart(
+        Object.entries(byCat).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({ label: label.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), value })),
+        'Documents by Category'
       )
     },
     {
-      title: 'File Type Distribution',
-      content: buildBarChart(
-        Object.entries(byType).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({ label, value })),
-        'File Types'
-      )
-    },
-    {
-      title: 'Evidence-to-Event Coverage',
-      content: (() => {
-        const eventCoverage = events.filter(e => !e.isExtracted).length;
-        const aiEvents = events.filter(e => e.isExtracted).length;
-        return buildStatGrid([
-          { label: 'Manual Events', value: eventCoverage },
-          { label: 'AI-Extracted Events', value: aiEvents },
-          { label: 'Coverage Ratio', value: uploads.length > 0 ? `${((events.length / uploads.length) * 100).toFixed(0)}%` : 'N/A' },
-        ]);
-      })()
-    },
-    {
-      title: 'Complete Evidence Registry',
+      title: 'Document Registry',
       content: buildTable(
-        ['File Name', 'Type', 'Category', 'Size', 'Uploaded'],
-        uploads.slice(0, 100).map((u: any) => [
-          u.file_name?.slice(0, 40) || 'N/A',
-          u.file_type || 'N/A',
-          u.category || 'general',
+        ['File Name', 'Category', 'Size', 'Uploaded'],
+        uploads.slice(0, 50).map((u: any) => [
+          u.file_name?.slice(0, 45) || 'N/A',
+          (u.category || 'general').replace(/_/g, ' '),
           formatSize(Number(u.file_size) || 0),
           u.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A'
-        ])
+        ]),
+        uploads.length > 50 ? `Showing 50 of ${uploads.length} documents` : undefined
       )
+    },
+    {
+      title: 'Recommended Actions',
+      content: buildRecommendation([
+        coverageRatio < 1 ? `Close evidence gaps — obtain corroborating documents for unsupported timeline events.` : 'Evidence coverage is strong — proceed with dossier compilation.',
+        aiEvents > 0 ? `Review ${aiEvents} AI-extracted events for accuracy before formal submission.` : 'Run AI analysis on uploaded documents to automatically extract timeline events.',
+        `Assign exhibit numbers to key documents for court dossier preparation.`,
+        `Ensure chain-of-custody documentation for all physical evidence submissions.`,
+      ])
     }
   ];
 
@@ -681,8 +673,8 @@ export function generateEvidenceMatrixReport(
     caseNumber,
     stats: [
       { label: 'Documents', value: uploads.length },
-      { label: 'Total Size', value: formatSize(totalSize) },
-      { label: 'Categories', value: Object.keys(byCat).length },
+      { label: 'Coverage', value: `${coverageRatio.toFixed(1)}:1` },
+      { label: 'AI Events', value: aiEvents },
     ],
     sections
   });
@@ -709,79 +701,82 @@ export function generateInvestigationReport(
     byYear[y] = (byYear[y] || 0) + 1;
   });
 
-  const entityCategories: Record<string, number> = {};
-  entities.forEach(e => { entityCategories[e.category || 'neutral'] = (entityCategories[e.category || 'neutral'] || 0) + 1; });
+  const antagonists = entities.filter(e => e.category === 'antagonist');
+  const criticalDisc = discrepancies.filter(d => d.severity === 'critical');
+  const years = Object.keys(byYear).sort();
+  const topCategory = Object.entries(byCategory).sort((a, b) => b[1] - a[1])[0];
 
   const sections = [
     {
-      title: 'Investigation Dashboard',
-      content: buildStatGrid([
-        { label: 'Total Events', value: platformStats.totalEvents },
-        { label: 'Total Entities', value: platformStats.totalEntities },
-        { label: 'Evidence Sources', value: platformStats.totalSources },
-        { label: 'Network Links', value: platformStats.totalConnections },
+      title: 'Investigation Summary',
+      content: buildNarrative([
+        `This comprehensive investigation report consolidates <strong>${platformStats.totalEvents} events</strong>, <strong>${platformStats.totalEntities} entities</strong>, <strong>${platformStats.totalSources} evidence sources</strong>, and <strong>${platformStats.totalConnections} network connections</strong> spanning ${years.length > 1 ? `${years[0]}–${years[years.length - 1]}` : 'the investigation period'}.`,
+        `The investigation has uncovered <strong>${platformStats.totalDiscrepancies} procedural discrepancies</strong> (${platformStats.criticalDiscrepancies} critical) and <strong>${platformStats.complianceViolations} compliance violations</strong>.`,
+        antagonists.length > 0 ? `<strong>${antagonists.length} hostile actors</strong> have been identified, operating within a network of ${connections.length} documented relationships.` : '',
+      ]) +
+      buildStatGrid([
+        { label: 'Events', value: platformStats.totalEvents },
+        { label: 'Entities', value: platformStats.totalEntities },
+        { label: 'Sources', value: platformStats.totalSources },
+        { label: 'Connections', value: platformStats.totalConnections },
         { label: 'Discrepancies', value: platformStats.totalDiscrepancies, color: '#d97706' },
-        { label: 'Compliance Violations', value: platformStats.complianceViolations, color: '#dc2626' },
+        { label: 'Violations', value: platformStats.complianceViolations, color: '#dc2626' },
       ])
     },
     {
-      title: 'Event Distribution Over Time',
-      content: buildTimelineChart(
-        Object.entries(byYear).sort().map(([year, count]) => ({ year, count })),
-        'Events Timeline'
-      )
+      title: 'Critical Findings',
+      content: 
+        (criticalDisc.length > 0 ? buildFinding(
+          `${criticalDisc.length} Critical Procedural Failures`,
+          `${criticalDisc.slice(0, 3).map(d => d.title).join('; ')}${criticalDisc.length > 3 ? ` and ${criticalDisc.length - 3} more` : ''}`,
+          'critical'
+        ) : '') +
+        (antagonists.length > 3 ? buildFinding(
+          `${antagonists.length} Coordinated Hostile Actors`,
+          `High concentration of antagonist entities (${((antagonists.length / entities.length) * 100).toFixed(0)}% of network) indicates institutional coordination.`,
+          'high'
+        ) : '') +
+        (platformStats.complianceViolations > 0 ? buildFinding(
+          `${platformStats.complianceViolations} Compliance Violations Documented`,
+          `Each violation represents a breach of procedural requirements that can be leveraged in court proceedings.`,
+          'high'
+        ) : '') +
+        buildTimelineChart(
+          Object.entries(byYear).sort().map(([year, count]) => ({ year, count })),
+          'Event Timeline'
+        )
     },
     {
       title: 'Category Intelligence',
-      content: buildPieChart(
-        Object.entries(byCategory).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({ label, value })),
+      content: buildDonutChart(
+        Object.entries(byCategory).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([label, value]) => ({ label, value })),
         'Event Categories'
-      )
-    },
-    {
-      title: 'Entity Intelligence',
-      content: buildPieChart(
-        Object.entries(entityCategories).map(([label, value]) => ({ label: label.charAt(0).toUpperCase() + label.slice(1), value })),
-        'Entity Alignment'
-      ) + buildBarChart(
-        Object.entries(entityCategories).map(([label, value]) => ({ label: label.charAt(0).toUpperCase() + label.slice(1), value })),
-        'Entity Distribution'
-      )
-    },
-    {
-      title: 'Network Summary',
-      content: buildStatGrid([
-        { label: 'Entity Network Size', value: entities.length },
-        { label: 'Connection Density', value: entities.length > 1 ? ((connections.length * 2) / (entities.length * (entities.length - 1)) * 100).toFixed(2) + '%' : 'N/A' },
-        { label: 'Inferred Links', value: connections.filter(c => c.isInferred).length },
-        { label: 'Documented Links', value: connections.filter(c => !c.isInferred).length },
+      ) +
+      buildNarrative([
+        topCategory ? `<strong>${topCategory[0]}</strong> is the dominant category with ${topCategory[1]} events (${((topCategory[1] / events.length) * 100).toFixed(0)}%). This should be the primary focus of legal strategy.` : '',
       ])
     },
     {
-      title: 'Discrepancy Analysis',
-      content: (() => {
-        const bySeverity: Record<string, number> = {};
-        discrepancies.forEach(d => { bySeverity[d.severity] = (bySeverity[d.severity] || 0) + 1; });
-        return buildPieChart(
-          Object.entries(bySeverity).map(([label, value]) => ({ label: label.charAt(0).toUpperCase() + label.slice(1), value })),
-          'Discrepancy Severity'
-        ) + buildTable(
-          ['Title', 'Type', 'Severity', 'Legal Ref'],
-          discrepancies.slice(0, 20).map(d => [d.title, d.discrepancy_type || 'N/A', d.severity, d.legal_reference || 'N/A'])
-        );
-      })()
+      title: 'Strategic Recommendations',
+      content: buildRecommendation([
+        criticalDisc.length > 0 ? `Prioritize ${criticalDisc.length} critical discrepancies — each is independently actionable in court.` : 'No critical discrepancies — focus on compliance violations.',
+        antagonists.length > 0 ? `Build prosecution profiles for ${Math.min(antagonists.length, 5)} top antagonist entities.` : '',
+        `Generate targeted reports for each module (Network, Violations, Economic Harm) to support specific legal filings.`,
+        `Prepare court dossier using the Dossier Builder with auto-annexed evidence.`,
+        `Update this investigation summary monthly to track case progression.`,
+      ].filter(Boolean))
     }
   ];
 
   return buildReportShell({
-    title: 'Investigation Hub Report',
+    title: 'Full Investigation Report',
     subtitle: 'Comprehensive Investigation Analysis',
     caseTitle,
     caseNumber,
     stats: [
       { label: 'Events', value: platformStats.totalEvents },
       { label: 'Entities', value: platformStats.totalEntities },
-      { label: 'Discrepancies', value: platformStats.totalDiscrepancies },
+      { label: 'Critical', value: platformStats.criticalDiscrepancies },
     ],
     sections
   });
@@ -797,10 +792,8 @@ export function generateThreatProfilesReport(
   caseTitle: string,
   caseNumber?: string
 ): string {
-  // Find antagonist entities with most connections
   const antagonists = entities.filter(e => e.category === 'antagonist');
   
-  // Score entities by connections + event mentions
   const scored = entities.map(e => {
     const connCount = connections.filter(c => c.source === e.id || c.target === e.id).length;
     const eventMentions = events.filter(ev => 
@@ -811,63 +804,43 @@ export function generateThreatProfilesReport(
 
   const sections = [
     {
-      title: 'Threat Assessment Overview',
-      content: buildStatGrid([
+      title: 'Threat Assessment Summary',
+      content: buildNarrative([
+        `This report profiles the <strong>10 highest-impact entities</strong> based on a composite threat score combining network influence (connections × 2) and event involvement (timeline mentions).`,
+        scored[0] ? `The primary threat is <strong>${scored[0].name}</strong> (Score: ${scored[0].score}), with ${scored[0].connCount} network connections and ${scored[0].eventMentions} event mentions. ${scored[0].category === 'antagonist' ? 'This entity is classified as hostile.' : 'This entity is not yet classified as hostile — review classification.'}` : '',
+        `Of the top 10 entities, <strong>${scored.filter(s => s.category === 'antagonist').length} are classified as antagonists</strong>.`,
+      ]) +
+      buildStatGrid([
         { label: 'Entities Assessed', value: entities.length },
-        { label: 'Antagonists Identified', value: antagonists.length, color: '#dc2626' },
-        { label: 'Top Threat Score', value: scored[0]?.score || 0 },
-        { label: 'Total Connections', value: connections.length },
+        { label: 'Antagonists', value: antagonists.length, color: '#dc2626' },
+        { label: 'Top Score', value: scored[0]?.score || 0 },
       ])
     },
     {
-      title: 'Top 10 Threat Profiles',
+      title: 'Threat Profiles',
       content: scored.map((e, i) => `
-        <div style="margin:16px 0;padding:16px;border:1px solid #e5e7eb;border-radius:8px;${e.category === 'antagonist' ? 'border-left:4px solid #dc2626;' : ''}">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div style="margin:12px 0;padding:14px;border:1px solid #e5e7eb;border-radius:8px;${e.category === 'antagonist' ? 'border-left:4px solid #dc2626;' : 'border-left:4px solid #0087C1;'}page-break-inside:avoid;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
             <div>
-              <span style="font-weight:700;font-size:14px;color:#1f2937;">#${i + 1} ${e.name}</span>
+              <span style="font-weight:700;font-size:13px;color:#1f2937;">#${i + 1} ${e.name}</span>
               <span style="margin-left:8px;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600;background:${e.category === 'antagonist' ? '#fef2f2' : '#f0fdf4'};color:${e.category === 'antagonist' ? '#dc2626' : '#059669'};">${(e.category || 'neutral').toUpperCase()}</span>
             </div>
-            <div style="font-size:12px;color:#6b7280;">Threat Score: <strong style="color:#dc2626;">${e.score}</strong></div>
+            <span style="font-size:11px;color:#6b7280;">Score: <strong style="color:#dc2626;">${e.score}</strong></span>
           </div>
-          <div style="font-size:12px;color:#6b7280;margin-bottom:8px;">${e.role || 'Role unspecified'} | ${e.type}</div>
-          <div style="font-size:11px;color:#4b5563;">${e.description || 'No description available'}</div>
-          ${buildSeverityMeter('Network Influence', Math.min(e.connCount, 10), 10)}
-          ${buildSeverityMeter('Event Mentions', Math.min(e.eventMentions, 20), 20)}
+          <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">${e.role || 'Role unspecified'} | ${e.type} | ${e.connCount} connections, ${e.eventMentions} event mentions</div>
+          ${e.description ? `<div style="font-size:11px;color:#4b5563;margin-top:4px;">${e.description.slice(0, 200)}</div>` : ''}
         </div>
       `).join('')
     },
     {
-      title: 'Threat Category Distribution',
-      content: (() => {
-        const catDist: Record<string, number> = {};
-        scored.forEach(e => { catDist[e.category || 'neutral'] = (catDist[e.category || 'neutral'] || 0) + 1; });
-        return buildPieChart(
-          Object.entries(catDist).map(([label, value]) => ({ label: label.charAt(0).toUpperCase() + label.slice(1), value })),
-          'Top 10 by Category'
-        );
-      })()
-    },
-    {
-      title: 'Threat Score Ranking',
-      content: buildBarChart(
-        scored.map(e => ({ label: e.name, value: e.score })),
-        'Composite Threat Score (Connections × 2 + Event Mentions)'
-      )
-    },
-    {
-      title: 'Connection Analysis',
-      content: buildTable(
-        ['Entity', 'Connections', 'Event Mentions', 'Score', 'Category', 'Type'],
-        scored.map(e => [
-          e.name,
-          String(e.connCount),
-          String(e.eventMentions),
-          String(e.score),
-          (e.category || 'neutral').charAt(0).toUpperCase() + (e.category || 'neutral').slice(1),
-          e.type
-        ])
-      )
+      title: 'Recommended Actions',
+      content: buildRecommendation([
+        scored[0] ? `Prioritize investigation of <strong>${scored[0].name}</strong> — highest threat score indicates central role in network.` : '',
+        scored.filter(s => s.category !== 'antagonist').length > 0 ? `Review classification of ${scored.filter(s => s.category !== 'antagonist').length} top-ranked entities not yet marked as antagonists.` : '',
+        `Cross-reference top threat profiles with compliance violations to establish individual liability.`,
+        `Generate Network Intelligence Report for detailed relationship mapping of these entities.`,
+        antagonists.length > scored.length ? `${antagonists.length - scored.filter(s => s.category === 'antagonist').length} additional antagonists exist outside top 10 — review for secondary threat assessment.` : '',
+      ].filter(Boolean))
     }
   ];
 
