@@ -17,10 +17,14 @@ import { generateCourtDossier } from "@/lib/courtDossierGenerator";
 import { generateDossierReport } from "@/lib/dossierGenerator";
 import { getCourtsList, COURT_PROFILES, COURT_FILING_TEMPLATES } from "@/lib/courtProfiles";
 import type { CourtId, CourtFilingTemplate } from "@/types/reports";
+import { Switch } from "@/components/ui/switch";
+import { Progress } from "@/components/ui/progress";
+import { validateCourtDossier, auditCitations, getReadinessLabel, type ValidationResult, type CitationAudit } from "@/lib/dossierValidation";
 import {
   FileText, Plus, Trash2, ChevronRight, ChevronLeft,
   Gavel, Search, Loader2, Sparkles, ArrowUp, ArrowDown,
   Wand2, MessageSquare, Scale, Building2, AlertTriangle,
+  ShieldCheck, Shield, CheckCircle2, XCircle, AlertCircle,
 } from "lucide-react";
 
 export interface DossierSection {
@@ -77,6 +81,7 @@ export const DossierBuilder = () => {
   // AI prompt state
   const [aiPrompt, setAiPrompt] = useState("");
   const [aiPopulating, setAiPopulating] = useState(false);
+  const [strictFactualMode, setStrictFactualMode] = useState(true);
 
   const courtProfile = COURT_PROFILES[selectedCourt];
   const filingTemplate = COURT_FILING_TEMPLATES[selectedFiling];
@@ -256,6 +261,25 @@ export const DossierBuilder = () => {
 
   // ── Generate ──
   const handleGenerate = async () => {
+    // Block generation if critical validation errors in court mode
+    if (template === "court" && validation && validation.issues.filter(i => i.type === 'error').length > 0) {
+      toast({
+        title: "Court Filing Incomplete",
+        description: `${validation.issues.filter(i => i.type === 'error').length} critical issues must be resolved before generating.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Strict factual mode citation warning
+    if (strictFactualMode && citationAudit && citationAudit.unverifiedCount > 0) {
+      toast({
+        title: "Unverified Citations Detected",
+        description: `${citationAudit.unverifiedCount} case law citation(s) not found in database. Review before filing.`,
+        variant: "destructive",
+      });
+    }
+
     setGenerating(true);
     try {
       const selectedAnnexures = annexures.filter(a => a.selected);
@@ -288,6 +312,10 @@ export const DossierBuilder = () => {
       }
 
       await openReportWindow(html);
+      // Log dossier generation for audit trail
+      if (template === "court") {
+        await logDossierGeneration();
+      }
       toast({ title: "Dossier Generated", description: `${sections.length} sections, ${selectedAnnexures.length} annexures` });
     } catch (err) {
       console.error(err);
@@ -305,6 +333,48 @@ export const DossierBuilder = () => {
 
   const selectedAnnexCount = annexures.filter(a => a.selected).length;
   const filledSections = sections.filter(s => s.content.trim()).length;
+
+  // ── Court Readiness Validation ──
+  const validation: ValidationResult | null = useMemo(() => {
+    if (template !== "court") return null;
+    return validateCourtDossier(sections, annexures, selectedCourt, selectedFiling, petitionerName, respondentName);
+  }, [template, sections, annexures, selectedCourt, selectedFiling, petitionerName, respondentName]);
+
+  const citationAudit: CitationAudit | null = useMemo(() => {
+    if (template !== "court" || sections.length === 0) return null;
+    return auditCitations(sections, strictFactualMode);
+  }, [template, sections, strictFactualMode]);
+
+  const readiness = validation ? getReadinessLabel(validation.score) : null;
+
+  // ── Audit log on generate ──
+  const logDossierGeneration = async () => {
+    try {
+      await supabase.from("generated_reports").insert({
+        case_id: selectedCaseId || undefined,
+        title: dossierTitle || filingTemplate.label,
+        report_type: "court_dossier",
+        template: selectedFiling,
+        sections_count: sections.length,
+        annexures_count: selectedAnnexCount,
+        description: `${courtProfile.name} — ${filingTemplate.label}`,
+        metadata: {
+          courtId: selectedCourt,
+          filingType: selectedFiling,
+          petitionerName,
+          respondentName,
+          includeWatermark,
+          strictFactualMode,
+          readinessScore: validation?.score || null,
+          sectionTitles: sections.map(s => s.title),
+          annexureLabels: annexures.filter(a => a.selected).map(a => a.label),
+          generatedAt: new Date().toISOString(),
+        },
+      });
+    } catch (err) {
+      console.error("Failed to log dossier generation:", err);
+    }
+  };
 
   return (
     <Card className="glass-card border-primary/20">
@@ -423,6 +493,17 @@ export const DossierBuilder = () => {
                     <AlertTriangle className="w-3 h-3 text-destructive" />
                     Include "DRAFT — REQUIRES LEGAL REVIEW" watermark
                   </label>
+                </div>
+
+                <div className="flex items-center justify-between p-2 rounded-md bg-accent/30 border border-accent">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-primary" />
+                    <div>
+                      <p className="text-xs font-semibold">Strict Factual Mode</p>
+                      <p className="text-[10px] text-muted-foreground">AI cannot invent statutes or case law — only database-backed citations allowed</p>
+                    </div>
+                  </div>
+                  <Switch checked={strictFactualMode} onCheckedChange={setStrictFactualMode} />
                 </div>
 
                 {/* Court info badge */}
@@ -619,6 +700,76 @@ export const DossierBuilder = () => {
         {/* ─── STEP 4: Review ─── */}
         {step === 4 && (
           <div className="space-y-3">
+            {/* Court Readiness Score */}
+            {template === "court" && validation && readiness && (
+              <div className="border rounded-lg p-4 bg-card space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-primary" />
+                    <h4 className="text-sm font-semibold">Court Readiness Assessment</h4>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-sm font-bold ${readiness.color}`}>{validation.score}%</span>
+                    <Badge variant={validation.score >= 70 ? "default" : "destructive"} className="text-[10px]">
+                      {readiness.label}
+                    </Badge>
+                  </div>
+                </div>
+                <Progress value={validation.score} className="h-2" />
+
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+                  {[
+                    { label: 'Required Sections', score: validation.breakdown.requiredSections.score, detail: `${validation.breakdown.requiredSections.present}/${validation.breakdown.requiredSections.total}` },
+                    { label: 'Content Density', score: validation.breakdown.contentDensity.score, detail: `${validation.breakdown.contentDensity.filledSections}/${validation.breakdown.contentDensity.totalSections} filled` },
+                    { label: 'Annexure Integrity', score: validation.breakdown.annexureIntegrity.score, detail: `${validation.breakdown.annexureIntegrity.issues.length} issues` },
+                    { label: 'Party Details', score: validation.breakdown.partyDetails.score, detail: validation.breakdown.partyDetails.hasPetitioner && validation.breakdown.partyDetails.hasRespondent ? 'Complete' : 'Incomplete' },
+                    { label: 'Verification', score: validation.breakdown.verificationPresent.score, detail: validation.breakdown.verificationPresent.present ? 'Included' : 'Missing' },
+                  ].map(item => (
+                    <div key={item.label} className="text-center p-2 rounded-md bg-muted/50 border border-border">
+                      <div className={`text-sm font-bold ${item.score >= 80 ? 'text-green-600' : item.score >= 50 ? 'text-amber-600' : 'text-destructive'}`}>{item.score}%</div>
+                      <div className="text-[9px] text-muted-foreground font-medium">{item.label}</div>
+                      <div className="text-[9px] text-muted-foreground">{item.detail}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Validation Issues */}
+                {validation.issues.length > 0 && (
+                  <div className="space-y-1 max-h-[120px] overflow-y-auto">
+                    {validation.issues.slice(0, 8).map((issue, i) => (
+                      <div key={i} className="flex items-start gap-1.5 text-[10px]">
+                        {issue.type === 'error' ? <XCircle className="w-3 h-3 text-destructive shrink-0 mt-0.5" /> :
+                         issue.type === 'warning' ? <AlertCircle className="w-3 h-3 text-amber-500 shrink-0 mt-0.5" /> :
+                         <CheckCircle2 className="w-3 h-3 text-green-500 shrink-0 mt-0.5" />}
+                        <span className="text-muted-foreground">{issue.message}</span>
+                      </div>
+                    ))}
+                    {validation.issues.length > 8 && (
+                      <p className="text-[10px] text-muted-foreground">+ {validation.issues.length - 8} more issues</p>
+                    )}
+                  </div>
+                )}
+
+                {/* Citation Audit */}
+                {citationAudit && citationAudit.totalCitations > 0 && (
+                  <div className="border-t pt-2 space-y-1">
+                    <div className="flex items-center gap-1.5">
+                      <ShieldCheck className="w-3 h-3 text-primary" />
+                      <span className="text-[10px] font-semibold">Citation Audit</span>
+                      {strictFactualMode && <Badge variant="outline" className="text-[8px] h-4">Strict Mode</Badge>}
+                    </div>
+                    <div className="flex gap-3 text-[10px] text-muted-foreground">
+                      <span>{citationAudit.statutoryRefs.length} statutory refs</span>
+                      <span>{citationAudit.caseLawRefs.length} case law refs</span>
+                      {citationAudit.unverifiedCount > 0 && (
+                        <span className="text-destructive font-semibold">{citationAudit.unverifiedCount} unverified</span>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="border rounded-lg p-4 bg-card space-y-2">
               <h4 className="font-semibold text-sm">{dossierTitle || "Untitled Dossier"}</h4>
               <p className="text-xs text-muted-foreground">{dossierSubtitle}</p>
@@ -636,6 +787,12 @@ export const DossierBuilder = () => {
                 )}
                 <div><span className="text-muted-foreground">Sections:</span> {sections.length} ({filledSections} filled)</div>
                 <div><span className="text-muted-foreground">Annexures:</span> {selectedAnnexCount}</div>
+                {strictFactualMode && template === "court" && (
+                  <div className="col-span-2 flex items-center gap-1 text-primary">
+                    <ShieldCheck className="w-3 h-3" />
+                    <span className="text-[10px] font-semibold">Strict Factual Mode Active</span>
+                  </div>
+                )}
               </div>
               {includeWatermark && template === "court" && (
                 <div className="flex items-center gap-1.5 text-[10px] text-destructive bg-destructive/5 rounded px-2 py-1">
