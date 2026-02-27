@@ -7,16 +7,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useCaseFilter } from "@/contexts/CaseFilterContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { generateDossierReport } from "@/lib/dossierGenerator";
 import { openReportWindow } from "@/lib/reportShell";
+import { generateCourtDossier } from "@/lib/courtDossierGenerator";
+import { generateDossierReport } from "@/lib/dossierGenerator";
+import { getCourtsList, COURT_PROFILES, COURT_FILING_TEMPLATES } from "@/lib/courtProfiles";
+import type { CourtId, CourtFilingTemplate } from "@/types/reports";
 import {
   FileText, Plus, Trash2, ChevronRight, ChevronLeft,
   Gavel, Search, Loader2, Sparkles, ArrowUp, ArrowDown,
-  Wand2, MessageSquare,
+  Wand2, MessageSquare, Scale, Building2, AlertTriangle,
 } from "lucide-react";
 
 export interface DossierSection {
@@ -40,14 +44,6 @@ export interface DossierAnnexure {
 type Template = "court" | "investigation";
 type Step = 1 | 2 | 3 | 4;
 
-const COURT_SECTIONS: Omit<DossierSection, "id">[] = [
-  { title: "Statement of Facts", content: "", type: "custom" },
-  { title: "Issues for Determination", content: "", type: "custom" },
-  { title: "Arguments on Law", content: "", type: "custom" },
-  { title: "Application of Law to Facts", content: "", type: "custom" },
-  { title: "Prayer for Relief", content: "", type: "custom" },
-];
-
 const INVESTIGATION_SECTIONS: Omit<DossierSection, "id">[] = [
   { title: "Executive Summary", content: "", type: "custom" },
   { title: "Background & Context", content: "", type: "custom" },
@@ -70,10 +66,21 @@ export const DossierBuilder = () => {
   const [sections, setSections] = useState<DossierSection[]>([]);
   const [annexures, setAnnexures] = useState<DossierAnnexure[]>([]);
   const [generating, setGenerating] = useState(false);
-  
+
+  // Court-specific state
+  const [selectedCourt, setSelectedCourt] = useState<CourtId>("IHC");
+  const [selectedFiling, setSelectedFiling] = useState<CourtFilingTemplate>("writ_petition");
+  const [petitionerName, setPetitionerName] = useState("");
+  const [respondentName, setRespondentName] = useState("");
+  const [includeWatermark, setIncludeWatermark] = useState(true);
+
   // AI prompt state
   const [aiPrompt, setAiPrompt] = useState("");
   const [aiPopulating, setAiPopulating] = useState(false);
+
+  const courtProfile = COURT_PROFILES[selectedCourt];
+  const filingTemplate = COURT_FILING_TEMPLATES[selectedFiling];
+  const courtsList = getCourtsList();
 
   // Fetch case
   const { data: caseData } = useQuery({
@@ -109,13 +116,31 @@ export const DossierBuilder = () => {
     },
   });
 
-  // ── Step 1: Template selection ──
+  // ── Step 1: Template + Court selection ──
   const handleSelectTemplate = (t: Template) => {
     setTemplate(t);
-    const base = t === "court" ? COURT_SECTIONS : INVESTIGATION_SECTIONS;
-    setSections(base.map(s => ({ ...s, id: nextId() })));
-    setDossierTitle(t === "court" ? "Court Filing Dossier" : "Investigation Dossier");
-    setDossierSubtitle(t === "court" ? "Petition / Application" : "Intelligence Assessment");
+    if (t === "investigation") {
+      setSections(INVESTIGATION_SECTIONS.map(s => ({ ...s, id: nextId() })));
+      setDossierTitle("Investigation Dossier");
+      setDossierSubtitle("Intelligence Assessment");
+    } else {
+      // Court mode — derive sections from filing template
+      applyFilingTemplate(selectedFiling);
+    }
+  };
+
+  const applyFilingTemplate = (filing: CourtFilingTemplate) => {
+    setSelectedFiling(filing);
+    const tmpl = COURT_FILING_TEMPLATES[filing];
+    const secs = tmpl.sections.map(s => ({
+      id: nextId(),
+      title: s.title,
+      content: "",
+      type: "custom" as const,
+    }));
+    setSections(secs);
+    setDossierTitle(tmpl.label);
+    setDossierSubtitle(`${courtProfile.name} — Article 199`);
   };
 
   // ── AI Auto-Populate ──
@@ -128,22 +153,21 @@ export const DossierBuilder = () => {
           prompt: aiPrompt,
           caseTitle: caseData?.title || "Active Investigation",
           caseNumber: caseData?.case_number,
+          courtName: template === "court" ? courtProfile.name : undefined,
+          filingType: template === "court" ? filingTemplate.label : undefined,
           existingSections: sections.map(s => ({ title: s.title, content: s.content })),
         },
       });
 
       if (error) throw error;
-
       if (data?.error) {
         toast({ title: "AI Error", description: data.error, variant: "destructive" });
         return;
       }
 
-      // Update title/subtitle if AI suggested them
       if (data?.title) setDossierTitle(data.title);
       if (data?.subtitle) setDossierSubtitle(data.subtitle);
 
-      // Replace sections with AI-generated ones
       if (data?.sections?.length) {
         const newSections: DossierSection[] = data.sections.map((s: any) => ({
           id: nextId(),
@@ -154,14 +178,14 @@ export const DossierBuilder = () => {
         setSections(newSections);
         toast({
           title: "Sections Populated",
-          description: `AI generated ${newSections.length} sections. Review and edit as needed.`,
+          description: `AI generated ${newSections.length} sections for ${template === "court" ? courtProfile.name : "investigation"}.`,
         });
       }
     } catch (err: any) {
       console.error(err);
       toast({
         title: "AI Generation Failed",
-        description: err?.message || "Could not auto-populate sections. Please try again.",
+        description: err?.message || "Could not auto-populate sections.",
         variant: "destructive",
       });
     } finally {
@@ -169,7 +193,7 @@ export const DossierBuilder = () => {
     }
   };
 
-  // ── Step 2: Section management ──
+  // ── Section management ──
   const addSection = () => {
     setSections(prev => [...prev, { id: nextId(), title: "New Section", content: "", type: "custom" }]);
   };
@@ -190,7 +214,7 @@ export const DossierBuilder = () => {
     });
   };
 
-  // ── Step 3: Annexures ──
+  // ── Annexures ──
   const buildAnnexures = useMemo(() => {
     const items: DossierAnnexure[] = [];
     (evidenceFiles || []).forEach(f => {
@@ -230,20 +254,39 @@ export const DossierBuilder = () => {
     setAnnexures(prev => prev.map(a => ({ ...a, selected: a.suggested ? true : a.selected })));
   };
 
-  // ── Step 4: Generate ──
+  // ── Generate ──
   const handleGenerate = async () => {
     setGenerating(true);
     try {
       const selectedAnnexures = annexures.filter(a => a.selected);
-      const html = generateDossierReport({
-        template,
-        title: dossierTitle || "Court Dossier",
-        subtitle: dossierSubtitle || "Legal Submission",
-        caseTitle: caseData?.title || "Active Investigation",
-        caseNumber: caseData?.case_number,
-        sections,
-        annexures: selectedAnnexures,
-      });
+      let html: string;
+
+      if (template === "court") {
+        html = generateCourtDossier({
+          courtId: selectedCourt,
+          filingTemplate: selectedFiling,
+          title: dossierTitle || filingTemplate.label,
+          subtitle: dossierSubtitle || `${courtProfile.name}`,
+          caseTitle: caseData?.title || "Active Investigation",
+          caseNumber: caseData?.case_number,
+          petitionerName,
+          respondentName,
+          sections,
+          annexures: selectedAnnexures,
+          includeWatermark,
+        });
+      } else {
+        html = generateDossierReport({
+          template,
+          title: dossierTitle || "Investigation Dossier",
+          subtitle: dossierSubtitle || "Intelligence Assessment",
+          caseTitle: caseData?.title || "Active Investigation",
+          caseNumber: caseData?.case_number,
+          sections,
+          annexures: selectedAnnexures,
+        });
+      }
+
       await openReportWindow(html);
       toast({ title: "Dossier Generated", description: `${sections.length} sections, ${selectedAnnexures.length} annexures` });
     } catch (err) {
@@ -257,9 +300,11 @@ export const DossierBuilder = () => {
   const canProceed = () => {
     if (step === 1) return true;
     if (step === 2) return sections.length > 0;
-    if (step === 3) return true;
     return true;
   };
+
+  const selectedAnnexCount = annexures.filter(a => a.selected).length;
+  const filledSections = sections.filter(s => s.content.trim()).length;
 
   return (
     <Card className="glass-card border-primary/20">
@@ -267,7 +312,7 @@ export const DossierBuilder = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Gavel className="w-5 h-5 text-primary" />
-            <CardTitle className="text-base">Custom Court Dossier Builder</CardTitle>
+            <CardTitle className="text-base">Court Dossier & Legal Filing Builder</CardTitle>
           </div>
           <div className="flex items-center gap-1">
             {[1, 2, 3, 4].map(s => (
@@ -276,25 +321,26 @@ export const DossierBuilder = () => {
           </div>
         </div>
         <CardDescription className="text-xs">
-          {step === 1 && "Choose a template and describe what you need — AI will draft it"}
+          {step === 1 && "Select court, filing type, and describe what you need"}
           {step === 2 && "Review, edit, or add sections — AI-generated content is fully editable"}
           {step === 3 && "Select source documents to annex"}
-          {step === 4 && "Review and generate your court-ready dossier"}
+          {step === 4 && "Review and generate your jurisdiction-aware court filing"}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {/* ─── STEP 1: Template + AI Prompt ─── */}
+        {/* ─── STEP 1: Template + Court + AI Prompt ─── */}
         {step === 1 && (
           <div className="space-y-4">
+            {/* Template selection */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <button
                 onClick={() => handleSelectTemplate("court")}
                 className={`p-4 rounded-lg border-2 text-left transition-all ${template === "court" ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}
               >
-                <Gavel className="w-6 h-6 text-primary mb-2" />
+                <Scale className="w-6 h-6 text-primary mb-2" />
                 <h4 className="font-semibold text-sm">Court Filing / Petition</h4>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Statement of Facts, Issues, Arguments, Prayer for Relief, Annexures
+                  Jurisdiction-aware filing with proper court heading, verification, and annexure labeling
                 </p>
               </button>
               <button
@@ -308,6 +354,86 @@ export const DossierBuilder = () => {
                 </p>
               </button>
             </div>
+
+            {/* Court-specific options */}
+            {template === "court" && (
+              <div className="border rounded-lg p-4 space-y-3 bg-muted/30">
+                <div className="flex items-center gap-2 mb-2">
+                  <Building2 className="w-4 h-4 text-primary" />
+                  <h4 className="text-sm font-semibold">Jurisdiction & Filing Type</h4>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-muted-foreground">Court</label>
+                    <Select value={selectedCourt} onValueChange={(v) => { setSelectedCourt(v as CourtId); }}>
+                      <SelectTrigger className="text-xs h-9">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {courtsList.map(c => (
+                          <SelectItem key={c.id} value={c.id} className="text-xs">{c.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-muted-foreground">Filing Type</label>
+                    <Select value={selectedFiling} onValueChange={(v) => applyFilingTemplate(v as CourtFilingTemplate)}>
+                      <SelectTrigger className="text-xs h-9">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.values(COURT_FILING_TEMPLATES).map(t => (
+                          <SelectItem key={t.id} value={t.id} className="text-xs">{t.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-muted-foreground">Petitioner Name</label>
+                    <Input
+                      placeholder="e.g., Danish Thanvi"
+                      value={petitionerName}
+                      onChange={e => setPetitionerName(e.target.value)}
+                      className="text-xs h-9"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-muted-foreground">Respondent(s)</label>
+                    <Input
+                      placeholder="e.g., Federation of Pakistan & Others"
+                      value={respondentName}
+                      onChange={e => setRespondentName(e.target.value)}
+                      className="text-xs h-9"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    checked={includeWatermark}
+                    onCheckedChange={(v) => setIncludeWatermark(v === true)}
+                    id="watermark"
+                  />
+                  <label htmlFor="watermark" className="text-xs text-muted-foreground flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3 text-destructive" />
+                    Include "DRAFT — REQUIRES LEGAL REVIEW" watermark
+                  </label>
+                </div>
+
+                {/* Court info badge */}
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="outline" className="text-[10px]">{courtProfile.name}</Badge>
+                  <Badge variant="outline" className="text-[10px]">Annexure: {courtProfile.filingStyle.annexLabel}</Badge>
+                  <Badge variant="outline" className="text-[10px]">{courtProfile.filingStyle.affidavitStyle === 'affidavit' ? 'Affidavit' : 'Verification'} mode</Badge>
+                  <Badge variant="outline" className="text-[10px]">Seat: {courtProfile.seatCities[0]}</Badge>
+                </div>
+              </div>
+            )}
 
             {/* Title/Subtitle */}
             <div className="space-y-2">
@@ -335,13 +461,12 @@ export const DossierBuilder = () => {
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground">
-                Describe what you need and AI will generate all sections with jurisdiction-aware legal content. 
-                You can edit everything afterwards.
+                Describe what you need and AI will generate all sections with {template === "court" ? `${courtProfile.name}-aware legal content` : "investigative content"}.
               </p>
               <Textarea
-                placeholder={template === "court" 
-                  ? "e.g., Draft a writ petition for Sindh High Court challenging PECA §33 violations during FIA raid, illegal seizure of devices without warrant, and forged recovery memos. Include constitutional grounds under Articles 4, 10A, and 14."
-                  : "e.g., Create an investigation dossier covering 9 years of systematic persecution including false FIRs, evidence fabrication, regulatory weaponization of NADRA/SECP, and military intelligence abuse."
+                placeholder={template === "court"
+                  ? `e.g., Draft a ${filingTemplate.label.toLowerCase()} for ${courtProfile.name} challenging PECA §33 violations during FIA raid, illegal seizure of devices without warrant, and forged recovery memos. Include constitutional grounds under Articles 4, 10A, and 14.`
+                  : "e.g., Create an investigation dossier covering systematic persecution including false FIRs, evidence fabrication, regulatory weaponization, and military intelligence abuse."
                 }
                 value={aiPrompt}
                 onChange={e => setAiPrompt(e.target.value)}
@@ -355,15 +480,9 @@ export const DossierBuilder = () => {
                   className="gap-1.5"
                 >
                   {aiPopulating ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      Generating...
-                    </>
+                    <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Generating...</>
                   ) : (
-                    <>
-                      <Wand2 className="w-3.5 h-3.5" />
-                      Auto-Populate Sections
-                    </>
+                    <><Wand2 className="w-3.5 h-3.5" /> Auto-Populate Sections</>
                   )}
                 </Button>
                 <span className="text-[10px] text-muted-foreground">
@@ -377,7 +496,6 @@ export const DossierBuilder = () => {
         {/* ─── STEP 2: Sections ─── */}
         {step === 2 && (
           <div className="space-y-3">
-            {/* Quick AI re-generate for individual sections or adding more */}
             <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 border border-border">
               <MessageSquare className="w-4 h-4 text-primary shrink-0" />
               <Input
@@ -427,7 +545,7 @@ export const DossierBuilder = () => {
                       </button>
                     </div>
                     <Textarea
-                      placeholder="Write your narrative for this section... Leave empty to auto-fill with a placeholder."
+                      placeholder="Write your narrative for this section..."
                       value={sec.content}
                       onChange={e => updateSection(sec.id, "content", e.target.value)}
                       className="text-xs min-h-[60px]"
@@ -449,6 +567,9 @@ export const DossierBuilder = () => {
               <p className="text-xs text-muted-foreground">
                 <Sparkles className="w-3 h-3 inline mr-1 text-primary" />
                 AI-suggested documents are pre-selected
+                {template === "court" && (
+                  <span className="ml-1">• Labels: <strong>{courtProfile.filingStyle.annexLabel}</strong> style</span>
+                )}
               </p>
               <Button variant="ghost" size="sm" onClick={selectAllSuggested} className="text-xs h-7">
                 Select Suggested
@@ -459,32 +580,37 @@ export const DossierBuilder = () => {
                 {annexures.length === 0 && (
                   <p className="text-xs text-muted-foreground text-center py-8">No documents found for this case.</p>
                 )}
-                {annexures.map((ann, idx) => (
-                  <div
-                    key={ann.id}
-                    className={`flex items-center gap-2 p-2 rounded-md border transition-colors ${ann.selected ? "border-primary/30 bg-primary/5" : "border-border"}`}
-                  >
-                    <Checkbox
-                      checked={ann.selected}
-                      onCheckedChange={() => toggleAnnexure(ann.id)}
-                    />
-                    <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium truncate">{ann.label}</p>
-                      <p className="text-[10px] text-muted-foreground">{ann.source === "affidavit" ? "Affidavit" : "Evidence"}</p>
+                {annexures.map((ann, idx) => {
+                  const annexLabel = template === "court"
+                    ? `${courtProfile.filingStyle.annexLabel.replace(/[A-Z0-9]$/, '')}${String.fromCharCode(65 + idx)}`
+                    : `Annex-${String.fromCharCode(65 + idx)}`;
+                  return (
+                    <div
+                      key={ann.id}
+                      className={`flex items-center gap-2 p-2 rounded-md border transition-colors ${ann.selected ? "border-primary/30 bg-primary/5" : "border-border"}`}
+                    >
+                      <Checkbox
+                        checked={ann.selected}
+                        onCheckedChange={() => toggleAnnexure(ann.id)}
+                      />
+                      <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium truncate">{ann.label}</p>
+                        <p className="text-[10px] text-muted-foreground">{ann.source === "affidavit" ? "Affidavit" : "Evidence"}</p>
+                      </div>
+                      {ann.suggested && (
+                        <Badge variant="secondary" className="text-[9px] shrink-0">
+                          <Sparkles className="w-2.5 h-2.5 mr-0.5" /> Suggested
+                        </Badge>
+                      )}
+                      {ann.selected && (
+                        <Badge variant="outline" className="text-[9px] shrink-0">
+                          {annexLabel}
+                        </Badge>
+                      )}
                     </div>
-                    {ann.suggested && (
-                      <Badge variant="secondary" className="text-[9px] shrink-0">
-                        <Sparkles className="w-2.5 h-2.5 mr-0.5" /> Suggested
-                      </Badge>
-                    )}
-                    {ann.selected && (
-                      <Badge variant="outline" className="text-[9px] shrink-0">
-                        Annex-{String.fromCharCode(65 + idx)}
-                      </Badge>
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </ScrollArea>
           </div>
@@ -498,11 +624,25 @@ export const DossierBuilder = () => {
               <p className="text-xs text-muted-foreground">{dossierSubtitle}</p>
               <Separator />
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div><span className="text-muted-foreground">Template:</span> {template === "court" ? "Court Filing" : "Investigation"}</div>
+                <div><span className="text-muted-foreground">Template:</span> {template === "court" ? filingTemplate.label : "Investigation"}</div>
                 <div><span className="text-muted-foreground">Case:</span> {caseData?.title || "N/A"}</div>
-                <div><span className="text-muted-foreground">Sections:</span> {sections.length}</div>
-                <div><span className="text-muted-foreground">Annexures:</span> {annexures.filter(a => a.selected).length}</div>
+                {template === "court" && (
+                  <>
+                    <div><span className="text-muted-foreground">Court:</span> {courtProfile.name}</div>
+                    <div><span className="text-muted-foreground">Seat:</span> {courtProfile.seatCities[0]}</div>
+                    {petitionerName && <div><span className="text-muted-foreground">Petitioner:</span> {petitionerName}</div>}
+                    {respondentName && <div><span className="text-muted-foreground">Respondent:</span> {respondentName}</div>}
+                  </>
+                )}
+                <div><span className="text-muted-foreground">Sections:</span> {sections.length} ({filledSections} filled)</div>
+                <div><span className="text-muted-foreground">Annexures:</span> {selectedAnnexCount}</div>
               </div>
+              {includeWatermark && template === "court" && (
+                <div className="flex items-center gap-1.5 text-[10px] text-destructive bg-destructive/5 rounded px-2 py-1">
+                  <AlertTriangle className="w-3 h-3" />
+                  Draft watermark enabled — will show "DRAFT — REQUIRES LEGAL REVIEW"
+                </div>
+              )}
               <Separator />
               <div className="space-y-1">
                 <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Table of Contents</p>
@@ -521,9 +661,9 @@ export const DossierBuilder = () => {
                     )}
                   </div>
                 ))}
-                {annexures.filter(a => a.selected).length > 0 && (
+                {selectedAnnexCount > 0 && (
                   <p className="text-xs text-muted-foreground font-medium mt-1">
-                    + {annexures.filter(a => a.selected).length} Annexed Documents
+                    + {selectedAnnexCount} Annexed Documents ({courtProfile.filingStyle.annexLabel} style)
                   </p>
                 )}
               </div>
@@ -555,7 +695,7 @@ export const DossierBuilder = () => {
           ) : (
             <Button size="sm" onClick={handleGenerate} disabled={generating}>
               {generating ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Gavel className="w-4 h-4 mr-1" />}
-              Generate Dossier
+              Generate {template === "court" ? "Court Filing" : "Dossier"}
             </Button>
           )}
         </div>
