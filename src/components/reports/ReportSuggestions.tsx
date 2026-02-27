@@ -15,6 +15,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { openReportWindow } from "@/lib/reportShell";
 import { assertReportContext, type QAResult, type ReportQAContext } from "@/lib/reportQA";
 import { QAResultsModal } from "./QAResultsModal";
+import { runSafetyGate } from "@/hooks/useSafetyGate";
+import { SafetyGateModal } from "@/components/safety/SafetyGateModal";
+import { SafetyBadge } from "@/components/safety/SafetyBadge";
+import type { SafetyGateResult, DistributionMode } from "@/types/safety";
 import { getCourtsList, COURT_PROFILES } from "@/lib/courtProfiles";
 import type { CourtId } from "@/types/reports";
 import {
@@ -57,6 +61,9 @@ export const ReportSuggestions = () => {
   const [qaResult, setQaResult] = useState<QAResult | null>(null);
   const [qaOpen, setQaOpen] = useState(false);
   const [pendingSuggestion, setPendingSuggestion] = useState<Suggestion | null>(null);
+  const [safetyResult, setSafetyResult] = useState<SafetyGateResult | null>(null);
+  const [safetyOpen, setSafetyOpen] = useState(false);
+  const [distributionMode, setDistributionMode] = useState<DistributionMode>("controlled_legal");
 
   const courtsList = getCourtsList();
   const courtProfile = COURT_PROFILES[selectedCourt];
@@ -255,6 +262,25 @@ export const ReportSuggestions = () => {
     setQaOpen(false);
     try {
       const html = suggestion.generate(courtMode);
+
+      // Run Safety Gate
+      const mode: DistributionMode = courtMode ? "court_mode" : distributionMode;
+      const sgResult = runSafetyGate({
+        text: html.replace(/<[^>]*>/g, ' ').slice(0, 50000),
+        mode,
+        courtStyle: courtMode ? (selectedCourt as any) : undefined,
+        filingType: courtMode ? "writ" : undefined,
+        context: { entities: entities.map(e => ({ name: e.name, category: e.category })) },
+      });
+
+      if (sgResult.blockers.length > 0 && !bypassed) {
+        setSafetyResult(sgResult);
+        setSafetyOpen(true);
+        setPendingSuggestion(suggestion);
+        setGeneratingId(null);
+        return;
+      }
+
       await openReportWindow(html);
       logReport.mutate({
         title: suggestion.title,
@@ -264,6 +290,8 @@ export const ReportSuggestions = () => {
         metadata: {
           court_mode: courtMode,
           court_profile: courtMode ? selectedCourt : null,
+          distribution_mode: mode,
+          safety_gate: { overall: sgResult.decision.overall, signals: sgResult.signals.length, rewrites: sgResult.rewritePlan.transformations.length, blockers: sgResult.blockers.length },
           qa_result: qa ? { ok: qa.ok, warnings: qa.warnings, errors: qa.errors, bypassed: !!bypassed } : { ok: true, warnings: [], errors: [], bypassed: false },
         },
       });
@@ -407,6 +435,28 @@ export const ReportSuggestions = () => {
             setQaOpen(false);
             setPendingSuggestion(null);
             setQaResult(null);
+          }}
+        />
+      )}
+
+      {/* Safety Gate Modal */}
+      {safetyResult && (
+        <SafetyGateModal
+          open={safetyOpen}
+          onOpenChange={setSafetyOpen}
+          result={safetyResult}
+          onProceed={() => {
+            setSafetyOpen(false);
+            if (pendingSuggestion) {
+              executeGeneration(pendingSuggestion, qaResult || undefined, true);
+            }
+            setSafetyResult(null);
+          }}
+          onCancel={() => {
+            setSafetyOpen(false);
+            setSafetyResult(null);
+            setPendingSuggestion(null);
+            setGeneratingId(null);
           }}
         />
       )}
