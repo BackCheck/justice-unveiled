@@ -40,21 +40,17 @@ export function LogoSpinner({ size = "md", className, showText = false }: LogoSp
           style={{ animationDuration: "2s" }}
         />
         
-        {/* Animated logo video */}
+        {/* Animated logo spinner - CSS only for fast load */}
         <div 
           className={cn(
-            "relative flex items-center justify-center rounded-full overflow-hidden",
+            "relative flex items-center justify-center rounded-full overflow-hidden border-2 border-primary/30",
             videoSizeClasses[size]
           )}
         >
-          <video 
-            src="/loading-animation.mp4" 
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-            className="w-full h-full object-cover rounded-full"
-          />
+          <div className="w-full h-full bg-gradient-to-tr from-primary/20 via-primary/40 to-primary/20 animate-spin rounded-full" style={{ animationDuration: "1.5s" }} />
+          <div className={cn("absolute inset-1 rounded-full bg-background flex items-center justify-center")}>
+            <div className="w-1/2 h-1/2 rounded-full bg-primary/30 animate-pulse" />
+          </div>
         </div>
       </div>
       

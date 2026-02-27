@@ -24,7 +24,7 @@ const GlowingOrb = ({ className, color = "primary", size = "md", delay = 0 }: Gl
   return (
     <div
       className={cn(
-        "absolute rounded-full blur-3xl animate-pulse-glow",
+        "absolute rounded-full blur-2xl animate-pulse-glow will-change-[opacity]",
         sizeClasses[size],
         colorClasses[color],
         className
