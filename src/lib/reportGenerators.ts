@@ -8,6 +8,8 @@
 
 import { buildReportShell } from './reportShell';
 import { buildBarChart, buildPieChart, buildStatGrid, buildTable, buildTimelineChart, buildSeverityMeter, buildDonutChart, buildHeatmapGrid, buildHierarchyMap, buildKeyValueGrid } from './reportCharts';
+import { fmtNum } from './reportQA';
+import { buildCriticalFindingsBlock, buildTimelineSummaryBlock, buildMethodologyBlock, buildDefinitionsBlock, buildDataQualityBlock, buildLODAppendix, buildKeyIssuesAppendix } from './reportBlocks';
 import type { CombinedEntity, CombinedConnection } from '@/hooks/useCombinedEntities';
 import type { CombinedTimelineEvent } from '@/hooks/useCombinedTimeline';
 import type { PlatformStats } from '@/hooks/usePlatformStats';
@@ -96,18 +98,18 @@ export function generateNetworkReport(
     {
       title: 'Key Findings',
       content: buildNarrative([
-        `This network analysis maps <strong>${entities.length} entities</strong> across <strong>${connections.length} documented relationships</strong>, revealing the structural architecture of actors involved in this case.`,
-        antagonists.length > 0 ? `<strong>${antagonists.length} entities classified as antagonists</strong> have been identified. The most connected entity is <strong>${topConnected[0]?.name || 'Unknown'}</strong> with ${topConnected[0]?.connections || 0} links, making them a central hub in the network.` : '',
+        `This network analysis maps <strong>${fmtNum(entities.length)} entities</strong> across <strong>${fmtNum(connections.length)} documented relationships</strong>, revealing the structural architecture of actors involved in this case.`,
+        antagonists.length > 0 ? `<strong>${fmtNum(antagonists.length)} entities classified as antagonists</strong> (${fmtNum(antagonists.length)}/${fmtNum(entities.length)} = ${((antagonists.length / Math.max(entities.length, 1)) * 100).toFixed(1)}% of network entities) have been identified. The most connected entity is <strong>${topConnected[0]?.name || 'Unknown'}</strong> with ${fmtNum(topConnected[0]?.connections || 0)} links, making them a central hub in the network.` : '',
         `The average connection density is <strong>${avgConn} links per entity</strong>. ${Number(avgConn) > 3 ? 'This indicates a tightly interconnected network, suggesting coordinated activity among key actors.' : 'This suggests a loosely connected network with potential isolated clusters.'}`,
       ]) +
       (topConnected.length > 0 ? buildFinding(
         `Central Hub: ${topConnected[0]?.name}`,
-        `With ${topConnected[0]?.connections} direct connections, this entity serves as a primary coordinator. Their removal or disruption would fragment the network into ${Math.ceil(entities.length / 5)} isolated clusters.`,
+        `With ${fmtNum(topConnected[0]?.connections)} direct connections, this entity serves as a primary coordinator. Their removal or disruption would fragment the network into ${Math.ceil(entities.length / 5)} isolated clusters.`,
         antagonists.some(a => a.name === topConnected[0]?.name) ? 'critical' : 'medium'
       ) : '') +
       (antagonists.length > 3 ? buildFinding(
-        `${antagonists.length} Hostile Actors Identified`,
-        `Antagonist entities comprise ${((antagonists.length / entities.length) * 100).toFixed(0)}% of the network. This concentration indicates organized opposition rather than isolated incidents.`,
+        `${fmtNum(antagonists.length)} Hostile Actors Identified`,
+        `Antagonist entities comprise ${((antagonists.length / entities.length) * 100).toFixed(1)}% of the network (${fmtNum(antagonists.length)}/${fmtNum(entities.length)}). This concentration indicates organized opposition rather than isolated incidents.`,
         'high'
       ) : '')
     },
@@ -690,7 +692,8 @@ export function generateInvestigationReport(
   discrepancies: any[],
   platformStats: PlatformStats,
   caseTitle: string,
-  caseNumber?: string
+  caseNumber?: string,
+  courtMode?: boolean,
 ): string {
   const byCategory: Record<string, number> = {};
   events.forEach(e => { byCategory[e.category] = (byCategory[e.category] || 0) + 1; });
@@ -706,45 +709,44 @@ export function generateInvestigationReport(
   const years = Object.keys(byYear).sort();
   const topCategory = Object.entries(byCategory).sort((a, b) => b[1] - a[1])[0];
 
+  // Front-matter blocks for comprehensive reports
+  const frontMatterHTML = buildMethodologyBlock(
+    caseTitle,
+    platformStats.totalEvents,
+    platformStats.totalSources,
+    { hiddenExcluded: true, approvedOnly: true, caseScoped: !!caseNumber }
+  ) + buildDefinitionsBlock() + buildDataQualityBlock({
+    totalEvents: platformStats.totalEvents,
+    totalEntities: platformStats.totalEntities,
+    totalSources: platformStats.totalSources,
+    aiExtracted: events.filter(e => e.isExtracted).length,
+    discrepancies: platformStats.totalDiscrepancies,
+  });
+
   const sections = [
     {
       title: 'Investigation Summary',
       content: buildNarrative([
-        `This comprehensive investigation report consolidates <strong>${platformStats.totalEvents} events</strong>, <strong>${platformStats.totalEntities} entities</strong>, <strong>${platformStats.totalSources} evidence sources</strong>, and <strong>${platformStats.totalConnections} network connections</strong> spanning ${years.length > 1 ? `${years[0]}–${years[years.length - 1]}` : 'the investigation period'}.`,
-        `The investigation has uncovered <strong>${platformStats.totalDiscrepancies} procedural discrepancies</strong> (${platformStats.criticalDiscrepancies} critical) and <strong>${platformStats.complianceViolations} compliance violations</strong>.`,
-        antagonists.length > 0 ? `<strong>${antagonists.length} hostile actors</strong> have been identified, operating within a network of ${connections.length} documented relationships.` : '',
+        `This comprehensive investigation report consolidates <strong>${fmtNum(platformStats.totalEvents)} events</strong>, <strong>${fmtNum(platformStats.totalEntities)} entities</strong>, <strong>${fmtNum(platformStats.totalSources)} evidence sources</strong>, and <strong>${fmtNum(platformStats.totalConnections)} network connections</strong> spanning ${years.length > 1 ? `${years[0]}–${years[years.length - 1]}` : 'the investigation period'}.`,
+        `The investigation has uncovered <strong>${fmtNum(platformStats.totalDiscrepancies)} procedural discrepancies</strong> (${fmtNum(platformStats.criticalDiscrepancies)} critical) and <strong>${fmtNum(platformStats.complianceViolations)} compliance violations</strong>.`,
+        antagonists.length > 0 ? `<strong>${fmtNum(antagonists.length)} hostile actors</strong> (${fmtNum(antagonists.length)}/${fmtNum(entities.length)} = ${((antagonists.length / Math.max(entities.length, 1)) * 100).toFixed(1)}% of entities) have been identified, operating within a network of ${fmtNum(connections.length)} documented relationships.` : '',
       ]) +
       buildStatGrid([
-        { label: 'Events', value: platformStats.totalEvents },
-        { label: 'Entities', value: platformStats.totalEntities },
-        { label: 'Sources', value: platformStats.totalSources },
-        { label: 'Connections', value: platformStats.totalConnections },
-        { label: 'Discrepancies', value: platformStats.totalDiscrepancies, color: '#d97706' },
-        { label: 'Violations', value: platformStats.complianceViolations, color: '#dc2626' },
+        { label: 'Events', value: fmtNum(platformStats.totalEvents) },
+        { label: 'Entities', value: fmtNum(platformStats.totalEntities) },
+        { label: 'Sources', value: fmtNum(platformStats.totalSources) },
+        { label: 'Connections', value: fmtNum(platformStats.totalConnections) },
+        { label: 'Discrepancies', value: fmtNum(platformStats.totalDiscrepancies), color: '#d97706' },
+        { label: 'Violations', value: fmtNum(platformStats.complianceViolations), color: '#dc2626' },
       ])
     },
     {
       title: 'Critical Findings',
-      content: 
-        (criticalDisc.length > 0 ? buildFinding(
-          `${criticalDisc.length} Critical Procedural Failures`,
-          `${criticalDisc.slice(0, 3).map(d => d.title).join('; ')}${criticalDisc.length > 3 ? ` and ${criticalDisc.length - 3} more` : ''}`,
-          'critical'
-        ) : '') +
-        (antagonists.length > 3 ? buildFinding(
-          `${antagonists.length} Coordinated Hostile Actors`,
-          `High concentration of antagonist entities (${((antagonists.length / entities.length) * 100).toFixed(0)}% of network) indicates institutional coordination.`,
-          'high'
-        ) : '') +
-        (platformStats.complianceViolations > 0 ? buildFinding(
-          `${platformStats.complianceViolations} Compliance Violations Documented`,
-          `Each violation represents a breach of procedural requirements that can be leveraged in court proceedings.`,
-          'high'
-        ) : '') +
-        buildTimelineChart(
-          Object.entries(byYear).sort().map(([year, count]) => ({ year, count })),
-          'Event Timeline'
-        )
+      content: buildCriticalFindingsBlock(discrepancies, entities, events)
+    },
+    {
+      title: 'Timeline Pattern Analysis',
+      content: buildTimelineSummaryBlock(byYear, events.length)
     },
     {
       title: 'Category Intelligence',
@@ -753,13 +755,13 @@ export function generateInvestigationReport(
         'Event Categories'
       ) +
       buildNarrative([
-        topCategory ? `<strong>${topCategory[0]}</strong> is the dominant category with ${topCategory[1]} events (${((topCategory[1] / events.length) * 100).toFixed(0)}%). This should be the primary focus of legal strategy.` : '',
+        topCategory ? `<strong>${topCategory[0]}</strong> is the dominant category with ${fmtNum(topCategory[1])} events (${((topCategory[1] / events.length) * 100).toFixed(1)}%). This should be the primary focus of legal strategy.` : '',
       ])
     },
     {
       title: 'Strategic Recommendations',
       content: buildRecommendation([
-        criticalDisc.length > 0 ? `Prioritize ${criticalDisc.length} critical discrepancies — each is independently actionable in court.` : 'No critical discrepancies — focus on compliance violations.',
+        criticalDisc.length > 0 ? `Prioritize ${fmtNum(criticalDisc.length)} critical discrepancies — each is independently actionable in court.` : 'No critical discrepancies — focus on compliance violations.',
         antagonists.length > 0 ? `Build prosecution profiles for ${Math.min(antagonists.length, 5)} top antagonist entities.` : '',
         `Generate targeted reports for each module (Network, Violations, Economic Harm) to support specific legal filings.`,
         `Prepare court dossier using the Dossier Builder with auto-annexed evidence.`,
@@ -768,17 +770,26 @@ export function generateInvestigationReport(
     }
   ];
 
+  // Court-mode appendices
+  const appendicesHTML = courtMode ? (
+    buildLODAppendix(events) +
+    buildKeyIssuesAppendix([], discrepancies, entities, events, [])
+  ) : '';
+
   return buildReportShell({
     title: 'Full Investigation Report',
     subtitle: 'Comprehensive Investigation Analysis',
     caseTitle,
     caseNumber,
     stats: [
-      { label: 'Events', value: platformStats.totalEvents },
-      { label: 'Entities', value: platformStats.totalEntities },
-      { label: 'Critical', value: platformStats.criticalDiscrepancies },
+      { label: 'Events', value: fmtNum(platformStats.totalEvents) },
+      { label: 'Entities', value: fmtNum(platformStats.totalEntities) },
+      { label: 'Critical', value: fmtNum(platformStats.criticalDiscrepancies) },
     ],
-    sections
+    sections,
+    frontMatterHTML,
+    appendicesHTML: appendicesHTML || undefined,
+    courtMode,
   });
 }
 

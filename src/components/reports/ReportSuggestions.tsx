@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useCaseFilter } from "@/contexts/CaseFilterContext";
 import { useCombinedEntities } from "@/hooks/useCombinedEntities";
@@ -11,6 +12,8 @@ import { useRegulatoryHarm } from "@/hooks/useRegulatoryHarm";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { openReportWindow } from "@/lib/reportShell";
+import { assertReportContext, type QAResult, type ReportQAContext } from "@/lib/reportQA";
+import { QAResultsModal } from "./QAResultsModal";
 import {
   generateNetworkReport,
   generateInternationalReport,
@@ -23,7 +26,7 @@ import {
 } from "@/lib/reportGenerators";
 import {
   Sparkles, FileText, Loader2, Network, Scale, TrendingDown,
-  GitBranch, BookOpen, Target, Shield, Clock,
+  GitBranch, BookOpen, Target, Shield, Clock, Gavel,
 } from "lucide-react";
 
 interface Suggestion {
@@ -34,7 +37,7 @@ interface Suggestion {
   color: string;
   caseId?: string;
   reportType: string;
-  generate: () => string;
+  generate: (courtMode?: boolean) => string;
 }
 
 export const ReportSuggestions = () => {
@@ -46,6 +49,9 @@ export const ReportSuggestions = () => {
   const { stats: platformStats } = usePlatformStats();
   const { incidents, losses, stats: harmStats } = useRegulatoryHarm(selectedCaseId || undefined);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
+  const [courtMode, setCourtMode] = useState(false);
+  const [qaResult, setQaResult] = useState<QAResult | null>(null);
+  const [pendingSuggestion, setPendingSuggestion] = useState<Suggestion | null>(null);
 
   const { data: cases } = useQuery({
     queryKey: ["cases-for-suggestions"],
@@ -192,7 +198,7 @@ export const ReportSuggestions = () => {
       icon: Target,
       color: "text-primary",
       reportType: "Investigation Report",
-      generate: () => generateInvestigationReport(events, entities, connections, discrepancies || [], platformStats, caseTitle, caseNumber),
+      generate: (cm?: boolean) => generateInvestigationReport(events, entities, connections, discrepancies || [], platformStats, caseTitle, caseNumber, cm),
     },
     {
       id: "threat-profiles",
@@ -208,9 +214,34 @@ export const ReportSuggestions = () => {
   const allSuggestions = [...smartSuggestions, ...suggestions];
 
   const handleGenerate = async (suggestion: Suggestion) => {
+    // Run QA preflight
+    const qaContext: ReportQAContext = {
+      reportType: suggestion.reportType,
+      courtMode,
+      entities: { total: entities.length, hostile: entities.filter(e => e.category === 'antagonist').length },
+      network: { relationships_total: platformStats.totalConnections, connections_total: connections.length },
+      events: events.map(e => ({ date: e.date, category: e.category })),
+      evidence: (uploads || []).map(u => ({ id: u.id })),
+      discrepancies: discrepancies || [],
+      violations: violations || [],
+    };
+    const result = assertReportContext(qaContext);
+
+    if (!result.ok || result.warnings.length > 0) {
+      setQaResult(result);
+      setPendingSuggestion(suggestion);
+      return;
+    }
+
+    await executeGeneration(suggestion);
+  };
+
+  const executeGeneration = async (suggestion: Suggestion) => {
     setGeneratingId(suggestion.id);
+    setQaResult(null);
+    setPendingSuggestion(null);
     try {
-      const html = suggestion.generate();
+      const html = suggestion.generate(courtMode);
       await openReportWindow(html);
       logReport.mutate({
         title: suggestion.title,
