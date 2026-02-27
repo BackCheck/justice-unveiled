@@ -9,12 +9,14 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { template, prompt, caseTitle, caseNumber, existingSections } = await req.json();
+    const { template, prompt, caseTitle, caseNumber, courtName, filingType, existingSections } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    const courtContext = courtName ? ` for the ${courtName}` : " for a Pakistani High Court";
+    const filingContext = filingType ? ` (Filing Type: ${filingType})` : "";
     const templateDescription = template === "court"
-      ? "a formal Court Filing / Petition for a Pakistani High Court or Sessions Court"
+      ? `a formal Court Filing / Petition${courtContext}${filingContext}`
       : "an Investigation Dossier for a human rights investigation";
 
     const existingSectionsContext = existingSections?.length
