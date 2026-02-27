@@ -30,7 +30,7 @@ const ParticleField = () => {
 
     const initParticles = () => {
       particlesRef.current = [];
-      const particleCount = Math.min(80, Math.floor(window.innerWidth / 20));
+      const particleCount = Math.min(40, Math.floor(window.innerWidth / 40));
       
       for (let i = 0; i < particleCount; i++) {
         particlesRef.current.push({
@@ -54,7 +54,7 @@ const ParticleField = () => {
 
     const drawConnections = () => {
       const particles = particlesRef.current;
-      const connectionDistance = 150;
+      const connectionDistance = 120;
 
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
