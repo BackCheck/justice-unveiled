@@ -1,7 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { 
   BarChart3,
   MessageSquare,
@@ -10,24 +9,24 @@ import {
   LayoutGrid,
   AlertCircle,
 } from "lucide-react";
+
+// Eagerly load above-fold only
+import { DashboardStatsHeader, QuickNavigationGrid, CaseOverviewCard } from "./widgets";
+import { GreetingBanner } from "@/components/GreetingBanner";
+import { DashboardHero } from "./DashboardHero";
+import { usePlatformStats } from "@/hooks/usePlatformStats";
+
+// Lazy-load everything below the fold
 const EntityCharts = lazy(() => import("./EntityCharts").then(m => ({ default: m.EntityCharts })));
 const IntelChat = lazy(() => import("./IntelChat").then(m => ({ default: m.IntelChat })));
 const IntelReports = lazy(() => import("./IntelReports").then(m => ({ default: m.IntelReports })));
-import { IntelBriefingCard } from "./IntelBriefingCard";
-import { CaseProfileBadges } from "./CaseProfileBadges";
-import { usePlatformStats } from "@/hooks/usePlatformStats";
-import {
-  DashboardStatsHeader,
-  CriticalAlertsPanel,
-  ActivityFeed,
-  TimelineSparkline,
-  QuickNavigationGrid,
-  CaseOverviewCard,
-  KeyFindingsGrid,
-  ViolationsSummaryWidget,
-} from "./widgets";
-import { GreetingBanner } from "@/components/GreetingBanner";
-import { DashboardHero } from "./DashboardHero";
+const IntelBriefingCard = lazy(() => import("./IntelBriefingCard").then(m => ({ default: m.IntelBriefingCard })));
+const CaseProfileBadges = lazy(() => import("./CaseProfileBadges").then(m => ({ default: m.CaseProfileBadges })));
+const KeyFindingsGrid = lazy(() => import("./widgets/KeyFindingsGrid").then(m => ({ default: m.KeyFindingsGrid })));
+const ViolationsSummaryWidget = lazy(() => import("./widgets/ViolationsSummaryWidget").then(m => ({ default: m.ViolationsSummaryWidget })));
+const CriticalAlertsPanel = lazy(() => import("./widgets/CriticalAlertsPanel").then(m => ({ default: m.CriticalAlertsPanel })));
+const ActivityFeed = lazy(() => import("./widgets/ActivityFeed").then(m => ({ default: m.ActivityFeed })));
+const TimelineSparkline = lazy(() => import("./widgets/TimelineSparkline").then(m => ({ default: m.TimelineSparkline })));
 
 export const IntelDashboard = () => {
   const { stats: platformStats, isLoading } = usePlatformStats();
@@ -94,20 +93,24 @@ export const IntelDashboard = () => {
           <CaseOverviewCard />
 
           {/* Case Profile Badges */}
-          <CaseProfileBadges />
+          <Suspense fallback={<div className="h-20 animate-pulse bg-muted/30 rounded-xl" />}>
+            <CaseProfileBadges />
+          </Suspense>
 
           {/* Intel Briefing */}
-          <IntelBriefingCard />
+          <Suspense fallback={<div className="h-32 animate-pulse bg-muted/30 rounded-xl" />}>
+            <IntelBriefingCard />
+          </Suspense>
 
           {/* Key Findings */}
           <div className="widget-card">
             <CardContent className="p-4 sm:p-6">
-              <KeyFindingsGrid />
+              <Suspense fallback={<div className="h-48 animate-pulse bg-muted/30 rounded-xl" />}>
+                <KeyFindingsGrid />
+              </Suspense>
             </CardContent>
           </div>
         </div>
-
-        {/* Keep the sidebar as-is */}
 
         {/* Secondary Column - Monitoring Sidebar */}
         <aside className="lg:col-span-4 space-y-6">
@@ -117,23 +120,31 @@ export const IntelDashboard = () => {
               <AlertCircle className="w-4 h-4 text-destructive" />
               <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Monitoring</h2>
             </div>
-            <CriticalAlertsPanel />
+            <Suspense fallback={<div className="h-32 animate-pulse bg-muted/30 rounded-xl" />}>
+              <CriticalAlertsPanel />
+            </Suspense>
           </section>
 
           <div className="section-divider" />
 
           {/* Timeline */}
-          <TimelineSparkline />
+          <Suspense fallback={<div className="h-24 animate-pulse bg-muted/30 rounded-xl" />}>
+            <TimelineSparkline />
+          </Suspense>
 
           <div className="section-divider" />
 
           {/* Activity Feed */}
-          <ActivityFeed />
+          <Suspense fallback={<div className="h-48 animate-pulse bg-muted/30 rounded-xl" />}>
+            <ActivityFeed />
+          </Suspense>
         </aside>
       </div>
 
       {/* Legal Violations Summary */}
-      <ViolationsSummaryWidget />
+      <Suspense fallback={<div className="h-32 animate-pulse bg-muted/30 rounded-xl" />}>
+        <ViolationsSummaryWidget />
+      </Suspense>
 
       {/* Separator */}
       <div className="section-divider" />
