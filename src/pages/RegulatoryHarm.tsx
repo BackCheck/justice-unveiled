@@ -100,6 +100,7 @@ const RegulatoryHarm = () => {
                 <ReportExportButton
                   label="Economic Harm Report"
                   generateReport={() => generateEconomicHarmReport(incidents, losses, stats, cases.find(c => c.id === selectedCaseId)?.title || "Active Investigation", cases.find(c => c.id === selectedCaseId)?.case_number)}
+                  qaContext={{ reportType: "Financial Assessment" }}
                 />
                 <Select value={selectedCaseId} onValueChange={setSelectedCaseId}>
                   <SelectTrigger className="w-[250px]">

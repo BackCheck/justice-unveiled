@@ -149,6 +149,13 @@ const Investigations = () => {
                 <ReportExportButton
                   label="Investigation Report"
                   generateReport={() => generateInvestigationReport(events, entities, connections, discrepancies || [], stats, caseData?.title || "Active Investigation", caseData?.case_number)}
+                  qaContext={{
+                    reportType: "Comprehensive Investigation Analysis",
+                    entities: { total: entities.length, hostile: entities.filter(e => e.category === 'antagonist').length },
+                    network: { relationships_total: stats.totalConnections, connections_total: connections.length },
+                    events: events.map(e => ({ date: e.date, category: e.category })),
+                    discrepancies: discrepancies || [],
+                  }}
                 />
               </div>
             </div>

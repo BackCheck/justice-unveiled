@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useCaseFilter } from "@/contexts/CaseFilterContext";
 import { useCombinedEntities } from "@/hooks/useCombinedEntities";
@@ -14,6 +15,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { openReportWindow } from "@/lib/reportShell";
 import { assertReportContext, type QAResult, type ReportQAContext } from "@/lib/reportQA";
 import { QAResultsModal } from "./QAResultsModal";
+import { getCourtsList, COURT_PROFILES } from "@/lib/courtProfiles";
+import type { CourtId } from "@/types/reports";
 import {
   generateNetworkReport,
   generateInternationalReport,
@@ -26,7 +29,7 @@ import {
 } from "@/lib/reportGenerators";
 import {
   Sparkles, FileText, Loader2, Network, Scale, TrendingDown,
-  GitBranch, BookOpen, Target, Shield, Clock, Gavel,
+  GitBranch, BookOpen, Target, Shield, Clock, Gavel, Building2,
 } from "lucide-react";
 
 interface Suggestion {
@@ -50,8 +53,13 @@ export const ReportSuggestions = () => {
   const { incidents, losses, stats: harmStats } = useRegulatoryHarm(selectedCaseId || undefined);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
   const [courtMode, setCourtMode] = useState(false);
+  const [selectedCourt, setSelectedCourt] = useState<CourtId>("IHC");
   const [qaResult, setQaResult] = useState<QAResult | null>(null);
+  const [qaOpen, setQaOpen] = useState(false);
   const [pendingSuggestion, setPendingSuggestion] = useState<Suggestion | null>(null);
+
+  const courtsList = getCourtsList();
+  const courtProfile = COURT_PROFILES[selectedCourt];
 
   const { data: cases } = useQuery({
     queryKey: ["cases-for-suggestions"],
@@ -103,13 +111,14 @@ export const ReportSuggestions = () => {
   });
 
   const logReport = useMutation({
-    mutationFn: async (report: { title: string; report_type: string; description: string; sections_count: number }) => {
+    mutationFn: async (report: { title: string; report_type: string; description: string; sections_count: number; metadata?: Record<string, any> }) => {
       await supabase.from("generated_reports").insert({
         case_id: selectedCaseId,
         title: report.title,
         report_type: report.report_type,
         description: report.description,
         sections_count: report.sections_count,
+        metadata: report.metadata || {},
       });
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["generated-reports"] }),
@@ -117,6 +126,18 @@ export const ReportSuggestions = () => {
 
   const caseTitle = caseData?.title || "Active Investigation";
   const caseNumber = caseData?.case_number;
+
+  // Build QA context
+  const buildQAContext = (suggestion: Suggestion): ReportQAContext => ({
+    reportType: suggestion.reportType,
+    courtMode,
+    entities: { total: entities.length, hostile: entities.filter(e => e.category === 'antagonist').length },
+    network: { relationships_total: platformStats.totalConnections, connections_total: connections.length },
+    events: events.map(e => ({ date: e.date, category: e.category })),
+    evidence: (uploads || []).map(u => ({ id: u.id })),
+    discrepancies: discrepancies || [],
+    violations: violations || [],
+  });
 
   // Build dynamic suggestions based on real case data
   const suggestions: Suggestion[] = [];
@@ -131,7 +152,7 @@ export const ReportSuggestions = () => {
       color: "text-chart-4",
       caseId: c.id,
       reportType: "Timeline Intelligence",
-      generate: () => generateReconstructionReport(events, discrepancies || [], c.title, c.case_number),
+      generate: (cm) => generateReconstructionReport(events, discrepancies || [], c.title, c.case_number),
     });
   });
 
@@ -214,32 +235,24 @@ export const ReportSuggestions = () => {
   const allSuggestions = [...smartSuggestions, ...suggestions];
 
   const handleGenerate = async (suggestion: Suggestion) => {
-    // Run QA preflight
-    const qaContext: ReportQAContext = {
-      reportType: suggestion.reportType,
-      courtMode,
-      entities: { total: entities.length, hostile: entities.filter(e => e.category === 'antagonist').length },
-      network: { relationships_total: platformStats.totalConnections, connections_total: connections.length },
-      events: events.map(e => ({ date: e.date, category: e.category })),
-      evidence: (uploads || []).map(u => ({ id: u.id })),
-      discrepancies: discrepancies || [],
-      violations: violations || [],
-    };
+    const qaContext = buildQAContext(suggestion);
     const result = assertReportContext(qaContext);
 
     if (!result.ok || result.warnings.length > 0) {
       setQaResult(result);
       setPendingSuggestion(suggestion);
+      setQaOpen(true);
       return;
     }
 
-    await executeGeneration(suggestion);
+    await executeGeneration(suggestion, result);
   };
 
-  const executeGeneration = async (suggestion: Suggestion) => {
+  const executeGeneration = async (suggestion: Suggestion, qa?: QAResult, bypassed?: boolean) => {
     setGeneratingId(suggestion.id);
     setQaResult(null);
     setPendingSuggestion(null);
+    setQaOpen(false);
     try {
       const html = suggestion.generate(courtMode);
       await openReportWindow(html);
@@ -248,6 +261,11 @@ export const ReportSuggestions = () => {
         report_type: suggestion.reportType,
         description: suggestion.description,
         sections_count: 5,
+        metadata: {
+          court_mode: courtMode,
+          court_profile: courtMode ? selectedCourt : null,
+          qa_result: qa ? { ok: qa.ok, warnings: qa.warnings, errors: qa.errors, bypassed: !!bypassed } : { ok: true, warnings: [], errors: [], bypassed: false },
+        },
       });
       toast({ title: "Report Generated", description: suggestion.title });
     } catch (err) {
@@ -266,12 +284,42 @@ export const ReportSuggestions = () => {
           <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
             <Sparkles className="w-6 h-6 text-primary" />
           </div>
-          <div>
+          <div className="flex-1">
             <h2 className="text-lg font-bold">AI-Powered Report Generator</h2>
             <p className="text-sm text-muted-foreground mt-1">
               Transform complex investigation data into tailored analyses. Click any suggestion to instantly generate a professional PDF report grounded in your source material.
             </p>
           </div>
+        </div>
+
+        {/* Court Mode Toggle */}
+        <div className="mt-4 flex flex-wrap items-center gap-4 p-3 rounded-lg border bg-card">
+          <div className="flex items-center gap-2">
+            <Gavel className="w-4 h-4 text-primary" />
+            <span className="text-xs font-semibold">Court Mode</span>
+            <Switch checked={courtMode} onCheckedChange={setCourtMode} />
+          </div>
+          {courtMode && (
+            <div className="flex items-center gap-2">
+              <Building2 className="w-3.5 h-3.5 text-muted-foreground" />
+              <Select value={selectedCourt} onValueChange={(v) => setSelectedCourt(v as CourtId)}>
+                <SelectTrigger className="text-xs h-8 w-[200px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {courtsList.map(c => (
+                    <SelectItem key={c.id} value={c.id} className="text-xs">{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Badge variant="outline" className="text-[10px]">{courtProfile.filingStyle.annexLabel} style</Badge>
+            </div>
+          )}
+          {courtMode && (
+            <p className="text-[10px] text-muted-foreground">
+              Serif typography • Auto LOD & Key Issues appendices • Stricter QA
+            </p>
+          )}
         </div>
       </div>
 
@@ -314,7 +362,10 @@ export const ReportSuggestions = () => {
                     <s.icon className={`w-5 h-5 ${s.color}`} />
                     <CardTitle className="text-sm">{s.title}</CardTitle>
                   </div>
-                  <Badge variant="secondary" className="text-[10px]">PDF</Badge>
+                  <div className="flex gap-1">
+                    {courtMode && <Badge variant="secondary" className="text-[10px]">Court</Badge>}
+                    <Badge variant="secondary" className="text-[10px]">PDF</Badge>
+                  </div>
                 </div>
                 <CardDescription className="text-xs">{s.description}</CardDescription>
               </CardHeader>
@@ -340,6 +391,25 @@ export const ReportSuggestions = () => {
           ))}
         </div>
       </div>
+
+      {/* QA Results Modal */}
+      {qaResult && (
+        <QAResultsModal
+          open={qaOpen}
+          onOpenChange={setQaOpen}
+          qaResult={qaResult}
+          onProceedAnyway={() => {
+            if (pendingSuggestion) {
+              executeGeneration(pendingSuggestion, qaResult, true);
+            }
+          }}
+          onCancel={() => {
+            setQaOpen(false);
+            setPendingSuggestion(null);
+            setQaResult(null);
+          }}
+        />
+      )}
     </div>
   );
 };

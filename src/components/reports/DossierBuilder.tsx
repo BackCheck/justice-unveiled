@@ -20,6 +20,9 @@ import type { CourtId, CourtFilingTemplate } from "@/types/reports";
 import { Switch } from "@/components/ui/switch";
 import { Progress } from "@/components/ui/progress";
 import { validateCourtDossier, auditCitations, getReadinessLabel, type ValidationResult, type CitationAudit } from "@/lib/dossierValidation";
+import { assertReportContext, type QAResult, type ReportQAContext } from "@/lib/reportQA";
+import { QAResultsModal } from "./QAResultsModal";
+import { buildLODAppendix, buildKeyIssuesAppendix } from "@/lib/reportBlocks";
 import {
   FileText, Plus, Trash2, ChevronRight, ChevronLeft,
   Gavel, Search, Loader2, Sparkles, ArrowUp, ArrowDown,
@@ -70,6 +73,9 @@ export const DossierBuilder = () => {
   const [sections, setSections] = useState<DossierSection[]>([]);
   const [annexures, setAnnexures] = useState<DossierAnnexure[]>([]);
   const [generating, setGenerating] = useState(false);
+  const [qaResult, setQaResult] = useState<QAResult | null>(null);
+  const [qaOpen, setQaOpen] = useState(false);
+  const [qaBypassed, setQaBypassed] = useState(false);
 
   // Court-specific state
   const [selectedCourt, setSelectedCourt] = useState<CourtId>("IHC");
@@ -259,6 +265,47 @@ export const DossierBuilder = () => {
     setAnnexures(prev => prev.map(a => ({ ...a, selected: a.suggested ? true : a.selected })));
   };
 
+  // Fetch events for appendices
+  const { data: caseEvents } = useQuery({
+    queryKey: ["dossier-events", selectedCaseId],
+    queryFn: async () => {
+      let q = supabase.from("extracted_events").select("*");
+      if (selectedCaseId) q = q.eq("case_id", selectedCaseId);
+      const { data } = await q.eq("is_hidden", false).eq("is_approved", true).order("date");
+      return data || [];
+    },
+  });
+
+  const { data: caseViolations } = useQuery({
+    queryKey: ["dossier-violations", selectedCaseId],
+    queryFn: async () => {
+      let q = supabase.from("compliance_violations").select("*");
+      if (selectedCaseId) q = q.eq("case_id", selectedCaseId);
+      const { data } = await q;
+      return data || [];
+    },
+  });
+
+  const { data: caseDiscrepancies } = useQuery({
+    queryKey: ["dossier-discrepancies", selectedCaseId],
+    queryFn: async () => {
+      let q = supabase.from("extracted_discrepancies").select("*");
+      if (selectedCaseId) q = q.eq("case_id", selectedCaseId);
+      const { data } = await q;
+      return data || [];
+    },
+  });
+
+  const { data: caseEntities } = useQuery({
+    queryKey: ["dossier-entities", selectedCaseId],
+    queryFn: async () => {
+      let q = supabase.from("extracted_entities").select("name, category, role");
+      if (selectedCaseId) q = q.eq("case_id", selectedCaseId);
+      const { data } = await q;
+      return data || [];
+    },
+  });
+
   // ── Generate ──
   const handleGenerate = async () => {
     // Block generation if critical validation errors in court mode
@@ -280,10 +327,49 @@ export const DossierBuilder = () => {
       });
     }
 
+    // Run QA preflight
+    const qaContext: ReportQAContext = {
+      reportType: template === "court" ? "Court Dossier" : "Investigation Dossier",
+      courtMode: template === "court",
+      entities: { total: (caseEntities || []).length, hostile: (caseEntities || []).filter(e => e.category === 'antagonist').length },
+      events: (caseEvents || []).map(e => ({ date: e.date, category: e.category })),
+      evidence: (evidenceFiles || []).map(u => ({ id: u.id })),
+      discrepancies: caseDiscrepancies || [],
+      violations: caseViolations || [],
+      sections: sections.map(s => ({ title: s.title, content: s.content })),
+      annexures: annexures.map(a => ({ label: a.label, selected: a.selected })),
+    };
+    const result = assertReportContext(qaContext);
+
+    if (!result.ok || result.warnings.length > 0) {
+      setQaResult(result);
+      setQaOpen(true);
+      return;
+    }
+
+    await executeGeneration();
+  };
+
+  const executeGeneration = async (bypassed?: boolean) => {
     setGenerating(true);
+    setQaOpen(false);
+    setQaBypassed(!!bypassed);
     try {
       const selectedAnnexures = annexures.filter(a => a.selected);
       let html: string;
+
+      // Build court-mode appendices automatically
+      let appendicesHTML = '';
+      if (template === "court") {
+        appendicesHTML += buildLODAppendix(caseEvents || []);
+        appendicesHTML += buildKeyIssuesAppendix(
+          caseViolations || [],
+          caseDiscrepancies || [],
+          caseEntities || [],
+          (caseEvents || []).map(e => ({ date: e.date, category: e.category, description: e.description })),
+          (evidenceFiles || []).map(f => ({ id: f.id, fileName: f.file_name, category: f.category || undefined })),
+        );
+      }
 
       if (template === "court") {
         html = generateCourtDossier({
@@ -299,6 +385,10 @@ export const DossierBuilder = () => {
           annexures: selectedAnnexures,
           includeWatermark,
         });
+        // Inject appendices before closing </body>
+        if (appendicesHTML) {
+          html = html.replace('</body>', appendicesHTML + '</body>');
+        }
       } else {
         html = generateDossierReport({
           template,
@@ -313,9 +403,7 @@ export const DossierBuilder = () => {
 
       await openReportWindow(html);
       // Log dossier generation for audit trail
-      if (template === "court") {
-        await logDossierGeneration();
-      }
+      await logDossierGeneration(bypassed);
       toast({ title: "Dossier Generated", description: `${sections.length} sections, ${selectedAnnexures.length} annexures` });
     } catch (err) {
       console.error(err);
@@ -347,18 +435,17 @@ export const DossierBuilder = () => {
 
   const readiness = validation ? getReadinessLabel(validation.score) : null;
 
-  // ── Audit log on generate ──
-  const logDossierGeneration = async () => {
+  const logDossierGeneration = async (bypassed?: boolean) => {
     try {
       await supabase.from("generated_reports").insert({
-        case_id: selectedCaseId || undefined,
+        case_id: selectedCaseId || null,
         title: dossierTitle || filingTemplate.label,
         report_type: "court_dossier",
         template: selectedFiling,
         sections_count: sections.length,
         annexures_count: selectedAnnexCount,
         description: `${courtProfile.name} — ${filingTemplate.label}`,
-        metadata: {
+        metadata: JSON.parse(JSON.stringify({
           courtId: selectedCourt,
           filingType: selectedFiling,
           petitionerName,
@@ -369,14 +456,16 @@ export const DossierBuilder = () => {
           sectionTitles: sections.map(s => s.title),
           annexureLabels: annexures.filter(a => a.selected).map(a => a.label),
           generatedAt: new Date().toISOString(),
-        },
-      });
+          qa_result: qaResult ? { ok: qaResult.ok, warnings: qaResult.warnings.map(w => ({ code: w.code, severity: w.severity, message: w.message })), errors: qaResult.errors.map(e => ({ code: e.code, severity: e.severity, message: e.message })), bypassed: !!bypassed } : { ok: true, warnings: [], errors: [], bypassed: false },
+        })),
+      } as any);
     } catch (err) {
       console.error("Failed to log dossier generation:", err);
     }
   };
 
   return (
+    <>
     <Card className="glass-card border-primary/20">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
@@ -858,5 +947,16 @@ export const DossierBuilder = () => {
         </div>
       </CardContent>
     </Card>
+
+    {qaResult && (
+      <QAResultsModal
+        open={qaOpen}
+        onOpenChange={setQaOpen}
+        qaResult={qaResult}
+        onProceedAnyway={() => executeGeneration(true)}
+        onCancel={() => { setQaOpen(false); setQaResult(null); }}
+      />
+    )}
+    </>
   );
 };
