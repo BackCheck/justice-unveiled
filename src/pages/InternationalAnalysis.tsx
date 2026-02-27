@@ -167,6 +167,7 @@ const InternationalAnalysis = () => {
                 <ReportExportButton
                   label="Violations Report"
                   generateReport={() => generateInternationalReport(violationStats as any, timelineEvents, "Active Investigation")}
+                  qaContext={{ reportType: "Rights Analysis", events: timelineEvents.map(e => ({ date: e.date, category: e.category })) }}
                 />
                 <div className="text-right">
                   <div className="text-3xl font-bold text-destructive">{totalViolations}</div>

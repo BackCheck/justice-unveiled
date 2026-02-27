@@ -81,6 +81,12 @@ const IntelBriefing = () => {
               <ReportExportButton
                 label="Intel Briefing Report"
                 generateReport={() => generateIntelBriefingReport(events, entities, platformStats, caseData?.title || "Active Investigation", caseData?.case_number)}
+                qaContext={{
+                  reportType: "Executive Briefing",
+                  entities: { total: entities.length, hostile: entities.filter(e => e.category === 'antagonist').length },
+                  network: { relationships_total: platformStats.totalConnections, connections_total: 0 },
+                  events: events.map(e => ({ date: e.date, category: e.category })),
+                }}
               />
               <SocialShareButtons
                 title="Intelligence Briefing - HRPM"

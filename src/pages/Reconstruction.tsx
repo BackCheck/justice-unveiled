@@ -128,6 +128,11 @@ const Reconstruction = () => {
               <ReportExportButton
                 label="Reconstruction Report"
                 generateReport={() => generateReconstructionReport(events as any, contradictions as any, cases?.find(c => c.id === selectedCaseId)?.title || "Active Investigation", cases?.find(c => c.id === selectedCaseId)?.case_number)}
+                qaContext={{
+                  reportType: "Timeline Intelligence",
+                  events: (events as any[]).map((e: any) => ({ date: e.date, category: e.category })),
+                  discrepancies: contradictions || [],
+                }}
               />
               {/* Case Filter */}
               <Select value={selectedCaseId || "all"} onValueChange={(val) => setSelectedCaseId(val === "all" ? "" : val)}>

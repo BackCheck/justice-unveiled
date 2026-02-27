@@ -31,6 +31,12 @@ const NetworkPage = () => {
           <ReportExportButton
             label="Network Report"
             generateReport={() => generateNetworkReport(entities, connections, caseData?.title || "Active Investigation", caseData?.case_number)}
+            qaContext={{
+              reportType: "Network Intelligence",
+              entities: { total: entities.length, hostile: entities.filter(e => e.category === 'antagonist').length },
+              network: { relationships_total: connections.length, connections_total: connections.length },
+              events: [],
+            }}
           />
         </div>
         <IntelGraph />
