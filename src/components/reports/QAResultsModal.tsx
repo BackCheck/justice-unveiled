@@ -49,7 +49,24 @@ export const QAResultsModal = ({ open, onOpenChange, qaResult, onProceedAnyway, 
         </div>
 
         <div className="max-h-[300px] overflow-y-auto space-y-1.5">
-          {[...qaResult.errors, ...qaResult.warnings].map((issue, i) => (
+          {/* Dedup stats summary if present */}
+          {qaResult.warnings.some(w => w.code === 'ENTITY_CONSOLIDATED' || w.code === 'EVENT_DEDUPLICATED') && (
+            <div className="p-2 rounded-md bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 mb-2">
+              <p className="text-xs font-medium text-blue-700 dark:text-blue-300">📊 Data Integrity Processing</p>
+              {qaResult.warnings.filter(w => w.code === 'ENTITY_CONSOLIDATED' || w.code === 'EVENT_DEDUPLICATED').map((w, i) => (
+                <p key={i} className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">{w.message}</p>
+              ))}
+            </div>
+          )}
+          {qaResult.warnings.some(w => w.code === 'EMOTIONAL_LANGUAGE') && (
+            <div className="p-2 rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 mb-2">
+              <p className="text-xs font-medium text-amber-700 dark:text-amber-300">🔒 Tone Sanitization Applied</p>
+              {qaResult.warnings.filter(w => w.code === 'EMOTIONAL_LANGUAGE').map((w, i) => (
+                <p key={i} className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">{w.message}</p>
+              ))}
+            </div>
+          )}
+          {[...qaResult.errors, ...qaResult.warnings.filter(w => !['ENTITY_CONSOLIDATED', 'EVENT_DEDUPLICATED', 'EMOTIONAL_LANGUAGE'].includes(w.code))].map((issue, i) => (
             <div key={i} className="flex items-start gap-2 text-xs p-2 rounded-md bg-muted/50">
               {issue.severity === 'critical' ? (
                 <XCircle className="w-3.5 h-3.5 text-destructive shrink-0 mt-0.5" />

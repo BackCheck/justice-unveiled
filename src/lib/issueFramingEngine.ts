@@ -85,13 +85,13 @@ export function buildKeyIssues(input: IssueInput): LegalIssue[] {
   if (hostileEntities.length > 3) {
     issues.push({
       issueId: `ISS-${++id}`,
-      title: `Coordinated Institutional Action — ${hostileEntities.length} Hostile Actors`,
-      category: 'Pattern of Persecution',
+      title: `Alleged Coordinated Institutional Action — ${hostileEntities.length} Adversarial Actors`,
+      category: 'Pattern of Alleged Targeting',
       legalAnchors: [],
       evidenceStrength: Math.min(80, hostileEntities.length * 8 + 20),
       vulnerabilityScore: 30,
       relatedAnnexures: [],
-      narrative: `${hostileEntities.length} entities classified as adversarial (${((hostileEntities.length / Math.max(input.entities.length, 1)) * 100).toFixed(0)}% of ${input.entities.length} total entities). This concentration indicates coordinated institutional action rather than isolated incidents. Legal anchors: Not linked (requires counsel review).`,
+      narrative: `${hostileEntities.length} entities classified as adversarial (${((hostileEntities.length / Math.max(input.entities.length, 1)) * 100).toFixed(0)}% of ${input.entities.length} total entities). This concentration indicates alleged coordinated institutional action rather than isolated incidents. Legal anchors: Not linked (requires counsel review).`,
     });
   }
 
