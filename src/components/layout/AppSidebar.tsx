@@ -86,16 +86,16 @@ const NEW_ITEMS = new Set([
 ]);
 
 const coreNavItems = [
-  { path: "/", labelKey: "nav.home", icon: Home },
+  { path: "/home", labelKey: "nav.home", icon: Home },
+  { path: "/osint-toolkit", labelKey: "nav.osintToolkit", icon: Radar },
   { path: "/reports", labelKey: "nav.reportBuilder", icon: FileText },
+  { path: "/analyze", labelKey: "nav.aiAnalyzer", icon: Brain },
   { path: "/cases", labelKey: "nav.caseFiles", icon: FolderOpen },
+  { path: "/investigations", labelKey: "nav.investigations", icon: Target },
   { path: "/timeline", labelKey: "nav.timeline", icon: Clock },
   { path: "/network", labelKey: "nav.entityNetwork", icon: Network },
   { path: "/evidence", labelKey: "nav.evidenceMatrix", icon: FileText },
-  { path: "/analyze", labelKey: "nav.aiAnalyzer", icon: Brain },
   { path: "/analysis-history", labelKey: "nav.analysisHistory", icon: Clock },
-  { path: "/investigations", labelKey: "nav.investigations", icon: Target },
-  { path: "/osint-toolkit", labelKey: "nav.osintToolkit", icon: Radar },
   { path: "/blog", labelKey: "nav.blogNews", icon: Newspaper },
 ];
 

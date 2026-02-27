@@ -113,7 +113,7 @@ const Landing = () => {
             {user ? (
               <div className="flex items-center gap-2">
                 <Button size="sm" variant="outline" className="border-primary/50 hover:bg-primary hover:text-primary-foreground transition-all duration-300" asChild>
-                  <Link to="/">Dashboard</Link>
+                  <Link to="/home">Dashboard</Link>
                 </Button>
                 <Button size="sm" variant="ghost" onClick={handleSignOut} className="text-muted-foreground hover:text-foreground">
                   <LogOut className="w-4 h-4" />
@@ -129,7 +129,7 @@ const Landing = () => {
             <LanguageSwitcher />
             {user ? (
               <Button size="sm" asChild>
-                <Link to="/">Dashboard</Link>
+                <Link to="/home">Dashboard</Link>
               </Button>
             ) : (
               <Button size="sm" asChild>
@@ -207,7 +207,7 @@ const Landing = () => {
                   </Link>
                 </Button>
                 <Button size="lg" variant="ghost" className="hover:bg-primary/5" asChild>
-                  <Link to="/">{t('landing.hero.secondaryCta')}</Link>
+                  <Link to="/home">{t('landing.hero.secondaryCta')}</Link>
                 </Button>
               </div>
             </ScrollReveal>
