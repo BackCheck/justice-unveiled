@@ -1,23 +1,16 @@
+import { lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { 
-  ArrowRight, 
-  Sparkles,
-  Target,
-  Eye,
-  Plus,
   LogOut,
   Code,
   BookOpen,
   Github
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import hrpmLogo from "@/assets/human-rights-logo.png";
 import { MotionScrollReveal } from "@/components/ui/motion-scroll-reveal";
 import SpotlightEffect from "@/components/landing/SpotlightEffect";
-import GlobeHeroSection from "@/components/landing/GlobeHeroSection";
 import TrustMetrics from "@/components/landing/TrustMetrics";
 import InteractiveHeroModules from "@/components/landing/InteractiveHeroModules";
 import FeaturedCasesSection from "@/components/landing/FeaturedCasesSection";
@@ -30,6 +23,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useSEO } from "@/hooks/useSEO";
+
+const MountainHeroSection = lazy(() => import("@/components/landing/MountainHeroSection"));
+const GlobeHeroSection = lazy(() => import("@/components/landing/GlobeHeroSection"));
 
 const Landing = () => {
   useSEO({
@@ -66,19 +62,16 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-background overflow-hidden relative">
-      <SpotlightEffect size={500} intensity={0.2} />
-
-      {/* Navigation */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/30">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      {/* Navigation - floating over mountain hero */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-background/40 backdrop-blur-xl border-b border-border/20">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
               <img 
                 src={hrpmLogo} 
                 alt="HRPM Logo" 
-                className="w-10 h-10 transition-all duration-300 group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]"
+                className="w-9 h-9 transition-all duration-300 group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]"
               />
-              <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
              <div className="flex flex-col">
                <span className="font-bold text-lg text-foreground tracking-tight">HRPM</span>
@@ -136,38 +129,52 @@ const Landing = () => {
         </div>
       </header>
 
-      {/* Globe Hero Section */}
-      <GlobeHeroSection />
+      {/* Section 1: Full-screen Mountain Hero — immediate impact */}
+      <Suspense fallback={<div className="w-full h-screen bg-background" />}>
+        <MountainHeroSection />
+      </Suspense>
 
-      {/* Trust Metrics */}
-      <ScrollReveal delay={100}>
-        <div className="max-w-4xl mx-auto px-4 pb-12">
-          <TrustMetrics />
-        </div>
-      </ScrollReveal>
+      {/* Everything below loads on scroll */}
+      <div className="relative">
+        <SpotlightEffect size={500} intensity={0.2} />
 
-      {/* Featured Cases - data driven */}
-      <MotionScrollReveal direction="up" delay={100}>
-        <FeaturedCasesSection />
-      </MotionScrollReveal>
+        {/* Section 2: Globe + Stats */}
+        <MotionScrollReveal direction="up" delay={100}>
+          <Suspense fallback={<div className="min-h-[85vh] bg-background" />}>
+            <GlobeHeroSection />
+          </Suspense>
+        </MotionScrollReveal>
 
-      {/* Violation Metrics Dashboard */}
-      <MotionScrollReveal direction="up" delay={150}>
-        <ViolationMetrics />
-      </MotionScrollReveal>
+        {/* Trust Metrics */}
+        <ScrollReveal delay={100}>
+          <div className="max-w-4xl mx-auto px-4 pb-12">
+            <TrustMetrics />
+          </div>
+        </ScrollReveal>
 
-      {/* Interactive Module Explorer */}
-      <MotionScrollReveal direction="scale" delay={100}>
-        <InteractiveHeroModules />
-      </MotionScrollReveal>
+        {/* Featured Cases */}
+        <MotionScrollReveal direction="up" delay={100}>
+          <FeaturedCasesSection />
+        </MotionScrollReveal>
 
-      {/* Bottom CTA */}
-      <MotionScrollReveal direction="up" delay={200}>
-        <BottomCTA />
-      </MotionScrollReveal>
+        {/* Violation Metrics */}
+        <MotionScrollReveal direction="up" delay={150}>
+          <ViolationMetrics />
+        </MotionScrollReveal>
 
-      {/* Footer */}
-      <LandingFooter />
+        {/* Interactive Module Explorer */}
+        <MotionScrollReveal direction="scale" delay={100}>
+          <InteractiveHeroModules />
+        </MotionScrollReveal>
+
+        {/* Bottom CTA */}
+        <MotionScrollReveal direction="up" delay={200}>
+          <BottomCTA />
+        </MotionScrollReveal>
+
+        {/* Footer */}
+        <LandingFooter />
+      </div>
     </div>
   );
 };
