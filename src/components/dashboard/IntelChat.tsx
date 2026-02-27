@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   MessageSquare,
   Send,
@@ -14,12 +15,15 @@ import {
   Bot,
   Loader2,
   AlertCircle,
-  FileText,
   Scale,
   Users,
   Clock,
+  Search,
+  FileText,
+  Gavel,
+  Radio,
+  Shield,
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 
 type Message = {
   role: "user" | "assistant";
@@ -27,11 +31,25 @@ type Message = {
   timestamp: Date;
 };
 
-const suggestedQuestions = [
-  { icon: FileText, text: "Summarize the key evidence fabrication findings" },
-  { icon: Scale, text: "What procedural violations led to the acquittal?" },
+const caseCommsSuggestions = [
   { icon: Users, text: "Who are the main antagonists and their connections?" },
   { icon: Clock, text: "What is the timeline of the FIA raid and its aftermath?" },
+  { icon: Shield, text: "Summarize the key evidence fabrication findings" },
+  { icon: Scale, text: "What procedural violations led to the acquittal?" },
+];
+
+const legalSuggestions = [
+  { icon: Gavel, text: "Draft a High Court submission for PECA §33 violations" },
+  { icon: FileText, text: "Generate a statement on chain-of-custody failures" },
+  { icon: Scale, text: "Prepare jurisdiction-aware positioning for Sindh High Court" },
+  { icon: Shield, text: "Auto-generate a comprehensive case report for appeal" },
+];
+
+const searchSuggestions = [
+  { icon: Search, text: "Search for NADRA contract termination evidence" },
+  { icon: Search, text: "Find all events involving SI Imran Saad" },
+  { icon: Search, text: "Enrich entity profile for Major Mumtaz Shah" },
+  { icon: Search, text: "Cross-reference FIA raid timeline with forensic evidence" },
 ];
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/intel-chat`;
@@ -41,6 +59,7 @@ export const IntelChat = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("comms");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -52,6 +71,7 @@ export const IntelChat = () => {
   const streamChat = async (userMessage: string) => {
     setError(null);
     setIsLoading(true);
+    setActiveTab("comms");
     
     const userMsg: Message = {
       role: "user",
@@ -90,12 +110,8 @@ export const IntelChat = () => {
       });
 
       if (!resp.ok) {
-        if (resp.status === 429) {
-          throw new Error("Rate limit exceeded. Please try again in a moment.");
-        }
-        if (resp.status === 402) {
-          throw new Error("AI credits exhausted. Please contact support.");
-        }
+        if (resp.status === 429) throw new Error("Rate limit exceeded. Please try again in a moment.");
+        if (resp.status === 402) throw new Error("AI credits exhausted. Please contact support.");
         throw new Error("Failed to get response from AI.");
       }
 
@@ -115,17 +131,11 @@ export const IntelChat = () => {
         while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
           let line = textBuffer.slice(0, newlineIndex);
           textBuffer = textBuffer.slice(newlineIndex + 1);
-
           if (line.endsWith("\r")) line = line.slice(0, -1);
           if (line.startsWith(":") || line.trim() === "") continue;
           if (!line.startsWith("data: ")) continue;
-
           const jsonStr = line.slice(6).trim();
-          if (jsonStr === "[DONE]") {
-            streamDone = true;
-            break;
-          }
-
+          if (jsonStr === "[DONE]") { streamDone = true; break; }
           try {
             const parsed = JSON.parse(jsonStr);
             const content = parsed.choices?.[0]?.delta?.content;
@@ -137,7 +147,6 @@ export const IntelChat = () => {
         }
       }
 
-      // Final flush
       if (textBuffer.trim()) {
         for (let raw of textBuffer.split("\n")) {
           if (!raw) continue;
@@ -172,57 +181,93 @@ export const IntelChat = () => {
     streamChat(question);
   };
 
+  const SuggestionGrid = ({ suggestions }: { suggestions: typeof caseCommsSuggestions }) => (
+    <div className="grid sm:grid-cols-2 gap-2">
+      {suggestions.map((q, i) => {
+        const Icon = q.icon;
+        return (
+          <Button
+            key={i}
+            variant="outline"
+            size="sm"
+            className="justify-start text-left h-auto py-2.5 px-3 border-border/50 hover:border-primary/30 hover:bg-primary/5 transition-all"
+            onClick={() => handleSuggestion(q.text)}
+            disabled={isLoading}
+          >
+            <Icon className="w-4 h-4 mr-2 flex-shrink-0 text-primary" />
+            <span className="text-sm">{q.text}</span>
+          </Button>
+        );
+      })}
+    </div>
+  );
+
   return (
-    <Card className="glass-card flex flex-col h-[500px]">
+    <Card className="glass-card flex flex-col border-primary/10">
       <CardHeader className="pb-3 flex-shrink-0">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-base">
-            <MessageSquare className="w-5 h-5" />
-            Intelligence Analyst Chat
+            <Radio className="w-5 h-5 text-primary" />
+            Live Comm + AI
           </CardTitle>
-          <Badge variant="outline" className="bg-primary/10 border-primary/30 gap-1">
-            <Sparkles className="w-3 h-3" />
-            AI-Powered
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="bg-primary/10 border-primary/30 gap-1">
+              <Sparkles className="w-3 h-3" />
+              AI-Powered
+            </Badge>
+            <Badge variant="outline" className="bg-chart-2/10 border-chart-2/30 text-chart-2 gap-1">
+              <Radio className="w-3 h-3" />
+              Live
+            </Badge>
+          </div>
         </div>
         <p className="text-sm text-muted-foreground">
-          Ask questions about the case findings, entities, and evidence
+          Case-based live comms · AI-assisted discussions · Auto-generated legal submissions
         </p>
       </CardHeader>
       
       <Separator />
       
-      <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
+      <CardContent className="flex flex-col p-0 overflow-hidden">
         {/* Messages Area */}
-        <ScrollArea className="flex-1 p-4" ref={scrollRef}>
+        <ScrollArea className="h-[350px] p-4" ref={scrollRef}>
           {messages.length === 0 ? (
             <div className="space-y-4">
-              <div className="text-center text-muted-foreground text-sm py-8">
-                <Bot className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                <p>Start a conversation with the case intelligence analyst</p>
+              <div className="text-center text-muted-foreground text-sm py-4">
+                <Bot className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                <p className="font-medium text-foreground/70">Intelligence Analyst Ready</p>
+                <p className="text-xs mt-1">Ask about the case, generate legal documents, or search evidence</p>
               </div>
               
-              <div className="space-y-2">
-                <p className="text-xs text-muted-foreground font-medium">Suggested Questions:</p>
-                <div className="grid gap-2">
-                  {suggestedQuestions.map((q, i) => {
-                    const Icon = q.icon;
-                    return (
-                      <Button
-                        key={i}
-                        variant="outline"
-                        size="sm"
-                        className="justify-start text-left h-auto py-2 px-3"
-                        onClick={() => handleSuggestion(q.text)}
-                        disabled={isLoading}
-                      >
-                        <Icon className="w-4 h-4 mr-2 flex-shrink-0" />
-                        <span className="text-sm">{q.text}</span>
-                      </Button>
-                    );
-                  })}
-                </div>
-              </div>
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-3 bg-muted/50">
+                  <TabsTrigger value="comms" className="text-xs gap-1.5 data-[state=active]:bg-background">
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Case Comms</span>
+                    <span className="sm:hidden">Comms</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="legal" className="text-xs gap-1.5 data-[state=active]:bg-background">
+                    <Gavel className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Legal Drafts</span>
+                    <span className="sm:hidden">Legal</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="search" className="text-xs gap-1.5 data-[state=active]:bg-background">
+                    <Search className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Search & Enrich</span>
+                    <span className="sm:hidden">Search</span>
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="comms" className="mt-3">
+                  <SuggestionGrid suggestions={caseCommsSuggestions} />
+                </TabsContent>
+                <TabsContent value="legal" className="mt-3">
+                  <SuggestionGrid suggestions={legalSuggestions} />
+                </TabsContent>
+                <TabsContent value="search" className="mt-3">
+                  <SuggestionGrid suggestions={searchSuggestions} />
+                </TabsContent>
+              </Tabs>
             </div>
           ) : (
             <div className="space-y-4">
@@ -287,12 +332,12 @@ export const IntelChat = () => {
         )}
 
         {/* Input Area */}
-        <div className="p-4 border-t">
+        <div className="p-4 border-t border-border/50">
           <form onSubmit={handleSubmit} className="flex gap-2">
             <Textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about evidence, entities, or case details..."
+              placeholder="Ask about evidence, draft legal submissions, search entities..."
               className="min-h-[44px] max-h-32 resize-none"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
@@ -311,3 +356,5 @@ export const IntelChat = () => {
     </Card>
   );
 };
+
+export default IntelChat;
