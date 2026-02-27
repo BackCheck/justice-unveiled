@@ -1,0 +1,10 @@
+INSERT INTO public.changelog_entries (version, title, description, category, release_date, is_published, changes)
+VALUES (
+  '2.11.0',
+  'CF-001 Deduplication & Credibility Hardening',
+  'Entity canonicalization engine merges name variants and aggregates roles. Event deduplication eliminates near-duplicate timeline entries. Neutral language enforcement sanitizes accusatory tone for court-safe output.',
+  'major',
+  '2026-02-27',
+  true,
+  '["Entity Canonicalizer: merges name variants (Major R Mumtaz / Major Mumtaz / Major Rtd Mumtaz) into single canonical entity with aggregated roles","Event Deduplicator: groups same-date events by actor overlap and 85% narrative similarity, merges into canonical events","Neutral Language Enforcement: auto-converts accusatory terms (sabotage, vendetta, conspiracy) to allegation framing in structured/court mode","Legal Disclaimer block injected automatically into all investigative and court-mode reports","Executive Summary block auto-generated with deduplicated counts, key themes, and analytical disclaimer","Distribution License selector: controlled_legal or research_only classification appended to closing","All report KPIs now use deduplicated event counts and canonical entity counts — no raw DB totals in final render","QA engine extended with deduplication ratio warnings, emotional language detection, and high-duplication alerts","QA Results Modal shows data integrity processing summary (entity consolidation ratio, event dedup ratio, tone sanitization)","Critical Findings block uses deduplicated entities and events for accurate top-10 tables","Timeline blocks use deduplicated year breakdowns for accurate spike analysis","Threat Profiles report uses canonical entities with merged connection counts","Network report uses canonical entity counts with fraction-format hostile percentages","Issue Framing Engine uses neutral language (alleged coordination vs organized opposition)"]'::jsonb
+);

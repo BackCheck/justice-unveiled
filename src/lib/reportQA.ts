@@ -18,6 +18,14 @@ export interface QAResult {
   warnings: ReportQAError[];
 }
 
+export interface DeduplicationStats {
+  entityOriginal: number;
+  entityCanonical: number;
+  eventOriginal: number;
+  eventCanonical: number;
+  emotionalWords: string[];
+}
+
 export interface ReportQAContext {
   reportType?: string;
   courtMode?: boolean;
@@ -34,6 +42,8 @@ export interface ReportQAContext {
   annexures?: Array<{ label: string; selected?: boolean }>;
   // Raw HTML to scan for issues
   rawHTML?: string;
+  // Deduplication stats (populated after canonicalization)
+  deduplication?: DeduplicationStats;
 }
 
 const fmt = new Intl.NumberFormat('en-US');
@@ -182,6 +192,48 @@ export function assertReportContext(context: ReportQAContext): QAResult {
         code: 'COURT_FEW_EVENTS',
         severity: 'warning',
         message: `Only ${context.events.length} events — List of Dates may be sparse`,
+      });
+    }
+  }
+
+  // ── G) Deduplication sanity checks ──
+  if (context.deduplication) {
+    const { entityOriginal, entityCanonical, eventOriginal, eventCanonical, emotionalWords } = context.deduplication;
+
+    if (entityOriginal > 0 && entityCanonical < entityOriginal) {
+      warnings.push({
+        code: 'ENTITY_CONSOLIDATED',
+        severity: 'warning',
+        message: `Entity consolidation reduced ${fmtNum(entityOriginal)} → ${fmtNum(entityCanonical)} unique entities`,
+        details: 'Canonical entity grouping has merged name variants and aggregated roles.',
+      });
+    }
+
+    if (eventOriginal > 0 && eventCanonical < eventOriginal) {
+      warnings.push({
+        code: 'EVENT_DEDUPLICATED',
+        severity: 'warning',
+        message: `Event deduplication reduced ${fmtNum(eventOriginal)} → ${fmtNum(eventCanonical)} canonical events`,
+        details: 'Near-duplicate events on the same date with similar descriptions have been merged.',
+      });
+    }
+
+    // Check for high duplicate clusters on same date
+    if (eventOriginal > 0 && (eventOriginal - eventCanonical) > eventOriginal * 0.3) {
+      warnings.push({
+        code: 'HIGH_DUPLICATION',
+        severity: 'warning',
+        message: `${fmtNum(eventOriginal - eventCanonical)} duplicate events removed (${(((eventOriginal - eventCanonical) / eventOriginal) * 100).toFixed(0)}% duplication rate)`,
+        details: 'High duplication suggests data quality issues — review source extraction pipeline.',
+      });
+    }
+
+    if (emotionalWords.length > 0) {
+      warnings.push({
+        code: 'EMOTIONAL_LANGUAGE',
+        severity: 'warning',
+        message: `${emotionalWords.length} emotional/accusatory terms detected and sanitized`,
+        details: `Terms: ${emotionalWords.slice(0, 10).join(', ')}. Auto-converted to allegation framing.`,
       });
     }
   }

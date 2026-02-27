@@ -9,7 +9,9 @@
 import { buildReportShell } from './reportShell';
 import { buildBarChart, buildPieChart, buildStatGrid, buildTable, buildTimelineChart, buildSeverityMeter, buildDonutChart, buildHeatmapGrid, buildHierarchyMap, buildKeyValueGrid } from './reportCharts';
 import { fmtNum } from './reportQA';
-import { buildCriticalFindingsBlock, buildTimelineSummaryBlock, buildMethodologyBlock, buildDefinitionsBlock, buildDataQualityBlock, buildLODAppendix, buildKeyIssuesAppendix } from './reportBlocks';
+import { buildCriticalFindingsBlock, buildTimelineSummaryBlock, buildMethodologyBlock, buildDefinitionsBlock, buildDataQualityBlock, buildLODAppendix, buildKeyIssuesAppendix, sanitizeNarrativeTone, detectEmotionalLanguage, buildLegalDisclaimerBlock, buildDistributionLicenseBlock, buildExecutiveSummaryBlock } from './reportBlocks';
+import { canonicalizeEntities, computeCanonicalMetrics } from './entityCanonicalizer';
+import { deduplicateEvents, computeDeduplicatedMetrics, type TimelineEvent } from './eventDeduplicator';
 import type { CombinedEntity, CombinedConnection } from '@/hooks/useCombinedEntities';
 import type { CombinedTimelineEvent } from '@/hooks/useCombinedTimeline';
 import type { PlatformStats } from '@/hooks/usePlatformStats';
@@ -67,13 +69,19 @@ export function generateNetworkReport(
   entities: CombinedEntity[],
   connections: CombinedConnection[],
   caseTitle: string,
-  caseNumber?: string
+  caseNumber?: string,
+  courtMode?: boolean,
 ): string {
+  // Canonicalize entities
+  const canonResult = canonicalizeEntities(entities);
+  const canonEntities = canonResult.entities;
+  const canonMetrics = computeCanonicalMetrics(canonResult);
+  const toneMode = courtMode ? 'court' : 'structured';
   const typeDist: Record<string, number> = {};
-  entities.forEach(e => { typeDist[e.type] = (typeDist[e.type] || 0) + 1; });
+  canonEntities.forEach(e => { typeDist[e.type] = (typeDist[e.type] || 0) + 1; });
 
   const catDist: Record<string, number> = {};
-  entities.forEach(e => { catDist[e.category || 'neutral'] = (catDist[e.category || 'neutral'] || 0) + 1; });
+  canonEntities.forEach(e => { catDist[e.category || 'neutral'] = (catDist[e.category || 'neutral'] || 0) + 1; });
 
   const connDist: Record<string, number> = {};
   connections.forEach(c => { connDist[c.type] = (connDist[c.type] || 0) + 1; });
@@ -87,38 +95,38 @@ export function generateNetworkReport(
     .sort((a, b) => b[1] - a[1])
     .slice(0, 10)
     .map(([id, count]) => {
-      const entity = entities.find(e => e.id === id);
-      return { name: entity?.name || id, connections: count, role: entity?.role || 'Unknown', category: entity?.category || 'neutral' };
+      const entity = canonEntities.find(e => e.id === id || e.mergedIds?.includes(id));
+      return { name: entity?.name || id, connections: count, role: entity?.roles?.join(', ') || 'Unknown', category: entity?.category || 'neutral' };
     });
 
-  const antagonists = entities.filter(e => e.category === 'antagonist');
-  const avgConn = entities.length ? (connections.length * 2 / entities.length).toFixed(1) : '0';
+  const antagonists = canonEntities.filter(e => e.category === 'antagonist');
+  const avgConn = canonEntities.length ? (connections.length * 2 / canonEntities.length).toFixed(1) : '0';
 
   const sections = [
     {
       title: 'Key Findings',
-      content: buildNarrative([
-        `This network analysis maps <strong>${fmtNum(entities.length)} entities</strong> across <strong>${fmtNum(connections.length)} documented relationships</strong>, revealing the structural architecture of actors involved in this case.`,
-        antagonists.length > 0 ? `<strong>${fmtNum(antagonists.length)} entities classified as antagonists</strong> (${fmtNum(antagonists.length)}/${fmtNum(entities.length)} = ${((antagonists.length / Math.max(entities.length, 1)) * 100).toFixed(1)}% of network entities) have been identified. The most connected entity is <strong>${topConnected[0]?.name || 'Unknown'}</strong> with ${fmtNum(topConnected[0]?.connections || 0)} links, making them a central hub in the network.` : '',
+      content: sanitizeNarrativeTone(buildNarrative([
+        `This network analysis maps <strong>${fmtNum(canonEntities.length)} entities</strong> (after consolidation) across <strong>${fmtNum(connections.length)} documented relationships</strong>, revealing the structural architecture of actors involved in this case.`,
+        antagonists.length > 0 ? `<strong>${fmtNum(antagonists.length)} entities classified as adversarial</strong> (${fmtNum(antagonists.length)}/${fmtNum(canonEntities.length)} = ${canonMetrics.hostilePercent}% of network entities) have been identified. The most connected entity is <strong>${topConnected[0]?.name || 'Unknown'}</strong> with ${fmtNum(topConnected[0]?.connections || 0)} links, making them a central hub in the network.` : '',
         `The average connection density is <strong>${avgConn} links per entity</strong>. ${Number(avgConn) > 3 ? 'This indicates a tightly interconnected network, suggesting coordinated activity among key actors.' : 'This suggests a loosely connected network with potential isolated clusters.'}`,
-      ]) +
+      ]), toneMode) +
       (topConnected.length > 0 ? buildFinding(
         `Central Hub: ${topConnected[0]?.name}`,
         `With ${fmtNum(topConnected[0]?.connections)} direct connections, this entity serves as a primary coordinator. Their removal or disruption would fragment the network into ${Math.ceil(entities.length / 5)} isolated clusters.`,
         antagonists.some(a => a.name === topConnected[0]?.name) ? 'critical' : 'medium'
       ) : '') +
       (antagonists.length > 3 ? buildFinding(
-        `${fmtNum(antagonists.length)} Hostile Actors Identified`,
-        `Antagonist entities comprise ${((antagonists.length / entities.length) * 100).toFixed(1)}% of the network (${fmtNum(antagonists.length)}/${fmtNum(entities.length)}). This concentration indicates organized opposition rather than isolated incidents.`,
+        `${fmtNum(antagonists.length)} Adversarial Actors Identified`,
+        `Adversarial entities comprise ${canonMetrics.hostilePercent}% of the network (${canonMetrics.hostileFraction}). This concentration indicates alleged coordinated institutional action rather than isolated incidents.`,
         'high'
       ) : '')
     },
     {
       title: 'Network Structure',
       content: buildStatGrid([
-        { label: 'Total Entities', value: entities.length },
-        { label: 'Total Connections', value: connections.length },
-        { label: 'Antagonists', value: antagonists.length, color: '#dc2626' },
+        { label: 'Entities (Canonical)', value: canonEntities.length },
+        { label: 'Connections', value: connections.length },
+        { label: 'Adversarial', value: antagonists.length, color: '#dc2626' },
         { label: 'Avg Connections', value: avgConn },
       ]) +
       buildDonutChart(
@@ -173,11 +181,12 @@ export function generateNetworkReport(
     caseTitle,
     caseNumber,
     stats: [
-      { label: 'Entities', value: entities.length },
+      { label: 'Entities', value: canonEntities.length },
       { label: 'Connections', value: connections.length },
-      { label: 'Antagonists', value: antagonists.length },
+      { label: 'Adversarial', value: antagonists.length },
     ],
-    sections
+    sections,
+    disclaimerHTML: buildLegalDisclaimerBlock(),
   });
 }
 
@@ -405,14 +414,24 @@ export function generateReconstructionReport(
   caseTitle: string,
   caseNumber?: string
 ): string {
-  const byCategory: Record<string, number> = {};
-  events.forEach(e => { byCategory[e.category] = (byCategory[e.category] || 0) + 1; });
-
-  const byYear: Record<string, number> = {};
-  events.forEach(e => {
-    const y = e.date?.split('-')[0] || 'Unknown';
-    byYear[y] = (byYear[y] || 0) + 1;
-  });
+  // Deduplicate events
+  const timelineEvents: TimelineEvent[] = events.map((e, idx) => ({
+    id: (e as any).extractedId || `evt_${idx}`,
+    date: e.date || '',
+    category: e.category,
+    description: e.description || '',
+    individuals: e.individuals || '',
+    legal_action: e.legalAction || '',
+    outcome: e.outcome || '',
+    evidence_discrepancy: e.evidenceDiscrepancy || '',
+    sources: e.sources || '',
+    isExtracted: (e as any).isExtracted,
+  }));
+  const dedupResult = deduplicateEvents(timelineEvents);
+  const dedupMetrics = computeDeduplicatedMetrics(dedupResult);
+  const effectiveCount = dedupMetrics.eventCount;
+  const byCategory = dedupMetrics.byCategory;
+  const byYear = dedupMetrics.byYear;
 
   const years = Object.keys(byYear).sort();
   const peakYear = Object.entries(byYear).sort((a, b) => b[1] - a[1])[0];
@@ -420,40 +439,33 @@ export function generateReconstructionReport(
   const criticalDisc = discrepancies.filter(d => d.severity === 'critical');
   const highDisc = discrepancies.filter(d => d.severity === 'high');
 
-  // Identify escalation patterns
   const yearValues = years.map(y => byYear[y]);
   const isEscalating = yearValues.length >= 3 && yearValues[yearValues.length - 1] > yearValues[yearValues.length - 3];
 
   const sections = [
     {
       title: 'Key Findings',
-      content: buildNarrative([
-        `This reconstruction maps <strong>${events.length} documented events</strong> spanning <strong>${years.length > 1 ? `${years[0]}–${years[years.length - 1]}` : years[0] || 'N/A'}</strong> (${years.length} years), classified across ${Object.keys(byCategory).length} categories.`,
-        peakYear ? `Activity peaked in <strong>${peakYear[0]}</strong> with <strong>${peakYear[1]} events</strong>, representing ${((peakYear[1] / events.length) * 100).toFixed(0)}% of all documented activity.` : '',
-        topCategory ? `The dominant category is <strong>${topCategory[0]}</strong> (${topCategory[1]} events, ${((topCategory[1] / events.length) * 100).toFixed(0)}%), which defines the primary pattern of the case.` : '',
-        isEscalating ? `<strong>Escalation pattern detected:</strong> Event frequency has increased over the most recent 3-year period, indicating intensifying pressure on the subject.` : '',
-        discrepancies.length > 0 ? `<strong>${discrepancies.length} procedural discrepancies</strong> have been identified, ${criticalDisc.length > 0 ? `including ${criticalDisc.length} critical failures that may constitute grounds for case dismissal or appeal.` : 'suggesting institutional compliance issues.'}` : 'No procedural discrepancies detected — procedures appear to have been followed.',
-      ]) +
+      content: sanitizeNarrativeTone(buildNarrative([
+        `This reconstruction maps <strong>${fmtNum(effectiveCount)} documented events</strong> (after deduplication) spanning <strong>${years.length > 1 ? `${years[0]}–${years[years.length - 1]}` : years[0] || 'N/A'}</strong> (${years.length} years), classified across ${Object.keys(byCategory).length} categories.`,
+        peakYear ? `Activity peaked in <strong>${peakYear[0]}</strong> with <strong>${fmtNum(peakYear[1])} events</strong>, representing ${((peakYear[1] / effectiveCount) * 100).toFixed(0)}% of all documented activity.` : '',
+        topCategory ? `The dominant category is <strong>${topCategory[0]}</strong> (${fmtNum(topCategory[1])} events, ${((topCategory[1] / effectiveCount) * 100).toFixed(0)}%), which defines the primary pattern of the case.` : '',
+        isEscalating ? `<strong>Escalation pattern detected:</strong> Event frequency has increased over the most recent 3-year period, indicating intensifying pressure.` : '',
+        discrepancies.length > 0 ? `<strong>${fmtNum(discrepancies.length)} procedural discrepancies</strong> have been identified, ${criticalDisc.length > 0 ? `including ${fmtNum(criticalDisc.length)} critical failures that may constitute grounds for case dismissal or appeal.` : 'suggesting institutional compliance issues.'}` : 'No procedural discrepancies detected — procedures appear to have been followed.',
+      ]), 'structured') +
       (isEscalating ? buildFinding(
         'Escalation Pattern Detected',
-        `Events have increased from ${yearValues[yearValues.length - 3] || 0} to ${yearValues[yearValues.length - 1] || 0} over the last 3 years, indicating systematic and intensifying persecution rather than isolated incidents.`,
+        `Events have increased from ${yearValues[yearValues.length - 3] || 0} to ${yearValues[yearValues.length - 1] || 0} over the last 3 years, indicating alleged systematic and intensifying targeting rather than isolated incidents.`,
         'critical'
       ) : '') +
       (criticalDisc.length > 0 ? buildFinding(
-        `${criticalDisc.length} Critical Procedural Failures`,
+        `${fmtNum(criticalDisc.length)} Critical Procedural Failures`,
         `These failures include: ${criticalDisc.slice(0, 3).map(d => d.title).join('; ')}. Each represents grounds for challenging the legality of proceedings.`,
         'critical'
       ) : '')
     },
     {
       title: 'Timeline Pattern Analysis',
-      content: buildTimelineChart(
-        Object.entries(byYear).sort().map(([year, count]) => ({ year, count })),
-        'Event Frequency by Year'
-      ) +
-      buildNarrative([
-        years.length > 1 ? `The timeline reveals ${isEscalating ? 'an escalating' : 'a varying'} pattern of activity over ${years.length} years. ${peakYear ? `The concentration of ${peakYear[1]} events in ${peakYear[0]} warrants focused investigation into triggering factors.` : ''}` : '',
-      ]) +
+      content: buildTimelineSummaryBlock(byYear, effectiveCount) +
       buildDonutChart(
         Object.entries(byCategory).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({ label, value })),
         'Event Categories'
@@ -482,10 +494,10 @@ export function generateReconstructionReport(
     {
       title: 'Recommended Actions',
       content: buildRecommendation([
-        criticalDisc.length > 0 ? `File applications challenging ${criticalDisc.length} critical procedural failures — each is independently actionable.` : 'Continue monitoring for procedural compliance.',
-        isEscalating ? 'Present the escalation pattern as evidence of systematic persecution in High Court submissions.' : '',
-        peakYear ? `Conduct deep-dive investigation into ${peakYear[0]} — the ${peakYear[1]} events during this peak period likely contain key evidence.` : '',
-        events.filter(e => e.isExtracted).length > 0 ? `Review ${events.filter(e => e.isExtracted).length} AI-extracted events for accuracy before formal submission.` : '',
+        criticalDisc.length > 0 ? `File applications challenging ${fmtNum(criticalDisc.length)} critical procedural failures — each is independently actionable.` : 'Continue monitoring for procedural compliance.',
+        isEscalating ? 'Present the escalation pattern as evidence of alleged systematic targeting in High Court submissions.' : '',
+        peakYear ? `Conduct deep-dive investigation into ${peakYear[0]} — the ${fmtNum(peakYear[1])} events during this peak period likely contain key evidence.` : '',
+        events.filter(e => (e as any).isExtracted).length > 0 ? `Review ${events.filter(e => (e as any).isExtracted).length} AI-extracted events for accuracy before formal submission.` : '',
         `Map each event category to specific legal provisions for targeted prosecution strategy.`,
       ].filter(Boolean))
     }
@@ -497,11 +509,12 @@ export function generateReconstructionReport(
     caseTitle,
     caseNumber,
     stats: [
-      { label: 'Events', value: events.length },
+      { label: 'Events', value: fmtNum(effectiveCount) },
       { label: 'Years', value: years.length },
       { label: 'Discrepancies', value: discrepancies.length },
     ],
-    sections
+    sections,
+    disclaimerHTML: buildLegalDisclaimerBlock(),
   });
 }
 
@@ -694,46 +707,91 @@ export function generateInvestigationReport(
   caseTitle: string,
   caseNumber?: string,
   courtMode?: boolean,
+  distributionMode?: 'controlled_legal' | 'research_only',
 ): string {
-  const byCategory: Record<string, number> = {};
-  events.forEach(e => { byCategory[e.category] = (byCategory[e.category] || 0) + 1; });
+  // ── Phase 1: Entity Canonicalization ──
+  const canonResult = canonicalizeEntities(entities);
+  const canonMetrics = computeCanonicalMetrics(canonResult);
+  const canonEntities = canonResult.entities;
 
-  const byYear: Record<string, number> = {};
-  events.forEach(e => {
-    const y = e.date?.split('-')[0] || 'Unknown';
-    byYear[y] = (byYear[y] || 0) + 1;
-  });
+  // ── Phase 2: Event Deduplication ──
+  const timelineEvents: TimelineEvent[] = events.map((e, idx) => ({
+    id: (e as any).extractedId || `evt_${idx}`,
+    date: e.date || '',
+    category: e.category,
+    description: e.description || '',
+    individuals: e.individuals || '',
+    legal_action: e.legalAction || '',
+    outcome: e.outcome || '',
+    evidence_discrepancy: e.evidenceDiscrepancy || '',
+    sources: e.sources || '',
+    isExtracted: (e as any).isExtracted,
+  }));
+  const dedupResult = deduplicateEvents(timelineEvents);
+  const dedupMetrics = computeDeduplicatedMetrics(dedupResult);
 
-  const antagonists = entities.filter(e => e.category === 'antagonist');
+  // ── Phase 3: Detect emotional language ──
+  const allText = events.map(e => e.description || '').join(' ');
+  const emotionalWords = detectEmotionalLanguage(allText);
+
+  // ── Use deduplicated counts ──
+  const effectiveEventCount = dedupMetrics.eventCount;
+  const effectiveEntityCount = canonMetrics.entityCount;
+  const toneMode = courtMode ? 'court' : 'structured';
+
+  // Category and year breakdowns from deduplicated data
+  const byCategory = dedupMetrics.byCategory;
+  const byYear = dedupMetrics.byYear;
+
+  const antagonists = canonEntities.filter(e => e.category === 'antagonist');
   const criticalDisc = discrepancies.filter(d => d.severity === 'critical');
   const years = Object.keys(byYear).sort();
   const topCategory = Object.entries(byCategory).sort((a, b) => b[1] - a[1])[0];
 
-  // Front-matter blocks for comprehensive reports
-  const frontMatterHTML = buildMethodologyBlock(
-    caseTitle,
-    platformStats.totalEvents,
-    platformStats.totalSources,
-    { hiddenExcluded: true, approvedOnly: true, caseScoped: !!caseNumber }
-  ) + buildDefinitionsBlock() + buildDataQualityBlock({
-    totalEvents: platformStats.totalEvents,
-    totalEntities: platformStats.totalEntities,
-    totalSources: platformStats.totalSources,
-    aiExtracted: events.filter(e => e.isExtracted).length,
-    discrepancies: platformStats.totalDiscrepancies,
+  // ── Front-matter blocks ──
+  const executiveSummary = buildExecutiveSummaryBlock({
+    eventCount: effectiveEventCount,
+    entityCount: effectiveEntityCount,
+    sourceCount: platformStats.totalSources,
+    hostileCount: canonMetrics.hostileCount,
+    hostilePercent: canonMetrics.hostilePercent,
+    hostileFraction: canonMetrics.hostileFraction,
+    discrepancyCount: platformStats.totalDiscrepancies,
+    criticalCount: platformStats.criticalDiscrepancies,
+    themes: identifyThemes(byCategory, discrepancies),
+    dedupApplied: dedupResult.originalCount > dedupResult.canonicalCount,
+    entityConsolidated: canonResult.originalCount > canonResult.canonicalCount,
   });
+
+  const frontMatterHTML = executiveSummary +
+    buildMethodologyBlock(
+      caseTitle,
+      effectiveEventCount,
+      platformStats.totalSources,
+      { hiddenExcluded: true, approvedOnly: true, caseScoped: !!caseNumber }
+    ) + buildDefinitionsBlock() + buildDataQualityBlock({
+      totalEvents: effectiveEventCount,
+      totalEntities: effectiveEntityCount,
+      totalSources: platformStats.totalSources,
+      aiExtracted: events.filter(e => e.isExtracted).length,
+      discrepancies: platformStats.totalDiscrepancies,
+    });
+
+  // ── Disclaimer ──
+  const disclaimerHTML = buildLegalDisclaimerBlock();
+  const distributionHTML = buildDistributionLicenseBlock(distributionMode || 'controlled_legal');
 
   const sections = [
     {
       title: 'Investigation Summary',
-      content: buildNarrative([
-        `This comprehensive investigation report consolidates <strong>${fmtNum(platformStats.totalEvents)} events</strong>, <strong>${fmtNum(platformStats.totalEntities)} entities</strong>, <strong>${fmtNum(platformStats.totalSources)} evidence sources</strong>, and <strong>${fmtNum(platformStats.totalConnections)} network connections</strong> spanning ${years.length > 1 ? `${years[0]}–${years[years.length - 1]}` : 'the investigation period'}.`,
-        `The investigation has uncovered <strong>${fmtNum(platformStats.totalDiscrepancies)} procedural discrepancies</strong> (${fmtNum(platformStats.criticalDiscrepancies)} critical) and <strong>${fmtNum(platformStats.complianceViolations)} compliance violations</strong>.`,
-        antagonists.length > 0 ? `<strong>${fmtNum(antagonists.length)} hostile actors</strong> (${fmtNum(antagonists.length)}/${fmtNum(entities.length)} = ${((antagonists.length / Math.max(entities.length, 1)) * 100).toFixed(1)}% of entities) have been identified, operating within a network of ${fmtNum(connections.length)} documented relationships.` : '',
-      ]) +
+      content: sanitizeNarrativeTone(buildNarrative([
+        `This comprehensive investigation report consolidates <strong>${fmtNum(effectiveEventCount)} events</strong> (after deduplication), <strong>${fmtNum(effectiveEntityCount)} entities</strong> (after consolidation), <strong>${fmtNum(platformStats.totalSources)} evidence sources</strong>, and <strong>${fmtNum(platformStats.totalConnections)} network connections</strong> spanning ${years.length > 1 ? `${years[0]}–${years[years.length - 1]}` : 'the investigation period'}.`,
+        `The investigation has identified <strong>${fmtNum(platformStats.totalDiscrepancies)} procedural discrepancies</strong> (${fmtNum(platformStats.criticalDiscrepancies)} critical) and <strong>${fmtNum(platformStats.complianceViolations)} compliance violations</strong>.`,
+        antagonists.length > 0 ? `<strong>${fmtNum(antagonists.length)} entities classified as adversarial</strong> (${fmtNum(antagonists.length)}/${fmtNum(effectiveEntityCount)} = ${canonMetrics.hostilePercent}% of entities) have been identified through rule-based analysis of documented conduct.` : '',
+      ]), toneMode) +
       buildStatGrid([
-        { label: 'Events', value: fmtNum(platformStats.totalEvents) },
-        { label: 'Entities', value: fmtNum(platformStats.totalEntities) },
+        { label: 'Events (Deduplicated)', value: fmtNum(effectiveEventCount) },
+        { label: 'Entities (Canonical)', value: fmtNum(effectiveEntityCount) },
         { label: 'Sources', value: fmtNum(platformStats.totalSources) },
         { label: 'Connections', value: fmtNum(platformStats.totalConnections) },
         { label: 'Discrepancies', value: fmtNum(platformStats.totalDiscrepancies), color: '#d97706' },
@@ -742,11 +800,11 @@ export function generateInvestigationReport(
     },
     {
       title: 'Critical Findings',
-      content: buildCriticalFindingsBlock(discrepancies, entities, events)
+      content: buildCriticalFindingsBlock(discrepancies, canonEntities, dedupResult.events as any)
     },
     {
       title: 'Timeline Pattern Analysis',
-      content: buildTimelineSummaryBlock(byYear, events.length)
+      content: buildTimelineSummaryBlock(byYear, effectiveEventCount)
     },
     {
       title: 'Category Intelligence',
@@ -754,15 +812,15 @@ export function generateInvestigationReport(
         Object.entries(byCategory).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([label, value]) => ({ label, value })),
         'Event Categories'
       ) +
-      buildNarrative([
-        topCategory ? `<strong>${topCategory[0]}</strong> is the dominant category with ${fmtNum(topCategory[1])} events (${((topCategory[1] / events.length) * 100).toFixed(1)}%). This should be the primary focus of legal strategy.` : '',
-      ])
+      sanitizeNarrativeTone(buildNarrative([
+        topCategory ? `<strong>${topCategory[0]}</strong> is the dominant category with ${fmtNum(topCategory[1])} events (${((topCategory[1] / effectiveEventCount) * 100).toFixed(1)}%). This should be the primary focus of legal strategy.` : '',
+      ]), toneMode)
     },
     {
       title: 'Strategic Recommendations',
       content: buildRecommendation([
         criticalDisc.length > 0 ? `Prioritize ${fmtNum(criticalDisc.length)} critical discrepancies — each is independently actionable in court.` : 'No critical discrepancies — focus on compliance violations.',
-        antagonists.length > 0 ? `Build prosecution profiles for ${Math.min(antagonists.length, 5)} top antagonist entities.` : '',
+        antagonists.length > 0 ? `Build prosecution profiles for ${Math.min(antagonists.length, 5)} top adversarial entities.` : '',
         `Generate targeted reports for each module (Network, Violations, Economic Harm) to support specific legal filings.`,
         `Prepare court dossier using the Dossier Builder with auto-annexed evidence.`,
         `Update this investigation summary monthly to track case progression.`,
@@ -772,8 +830,8 @@ export function generateInvestigationReport(
 
   // Court-mode appendices
   const appendicesHTML = courtMode ? (
-    buildLODAppendix(events) +
-    buildKeyIssuesAppendix([], discrepancies, entities, events, [])
+    buildLODAppendix(dedupResult.events as any) +
+    buildKeyIssuesAppendix([], discrepancies, canonEntities as any, dedupResult.events as any, [])
   ) : '';
 
   return buildReportShell({
@@ -782,15 +840,29 @@ export function generateInvestigationReport(
     caseTitle,
     caseNumber,
     stats: [
-      { label: 'Events', value: fmtNum(platformStats.totalEvents) },
-      { label: 'Entities', value: fmtNum(platformStats.totalEntities) },
+      { label: 'Events', value: fmtNum(effectiveEventCount) },
+      { label: 'Entities', value: fmtNum(effectiveEntityCount) },
       { label: 'Critical', value: fmtNum(platformStats.criticalDiscrepancies) },
     ],
     sections,
     frontMatterHTML,
+    disclaimerHTML,
+    distributionHTML,
     appendicesHTML: appendicesHTML || undefined,
     courtMode,
   });
+}
+
+/** Identify key themes from category breakdown and discrepancies */
+function identifyThemes(byCategory: Record<string, number>, discrepancies: any[]): string[] {
+  const themes: string[] = [];
+  const cats = Object.keys(byCategory).map(c => c.toLowerCase());
+  if (cats.some(c => c.includes('legal'))) themes.push('procedural irregularities');
+  if (cats.some(c => c.includes('business') || c.includes('economic'))) themes.push('regulatory escalation');
+  if (cats.some(c => c.includes('harassment') || c.includes('surveillance'))) themes.push('surveillance allegations');
+  if (discrepancies.some(d => d.discrepancy_type?.includes('forensic') || d.discrepancy_type?.includes('evidence'))) themes.push('forensic discrepancies');
+  if (discrepancies.some(d => d.severity === 'critical')) themes.push('critical procedural failures');
+  return themes.length > 0 ? themes : ['case documentation analysis'];
 }
 
 // ──────────────────────────────────────────
@@ -803,10 +875,13 @@ export function generateThreatProfilesReport(
   caseTitle: string,
   caseNumber?: string
 ): string {
-  const antagonists = entities.filter(e => e.category === 'antagonist');
+  // Canonicalize entities
+  const canonResult = canonicalizeEntities(entities);
+  const canonEntities = canonResult.entities;
+  const antagonists = canonEntities.filter(e => e.category === 'antagonist');
   
-  const scored = entities.map(e => {
-    const connCount = connections.filter(c => c.source === e.id || c.target === e.id).length;
+  const scored = canonEntities.map(e => {
+    const connCount = connections.filter(c => c.source === e.id || c.target === e.id || e.mergedIds?.some(mid => c.source === mid || c.target === mid)).length;
     const eventMentions = events.filter(ev => 
       ev.individuals?.toLowerCase().includes(e.name.toLowerCase().split(' ')[0])
     ).length;
@@ -816,19 +891,19 @@ export function generateThreatProfilesReport(
   const sections = [
     {
       title: 'Threat Assessment Summary',
-      content: buildNarrative([
-        `This report profiles the <strong>10 highest-impact entities</strong> based on a composite threat score combining network influence (connections × 2) and event involvement (timeline mentions).`,
-        scored[0] ? `The primary threat is <strong>${scored[0].name}</strong> (Score: ${scored[0].score}), with ${scored[0].connCount} network connections and ${scored[0].eventMentions} event mentions. ${scored[0].category === 'antagonist' ? 'This entity is classified as hostile.' : 'This entity is not yet classified as hostile — review classification.'}` : '',
-        `Of the top 10 entities, <strong>${scored.filter(s => s.category === 'antagonist').length} are classified as antagonists</strong>.`,
-      ]) +
+      content: sanitizeNarrativeTone(buildNarrative([
+        `This report profiles the <strong>10 highest-impact entities</strong> (after canonical consolidation) based on a composite score combining network influence (connections × 2) and event involvement (timeline mentions).`,
+        scored[0] ? `The primary entity of interest is <strong>${scored[0].name}</strong> (Score: ${scored[0].score}), with ${scored[0].connCount} network connections and ${scored[0].eventMentions} event mentions. ${scored[0].category === 'antagonist' ? 'This entity is classified as adversarial.' : 'This entity is not yet classified as adversarial — review classification.'}` : '',
+        `Of the top 10 entities, <strong>${scored.filter(s => s.category === 'antagonist').length} are classified as adversarial</strong>.`,
+      ]), 'structured') +
       buildStatGrid([
-        { label: 'Entities Assessed', value: entities.length },
-        { label: 'Antagonists', value: antagonists.length, color: '#dc2626' },
+        { label: 'Entities Assessed', value: canonEntities.length },
+        { label: 'Adversarial', value: antagonists.length, color: '#dc2626' },
         { label: 'Top Score', value: scored[0]?.score || 0 },
       ])
     },
     {
-      title: 'Threat Profiles',
+      title: 'Entity Profiles',
       content: scored.map((e, i) => `
         <div style="margin:12px 0;padding:14px;border:1px solid #e5e7eb;border-radius:8px;${e.category === 'antagonist' ? 'border-left:4px solid #dc2626;' : 'border-left:4px solid #0087C1;'}page-break-inside:avoid;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
@@ -838,33 +913,34 @@ export function generateThreatProfilesReport(
             </div>
             <span style="font-size:11px;color:#6b7280;">Score: <strong style="color:#dc2626;">${e.score}</strong></span>
           </div>
-          <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">${e.role || 'Role unspecified'} | ${e.type} | ${e.connCount} connections, ${e.eventMentions} event mentions</div>
-          ${e.description ? `<div style="font-size:11px;color:#4b5563;margin-top:4px;">${e.description.slice(0, 200)}</div>` : ''}
+          <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">${e.roles?.join(', ') || 'Role unspecified'} | ${e.type} | ${e.connCount} connections, ${e.eventMentions} event mentions</div>
+          ${e.description ? `<div style="font-size:11px;color:#4b5563;margin-top:4px;">${sanitizeNarrativeTone(e.description.slice(0, 200), 'structured')}</div>` : ''}
         </div>
       `).join('')
     },
     {
       title: 'Recommended Actions',
       content: buildRecommendation([
-        scored[0] ? `Prioritize investigation of <strong>${scored[0].name}</strong> — highest threat score indicates central role in network.` : '',
-        scored.filter(s => s.category !== 'antagonist').length > 0 ? `Review classification of ${scored.filter(s => s.category !== 'antagonist').length} top-ranked entities not yet marked as antagonists.` : '',
-        `Cross-reference top threat profiles with compliance violations to establish individual liability.`,
+        scored[0] ? `Prioritize investigation of <strong>${scored[0].name}</strong> — highest score indicates central role in network.` : '',
+        scored.filter(s => s.category !== 'antagonist').length > 0 ? `Review classification of ${scored.filter(s => s.category !== 'antagonist').length} top-ranked entities not yet marked as adversarial.` : '',
+        `Cross-reference top profiles with compliance violations to establish individual liability.`,
         `Generate Network Intelligence Report for detailed relationship mapping of these entities.`,
-        antagonists.length > scored.length ? `${antagonists.length - scored.filter(s => s.category === 'antagonist').length} additional antagonists exist outside top 10 — review for secondary threat assessment.` : '',
+        antagonists.length > scored.length ? `${antagonists.length - scored.filter(s => s.category === 'antagonist').length} additional adversarial entities exist outside top 10 — review for secondary assessment.` : '',
       ].filter(Boolean))
     }
   ];
 
   return buildReportShell({
-    title: 'Top 10 Threat Profiles Report',
+    title: 'Top 10 Entity Profiles Report',
     subtitle: 'Adversary Intelligence Assessment',
     caseTitle,
     caseNumber,
     stats: [
       { label: 'Profiles', value: scored.length },
-      { label: 'Antagonists', value: antagonists.length },
+      { label: 'Adversarial', value: antagonists.length },
       { label: 'Max Score', value: scored[0]?.score || 0 },
     ],
-    sections
+    sections,
+    disclaimerHTML: buildLegalDisclaimerBlock(),
   });
 }

@@ -13,6 +13,8 @@ interface ReportShellOptions {
   frontMatterHTML?: string;
   appendicesHTML?: string;
   courtMode?: boolean;
+  disclaimerHTML?: string;
+  distributionHTML?: string;
 }
 
 // Logo placeholder that gets replaced with base64 at runtime
@@ -97,6 +99,8 @@ export function buildReportShell(opts: ReportShellOptions): string {
 
 <div class="page-break"></div>
 
+${opts.disclaimerHTML || ''}
+
 <!-- TABLE OF CONTENTS -->
 <div style="padding:48px;">
   <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid #0087C1;">
@@ -115,6 +119,8 @@ ${opts.frontMatterHTML}
 ${sectionsHTML}
 
 ${opts.appendicesHTML || ''}
+
+${opts.distributionHTML || ''}
 
 <!-- CLOSING -->
 <div style="padding:48px;margin-top:32px;">

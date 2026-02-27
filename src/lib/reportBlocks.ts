@@ -4,11 +4,149 @@
  * - TimelineSummaryBlock: labeled bar chart + spike callouts + LOD
  * - FrontMatterBlocks: methodology, definitions, data quality
  * - CourtAppendices: LOD + Key Issues
+ * - Neutral language enforcement
+ * - Legal disclaimer injection
  */
 
 import { buildTable, buildBarChart } from './reportCharts';
 import { fmtNum } from './reportQA';
 import { buildKeyIssues, renderKeyIssuesHTML, type LegalIssue } from './issueFramingEngine';
+
+// ── Neutral Language Enforcement ──
+
+const TONE_REPLACEMENTS: Array<[RegExp, string]> = [
+  [/\beconomic sabotage\b/gi, 'alleged economic targeting'],
+  [/\borchestrated by powerful retired military circles\b/gi, 'alleged coordination involving retired officials'],
+  [/\bfabricated evidence\b/gi, 'alleged fabrication of evidence'],
+  [/\billegal\b/gi, 'allegedly unlawful'],
+  [/\bcriminal conspiracy\b/gi, 'potential criminal conspiracy (subject to judicial determination)'],
+  [/\bsystematic persecution\b/gi, 'alleged systematic targeting'],
+  [/\bcorrupt officials?\b/gi, 'officials under scrutiny'],
+  [/\bstate terrorism\b/gi, 'alleged state overreach'],
+  [/\bforced disappearance\b/gi, 'alleged enforced disappearance'],
+  [/\btorture\b/gi, 'alleged torture/ill-treatment'],
+  [/\bextrajudicial killing\b/gi, 'alleged extrajudicial killing'],
+  [/\bwar crime\b/gi, 'alleged war crime'],
+];
+
+const ALLEGATION_TRIGGER_WORDS = [
+  'sabotage', 'vendetta', 'hijacked', 'abducted', 'conspiracy',
+  'orchestrated', 'fabricated', 'forged', 'planted', 'rigged',
+  'colluded', 'terrorized', 'intimidated', 'extorted',
+];
+
+/**
+ * Sanitize narrative tone for court-mode or structured reports.
+ * Converts accusatory language to allegation framing.
+ */
+export function sanitizeNarrativeTone(text: string, mode: 'court' | 'structured' | 'raw' = 'structured'): string {
+  if (mode === 'raw') return text;
+
+  let sanitized = text;
+
+  // Apply direct replacements
+  for (const [pattern, replacement] of TONE_REPLACEMENTS) {
+    sanitized = sanitized.replace(pattern, replacement);
+  }
+
+  // Auto-convert sentences with trigger words to allegation framing
+  if (mode === 'court') {
+    for (const trigger of ALLEGATION_TRIGGER_WORDS) {
+      const regex = new RegExp(`([^.]*\\b${trigger}\\b[^.]*)`, 'gi');
+      sanitized = sanitized.replace(regex, (match) => {
+        // Don't double-wrap if already has "alleged"
+        if (/\balleged\b/i.test(match)) return match;
+        return `It is alleged that ${match.charAt(0).toLowerCase()}${match.slice(1)}`;
+      });
+    }
+  }
+
+  return sanitized;
+}
+
+/**
+ * Detect emotional/accusatory language in text and return found words.
+ */
+export function detectEmotionalLanguage(text: string): string[] {
+  const found: string[] = [];
+  for (const trigger of ALLEGATION_TRIGGER_WORDS) {
+    if (new RegExp(`\\b${trigger}\\b`, 'i').test(text)) {
+      found.push(trigger);
+    }
+  }
+  return found;
+}
+
+// ── Legal Disclaimer Block ──
+
+export function buildLegalDisclaimerBlock(): string {
+  return `
+    <div style="padding:32px 48px;page-break-inside:avoid;">
+      <div style="border:2px solid #d97706;border-radius:8px;padding:20px;background:#fffbeb;">
+        <h3 style="font-size:14px;font-weight:700;color:#92400e;margin:0 0 12px;">Legal Disclaimer</h3>
+        <div style="font-size:11px;color:#78350f;line-height:1.8;">
+          <p style="margin:4px 0;"><strong>1.</strong> This report presents analytical findings based on documented data. It does not constitute a judicial determination or adjudication of any fact, allegation, or claim contained herein.</p>
+          <p style="margin:4px 0;"><strong>2.</strong> All allegations referenced in this report remain subject to due process and have not been adjudicated by any court of competent jurisdiction unless expressly stated otherwise.</p>
+          <p style="margin:4px 0;"><strong>3.</strong> This report does not constitute legal advice. Recipients are strongly advised to seek independent legal counsel before relying on any content for legal proceedings.</p>
+          <p style="margin:4px 0;"><strong>4.</strong> Independent verification by qualified legal professionals is recommended prior to any formal submission or legal filing.</p>
+          <p style="margin:4px 0;"><strong>5.</strong> HRPM and its affiliates accept no liability for any consequences arising from the use or misuse of the information contained in this report.</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ── Distribution License Block ──
+
+export function buildDistributionLicenseBlock(mode: 'controlled_legal' | 'research_only' = 'controlled_legal'): string {
+  const licenses: Record<string, string> = {
+    controlled_legal: `This report is classified as <strong>Controlled Legal Distribution</strong>. It may be shared only with legal counsel, courts of competent jurisdiction, and authorized parties to the case. Unauthorized distribution, reproduction, or publication is strictly prohibited.`,
+    research_only: `This report is classified as <strong>Research Only</strong>. It may be used for academic research, policy analysis, and human rights documentation purposes. It may not be cited in legal proceedings without independent verification. No warranty of accuracy is provided for non-legal use.`,
+  };
+
+  return `
+    <div style="padding:16px 48px;page-break-inside:avoid;">
+      <div style="border:1px solid #e5e7eb;border-radius:6px;padding:14px;background:#f9fafb;font-size:10px;color:#6b7280;line-height:1.7;">
+        <strong style="color:#374151;">Distribution Classification:</strong> ${licenses[mode]}
+      </div>
+    </div>
+  `;
+}
+
+// ── Executive Summary Block ──
+
+export function buildExecutiveSummaryBlock(stats: {
+  eventCount: number;
+  entityCount: number;
+  sourceCount: number;
+  hostileCount: number;
+  hostilePercent: string;
+  hostileFraction: string;
+  discrepancyCount: number;
+  criticalCount: number;
+  themes: string[];
+  dedupApplied: boolean;
+  entityConsolidated: boolean;
+}): string {
+  return `
+    <div style="padding:32px 48px;page-break-inside:avoid;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #0087C1;">
+        <h2 style="font-size:18px;margin:0;color:#1f2937;">Executive Summary</h2>
+      </div>
+      <div style="font-size:12px;color:#374151;line-height:1.8;">
+        <p>This report consolidates <strong>${fmtNum(stats.eventCount)} documented events</strong>, <strong>${fmtNum(stats.entityCount)} entities</strong>, and <strong>${fmtNum(stats.sourceCount)} evidence sources</strong> for the case under investigation.</p>
+        ${stats.hostileCount > 0 ? `<p><strong>${fmtNum(stats.hostileCount)} entities</strong> (${stats.hostileFraction} = ${stats.hostilePercent}% of entities) have been classified as adversarial based on documented conduct and rule-based analysis.</p>` : ''}
+        ${stats.discrepancyCount > 0 ? `<p>The analysis identifies <strong>${fmtNum(stats.discrepancyCount)} procedural discrepancies</strong>, of which <strong>${fmtNum(stats.criticalCount)}</strong> are classified as critical.</p>` : ''}
+        ${stats.themes.length > 0 ? `<p><strong>Key themes identified:</strong> ${stats.themes.join(', ')}.</p>` : ''}
+        ${stats.dedupApplied ? `<p style="font-size:11px;color:#6b7280;font-style:italic;">Event deduplication has been applied to eliminate redundant entries. Counts reflect canonical events only.</p>` : ''}
+        ${stats.entityConsolidated ? `<p style="font-size:11px;color:#6b7280;font-style:italic;">Entity consolidation has been applied to merge name variants and aggregate roles.</p>` : ''}
+        <p style="margin-top:12px;padding:8px 12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;font-size:11px;color:#1e40af;">
+          <strong>Note:</strong> All findings in this report are analytical in nature and do not constitute judicial determinations. Allegations remain subject to due process and adjudication.
+        </p>
+      </div>
+    </div>
+  `;
+}
 
 // ── Front-Matter Blocks ──
 
