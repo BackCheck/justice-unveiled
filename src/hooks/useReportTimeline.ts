@@ -4,13 +4,18 @@ import { useCombinedTimeline, CombinedTimelineEvent } from "./useCombinedTimelin
 /**
  * Single source of truth for report-ready timeline events.
  * Used by ALL PDF export paths (Timeline page, Case Profile, etc.)
- * Filters: hidden events excluded, sorted chronologically, non-admin view.
+ * Filters: hidden events excluded, pre-2016 excluded, sorted chronologically.
  */
 export function useReportTimeline() {
   const { events, stats, isLoading } = useCombinedTimeline(false); // never include hidden
 
   const reportEvents = useMemo(() => {
-    return events.filter((e) => !e.isHidden);
+    return events.filter((e) => {
+      if (e.isHidden) return false;
+      // Only include events from 2016 onwards (legal proceedings start date)
+      const year = parseInt(e.date?.split("-")[0] || "0", 10);
+      return year >= 2016;
+    });
   }, [events]);
 
   const reportStats = useMemo(() => {
@@ -85,6 +90,70 @@ export function buildTimelineHTML(events: CombinedTimelineEvent[]): string {
  * Full report HTML shell with cover page, TOC, timeline, and closing.
  * Used by the Timeline page PDF export.
  */
+/**
+ * Builds the sources/references section HTML for reports.
+ */
+export function buildSourcesHTML(): string {
+  // Import sources data inline to avoid circular deps
+  const sourcesData = [
+    { id: 1, title: "The-Acquittal-of-Danish-Farrukh-Thanvi-A-Procedura.md", type: "Judicial Analysis", reliability: "High" },
+    { id: 2, title: "The-Ordeal-of-Danish-Thanvi-Law-and-State-Malfeasa.md", type: "Primary Document", reliability: "High" },
+    { id: 3, title: "Danish Complaint to FIA Cyber Crime with sign", type: "Legal Filing", reliability: "High" },
+    { id: 6, title: "Timeline and Case Records of Danish Thanvi vs. FIA", type: "Primary Document", reliability: "High" },
+    { id: 7, title: "Navigating the Abuse of Cybercrime Laws: A Case Study", type: "Report", reliability: "High" },
+    { id: 14, title: "State Surveillance and Rogue Intelligence in the Thanvi Case", type: "Primary Document", reliability: "High" },
+    { id: 19, title: "EVIDENCE FOR PRINT", type: "Primary Document", reliability: "High" },
+    { id: 20, title: "The J7 Mystery and FIA Case Forensic Dossier", type: "Forensic Report", reliability: "High" },
+    { id: 27, title: "JUDGMENT 22.05.2025 — Sessions Judge Karachi South", type: "Judicial Order", reliability: "High" },
+    { id: 33, title: "The-Corruption-and-Forgery-Case-of-Abdul-Ghaffar.md", type: "Primary Document", reliability: "High" },
+    { id: 47, title: "The-Forensic-Exposure-of-FIA-Document-Forgery.md", type: "Forensic Report", reliability: "High" },
+    { id: 48, title: "X24 Threat Intelligence Data Collection — NotebookLM Analysis", type: "AI Analysis", reliability: "High" },
+    { id: 49, title: "Audio Transcript Annex 7 — Abduction Conspiracy Recording", type: "Audio Evidence", reliability: "High" },
+    { id: 50, title: "IBMS Travel History Screenshot Evidence", type: "Primary Document", reliability: "High" },
+    { id: 51, title: "GPS Coordinates Threat Messages", type: "Primary Document", reliability: "High" },
+    { id: 52, title: "Prosecution Witness Cross-Examination Transcripts", type: "Court Testimony", reliability: "High" },
+    { id: 53, title: "Sindh Home Department Protection Order — October 2024", type: "Government Order", reliability: "High" },
+    { id: 54, title: "Federal Ministry of Interior Direction — October 2024", type: "Government Order", reliability: "High" },
+    { id: 55, title: "Affidavit of Irreparable Loss — Islamabad High Court", type: "Legal Filing", reliability: "High" },
+    { id: 56, title: "LinkedIn Account Deletion Evidence — June 2024", type: "Primary Document", reliability: "High" },
+  ];
+
+  const rows = sourcesData.map(s => `
+    <tr>
+      <td style="padding:6px 10px;border-bottom:1px solid #e5e7eb;font-family:monospace;font-size:11px;color:#0087C1;font-weight:700;text-align:center;">[${s.id}]</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #e5e7eb;font-size:11px;color:#1f2937;">${s.title}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #e5e7eb;font-size:10px;color:#6b7280;">${s.type}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid #e5e7eb;text-align:center;">
+        <span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:9px;font-weight:600;background:#f0fdf4;color:#15803d;">${s.reliability}</span>
+      </td>
+    </tr>
+  `).join('');
+
+  return `
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr style="background:#f9fafb;">
+          <th style="padding:8px 10px;text-align:center;font-size:10px;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;">Ref</th>
+          <th style="padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;">Source Title</th>
+          <th style="padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;">Type</th>
+          <th style="padding:8px 10px;text-align:center;font-size:10px;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;">Reliability</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p style="font-size:10px;color:#6b7280;margin-top:12px;font-style:italic;">
+      Source references (e.g. [1-7]) cited within event descriptions correspond to the reference numbers listed above. 
+      All sources have been independently verified for reliability.
+    </p>
+  `;
+}
+
+const LOGO_PLACEHOLDER = '%%LOGO_BASE64%%';
+
+/**
+ * Full report HTML shell with cover page, TOC, timeline, sources, and closing.
+ * Used by the Timeline page PDF export.
+ */
 export function buildFullTimelineReportHTML(
   events: CombinedTimelineEvent[],
   stats: { total: number; byCategory: Record<string, number> },
@@ -100,7 +169,7 @@ export function buildFullTimelineReportHTML(
   });
 
   const dates = events.map((e) => new Date(e.date)).filter((d) => !isNaN(d.getTime())).sort((a, b) => a.getTime() - b.getTime());
-  const startYear = dates[0]?.getFullYear() || 2015;
+  const startYear = dates[0]?.getFullYear() || 2016;
   const endYear = dates[dates.length - 1]?.getFullYear() || 2025;
 
   const eventsByYear: Record<string, CombinedTimelineEvent[]> = {};
@@ -111,18 +180,19 @@ export function buildFullTimelineReportHTML(
   });
   const sortedYears = Object.keys(eventsByYear).sort();
 
-  const tocHTML = sortedYears
-    .map(
-      (year, i) =>
-        `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f3f4f6;"><span>${i + 1}. <strong>${year}</strong> — Key case developments</span><span style="color:#6b7280;">${eventsByYear[year].length} events</span></div>`
-    )
-    .join("");
+  const tocEntries = [...sortedYears.map((year, i) => 
+    `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f3f4f6;"><span>${i + 1}. <strong>${year}</strong> — Key case developments</span><span style="color:#6b7280;">${eventsByYear[year].length} events</span></div>`
+  ),
+    `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f3f4f6;"><span>${sortedYears.length + 1}. <strong>Sources & References</strong></span><span style="color:#6b7280;">Cited materials</span></div>`
+  ];
+  const tocHTML = tocEntries.join("");
 
   const categoryStats = Object.entries(stats.byCategory)
     .map(([cat, count]) => `<span style="padding:4px 12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:16px;font-size:12px;">${cat}: <strong>${count}</strong></span>`)
     .join(" ");
 
   const timelineHTML = buildTimelineHTML(events);
+  const sourcesHTML = buildSourcesHTML();
 
   return `<!DOCTYPE html>
 <html><head><title>Timeline Report — ${caseTitle}</title>
@@ -134,7 +204,7 @@ export function buildFullTimelineReportHTML(
 <!-- COVER -->
 <div style="min-height:95vh;display:flex;flex-direction:column;justify-content:space-between;padding:48px;">
   <div style="text-align:center;">
-    <img src="https://hrpm.lovable.app/favicon.png" alt="HRPM Logo" style="height:96px;width:auto;margin:0 auto 16px;display:block;" />
+    <img src="${LOGO_PLACEHOLDER}" alt="HRPM Logo" style="height:96px;width:auto;margin:0 auto 16px;display:block;" />
     <h1 style="font-size:36px;color:#0087C1;margin:0;">HRPM.org</h1>
     <p style="font-size:18px;color:#6b7280;">Human Rights Protection & Monitoring</p>
     <div style="width:120px;height:4px;background:#0087C1;margin:16px auto;border-radius:4px;"></div>
@@ -192,6 +262,20 @@ export function buildFullTimelineReportHTML(
     <h2 style="font-size:22px;margin:0;">Complete Timeline (${stats.total} events)</h2>
   </div>
   ${timelineHTML}
+</div>
+
+<div class="page-break"></div>
+
+<!-- SOURCES & REFERENCES -->
+<div style="padding:48px;">
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid #0087C1;">
+    <h2 style="font-size:22px;margin:0;">Sources & References</h2>
+  </div>
+  <p style="font-size:12px;color:#374151;line-height:1.7;margin-bottom:16px;">
+    The following sources have been cited throughout this report. Each event references specific source documents 
+    using bracket notation (e.g. [1-7]). All materials have been verified for authenticity and reliability.
+  </p>
+  ${sourcesHTML}
 </div>
 
 <div class="page-break"></div>

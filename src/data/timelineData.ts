@@ -11,16 +11,6 @@ export interface TimelineEvent {
 
 export const timelineData: TimelineEvent[] = [
   {
-    date: "2015-01-01",
-    category: "Business Interference",
-    description: "Genesis of the conflict; Syeda Mehwish Ali (daughter of Major Mumtaz) is hired by Background Check Group (BCG) under CEO Danish Thanvi.",
-    individuals: "Danish Thanvi (CEO/Accused), Syeda Mehwish Ali (Employee/Victim)",
-    legalAction: "Employment Contract",
-    outcome: "Initial professional relationship established",
-    evidenceDiscrepancy: "Later testimony regarding the professional relationship contradicted documented corporate records and promotions.",
-    sources: "[1-7]"
-  },
-  {
     date: "2016-09-30",
     category: "Business Interference",
     description: "Mehwish Ali promoted to General Manager; assigned HR restructuring tasks which allegedly sparked jealousy within the Mumtaz family.",
