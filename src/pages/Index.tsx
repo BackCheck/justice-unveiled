@@ -15,6 +15,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useCaseFilter } from "@/contexts/CaseFilterContext";
 import { useCases, useCase } from "@/hooks/useCases";
 import { buildFullTimelineReportHTML } from "@/hooks/useReportTimeline";
+import { openReportWindow } from "@/lib/reportShell";
 
 const Index = () => {
   const [selectedCategories, setSelectedCategories] = useState<TimelineEvent["category"][]>([
@@ -56,8 +57,12 @@ const Index = () => {
     await new Promise(resolve => setTimeout(resolve, 100));
 
     // Use the unified report engine via window.open() buffer strategy
-    // Filter to only visible (non-hidden) events for the report
-    const reportEvents = allEvents.filter(e => !e.isHidden);
+    // Filter to only visible (non-hidden) events from 2016 onwards
+    const reportEvents = allEvents.filter(e => {
+      if (e.isHidden) return false;
+      const year = parseInt(e.date?.split("-")[0] || "0", 10);
+      return year >= 2016;
+    });
     const reportStats = {
       total: reportEvents.length,
       byCategory: {} as Record<string, number>,
@@ -67,11 +72,7 @@ const Index = () => {
     });
 
     const html = buildFullTimelineReportHTML(reportEvents, reportStats, caseTitle, caseNumber);
-    const reportWindow = window.open("", "_blank");
-    if (reportWindow) {
-      reportWindow.document.write(html);
-      reportWindow.document.close();
-    }
+    await openReportWindow(html);
   };
 
   const handleCategoryToggle = (category: TimelineEvent["category"]) => {
