@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -15,8 +14,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { generateDossierReport } from "@/lib/dossierGenerator";
 import { openReportWindow } from "@/lib/reportShell";
 import {
-  FileText, Plus, Trash2, GripVertical, ChevronRight, ChevronLeft,
-  Gavel, Search, BookOpen, Loader2, Sparkles, ArrowUp, ArrowDown,
+  FileText, Plus, Trash2, ChevronRight, ChevronLeft,
+  Gavel, Search, Loader2, Sparkles, ArrowUp, ArrowDown,
+  Wand2, MessageSquare,
 } from "lucide-react";
 
 export interface DossierSection {
@@ -70,6 +70,10 @@ export const DossierBuilder = () => {
   const [sections, setSections] = useState<DossierSection[]>([]);
   const [annexures, setAnnexures] = useState<DossierAnnexure[]>([]);
   const [generating, setGenerating] = useState(false);
+  
+  // AI prompt state
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiPopulating, setAiPopulating] = useState(false);
 
   // Fetch case
   const { data: caseData } = useQuery({
@@ -112,6 +116,57 @@ export const DossierBuilder = () => {
     setSections(base.map(s => ({ ...s, id: nextId() })));
     setDossierTitle(t === "court" ? "Court Filing Dossier" : "Investigation Dossier");
     setDossierSubtitle(t === "court" ? "Petition / Application" : "Intelligence Assessment");
+  };
+
+  // ── AI Auto-Populate ──
+  const handleAiPopulate = async () => {
+    setAiPopulating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-dossier", {
+        body: {
+          template,
+          prompt: aiPrompt,
+          caseTitle: caseData?.title || "Active Investigation",
+          caseNumber: caseData?.case_number,
+          existingSections: sections.map(s => ({ title: s.title, content: s.content })),
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.error) {
+        toast({ title: "AI Error", description: data.error, variant: "destructive" });
+        return;
+      }
+
+      // Update title/subtitle if AI suggested them
+      if (data?.title) setDossierTitle(data.title);
+      if (data?.subtitle) setDossierSubtitle(data.subtitle);
+
+      // Replace sections with AI-generated ones
+      if (data?.sections?.length) {
+        const newSections: DossierSection[] = data.sections.map((s: any) => ({
+          id: nextId(),
+          title: s.title,
+          content: s.content,
+          type: "auto" as const,
+        }));
+        setSections(newSections);
+        toast({
+          title: "Sections Populated",
+          description: `AI generated ${newSections.length} sections. Review and edit as needed.`,
+        });
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast({
+        title: "AI Generation Failed",
+        description: err?.message || "Could not auto-populate sections. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setAiPopulating(false);
+    }
   };
 
   // ── Step 2: Section management ──
@@ -221,25 +276,25 @@ export const DossierBuilder = () => {
           </div>
         </div>
         <CardDescription className="text-xs">
-          {step === 1 && "Choose a template to start building your dossier"}
-          {step === 2 && "Add and edit sections for your dossier"}
+          {step === 1 && "Choose a template and describe what you need — AI will draft it"}
+          {step === 2 && "Review, edit, or add sections — AI-generated content is fully editable"}
           {step === 3 && "Select source documents to annex"}
           {step === 4 && "Review and generate your court-ready dossier"}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {/* ─── STEP 1: Template ─── */}
+        {/* ─── STEP 1: Template + AI Prompt ─── */}
         {step === 1 && (
-          <div className="space-y-3">
+          <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <button
                 onClick={() => handleSelectTemplate("court")}
                 className={`p-4 rounded-lg border-2 text-left transition-all ${template === "court" ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}
               >
                 <Gavel className="w-6 h-6 text-primary mb-2" />
-                <h4 className="font-semibold text-sm">Court Filing Format</h4>
+                <h4 className="font-semibold text-sm">Court Filing / Petition</h4>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Cover, Index, Statement of Facts, Issues, Arguments, Prayer, Annexures
+                  Statement of Facts, Issues, Arguments, Prayer for Relief, Annexures
                 </p>
               </button>
               <button
@@ -249,11 +304,13 @@ export const DossierBuilder = () => {
                 <Search className="w-6 h-6 text-primary mb-2" />
                 <h4 className="font-semibold text-sm">Investigation Dossier</h4>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Executive Summary, Evidence Matrix, Timeline, Entity Analysis, Recommendations
+                  Executive Summary, Evidence Matrix, Timeline, Findings, Recommendations
                 </p>
               </button>
             </div>
-            <div className="space-y-2 mt-4">
+
+            {/* Title/Subtitle */}
+            <div className="space-y-2">
               <Input
                 placeholder="Dossier title"
                 value={dossierTitle}
@@ -261,11 +318,58 @@ export const DossierBuilder = () => {
                 className="text-sm"
               />
               <Input
-                placeholder="Subtitle / Filing type"
+                placeholder="Subtitle / Filing type (e.g., Writ Petition u/Art 199)"
                 value={dossierSubtitle}
                 onChange={e => setDossierSubtitle(e.target.value)}
                 className="text-sm"
               />
+            </div>
+
+            {/* AI Prompt Box */}
+            <div className="border-2 border-dashed border-primary/30 rounded-lg p-4 bg-primary/5 space-y-3">
+              <div className="flex items-center gap-2">
+                <Wand2 className="w-4 h-4 text-primary" />
+                <h4 className="text-sm font-semibold">AI Auto-Populate</h4>
+                <Badge variant="secondary" className="text-[9px]">
+                  <Sparkles className="w-2.5 h-2.5 mr-0.5" /> Powered by AI
+                </Badge>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Describe what you need and AI will generate all sections with jurisdiction-aware legal content. 
+                You can edit everything afterwards.
+              </p>
+              <Textarea
+                placeholder={template === "court" 
+                  ? "e.g., Draft a writ petition for Sindh High Court challenging PECA §33 violations during FIA raid, illegal seizure of devices without warrant, and forged recovery memos. Include constitutional grounds under Articles 4, 10A, and 14."
+                  : "e.g., Create an investigation dossier covering 9 years of systematic persecution including false FIRs, evidence fabrication, regulatory weaponization of NADRA/SECP, and military intelligence abuse."
+                }
+                value={aiPrompt}
+                onChange={e => setAiPrompt(e.target.value)}
+                className="text-xs min-h-[80px] bg-background"
+              />
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  onClick={handleAiPopulate}
+                  disabled={aiPopulating || sections.length === 0}
+                  className="gap-1.5"
+                >
+                  {aiPopulating ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Wand2 className="w-3.5 h-3.5" />
+                      Auto-Populate Sections
+                    </>
+                  )}
+                </Button>
+                <span className="text-[10px] text-muted-foreground">
+                  {aiPrompt ? "Custom prompt will guide AI output" : "Leave empty for default template content"}
+                </span>
+              </div>
             </div>
           </div>
         )}
@@ -273,7 +377,28 @@ export const DossierBuilder = () => {
         {/* ─── STEP 2: Sections ─── */}
         {step === 2 && (
           <div className="space-y-3">
-            <ScrollArea className="h-[340px] pr-2">
+            {/* Quick AI re-generate for individual sections or adding more */}
+            <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 border border-border">
+              <MessageSquare className="w-4 h-4 text-primary shrink-0" />
+              <Input
+                placeholder="Ask AI to add a section, e.g., 'Add a section on chain of custody failures'"
+                value={aiPrompt}
+                onChange={e => setAiPrompt(e.target.value)}
+                className="text-xs h-8 flex-1"
+              />
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handleAiPopulate}
+                disabled={aiPopulating || !aiPrompt.trim()}
+                className="text-xs h-8 gap-1 shrink-0"
+              >
+                {aiPopulating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
+                Generate
+              </Button>
+            </div>
+
+            <ScrollArea className="h-[320px] pr-2">
               <div className="space-y-2">
                 {sections.map((sec, idx) => (
                   <div key={sec.id} className="border rounded-lg p-3 space-y-2 bg-card">
@@ -287,6 +412,11 @@ export const DossierBuilder = () => {
                         </button>
                       </div>
                       <Badge variant="outline" className="text-[10px] shrink-0">§{idx + 1}</Badge>
+                      {sec.type === "auto" && (
+                        <Badge variant="secondary" className="text-[9px] shrink-0 gap-0.5">
+                          <Sparkles className="w-2 h-2" /> AI
+                        </Badge>
+                      )}
                       <Input
                         value={sec.title}
                         onChange={e => updateSection(sec.id, "title", e.target.value)}
@@ -307,7 +437,7 @@ export const DossierBuilder = () => {
               </div>
             </ScrollArea>
             <Button variant="outline" size="sm" onClick={addSection} className="w-full">
-              <Plus className="w-4 h-4 mr-1" /> Add Section
+              <Plus className="w-4 h-4 mr-1" /> Add Section Manually
             </Button>
           </div>
         )}
@@ -377,7 +507,19 @@ export const DossierBuilder = () => {
               <div className="space-y-1">
                 <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Table of Contents</p>
                 {sections.map((s, i) => (
-                  <p key={s.id} className="text-xs text-muted-foreground">{i + 1}. {s.title}</p>
+                  <div key={s.id} className="flex items-center gap-2">
+                    <p className="text-xs text-muted-foreground flex-1">{i + 1}. {s.title}</p>
+                    {s.type === "auto" && (
+                      <Badge variant="secondary" className="text-[8px] h-4 gap-0.5">
+                        <Sparkles className="w-2 h-2" /> AI
+                      </Badge>
+                    )}
+                    {s.content ? (
+                      <Badge variant="outline" className="text-[8px] h-4 text-green-600">Filled</Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-[8px] h-4 text-amber-600">Empty</Badge>
+                    )}
+                  </div>
                 ))}
                 {annexures.filter(a => a.selected).length > 0 && (
                   <p className="text-xs text-muted-foreground font-medium mt-1">
