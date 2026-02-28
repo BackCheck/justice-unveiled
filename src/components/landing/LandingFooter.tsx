@@ -45,7 +45,7 @@ const LandingFooter = () => {
           <div className="space-y-4">
             <h4 className="font-semibold text-foreground">{t('footer.quickLinks')}</h4>
             <div className="flex flex-col gap-2 text-sm text-foreground/70">
-              <Link to="/who-what-why" className="hover:text-primary transition-all duration-300">Who, What & Why</Link>
+              <Link to="/about" className="hover:text-primary transition-all duration-300">About HRPM</Link>
               <Link to="/how-to-use" className="hover:text-primary transition-all duration-300">{t('footer.howToUse')}</Link>
               <Link to="/cases" className="hover:text-primary transition-all duration-300">{t('cases.title')}</Link>
               <Link to="/contact" className="hover:text-primary transition-all duration-300">{t('footer.contact')}</Link>

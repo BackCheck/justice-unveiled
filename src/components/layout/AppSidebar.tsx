@@ -113,7 +113,7 @@ const moreToolsItems = [
   { path: "/api", labelKey: "nav.developerApi", icon: Code },
   { path: "/how-to-use", labelKey: "nav.howToUse", icon: HelpCircle },
   { path: "/changelog", labelKey: "nav.changelog", icon: Rocket },
-  { path: "/who-what-why", labelKey: "nav.about", icon: Info },
+  { path: "/about", labelKey: "nav.about", icon: Info },
   { path: "/contact", labelKey: "nav.contact", icon: Phone },
 ];
 
@@ -363,7 +363,7 @@ export function AppSidebar() {
                 <Eye className="mr-2 h-4 w-4" />
                 My Watchlist
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/who-what-why")}>
+              <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/about")}>
                 <User className="mr-2 h-4 w-4" />
                 Profile
               </DropdownMenuItem>

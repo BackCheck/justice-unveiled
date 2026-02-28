@@ -29,7 +29,7 @@ const navItems = [
   { path: "/international", label: "International Rights", icon: Scale },
   { path: "/uploads", label: "Uploads", icon: Upload },
   { path: "/docs", label: "Docs", icon: BookOpen },
-  { path: "/who-what-why", label: "About", icon: Info },
+  { path: "/about", label: "About", icon: Info },
 ];
 
 export const PlatformHeader = () => {

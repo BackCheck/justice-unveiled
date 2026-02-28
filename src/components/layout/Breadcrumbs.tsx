@@ -41,7 +41,6 @@ const routeConfig: Record<string, { labelKey: string; parent?: string }> = {
   "/osint-toolkit": { labelKey: "nav.osintToolkit", parent: "/investigations" },
   "/changelog": { labelKey: "nav.changelog", parent: "/" },
   "/analysis-history": { labelKey: "nav.analysisHistory", parent: "/" },
-  "/who-what-why": { labelKey: "nav.about", parent: "/" },
   "/reports": { labelKey: "nav.reportCenter", parent: "/" },
 };
 
