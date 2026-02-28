@@ -113,22 +113,19 @@ export const PDFCoverPage = ({ totalEvents, dateRange, caseTitle }: PDFCoverPage
         </div>
       </div>
 
-      {/* Singapore Office */}
+      {/* Organization Details */}
       <div className="text-center mb-8">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-3">
-          Head Office
-        </h3>
-        <p className="text-gray-800 font-medium">
-          Human Rights Protection & Monitoring
+        <p className="text-gray-800 font-semibold">
+          Human Rights Protection & Monitoring (HRPM.org)
         </p>
-        <p className="text-gray-600">
-          36 Robinson Road, #20-01 City House
-        </p>
-        <p className="text-gray-600">
-          Singapore 068877
+        <p className="text-gray-600 text-sm">
+          Independent Public-Interest Documentation & Monitoring Platform
         </p>
         <p className="text-gray-600 mt-2">
-          Tel: +6531 290 390 | Email: info@hrpm.org
+          36 Robinson Road, #20-01 City House, Singapore 068877
+        </p>
+        <p className="text-gray-600">
+          Email: info@hrpm.org &nbsp;|&nbsp; Tel: +65 31 290 390
         </p>
       </div>
 
@@ -157,7 +154,7 @@ export const PDFCoverPage = ({ totalEvents, dateRange, caseTitle }: PDFCoverPage
           <p className="font-semibold text-red-700 mb-2">
             Strictly Confidential – Only for Advocacy Work
           </p>
-          <p>© {currentDate.getFullYear()} Human Rights Protection & Monitoring. All rights reserved.</p>
+          <p>© {currentDate.getFullYear()} HRPM.org. All Rights Reserved.</p>
           <p className="mt-1" style={{ color: "#0087C1" }}>
             Documenting injustice. Demanding accountability.
           </p>
