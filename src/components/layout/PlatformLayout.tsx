@@ -205,10 +205,17 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
 
                     <span className="text-border">|</span>
 
-                    <Link to="/who-what-why#privacy" className="text-[10px] sm:text-xs hover:text-primary transition-colors">{t('footer.privacy')}</Link>
-                    <Link to="/who-what-why#terms" className="text-[10px] sm:text-xs hover:text-primary transition-colors">{t('footer.terms')}</Link>
+                    <Link to="/privacy" className="text-[10px] sm:text-xs hover:text-primary transition-colors">{t('footer.privacy')}</Link>
+                    <Link to="/terms" className="text-[10px] sm:text-xs hover:text-primary transition-colors">{t('footer.terms')}</Link>
                   </div>
                 </TooltipProvider>
+              </div>
+
+              {/* Freedom of Expression & Good Faith */}
+              <div className="pt-2 text-center">
+                <p className="text-[9px] leading-relaxed text-muted-foreground/70 max-w-3xl mx-auto">
+                  This site constitutes protected expression under principles of freedom of expression and public-interest reporting as recognized under international human rights law, including Article 19 of the ICCPR and related frameworks. This publication is issued without malice and solely for documentation, transparency, and human rights advocacy purposes.
+                </p>
               </div>
             </div>
           </footer>

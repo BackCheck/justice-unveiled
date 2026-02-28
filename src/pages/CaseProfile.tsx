@@ -35,6 +35,7 @@ import { useState } from "react";
 import { useCase, useCaseEvents, useCaseEntities, useCaseDiscrepancies, useCaseEvidence } from "@/hooks/useCases";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { EvidenceRepositoryCard } from "@/components/evidence/EvidenceRepositoryCard";
+import { CaseReportFooter } from "@/components/cases/CaseReportFooter";
 import { CaseReconstructionTab } from "@/components/reconstruction/CaseReconstructionTab";
 import { CaseCorrelationTab } from "@/components/correlation/CaseCorrelationTab";
 import { CaseComplianceTab } from "@/components/compliance/CaseComplianceTab";
@@ -262,6 +263,70 @@ const CaseProfile = () => {
   `}
 </div>
 
+<!-- INTELLIGENCE CLASSIFICATION BANNER -->
+<div style="text-align:center;padding:16px 48px;background:#f0f9ff;border-top:2px solid #0087C1;border-bottom:2px solid #0087C1;margin:0;">
+  <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:700;color:#0087C1;margin:0;">PUBLIC INTEREST INTELLIGENCE DOCUMENT</p>
+  <p style="font-size:10px;color:#6b7280;margin:4px 0 0;">Not Classified &bull; Advocacy Use &bull; Monitoring Record</p>
+</div>
+
+<!-- FULL LEGAL DISCLAIMER -->
+<div style="padding:48px;">
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid #0087C1;">
+    <div style="width:36px;height:36px;background:#0087C1;color:#fff;display:flex;align-items:center;justify-content:center;border-radius:8px;font-weight:700;">6</div>
+    <h2 style="font-size:22px;margin:0;">Legal &amp; Publication Disclaimer</h2>
+  </div>
+
+  <p style="font-size:12px;line-height:1.7;color:#374151;margin-bottom:16px;">
+    This report has been prepared by Human Rights Protection &amp; Monitoring (HRPM.org) as part of its public-interest mandate to document, analyze, and monitor human rights violations, procedural irregularities, and institutional misconduct.
+  </p>
+
+  <p style="font-size:12px;font-weight:600;color:#1f2937;margin-bottom:8px;">The contents of this report are based on:</p>
+  <ul style="font-size:12px;color:#374151;line-height:1.8;margin:0 0 16px 24px;">
+    <li>Court filings and judicial records</li>
+    <li>Witness statements and recorded testimonies</li>
+    <li>Official correspondence</li>
+    <li>Open-source intelligence (OSINT)</li>
+    <li>Digital forensic analysis</li>
+    <li>Regulatory and statutory frameworks</li>
+  </ul>
+
+  <p style="font-size:12px;line-height:1.7;color:#374151;margin-bottom:16px;">
+    The findings presented herein represent analytical conclusions derived from the above sources at the time of publication.
+  </p>
+
+  <h3 style="font-size:14px;color:#1f2937;margin:20px 0 8px;">Important Notice</h3>
+  <ul style="font-size:12px;color:#374151;line-height:1.8;margin:0 0 16px 24px;">
+    <li>Allegations referenced in this report may remain subject to judicial review or appeal.</li>
+    <li>Inclusion of an individual, organization, or authority does not constitute a criminal conviction.</li>
+    <li>HRPM does not assert guilt beyond what is legally established.</li>
+    <li>This report is not legal advice and should not be construed as such.</li>
+    <li>Readers are encouraged to consult qualified legal professionals where necessary.</li>
+  </ul>
+
+  <h3 style="font-size:14px;color:#1f2937;margin:20px 0 8px;">Accuracy &amp; Corrections</h3>
+  <p style="font-size:12px;line-height:1.7;color:#374151;margin-bottom:8px;">
+    HRPM operates under a corrections and transparency policy. Any party who believes material information is inaccurate may submit:
+  </p>
+  <ul style="font-size:12px;color:#374151;line-height:1.8;margin:0 0 16px 24px;">
+    <li>Verifiable documentary evidence</li>
+    <li>Written clarification</li>
+    <li>Legal reference citations</li>
+  </ul>
+  <p style="font-size:12px;color:#374151;margin-bottom:16px;">Corrections will be reviewed and updated where appropriate.</p>
+
+  <h3 style="font-size:14px;color:#1f2937;margin:20px 0 8px;">Confidentiality</h3>
+  <p style="font-size:12px;line-height:1.7;color:#374151;margin-bottom:16px;">
+    This report may contain sensitive information related to ongoing legal or advocacy matters. Unauthorized alteration, misrepresentation, or selective reproduction of this report is strictly discouraged.
+  </p>
+
+  <h3 style="font-size:14px;color:#1f2937;margin:20px 0 8px;">Copyright</h3>
+  <p style="font-size:12px;line-height:1.7;color:#374151;">
+    &copy; ${now.getFullYear()} Human Rights Protection &amp; Monitoring (HRPM.org). All rights reserved. No part of this publication may be reproduced, stored, or transmitted in any form without prior written permission, except for fair-use academic or journalistic citation with proper attribution.
+  </p>
+</div>
+
+<div class="page-break"></div>
+
 <!-- CLOSING -->
 <div style="min-height:60vh;display:flex;align-items:center;justify-content:center;padding:48px;">
   <div style="text-align:center;max-width:480px;">
@@ -273,14 +338,20 @@ const CaseProfile = () => {
       for case ${caseData.case_number}.
     </p>
     <div style="margin-top:16px;font-size:12px;color:#6b7280;">
-      <p style="font-weight:600;color:#1f2937;">Human Rights Protection & Monitoring</p>
+      <p style="font-weight:600;color:#1f2937;">Human Rights Protection &amp; Monitoring</p>
       <p>36 Robinson Road, #20-01 City House, Singapore 068877</p>
-      <p>Tel: +6531 290 390 | Email: info@hrpm.org</p>
+      <p>Tel: +65 31 290 390 | Email: info@hrpm.org</p>
     </div>
     <div style="border-top:1px solid #e5e7eb;padding-top:16px;margin-top:16px;font-size:11px;color:#6b7280;">
       <p style="font-weight:600;color:#dc2626;">Strictly Confidential – Only for Advocacy Work</p>
-      <p>© ${now.getFullYear()} Human Rights Protection & Monitoring. All rights reserved.</p>
+      <p>&copy; ${now.getFullYear()} Human Rights Protection &amp; Monitoring. All rights reserved.</p>
       <p style="color:#0087C1;">Documenting injustice. Demanding accountability.</p>
+      <p style="margin-top:8px;font-size:9px;color:#9ca3af;line-height:1.5;">
+        This publication constitutes protected expression under principles of freedom of expression and public-interest reporting as recognized under international human rights law, including Article 19 of the ICCPR and related frameworks.
+      </p>
+      <p style="font-size:9px;color:#9ca3af;font-style:italic;">
+        This publication is issued without malice and solely for documentation, transparency, and human rights advocacy purposes.
+      </p>
     </div>
   </div>
 </div>
@@ -883,6 +954,9 @@ const CaseProfile = () => {
             )}
           </TabsContent>
         </Tabs>
+
+        {/* Case Report Footer */}
+        <CaseReportFooter />
       </main>
     </PlatformLayout>
   );
