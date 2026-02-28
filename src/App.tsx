@@ -47,6 +47,9 @@ const AnalysisHistory = lazy(() => import("./pages/AnalysisHistory"));
 const OsintToolkit = lazy(() => import("./pages/OsintToolkit"));
 const Landing = lazy(() => import("./pages/Landing"));
 const ReportCenter = lazy(() => import("./pages/ReportCenter"));
+const Disclaimer = lazy(() => import("./pages/Disclaimer"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Privacy = lazy(() => import("./pages/Privacy"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -113,6 +116,9 @@ const App = () => (
             <Route path="/entities/:entityId" element={<EntityDetail />} />
             <Route path="/welcome" element={<Landing />} />
             <Route path="/reports" element={<ReportCenter />} />
+            <Route path="/disclaimer" element={<Disclaimer />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
