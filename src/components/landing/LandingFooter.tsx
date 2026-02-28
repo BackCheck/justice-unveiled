@@ -127,8 +127,9 @@ const LandingFooter = () => {
 
               <span className="text-border">|</span>
 
-              <Link to="/who-what-why#privacy" className="text-xs hover:text-primary transition-colors">{t('footer.privacy')}</Link>
-              <Link to="/who-what-why#terms" className="text-xs hover:text-primary transition-colors">{t('footer.terms')}</Link>
+              <Link to="/privacy" className="text-xs hover:text-primary transition-colors">{t('footer.privacy')}</Link>
+              <Link to="/terms" className="text-xs hover:text-primary transition-colors">{t('footer.terms')}</Link>
+              <Link to="/disclaimer" className="text-xs hover:text-primary transition-colors">Disclaimer</Link>
             </div>
           </TooltipProvider>
         </div>
