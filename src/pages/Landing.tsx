@@ -90,7 +90,7 @@ const Landing = () => {
              </div>
           </Link>
           <nav className="hidden md:flex items-center gap-4">
-            <Link to="/who-what-why" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">{t('nav.about')}</Link>
+            <Link to="/about" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">{t('nav.about')}</Link>
             <Link to="/cases" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300">{t('nav.cases')}</Link>
             <Link to="/docs" className="text-sm text-foreground/70 hover:text-primary transition-all duration-300 flex items-center gap-1">
               <BookOpen className="w-3.5 h-3.5" />

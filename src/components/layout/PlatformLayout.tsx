@@ -52,7 +52,6 @@ const pageTitleKeys: Record<string, { titleKey: string; subtitleKey?: string; is
   "/osint-toolkit": { titleKey: "nav.osintToolkit", subtitleKey: "pages.osintToolkitSub", isAI: true },
   "/changelog": { titleKey: "nav.changelog", subtitleKey: "pages.changelogSub" },
   "/analysis-history": { titleKey: "nav.analysisHistory", subtitleKey: "pages.analysisHistorySub", isAI: true },
-  "/who-what-why": { titleKey: "nav.about", subtitleKey: "pages.aboutSub" },
   "/reports": { titleKey: "nav.reportCenter", subtitleKey: "pages.reportCenterSub" },
 };
 
@@ -147,7 +146,7 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
 
                 {/* Quick Links as text */}
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                  <Link to="/who-what-why" className="hover:text-primary transition-colors">Who, What & Why</Link>
+                  <Link to="/about" className="hover:text-primary transition-colors">About HRPM</Link>
                   <Link to="/how-to-use" className="hover:text-primary transition-colors">{t('footer.howToUse')}</Link>
                   <Link to="/cases" className="hover:text-primary transition-colors">{t('cases.title')}</Link>
                   <Link to="/blog" className="hover:text-primary transition-colors">{t('nav.blogNews')}</Link>
