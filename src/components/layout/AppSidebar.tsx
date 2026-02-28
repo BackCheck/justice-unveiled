@@ -1,5 +1,4 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { 
   Clock, 
@@ -176,11 +175,7 @@ export function AppSidebar() {
             )}
           >
             {active && (
-              <motion.div
-                layoutId="sidebar-active-indicator"
-                className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-lg shadow-sm"
-                transition={{ type: "spring", stiffness: 350, damping: 30 }}
-              />
+              <div className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-lg shadow-sm transition-all duration-200" />
             )}
             <Icon className={cn(
               "h-4 w-4 shrink-0 transition-colors duration-200 relative z-10",
@@ -193,12 +188,7 @@ export function AppSidebar() {
               </span>
             )}
             {active && !isNew && (
-              <motion.span 
-                className="ml-auto w-1.5 h-1.5 rounded-full bg-primary relative z-10"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 500, damping: 25 }}
-              />
+              <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary relative z-10" />
             )}
           </Link>
         </SidebarMenuButton>

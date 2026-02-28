@@ -3,18 +3,18 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { lazy, Suspense } from "react";
 import { AppSidebar } from "./AppSidebar";
 import { Breadcrumbs } from "./Breadcrumbs";
-import { QuickActions } from "./QuickActions";
-import { GlobalSearch } from "./GlobalSearch";
-import { NotificationCenter } from "./NotificationCenter";
 import { Badge } from "@/components/ui/badge";
 import { ScrollProgressBar } from "@/components/ui/scroll-progress-bar";
-import { Sparkles, FileText, Github, Code, BookOpen, History, Rss } from "lucide-react";
-import { CaseSelector } from "./CaseSelector";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { Sparkles, Github, Code, BookOpen, History, Rss } from "lucide-react";
 import hrpmLogo from "@/assets/human-rights-logo.png";
+
+const GlobalSearch = lazy(() => import("./GlobalSearch").then(m => ({ default: m.GlobalSearch })));
+const QuickActions = lazy(() => import("./QuickActions").then(m => ({ default: m.QuickActions })));
+const NotificationCenter = lazy(() => import("./NotificationCenter").then(m => ({ default: m.NotificationCenter })));
+const CaseSelector = lazy(() => import("./CaseSelector").then(m => ({ default: m.CaseSelector })));
 
 interface PlatformLayoutProps {
   children: ReactNode;
@@ -66,18 +66,6 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
   const isAI = pageConfig?.isAI;
   const isHomePage = currentPath === "/" || currentPath === "";
 
-  const { data: recentPosts } = useQuery({
-    queryKey: ["recent-blog-posts-footer"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("blog_posts")
-        .select("title, slug")
-        .eq("is_published", true)
-        .order("published_at", { ascending: false })
-        .limit(4);
-      return data || [];
-    },
-  });
 
   return (
     <SidebarProvider>
@@ -121,16 +109,16 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
 
               {!isHomePage && (
                 <div className="hidden sm:block">
-                  <CaseSelector />
+                  <Suspense fallback={null}><CaseSelector /></Suspense>
                 </div>
               )}
 
               <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-                <GlobalSearch />
+                <Suspense fallback={null}><GlobalSearch /></Suspense>
                 <div className="hidden sm:block">
-                  <QuickActions />
+                  <Suspense fallback={null}><QuickActions /></Suspense>
                 </div>
-                <NotificationCenter />
+                <Suspense fallback={null}><NotificationCenter /></Suspense>
               </div>
             </div>
 
