@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 
 interface GlobeProps {
   className?: string;
@@ -89,10 +89,23 @@ export function InteractiveGlobe({
   const animRef = useRef(0);
   const timeRef = useRef(0);
   const dotsRef = useRef<[number, number, number][]>([]);
+  const [isVisible, setIsVisible] = useState(false);
+
+  // IntersectionObserver to pause animation when off-screen
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.05 }
+    );
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const dots: [number, number, number][] = [];
-    const numDots = 1200;
+    const numDots = 800; // Reduced from 1200 for performance
     const goldenRatio = (1 + Math.sqrt(5)) / 2;
     for (let i = 0; i < numDots; i++) {
       const theta = (2 * Math.PI * i) / goldenRatio;
@@ -228,9 +241,10 @@ export function InteractiveGlobe({
   }, [dotColor, arcColor, markerColor, autoRotateSpeed, connections, markers]);
 
   useEffect(() => {
+    if (!isVisible) return;
     animRef.current = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(animRef.current);
-  }, [draw]);
+  }, [draw, isVisible]);
 
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     dragRef.current = {
