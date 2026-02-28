@@ -129,25 +129,54 @@ export const PDFCoverPage = ({ totalEvents, dateRange, caseTitle }: PDFCoverPage
         </p>
       </div>
 
-      {/* Disclaimer and Copyright */}
+      {/* Intelligence Classification Banner */}
+      <div className="text-center py-3 border-y-2" style={{ borderColor: "#0087C1", backgroundColor: "#f0f9ff" }}>
+        <p className="text-[11px] tracking-[3px] uppercase font-bold" style={{ color: "#0087C1" }}>
+          PUBLIC INTEREST INTELLIGENCE DOCUMENT
+        </p>
+        <p className="text-[10px] text-gray-500 mt-1">
+          Not Classified • Advocacy Use • Monitoring Record
+        </p>
+      </div>
+
+      {/* Full Legal Disclaimer */}
       <div className="border-t border-gray-200 pt-6 text-xs text-gray-500 space-y-4">
         <div>
-          <p className="font-semibold uppercase tracking-wider mb-2">Disclaimer</p>
+          <p className="font-semibold uppercase tracking-wider mb-2">Legal & Publication Disclaimer</p>
           <p className="leading-relaxed">
-            This document is prepared by Human Rights Protection & Monitoring (HRPM) for informational 
-            and legal reference purposes only. All dates, events, and information contained herein are 
-            based on official court documents, FIR records, and verified testimonies. This report does 
-            not constitute legal advice. HRPM makes no representations or warranties regarding the 
-            accuracy, completeness, or suitability of this information. Recipients should seek independent 
-            legal counsel for specific legal matters.
+            This report has been prepared by Human Rights Protection & Monitoring (HRPM.org) as part of its
+            public-interest mandate to document, analyze, and monitor human rights violations, procedural
+            irregularities, and institutional misconduct. The contents are based on court filings and judicial
+            records, witness statements, official correspondence, open-source intelligence (OSINT), digital
+            forensic analysis, and regulatory and statutory frameworks. The findings represent analytical
+            conclusions derived from the above sources at the time of publication.
           </p>
         </div>
         <div>
-          <p className="font-semibold uppercase tracking-wider mb-2">Confidentiality Notice</p>
+          <p className="font-semibold uppercase tracking-wider mb-2">Important Notice</p>
           <p className="leading-relaxed">
-            The information contained in this report may be privileged and confidential. Unauthorized 
-            reproduction, distribution, or disclosure is strictly prohibited. This document is logged 
-            with the requester's IP address and timestamp for audit purposes.
+            Allegations referenced may remain subject to judicial review or appeal. Inclusion of an individual,
+            organization, or authority does not constitute a criminal conviction. HRPM does not assert guilt
+            beyond what is legally established. This report is not legal advice. Readers are encouraged to
+            consult qualified legal professionals where necessary.
+          </p>
+        </div>
+        <div>
+          <p className="font-semibold uppercase tracking-wider mb-2">Accuracy & Corrections</p>
+          <p className="leading-relaxed">
+            HRPM operates under a corrections and transparency policy. Any party who believes material
+            information is inaccurate may submit verifiable documentary evidence, written clarification,
+            or legal reference citations. Corrections will be reviewed and updated where appropriate.
+          </p>
+        </div>
+        <div>
+          <p className="font-semibold uppercase tracking-wider mb-2">Confidentiality & Copyright</p>
+          <p className="leading-relaxed">
+            This report may contain sensitive information related to ongoing legal or advocacy matters.
+            Unauthorized alteration, misrepresentation, or selective reproduction is strictly discouraged.
+            © {currentDate.getFullYear()} HRPM.org. All rights reserved. No part of this publication may
+            be reproduced without prior written permission, except for fair-use academic or journalistic
+            citation with proper attribution.
           </p>
         </div>
         <div className="text-center pt-4 border-t border-gray-100">
@@ -157,6 +186,12 @@ export const PDFCoverPage = ({ totalEvents, dateRange, caseTitle }: PDFCoverPage
           <p>© {currentDate.getFullYear()} HRPM.org. All Rights Reserved.</p>
           <p className="mt-1" style={{ color: "#0087C1" }}>
             Documenting injustice. Demanding accountability.
+          </p>
+          <p className="mt-2 text-[9px] text-gray-400 leading-relaxed max-w-lg mx-auto">
+            This site constitutes protected expression under principles of freedom of expression and
+            public-interest reporting as recognized under international human rights law, including
+            Article 19 of the ICCPR and related frameworks. This publication is issued without malice
+            and solely for documentation, transparency, and human rights advocacy purposes.
           </p>
         </div>
       </div>
