@@ -20,6 +20,8 @@ import { SocialShareButtons } from "@/components/sharing";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const categoryColors: Record<string, string> = {
   "Business Interference": "bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/30",
@@ -104,11 +106,20 @@ const AnalysisHistory = () => {
     return Object.values(groups).sort((a, b) => b.date.localeCompare(a.date));
   }, [jobs, events, entities, discrepancies]);
 
+  const { data: dbStats } = useQuery({
+    queryKey: ["analysis-history-stats"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_analysis_history_stats");
+      if (error) throw error;
+      return data?.[0] ?? { total_jobs: 0, total_events: 0, total_entities: 0, total_discrepancies: 0 };
+    },
+  });
+
   const totalStats = {
-    totalJobs: jobs?.filter(j => j.status === "completed").length || 0,
-    totalEvents: events?.length || 0,
-    totalEntities: entities?.length || 0,
-    totalDiscrepancies: discrepancies?.length || 0,
+    totalJobs: Number(dbStats?.total_jobs ?? 0),
+    totalEvents: Number(dbStats?.total_events ?? 0),
+    totalEntities: Number(dbStats?.total_entities ?? 0),
+    totalDiscrepancies: Number(dbStats?.total_discrepancies ?? 0),
   };
 
   const formatDate = (dateStr: string) => {
