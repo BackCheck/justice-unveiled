@@ -74,9 +74,14 @@ const LandingFooter = () => {
 
         {/* Bottom Bar: Copyright + Icon links */}
         <div className="mt-10 pt-6 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-foreground/50">
-            © {new Date().getFullYear()} Human Rights Protection & Monitoring. Open-source & non-profit. {t('footer.copyright')}
-          </p>
+          <div className="text-xs text-foreground/50 space-y-0.5">
+            <p className="font-medium text-foreground/70">Human Rights Protection & Monitoring (HRPM.org)</p>
+            <p>Independent Public-Interest Documentation & Monitoring Platform</p>
+            <p className="mt-1">36 Robinson Road, #20-01 City House, Singapore 068877</p>
+            <p>Email: info@hrpm.org &nbsp;|&nbsp; Tel: +65 31 290 390</p>
+            <p className="mt-1">© {new Date().getFullYear()} HRPM.org. All Rights Reserved.</p>
+            <p className="text-primary/80 italic">Documenting injustice. Demanding accountability.</p>
+          </div>
           <TooltipProvider delayDuration={200}>
             <div className="flex items-center gap-3 text-foreground/50">
               <Tooltip>
