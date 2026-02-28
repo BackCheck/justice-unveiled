@@ -2435,6 +2435,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_analysis_history_stats: {
+        Args: { p_case_id?: string }
+        Returns: {
+          total_discrepancies: number
+          total_entities: number
+          total_events: number
+          total_jobs: number
+        }[]
+      }
       get_platform_stats: { Args: { p_case_id?: string }; Returns: Json }
       get_user_role: {
         Args: { _user_id: string }
