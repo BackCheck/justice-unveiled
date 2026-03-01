@@ -7,6 +7,8 @@ import { SocialShareButtons } from "@/components/sharing/SocialShareButtons";
 import { WatchlistButton } from "./WatchlistButton";
 import { WatchlistItem } from "@/hooks/useWatchlist";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface DetailPageHeaderProps {
   title: string;
@@ -38,8 +40,15 @@ export const DetailPageHeader = ({
   className,
 }: DetailPageHeaderProps) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   const handlePrint = () => {
+    if (!user) {
+      toast({ title: "Login Required", description: "Please sign in to print reports.", variant: "destructive" });
+      navigate("/auth");
+      return;
+    }
     window.print();
   };
 

@@ -16,6 +16,9 @@ import { useCaseFilter } from "@/contexts/CaseFilterContext";
 import { useCases, useCase } from "@/hooks/useCases";
 import { buildFullTimelineReportHTML } from "@/hooks/useReportTimeline";
 import { openReportWindow } from "@/lib/reportShell";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [selectedCategories, setSelectedCategories] = useState<TimelineEvent["category"][]>([
@@ -27,6 +30,9 @@ const Index = () => {
   const [isPrintMode, setIsPrintMode] = useState(false);
   const queryClient = useQueryClient();
   const { selectedCaseId } = useCaseFilter();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   // Fetch case details for dynamic title
   const { data: cases } = useCases();
@@ -50,6 +56,11 @@ const Index = () => {
   });
 
   const handleExportPDF = async () => {
+    if (!user) {
+      toast({ title: "Login Required", description: "Please sign in to export reports.", variant: "destructive" });
+      navigate("/auth");
+      return;
+    }
     // Invalidate and refetch to ensure fresh data
     await queryClient.invalidateQueries({ queryKey: ["hidden-static-events"] });
     await queryClient.invalidateQueries({ queryKey: ["extracted-events"] });
