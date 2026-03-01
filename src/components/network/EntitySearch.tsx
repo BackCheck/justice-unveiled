@@ -16,6 +16,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { RedactedText } from "@/components/ui/RedactedText";
 
 interface EntitySearchProps {
   entities: CombinedEntity[];
@@ -178,9 +179,9 @@ export const EntitySearch = ({ entities, onSelectEntity, selectedEntity }: Entit
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <span className="font-medium text-sm truncate">
+                        <RedactedText className="font-medium text-sm truncate">
                           {entity.name}
-                        </span>
+                        </RedactedText>
                         {entity.isAIExtracted && (
                           <Sparkles className="w-3 h-3 text-amber-400 flex-shrink-0" />
                         )}

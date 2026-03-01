@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FileAudio, FileText, File, ExternalLink, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { RedactedText } from "@/components/ui/RedactedText";
 
 interface LinkedEvidenceProps {
   eventIndex: number;
@@ -46,7 +47,7 @@ export const LinkedEvidence = ({ eventIndex }: LinkedEvidenceProps) => {
             >
               <Icon className="w-4 h-4 text-muted-foreground shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{file.file_name}</p>
+                <RedactedText className="text-sm font-medium truncate" as="p">{file.file_name}</RedactedText>
                 {file.description && (
                   <p className="text-xs text-muted-foreground truncate">{file.description}</p>
                 )}

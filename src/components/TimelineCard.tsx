@@ -10,6 +10,7 @@ import { LinkedEvidence } from "@/components/timeline/LinkedEvidence";
 import { CombinedTimelineEvent } from "@/hooks/useCombinedTimeline";
 import { cn } from "@/lib/utils";
 import { useUserRole } from "@/hooks/useUserRole";
+import { RedactedText } from "@/components/ui/RedactedText";
 import { useDeleteExtractedEvent, useToggleEventVisibility } from "@/hooks/useExtractedEvents";
 import { useToggleStaticEventVisibility } from "@/hooks/useStaticEventVisibility";
 import {
@@ -254,7 +255,7 @@ export const TimelineCard = ({ event, index, forceExpanded = false, showAdminCon
                     <Users className="w-4 h-4 mt-1 text-muted-foreground flex-shrink-0" />
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">Key Individuals</p>
-                      <p className="text-sm">{event.individuals}</p>
+                      <RedactedText className="text-sm" as="p">{event.individuals}</RedactedText>
                     </div>
                   </div>
                 </div>

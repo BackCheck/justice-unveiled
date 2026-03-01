@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { EntitySearch } from "./EntitySearch";
 import { ForceGraph } from "./ForceGraph";
 import { toast } from "sonner";
+import { RedactedText } from "@/components/ui/RedactedText";
 
 export const EntityNetwork = () => {
   const { entities, connections, isLoading, aiEntityCount, inferredConnectionCount } = useCombinedEntities();
@@ -320,7 +321,7 @@ export const EntityNetwork = () => {
               <div className="space-y-4">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-semibold text-lg">{selectedEntity.name}</h3>
+                    <RedactedText className="font-semibold text-lg">{selectedEntity.name}</RedactedText>
                     {selectedEntity.isAIExtracted && (
                       <Badge className="bg-amber-500/20 text-amber-600 border-amber-500/30 text-[10px]">
                         <Sparkles className="w-3 h-3 mr-1" />

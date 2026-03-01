@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { NodeContextMenu } from "./NodeContextMenu";
 import { EntitySearch } from "./EntitySearch";
 import { toast } from "sonner";
+import { useRedactedText } from "@/components/ui/RedactedText";
 
 interface NetworkNodeProps {
   entity: CombinedEntity;
@@ -26,6 +27,7 @@ interface NetworkNodeProps {
 }
 
 const NetworkNode = ({ entity, isSelected, onClick, position, clusterColor, isHighlightedCluster, isOnWatchlist }: NetworkNodeProps) => {
+  const { redact, isRedacted } = useRedactedText();
   const getIcon = () => {
     switch (entity.type) {
       case "person": return Users;
@@ -112,13 +114,14 @@ const NetworkNode = ({ entity, isSelected, onClick, position, clusterColor, isHi
         textAnchor="middle"
         className="fill-foreground text-[10px] font-medium"
       >
-        {entity.name.split(' ').slice(0, 2).join(' ')}
+        {isRedacted ? '••••••' : entity.name.split(' ').slice(0, 2).join(' ')}
       </text>
     </g>
   );
 };
 
 export const EntityNetwork = () => {
+  const { redact, isRedacted } = useRedactedText();
   const { entities, connections, isLoading, aiEntityCount, inferredConnectionCount } = useCombinedEntities();
   const clusters = useEntityClusters(entities, connections);
   const [selectedEntity, setSelectedEntity] = useState<CombinedEntity | null>(null);
@@ -690,7 +693,7 @@ export const EntityNetwork = () => {
                               textAnchor="middle"
                               className="fill-foreground text-[10px] font-medium pointer-events-none"
                             >
-                              {entity.name.split(' ').slice(0, 2).join(' ')}
+                              {isRedacted ? '••••••' : entity.name.split(' ').slice(0, 2).join(' ')}
                             </text>
                           </g>
                         </svg>
@@ -741,7 +744,7 @@ export const EntityNetwork = () => {
               <div className="space-y-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-lg">{selectedEntity.name}</h3>
+                    <h3 className="font-semibold text-lg">{isRedacted ? '••••••••••' : selectedEntity.name}</h3>
                     {selectedEntity.isAIExtracted && (
                       <Badge className="bg-amber-500/20 text-amber-600 border-amber-500/30 text-[10px]">
                         <Sparkles className="w-3 h-3 mr-1" />
