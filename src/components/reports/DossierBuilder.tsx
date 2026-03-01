@@ -34,6 +34,7 @@ import {
   Wand2, MessageSquare, Scale, Building2, AlertTriangle,
   ShieldCheck, Shield, CheckCircle2, XCircle, AlertCircle,
 } from "lucide-react";
+import { RedactedText } from "@/components/ui/RedactedText";
 
 export interface DossierSection {
   id: string;
@@ -798,7 +799,7 @@ export const DossierBuilder = () => {
                       />
                       <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium truncate">{ann.label}</p>
+                        <RedactedText className="text-xs font-medium truncate">{ann.label}</RedactedText>
                         <p className="text-[10px] text-muted-foreground">{ann.source === "affidavit" ? "Affidavit" : "Evidence"}</p>
                       </div>
                       {ann.suggested && (

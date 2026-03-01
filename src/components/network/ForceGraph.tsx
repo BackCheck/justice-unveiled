@@ -5,6 +5,7 @@ import { categoryColors } from "@/data/entitiesData";
 import { Users, Building2, Shield, Scale, Sparkles, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { useRedactedText } from "@/components/ui/RedactedText";
 
 interface ForceNode extends SimulationNodeDatum {
   id: string;
@@ -44,6 +45,7 @@ export const ForceGraph = ({
   highlightClusterIds = [],
   clusterColors = {},
 }: ForceGraphProps) => {
+  const { isRedacted } = useRedactedText();
   const svgRef = useRef<SVGSVGElement>(null);
   const [nodes, setNodes] = useState<ForceNode[]>([]);
   const [links, setLinks] = useState<ForceLink[]>([]);
@@ -380,7 +382,7 @@ export const ForceGraph = ({
                   textShadow: "0 1px 2px hsl(var(--background)), 0 -1px 2px hsl(var(--background))"
                 }}
               >
-                {node.entity.name.split(' ').slice(0, 2).join(' ')}
+                {isRedacted ? '••••••' : node.entity.name.split(' ').slice(0, 2).join(' ')}
               </text>
             </g>
           );
