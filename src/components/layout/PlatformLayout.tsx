@@ -157,7 +157,7 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
               </div>
 
               {/* Bottom Bar: Icon links + Copyright */}
-              <div className="pt-3 border-t border-border/30 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="pt-3 border-t border-border/30 flex items-center justify-between gap-3 flex-wrap">
                 <TooltipProvider delayDuration={200}>
                   <div className="flex items-center gap-3 text-muted-foreground">
                     <Tooltip>
