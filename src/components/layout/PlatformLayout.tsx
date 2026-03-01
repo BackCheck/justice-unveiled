@@ -156,11 +156,8 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
                 </div>
               </div>
 
-              {/* Bottom Bar: Copyright + Icon links */}
+              {/* Bottom Bar: Icon links + Copyright */}
               <div className="pt-3 border-t border-border/30 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <p className="text-[10px] sm:text-xs text-muted-foreground">
-                  © {new Date().getFullYear()} Human Rights Protection & Monitoring. {t('footer.copyright')}
-                </p>
                 <TooltipProvider delayDuration={200}>
                   <div className="flex items-center gap-3 text-muted-foreground">
                     <Tooltip>
@@ -203,9 +200,11 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
                       </TooltipTrigger>
                       <TooltipContent><p>{t('footer.openSource')}</p></TooltipContent>
                     </Tooltip>
-
                   </div>
                 </TooltipProvider>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">
+                  © {new Date().getFullYear()} Human Rights Protection & Monitoring. {t('footer.copyright')}
+                </p>
               </div>
 
               {/* Freedom of Expression & Good Faith */}
