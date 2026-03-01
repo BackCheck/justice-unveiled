@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,7 +23,12 @@ import {
   Gavel,
   Radio,
   Shield,
+  PlusCircle,
+  Download,
+  Check,
 } from "lucide-react";
+import { toast } from "sonner";
+import { format } from "date-fns";
 
 type Message = {
   role: "user" | "assistant";
@@ -60,6 +65,7 @@ export const IntelChat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("comms");
+  const [reportSections, setReportSections] = useState<number[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -181,6 +187,61 @@ export const IntelChat = () => {
     streamChat(question);
   };
 
+  const addToReport = useCallback((msgIndex: number) => {
+    setReportSections(prev => {
+      if (prev.includes(msgIndex)) return prev;
+      toast.success("Section added to report");
+      return [...prev, msgIndex];
+    });
+  }, []);
+
+  const downloadFullReport = useCallback(() => {
+    const now = format(new Date(), "MMMM d, yyyy 'at' h:mm a");
+    const addedMessages = reportSections
+      .sort((a, b) => a - b)
+      .map((idx, sectionNum) => {
+        const msg = messages[idx];
+        if (!msg) return "";
+        // Find the preceding user question
+        let userQuestion = "";
+        for (let i = idx - 1; i >= 0; i--) {
+          if (messages[i].role === "user") {
+            userQuestion = messages[i].content;
+            break;
+          }
+        }
+        return `## Section ${sectionNum + 1}${userQuestion ? `\n\n**Query:** ${userQuestion}` : ""}\n\n${msg.content}`;
+      })
+      .filter(Boolean);
+
+    const report = `# Intelligence Communication Report
+
+**Generated:** ${now}
+**Classification:** Confidential — Advocacy Use Only
+**Sections Included:** ${addedMessages.length}
+
+---
+
+${addedMessages.join("\n\n---\n\n")}
+
+---
+
+*This report was compiled from Live Comm + AI intelligence briefings.*
+*HRPM Intelligence Analysis System — Strictly Confidential*
+`;
+
+    const blob = new Blob([report], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Intel_Report_${format(new Date(), "yyyy-MM-dd_HHmm")}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success("Full report downloaded");
+  }, [reportSections, messages]);
+
   const SuggestionGrid = ({ suggestions }: { suggestions: typeof caseCommsSuggestions }) => (
     <div className="grid sm:grid-cols-2 gap-2">
       {suggestions.map((q, i) => {
@@ -271,41 +332,68 @@ export const IntelChat = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              {messages.map((msg, i) => (
-                <div
-                  key={i}
-                  className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                >
-                  {msg.role === "assistant" && (
-                    <Avatar className="w-8 h-8 flex-shrink-0">
-                      <AvatarFallback className="bg-primary/10 text-primary">
-                        <Bot className="w-4 h-4" />
-                      </AvatarFallback>
-                    </Avatar>
-                  )}
-                  
+              {messages.map((msg, i) => {
+                const isAdded = reportSections.includes(i);
+                return (
                   <div
-                    className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                      msg.role === "user"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-accent/50"
-                    }`}
+                    key={i}
+                    className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                   >
-                    <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-                    <p className="text-[10px] opacity-60 mt-1">
-                      {msg.timestamp.toLocaleTimeString()}
-                    </p>
+                    {msg.role === "assistant" && (
+                      <Avatar className="w-8 h-8 flex-shrink-0">
+                        <AvatarFallback className="bg-primary/10 text-primary">
+                          <Bot className="w-4 h-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
+                    
+                    <div className={`max-w-[80%] ${msg.role === "assistant" ? "space-y-1.5" : ""}`}>
+                      <div
+                        className={`rounded-lg px-4 py-2 ${
+                          msg.role === "user"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-accent/50"
+                        }`}
+                      >
+                        <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                        <p className="text-[10px] opacity-60 mt-1">
+                          {msg.timestamp.toLocaleTimeString()}
+                        </p>
+                      </div>
+                      
+                      {msg.role === "assistant" && !isLoading && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={`h-7 text-xs gap-1.5 ${isAdded ? "text-chart-2" : "text-muted-foreground hover:text-primary"}`}
+                          onClick={() => addToReport(i)}
+                          disabled={isAdded}
+                        >
+                          {isAdded ? (
+                            <>
+                              <Check className="w-3 h-3" />
+                              Added to Report
+                            </>
+                          ) : (
+                            <>
+                              <PlusCircle className="w-3 h-3" />
+                              Add to Report
+                            </>
+                          )}
+                        </Button>
+                      )}
+                    </div>
+                    
+                    {msg.role === "user" && (
+                      <Avatar className="w-8 h-8 flex-shrink-0">
+                        <AvatarFallback className="bg-chart-2/10 text-chart-2">
+                          <User className="w-4 h-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
                   </div>
-                  
-                  {msg.role === "user" && (
-                    <Avatar className="w-8 h-8 flex-shrink-0">
-                      <AvatarFallback className="bg-chart-2/10 text-chart-2">
-                        <User className="w-4 h-4" />
-                      </AvatarFallback>
-                    </Avatar>
-                  )}
-                </div>
-              ))}
+                );
+              })}
               
               {isLoading && messages[messages.length - 1]?.role === "user" && (
                 <div className="flex gap-3">
@@ -328,6 +416,20 @@ export const IntelChat = () => {
           <div className="mx-4 mb-2 p-2 bg-destructive/10 border border-destructive/30 rounded-md flex items-center gap-2 text-sm text-destructive">
             <AlertCircle className="w-4 h-4" />
             {error}
+          </div>
+        )}
+
+        {/* Download Full Report */}
+        {reportSections.length > 0 && (
+          <div className="mx-4 mb-2">
+            <Button
+              onClick={downloadFullReport}
+              className="w-full gap-2"
+              variant="default"
+            >
+              <Download className="w-4 h-4" />
+              Download Full Report ({reportSections.length} {reportSections.length === 1 ? "section" : "sections"})
+            </Button>
           </div>
         )}
 
