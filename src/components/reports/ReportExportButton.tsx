@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { FileText, Loader2 } from "lucide-react";
+import { FileText, Loader2, LogIn } from "lucide-react";
 import { openReportWindow } from "@/lib/reportShell";
 import { useToast } from "@/hooks/use-toast";
 import { assertReportContext, type QAResult, type ReportQAContext } from "@/lib/reportQA";
@@ -9,6 +9,8 @@ import { runSafetyGate } from "@/hooks/useSafetyGate";
 import { SafetyGateModal } from "@/components/safety/SafetyGateModal";
 import { SafetyBadge } from "@/components/safety/SafetyBadge";
 import type { SafetyGateResult, DistributionMode } from "@/types/safety";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface ReportExportButtonProps {
   label?: string;
@@ -32,12 +34,19 @@ export const ReportExportButton = ({
 }: ReportExportButtonProps) => {
   const [generating, setGenerating] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [qaResult, setQaResult] = useState<QAResult | null>(null);
   const [qaOpen, setQaOpen] = useState(false);
   const [safetyResult, setSafetyResult] = useState<SafetyGateResult | null>(null);
   const [safetyOpen, setSafetyOpen] = useState(false);
 
   const handleExport = async () => {
+    if (!user) {
+      toast({ title: "Login Required", description: "Please sign in to generate or print reports.", variant: "destructive" });
+      navigate("/auth");
+      return;
+    }
     // 1) Run QA preflight if context provided
     if (qaContext) {
       const result = assertReportContext(qaContext as ReportQAContext);
