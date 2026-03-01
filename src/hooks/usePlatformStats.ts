@@ -85,15 +85,15 @@ export const usePlatformStats = (explicitCaseId?: string | null) => {
       timelineMaxYear: maxY,
       
       aiExtractedSources: Number(rawStats.total_sources) || 0,
-      aiExtractedEvents: Number(rawStats.total_events) || 0,
-      aiExtractedEntities: Number(rawStats.total_entities) || 0,
-      inferredConnections: Number(rawStats.total_connections) || 0,
+      aiExtractedEvents: Number(rawStats.ai_extracted_events) || 0,
+      aiExtractedEntities: Number(rawStats.ai_extracted_entities) || 0,
+      inferredConnections: Number(rawStats.inferred_connections) || 0,
       
       eventsByCategory: (rawStats.events_by_category as Record<string, number>) || {},
       
       criticalDiscrepancies: Number(rawStats.critical_discrepancies) || 0,
       totalDiscrepancies: Number(rawStats.total_discrepancies) || 0,
-      documentsAnalyzed: Number(rawStats.total_sources) || 0,
+      documentsAnalyzed: Number(rawStats.documents_analyzed) || 0,
       
       verifiedPrecedents: Number(rawStats.verified_precedents) || 0,
       totalPrecedents: Number(rawStats.total_precedents) || 0,
