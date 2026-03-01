@@ -151,6 +151,8 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
                   <Link to="/cases" className="hover:text-primary transition-colors">{t('cases.title')}</Link>
                   <Link to="/blog" className="hover:text-primary transition-colors">{t('nav.blogNews')}</Link>
                   <Link to="/contact" className="hover:text-primary transition-colors">{t('footer.contact')}</Link>
+                  <Link to="/privacy" className="hover:text-primary transition-colors">{t('footer.privacy')}</Link>
+                  <Link to="/terms" className="hover:text-primary transition-colors">{t('footer.terms')}</Link>
                 </div>
               </div>
 
@@ -202,10 +204,6 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
                       <TooltipContent><p>{t('footer.openSource')}</p></TooltipContent>
                     </Tooltip>
 
-                    <span className="text-border">|</span>
-
-                    <Link to="/privacy" className="text-[10px] sm:text-xs hover:text-primary transition-colors">{t('footer.privacy')}</Link>
-                    <Link to="/terms" className="text-[10px] sm:text-xs hover:text-primary transition-colors">{t('footer.terms')}</Link>
                   </div>
                 </TooltipProvider>
               </div>
