@@ -15,7 +15,7 @@ import { usePlatformStats } from "@/hooks/usePlatformStats";
 
 // Lazy-load everything below the fold
 const IntelChat = lazy(() => import("./IntelChat").then(m => ({ default: m.IntelChat })));
-const IntelBriefingCard = lazy(() => import("./IntelBriefingCard").then(m => ({ default: m.IntelBriefingCard })));
+
 const CaseProfileBadges = lazy(() => import("./CaseProfileBadges").then(m => ({ default: m.CaseProfileBadges })));
 const KeyFindingsGrid = lazy(() => import("./widgets/KeyFindingsGrid").then(m => ({ default: m.KeyFindingsGrid })));
 const ViolationsSummaryWidget = lazy(() => import("./widgets/ViolationsSummaryWidget").then(m => ({ default: m.ViolationsSummaryWidget })));
@@ -106,10 +106,6 @@ export const IntelDashboard = () => {
             <CaseProfileBadges />
           </Suspense>
 
-          {/* Intel Briefing */}
-          <Suspense fallback={<div className="h-32 animate-pulse bg-muted/30 rounded-xl" />}>
-            <IntelBriefingCard />
-          </Suspense>
 
           {/* Key Findings */}
           <div className="widget-card">
