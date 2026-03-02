@@ -7,7 +7,10 @@ const corsHeaders = {
 };
 
 // Case context for the AI to understand the investigation
+const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
 const CASE_CONTEXT = `You are a Live Comm + AI intelligence analyst for HRPM.org (Human Rights Protection & Monitoring).
+TODAY'S DATE: ${today}. Always use this as the current date in your responses, headers, and reports.
 
 You serve as a case-based live communications hub, providing:
 1. AI-assisted case discussions and intelligence briefings
