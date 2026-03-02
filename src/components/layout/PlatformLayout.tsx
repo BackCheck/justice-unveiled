@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -8,8 +7,8 @@ import { AppSidebar } from "./AppSidebar";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { Badge } from "@/components/ui/badge";
 import { ScrollProgressBar } from "@/components/ui/scroll-progress-bar";
-import { Sparkles, Github, Code, BookOpen, History, Rss } from "lucide-react";
-import hrpmLogo from "@/assets/human-rights-logo.png";
+import { Sparkles } from "lucide-react";
+import SiteFooter from "./SiteFooter";
 
 const GlobalSearch = lazy(() => import("./GlobalSearch").then(m => ({ default: m.GlobalSearch })));
 const QuickActions = lazy(() => import("./QuickActions").then(m => ({ default: m.QuickActions })));
@@ -130,91 +129,7 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
 
           <main className="flex-1">{children}</main>
           
-          {/* Compact Footer */}
-          <footer className="border-t border-border/20 bg-card/40 backdrop-blur-xl backdrop-saturate-150 py-4">
-            <div className="max-w-7xl mx-auto px-4">
-              {/* Top row: Brand + Recent Posts */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                {/* Brand */}
-                <div className="flex items-center gap-2.5 group">
-                  <img src={hrpmLogo} alt="HRPM Logo" className="w-8 h-8 transition-transform group-hover:scale-110" />
-                  <div>
-                    <p className="font-semibold text-foreground text-sm">HRPM.org</p>
-                    <p className="text-[10px] text-muted-foreground">Open-Source · Non-Profit</p>
-                  </div>
-                </div>
-
-                {/* Quick Links as text */}
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                  <Link to="/about" className="hover:text-primary transition-colors">About HRPM</Link>
-                  <Link to="/how-to-use" className="hover:text-primary transition-colors">{t('footer.howToUse')}</Link>
-                  <Link to="/cases" className="hover:text-primary transition-colors">{t('cases.title')}</Link>
-                  <Link to="/blog" className="hover:text-primary transition-colors">{t('nav.blogNews')}</Link>
-                  <Link to="/contact" className="hover:text-primary transition-colors">{t('footer.contact')}</Link>
-                  <Link to="/privacy" className="hover:text-primary transition-colors">{t('footer.privacy')}</Link>
-                  <Link to="/terms" className="hover:text-primary transition-colors">{t('footer.terms')}</Link>
-                </div>
-              </div>
-
-              {/* Bottom Bar: Icon links + Copyright */}
-              <div className="pt-3 border-t border-border/30 flex items-center justify-between gap-3 flex-wrap">
-                <TooltipProvider delayDuration={200}>
-                  <div className="flex items-center gap-3 text-muted-foreground">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Link to="/docs" className="hover:text-primary transition-colors">
-                          <BookOpen className="w-3.5 h-3.5" />
-                        </Link>
-                      </TooltipTrigger>
-                      <TooltipContent><p>{t('pages.docs')}</p></TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Link to="/api" className="hover:text-primary transition-colors">
-                          <Code className="w-3.5 h-3.5" />
-                        </Link>
-                      </TooltipTrigger>
-                      <TooltipContent><p>{t('pages.api')}</p></TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Link to="/changelog" className="hover:text-primary transition-colors">
-                          <History className="w-3.5 h-3.5" />
-                        </Link>
-                      </TooltipTrigger>
-                      <TooltipContent><p>Changelog</p></TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <a href={`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/case-rss-feed`} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-                          <Rss className="w-3.5 h-3.5" />
-                        </a>
-                      </TooltipTrigger>
-                      <TooltipContent><p>RSS Feed</p></TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <a href="https://github.com/BackCheck/justice-unveiled" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-                          <Github className="w-3.5 h-3.5" />
-                        </a>
-                      </TooltipTrigger>
-                      <TooltipContent><p>{t('footer.openSource')}</p></TooltipContent>
-                    </Tooltip>
-                  </div>
-                </TooltipProvider>
-                <p className="text-[10px] sm:text-xs text-muted-foreground">
-                  © {new Date().getFullYear()} Human Rights Protection & Monitoring. {t('footer.copyright')}
-                </p>
-              </div>
-
-              {/* Freedom of Expression & Good Faith */}
-              <div className="pt-2 text-center">
-                <p className="text-[9px] leading-relaxed text-muted-foreground/70 max-w-3xl mx-auto">
-                  This site constitutes protected expression under principles of freedom of expression and public-interest reporting as recognized under international human rights law, including Article 19 of the ICCPR and related frameworks. This publication is issued without malice and solely for documentation, transparency, and human rights advocacy purposes.
-                </p>
-              </div>
-            </div>
-          </footer>
+          <SiteFooter compact />
         </div>
       </div>
     </SidebarProvider>
