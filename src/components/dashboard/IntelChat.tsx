@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { openReportWindow } from "@/lib/reportShell";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
@@ -195,14 +196,13 @@ export const IntelChat = () => {
     });
   }, []);
 
-  const downloadFullReport = useCallback(() => {
+  const downloadFullReport = useCallback(async () => {
     const now = format(new Date(), "MMMM d, yyyy 'at' h:mm a");
-    const addedMessages = reportSections
+    const sections = reportSections
       .sort((a, b) => a - b)
       .map((idx, sectionNum) => {
         const msg = messages[idx];
         if (!msg) return "";
-        // Find the preceding user question
         let userQuestion = "";
         for (let i = idx - 1; i >= 0; i--) {
           if (messages[i].role === "user") {
@@ -210,36 +210,94 @@ export const IntelChat = () => {
             break;
           }
         }
-        return `## Section ${sectionNum + 1}${userQuestion ? `\n\n**Query:** ${userQuestion}` : ""}\n\n${msg.content}`;
+        // Convert markdown-style content to basic HTML
+        const htmlContent = msg.content
+          .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+          .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+          .replace(/\*(.*?)\*/g, "<em>$1</em>")
+          .replace(/^### (.*$)/gm, "<h4>$1</h4>")
+          .replace(/^## (.*$)/gm, "<h3>$1</h3>")
+          .replace(/^# (.*$)/gm, "<h2>$1</h2>")
+          .replace(/^- (.*$)/gm, "<li>$1</li>")
+          .replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`)
+          .replace(/\n{2,}/g, "</p><p>")
+          .replace(/\n/g, "<br/>");
+
+        return `
+          <div class="section">
+            <div class="section-header">Section ${sectionNum + 1}</div>
+            ${userQuestion ? `<div class="query"><strong>Query:</strong> ${userQuestion.replace(/</g, "&lt;")}</div>` : ""}
+            <div class="content"><p>${htmlContent}</p></div>
+          </div>`;
       })
       .filter(Boolean);
 
-    const report = `# Intelligence Communication Report
+    const html = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Intelligence Communication Report</title>
+<style>
+  @page { size: A4; margin: 20mm 18mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Georgia', 'Times New Roman', serif; color: #1a1a1a; line-height: 1.7; background: #fff; }
+  .cover { page-break-after: always; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 90vh; text-align: center; border: 3px double #0087C1; padding: 60px 40px; }
+  .cover-badge { background: #0087C1; color: #fff; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 6px 20px; border-radius: 2px; margin-bottom: 30px; }
+  .cover h1 { font-size: 28px; color: #0a2540; margin: 20px 0 10px; font-weight: 700; }
+  .cover .subtitle { font-size: 14px; color: #555; margin-bottom: 30px; }
+  .cover .meta { font-size: 11px; color: #888; line-height: 2; }
+  .classification { background: #fef3cd; border: 1px solid #ffc107; color: #856404; text-align: center; padding: 8px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 24px; }
+  .section { margin-bottom: 32px; page-break-inside: avoid; }
+  .section-header { font-size: 13px; font-weight: 700; color: #0087C1; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 2px solid #0087C1; padding-bottom: 6px; margin-bottom: 16px; }
+  .query { background: #f0f7ff; border-left: 3px solid #0087C1; padding: 10px 14px; margin-bottom: 14px; font-size: 13px; color: #333; font-style: italic; }
+  .content { font-size: 13px; color: #222; }
+  .content p { margin-bottom: 10px; }
+  .content h2, .content h3, .content h4 { color: #0a2540; margin: 16px 0 8px; }
+  .content h2 { font-size: 18px; }
+  .content h3 { font-size: 15px; }
+  .content h4 { font-size: 13px; }
+  .content ul { padding-left: 20px; margin: 8px 0; }
+  .content li { margin-bottom: 4px; }
+  .content strong { color: #0a2540; }
+  .divider { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
+  .footer { margin-top: 40px; border-top: 2px solid #0087C1; padding-top: 16px; text-align: center; font-size: 10px; color: #888; }
+  .footer .org { font-weight: 700; color: #0a2540; font-size: 11px; }
+  .footer .tagline { color: #0087C1; font-weight: 600; margin-top: 4px; }
+  .disclaimer { background: #f9f9f9; border: 1px solid #e0e0e0; padding: 14px 18px; margin-top: 24px; font-size: 10px; color: #666; line-height: 1.6; }
+  .conf-footer { background: #c0392b; color: #fff; text-align: center; padding: 6px; font-size: 10px; letter-spacing: 1px; position: fixed; bottom: 0; left: 0; right: 0; }
+  @media print { .conf-footer { position: fixed; } }
+</style></head><body>
+  <div class="cover">
+    <div class="cover-badge">Public Interest Intelligence Document</div>
+    <h1>Intelligence Communication Report</h1>
+    <div class="subtitle">Compiled from Live Comm + AI Briefings</div>
+    <div class="meta">
+      Generated: ${now}<br/>
+      Sections: ${sections.length}<br/>
+      Classification: Confidential — Advocacy Use Only<br/>
+      Platform: HRPM.org — Human Rights Protection & Monitoring
+    </div>
+  </div>
 
-**Generated:** ${now}
-**Classification:** Confidential — Advocacy Use Only
-**Sections Included:** ${addedMessages.length}
+  <div class="classification">Strictly Confidential — Only for Advocacy Work</div>
 
----
+  ${sections.join('<hr class="divider"/>')}
 
-${addedMessages.join("\n\n---\n\n")}
+  <div class="disclaimer">
+    <strong>Disclaimer:</strong> This report is published in good faith for public-interest documentation and advocacy purposes.
+    Allegations remain subject to judicial determination. HRPM does not provide legal advice.
+    This publication is issued without malice and solely for documentation, transparency, and human rights advocacy purposes.
+  </div>
 
----
+  <div class="footer">
+    <div class="org">Human Rights Protection & Monitoring (HRPM.org)</div>
+    <div>Independent Public-Interest Documentation & Monitoring Platform</div>
+    <div>36 Robinson Road, #20-01 City House, Singapore 068877 · info@hrpm.org · +65 31 290 390</div>
+    <div class="tagline">Documenting injustice. Demanding accountability.</div>
+  </div>
 
-*This report was compiled from Live Comm + AI intelligence briefings.*
-*HRPM Intelligence Analysis System — Strictly Confidential*
-`;
+  <div class="conf-footer">Strictly Confidential — Only for Advocacy Work</div>
+</body></html>`;
 
-    const blob = new Blob([report], { type: "text/markdown" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `Intel_Report_${format(new Date(), "yyyy-MM-dd_HHmm")}.md`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    toast.success("Full report downloaded");
+    await openReportWindow(html);
+    toast.success("Full report generated — use Print → Save as PDF");
   }, [reportSections, messages]);
 
   const SuggestionGrid = ({ suggestions }: { suggestions: typeof caseCommsSuggestions }) => (
