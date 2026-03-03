@@ -8,25 +8,12 @@ import { Button } from "@/components/ui/button";
 import { LogoSpinner } from "@/components/ui/LogoSpinner";
 import { cn } from "@/lib/utils";
 import {
-  Brain,
-  FileText,
-  Network,
-  Scale,
-  GitBranch,
-  Gavel,
-  Search,
-  ClipboardCheck,
-  Shield,
-  TrendingDown,
-  Globe,
-  Target,
-  Clock,
-  Radar,
-  BarChart3,
-  BookOpen,
-  Sparkles,
-  ExternalLink,
+  Brain, FileText, Network, Scale, GitBranch, Gavel, Search,
+  ClipboardCheck, Shield, TrendingDown, Globe, Target, Clock,
+  Radar, BarChart3, BookOpen, Sparkles, ExternalLink,
 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
 
 // Lazy-load embedded tools
 const DocumentAnalyzer = lazy(() =>
@@ -39,16 +26,12 @@ const AnalyzedDataSummary = lazy(() =>
   import("@/components/intel/AnalyzedDataSummary").then((m) => ({ default: m.AnalyzedDataSummary }))
 );
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-
 interface ToolDef {
   key: string;
   label: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
   ai?: boolean;
-  /** If set, tool opens full page instead of embedding */
   fullPagePath?: string;
 }
 
@@ -76,14 +59,16 @@ const AnalyzeHub = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedTool = searchParams.get("tool") || "";
 
-  // Default to AI Analyzer if no tool param
+  // Default to AI Analyzer
   useEffect(() => {
     if (!selectedTool) {
       setSearchParams({ tool: "ai" }, { replace: true });
     }
   }, [selectedTool, setSearchParams]);
 
-  const activeTool = tools.find((t) => t.key === (selectedTool || "ai")) || tools[0];
+  const activeKey = selectedTool || "ai";
+  const activeTool = tools.find((t) => t.key === activeKey) || tools[0];
+  const isEmbedded = !activeTool.fullPagePath; // only AI is embedded
 
   useSEO({
     title: `${activeTool.label} — Analyze Hub — HRPM`,
@@ -91,10 +76,6 @@ const AnalyzeHub = () => {
   });
 
   const handleToolSelect = (tool: ToolDef) => {
-    if (tool.fullPagePath) {
-      // Don't change search params for full-page tools — user clicks through
-      return;
-    }
     setSearchParams({ tool: tool.key }, { replace: true });
   };
 
@@ -112,52 +93,45 @@ const AnalyzeHub = () => {
           </p>
         </div>
 
-        {/* Tool grid */}
+        {/* Tool grid — all tools set ?tool= */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2">
           {tools.map((tool) => {
             const Icon = tool.icon;
-            const isActive = activeTool.key === tool.key && !tool.fullPagePath;
-            const isFullPage = !!tool.fullPagePath;
-
-            const cardContent = (
-              <Card
-                className={cn(
-                  "h-full border transition-all duration-150 cursor-pointer",
-                  isActive
-                    ? "border-primary bg-primary/5 shadow-sm"
-                    : "border-border/40 bg-card/60 hover:border-primary/30 hover:shadow-sm"
-                )}
-              >
-                <CardContent className="p-3">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-primary" : "text-muted-foreground")} />
-                    {tool.ai && (
-                      <Badge variant="secondary" className="h-3.5 px-1 text-[8px] gap-0.5">
-                        <Sparkles className="w-2 h-2" /> AI
-                      </Badge>
-                    )}
-                    {isFullPage && (
-                      <ExternalLink className="w-3 h-3 text-muted-foreground/50 ml-auto shrink-0" />
-                    )}
-                  </div>
-                  <h3 className={cn("font-medium text-xs leading-tight", isActive ? "text-primary" : "text-foreground")}>
-                    {tool.label}
-                  </h3>
-                </CardContent>
-              </Card>
-            );
-
-            if (isFullPage) {
-              return (
-                <Link key={tool.key} to={tool.fullPagePath!} className="group">
-                  {cardContent}
-                </Link>
-              );
-            }
+            const isActive = activeKey === tool.key;
 
             return (
-              <div key={tool.key} onClick={() => handleToolSelect(tool)} role="button" tabIndex={0}>
-                {cardContent}
+              <div
+                key={tool.key}
+                onClick={() => handleToolSelect(tool)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === "Enter" && handleToolSelect(tool)}
+              >
+                <Card
+                  className={cn(
+                    "h-full border transition-all duration-150 cursor-pointer",
+                    isActive
+                      ? "border-primary bg-primary/5 shadow-sm ring-1 ring-primary/20"
+                      : "border-border/40 bg-card/60 hover:border-primary/30 hover:shadow-sm"
+                  )}
+                >
+                  <CardContent className="p-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-primary" : "text-muted-foreground")} />
+                      {tool.ai && (
+                        <Badge variant="secondary" className="h-3.5 px-1 text-[8px] gap-0.5">
+                          <Sparkles className="w-2 h-2" /> AI
+                        </Badge>
+                      )}
+                      {tool.fullPagePath && (
+                        <ExternalLink className="w-3 h-3 text-muted-foreground/50 ml-auto shrink-0" />
+                      )}
+                    </div>
+                    <h3 className={cn("font-medium text-xs leading-tight", isActive ? "text-primary" : "text-foreground")}>
+                      {tool.label}
+                    </h3>
+                  </CardContent>
+                </Card>
               </div>
             );
           })}
@@ -165,8 +139,9 @@ const AnalyzeHub = () => {
 
         <Separator />
 
-        {/* Embedded tool panel */}
-        {(selectedTool === "ai" || !selectedTool) && (
+        {/* Tool detail panel */}
+        {isEmbedded ? (
+          /* Embedded AI Analyzer */
           <Suspense fallback={<div className="flex justify-center py-12"><LogoSpinner size="lg" /></div>}>
             <div className="space-y-6">
               <Tabs defaultValue="single" className="w-full">
@@ -185,6 +160,21 @@ const AnalyzeHub = () => {
               <AnalyzedDataSummary />
             </div>
           </Suspense>
+        ) : (
+          /* Full-page tool — show description + open button */
+          <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
+            <activeTool.icon className="w-12 h-12 text-primary/60" />
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">{activeTool.label}</h2>
+              <p className="text-sm text-muted-foreground mt-1 max-w-md">{activeTool.description}</p>
+            </div>
+            <Button asChild size="lg" className="gap-2">
+              <Link to={activeTool.fullPagePath!}>
+                <ExternalLink className="w-4 h-4" />
+                Open {activeTool.label}
+              </Link>
+            </Button>
+          </div>
         )}
       </div>
     </PlatformLayout>

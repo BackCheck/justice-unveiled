@@ -1,5 +1,4 @@
 import { Link, useLocation, useSearchParams } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { ChevronRight, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -9,121 +8,138 @@ interface BreadcrumbItem {
   icon?: React.ComponentType<{ className?: string }>;
 }
 
-// Route configuration with translation keys and parent relationships
-// IMPORTANT: Only truly nested pages use parent other than "/"
-const routeConfig: Record<string, { labelKey: string; parent?: string }> = {
-  "/": { labelKey: "nav.home" },
-  "/cases": { labelKey: "nav.caseFiles", parent: "/" },
-  "/timeline": { labelKey: "nav.timeline", parent: "/" },
-  "/blog": { labelKey: "nav.blogNews", parent: "/" },
-  "/submit-case": { labelKey: "Submit a Case", parent: "/" },
-  "/uploads": { labelKey: "nav.uploads", parent: "/" },
-  "/analyze": { labelKey: "Analyze Hub", parent: "/" },
-  // Top-level tool pages — NOT children of /analyze
-  "/evidence": { labelKey: "nav.evidenceMatrix", parent: "/" },
-  "/network": { labelKey: "nav.entityNetwork", parent: "/" },
-  "/correlation": { labelKey: "nav.correlation", parent: "/" },
-  "/reconstruction": { labelKey: "nav.reconstruction", parent: "/" },
-  "/legal-intelligence": { labelKey: "nav.legal", parent: "/" },
-  "/legal-research": { labelKey: "nav.legalResearch", parent: "/" },
-  "/compliance": { labelKey: "nav.complianceChecker", parent: "/" },
-  "/threat-profiler": { labelKey: "nav.threatProfiler", parent: "/" },
-  "/regulatory-harm": { labelKey: "nav.harm", parent: "/" },
-  "/international": { labelKey: "nav.international", parent: "/" },
-  "/investigations": { labelKey: "nav.investigations", parent: "/" },
-  "/analysis-history": { labelKey: "nav.analysisHistory", parent: "/" },
-  "/osint-toolkit": { labelKey: "nav.osintToolkit", parent: "/" },
-  "/reports": { labelKey: "nav.reportCenter", parent: "/" },
-  "/intel-briefing": { labelKey: "nav.intelBriefing", parent: "/" },
-  "/dashboard": { labelKey: "nav.intelDashboard", parent: "/" },
-  "/how-to-use": { labelKey: "nav.howToUse", parent: "/" },
-  "/docs": { labelKey: "nav.documentation", parent: "/" },
-  "/api": { labelKey: "nav.developerApi", parent: "/docs" },
-  "/changelog": { labelKey: "nav.changelog", parent: "/" },
-  "/about": { labelKey: "nav.about", parent: "/" },
-  "/contact": { labelKey: "nav.contact", parent: "/" },
-  "/auth": { labelKey: "common.signIn", parent: "/" },
-  "/admin": { labelKey: "nav.admin", parent: "/" },
-  "/admin/entity-review": { labelKey: "Entity Review", parent: "/admin" },
-  "/watchlist": { labelKey: "nav.watchlist", parent: "/" },
-  "/disclaimer": { labelKey: "Disclaimer", parent: "/" },
-  "/terms": { labelKey: "Terms", parent: "/" },
-  "/privacy": { labelKey: "Privacy", parent: "/" },
+// Direct label mapping — no i18n dependency
+const routeLabels: Record<string, string> = {
+  "/": "Home",
+  "/cases": "Case Library",
+  "/timeline": "Timeline",
+  "/blog": "Blog & News",
+  "/submit-case": "Submit a Case",
+  "/uploads": "Upload Center",
+  "/analyze": "Analyze Hub",
+  "/evidence": "Evidence Matrix",
+  "/network": "Entity Network",
+  "/correlation": "Claim Correlation",
+  "/reconstruction": "Reconstruction",
+  "/legal-intelligence": "Legal Intelligence",
+  "/legal-research": "Legal Research",
+  "/compliance": "Compliance Checker",
+  "/threat-profiler": "Threat Profiler",
+  "/regulatory-harm": "Economic Harm",
+  "/international": "International Rights",
+  "/investigations": "Investigation Hub",
+  "/analysis-history": "Analysis History",
+  "/osint-toolkit": "OSINT Toolkit",
+  "/reports": "Report Center",
+  "/intel-briefing": "Intel Briefing",
+  "/dashboard": "Intel Dashboard",
+  "/how-to-use": "How to Use",
+  "/docs": "Documentation",
+  "/api": "Developer API",
+  "/changelog": "Changelog",
+  "/about": "About",
+  "/contact": "Contact",
+  "/auth": "Sign In",
+  "/admin": "Admin Panel",
+  "/admin/entity-review": "Entity Review",
+  "/watchlist": "Watchlist",
+  "/disclaimer": "Disclaimer",
+  "/terms": "Terms",
+  "/privacy": "Privacy",
+  "/welcome": "Welcome",
 };
 
-// Tool key to label for ?tool= query param on /analyze
+// Parent relationships — only real hierarchy
+const routeParents: Record<string, string> = {
+  "/admin/entity-review": "/admin",
+  "/api": "/docs",
+};
+
+// Analyze tool labels for ?tool= suffix
 const analyzeToolLabels: Record<string, string> = {
   ai: "AI Analyzer",
+  evidence: "Evidence Matrix",
+  network: "Entity Network",
+  correlation: "Claim Correlation",
+  reconstruction: "Reconstruction",
+  "legal-intelligence": "Legal Intelligence",
+  "legal-research": "Legal Research",
+  compliance: "Compliance Checker",
+  "threat-profiler": "Threat Profiler",
+  "regulatory-harm": "Economic Harm",
+  international: "International Rights",
+  investigations: "Investigation Hub",
+  "analysis-history": "Analysis History",
+  "osint-toolkit": "OSINT Toolkit",
+  reports: "Report Center",
+  "intel-briefing": "Intel Briefing",
+  dashboard: "Intel Dashboard",
 };
 
 export const Breadcrumbs = () => {
   const location = useLocation();
-  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const currentPath = location.pathname;
 
+  if (currentPath === "/" || currentPath === "") return null;
+
   const buildBreadcrumbs = (): BreadcrumbItem[] => {
-    const breadcrumbs: BreadcrumbItem[] = [];
+    const crumbs: BreadcrumbItem[] = [];
     let path = currentPath;
 
-    const segments = path.split("/").filter(Boolean);
-    const basePath = "/" + (segments[0] || "");
-
-    while (path && path !== "/") {
-      const config = routeConfig[path];
-      if (config) {
-        breadcrumbs.unshift({ label: t(config.labelKey), path });
-        path = config.parent || "";
+    // Walk up the parent chain
+    const visited = new Set<string>();
+    while (path && path !== "/" && !visited.has(path)) {
+      visited.add(path);
+      const label = routeLabels[path];
+      if (label) {
+        crumbs.unshift({ label, path });
+        path = routeParents[path] || "/";
       } else {
-        const parentConfig = routeConfig[basePath];
-        if (parentConfig && breadcrumbs.length === 0) {
-          const lastSegment = segments[segments.length - 1];
-          const dynamicLabel = lastSegment.length > 12
-            ? lastSegment.slice(0, 10) + "…"
-            : lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1).replace(/-/g, " ");
-          breadcrumbs.unshift({ label: dynamicLabel, path });
-          breadcrumbs.unshift({ label: t(parentConfig.labelKey), path: basePath });
-          path = parentConfig.parent || "";
-        } else {
-          break;
+        // Dynamic segment: e.g. /cases/:caseId
+        const segments = path.split("/").filter(Boolean);
+        const basePath = "/" + segments[0];
+        const baseLabel = routeLabels[basePath];
+        if (baseLabel && segments.length > 1) {
+          const lastSeg = segments[segments.length - 1];
+          const dynamicLabel = lastSeg.length > 20
+            ? lastSeg.slice(0, 18) + "…"
+            : lastSeg.charAt(0).toUpperCase() + lastSeg.slice(1).replace(/-/g, " ");
+          crumbs.unshift({ label: dynamicLabel, path });
+          crumbs.unshift({ label: baseLabel, path: basePath });
         }
+        break;
       }
     }
 
-    // Add tool suffix for /analyze?tool=X
+    // Analyze tool suffix via ?tool=
     if (currentPath === "/analyze") {
       const toolKey = searchParams.get("tool");
       if (toolKey && analyzeToolLabels[toolKey]) {
-        breadcrumbs.push({ label: analyzeToolLabels[toolKey], path: `/analyze?tool=${toolKey}` });
+        crumbs.push({ label: analyzeToolLabels[toolKey], path: `/analyze?tool=${toolKey}` });
       }
     }
 
-    if (breadcrumbs.length === 0 || breadcrumbs[0].path !== "/") {
-      breadcrumbs.unshift({ label: t("nav.home"), path: "/", icon: Home });
+    // Always start with Home
+    if (crumbs.length === 0 || crumbs[0].path !== "/") {
+      crumbs.unshift({ label: "Home", path: "/", icon: Home });
     } else {
-      breadcrumbs[0].icon = Home;
+      crumbs[0].icon = Home;
     }
 
-    return breadcrumbs;
+    return crumbs;
   };
 
   const breadcrumbs = buildBreadcrumbs();
-
-  if (currentPath === "/" || currentPath === "") {
-    return null;
-  }
 
   return (
     <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm overflow-x-auto scrollbar-none">
       {breadcrumbs.map((crumb, index) => {
         const isLast = index === breadcrumbs.length - 1;
         const Icon = crumb.icon;
-
         return (
           <div key={`${crumb.path}-${index}`} className="flex items-center gap-1 shrink-0">
-            {index > 0 && (
-              <ChevronRight className="w-3 h-3 text-muted-foreground/50" />
-            )}
+            {index > 0 && <ChevronRight className="w-3 h-3 text-muted-foreground/50" />}
             {isLast ? (
               <span className="font-medium text-foreground flex items-center gap-1 text-[11px] sm:text-xs">
                 {Icon && <Icon className="w-3 h-3" />}
