@@ -14,13 +14,13 @@ import {
   Info,
   Phone,
   Shield,
-  Settings,
   Eye,
   LogOut,
   LogIn,
   ChevronUp,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -51,7 +51,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { toast } from "sonner";
+import { useState } from "react";
 
 // ── Navigation groups ──────────────────────────────────────────────
 
@@ -87,20 +89,6 @@ const adminItems: NavItem[] = [
   { path: "/admin/entity-review", label: "Entity Review", icon: Eye },
 ];
 
-interface NavGroupDef {
-  label: string;
-  items: NavItem[];
-  adminOnly?: boolean;
-}
-
-const navGroups: NavGroupDef[] = [
-  { label: "Explore", items: exploreItems },
-  { label: "Contribute", items: contributeItems },
-  { label: "Analyze", items: analyzeItems },
-  { label: "Learn", items: learnItems },
-  { label: "Admin", items: adminItems, adminOnly: true },
-];
-
 export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -108,8 +96,12 @@ export function AppSidebar() {
   const { user, profile, signOut } = useAuth();
   const { role, isAdmin } = useUserRole();
   const collapsed = state === "collapsed";
+  const [learnOpen, setLearnOpen] = useState(false);
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    if (path === "/") return location.pathname === "/";
+    return location.pathname === path || location.pathname.startsWith(path + "/");
+  };
 
   const displayName = profile?.display_name || user?.email?.split("@")[0] || "User";
   const userRoleDisplay = role ? role.charAt(0).toUpperCase() + role.slice(1) : "Analyst";
@@ -122,6 +114,45 @@ export function AppSidebar() {
     toast.success("Signed out successfully");
     navigate("/auth");
   };
+
+  const renderNavItem = (item: NavItem) => {
+    const Icon = item.icon;
+    const active = isActive(item.path);
+    return (
+      <SidebarMenuItem key={item.path}>
+        <SidebarMenuButton asChild tooltip={item.label}>
+          <Link
+            to={item.path}
+            className={cn(
+              "relative flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-200",
+              active
+                ? "text-primary bg-primary/10"
+                : "text-muted-foreground hover:text-foreground hover:bg-accent/20"
+            )}
+          >
+            <Icon className={cn("h-4 w-4 shrink-0 transition-colors", active && "text-primary")} />
+            <span className={cn("truncate text-sm", collapsed && "sr-only")}>{item.label}</span>
+            {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary shrink-0" />}
+          </Link>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    );
+  };
+
+  const renderGroup = (label: string, items: NavItem[]) => (
+    <SidebarGroup key={label} className="mb-1">
+      {collapsed ? (
+        <SidebarGroupLabel className="sr-only">{label}</SidebarGroupLabel>
+      ) : (
+        <SidebarGroupLabel className="px-3 py-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+          {label}
+        </SidebarGroupLabel>
+      )}
+      <SidebarGroupContent>
+        <SidebarMenu>{items.map(renderNavItem)}</SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  );
 
   return (
     <Sidebar
@@ -162,48 +193,36 @@ export function AppSidebar() {
 
       {/* ── Navigation groups ── */}
       <SidebarContent className="px-2 py-3 overflow-y-auto overflow-x-hidden flex-1 min-h-0">
-        {navGroups.map((group) => {
-          if (group.adminOnly && !isAdmin) return null;
+        {renderGroup("Explore", exploreItems)}
+        {renderGroup("Contribute", contributeItems)}
+        {renderGroup("Analyze", analyzeItems)}
 
-          return (
-            <SidebarGroup key={group.label} className="mb-1">
-              {collapsed ? (
-                <SidebarGroupLabel className="sr-only">{group.label}</SidebarGroupLabel>
-              ) : (
-                <SidebarGroupLabel className="px-3 py-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-                  {group.label}
-                </SidebarGroupLabel>
-              )}
+        {/* Learn — collapsed by default */}
+        <SidebarGroup className="mb-1">
+          {collapsed ? (
+            <>
+              <SidebarGroupLabel className="sr-only">Learn</SidebarGroupLabel>
               <SidebarGroupContent>
-                <SidebarMenu>
-                  {group.items.map((item) => {
-                    const Icon = item.icon;
-                    const active = isActive(item.path);
-                    return (
-                      <SidebarMenuItem key={item.path}>
-                        <SidebarMenuButton asChild tooltip={item.label}>
-                          <Link
-                            to={item.path}
-                            className={cn(
-                              "relative flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-200",
-                              active
-                                ? "text-primary bg-primary/10"
-                                : "text-muted-foreground hover:text-foreground hover:bg-accent/20"
-                            )}
-                          >
-                            <Icon className={cn("h-4 w-4 shrink-0 transition-colors", active && "text-primary")} />
-                            <span className={cn("truncate text-sm", collapsed && "sr-only")}>{item.label}</span>
-                            {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary shrink-0" />}
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    );
-                  })}
-                </SidebarMenu>
+                <SidebarMenu>{learnItems.map(renderNavItem)}</SidebarMenu>
               </SidebarGroupContent>
-            </SidebarGroup>
-          );
-        })}
+            </>
+          ) : (
+            <Collapsible open={learnOpen} onOpenChange={setLearnOpen}>
+              <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors">
+                Learn
+                {learnOpen ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarGroupContent>
+                  <SidebarMenu>{learnItems.map(renderNavItem)}</SidebarMenu>
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </Collapsible>
+          )}
+        </SidebarGroup>
+
+        {/* Admin — role-gated */}
+        {isAdmin && renderGroup("Admin", adminItems)}
       </SidebarContent>
 
       {/* ── Footer ── */}
