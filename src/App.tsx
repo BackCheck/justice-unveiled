@@ -49,6 +49,7 @@ const OsintToolkit = lazy(() => import("./pages/OsintToolkit"));
 const Landing = lazy(() => import("./pages/Landing"));
 const EntityReview = lazy(() => import("./pages/EntityReview"));
 const SubmitCase = lazy(() => import("./pages/SubmitCase"));
+const AddEvidence = lazy(() => import("./pages/AddEvidence"));
 const ReportCenter = lazy(() => import("./pages/ReportCenter"));
 const AnalyzeHub = lazy(() => import("./pages/AnalyzeHub"));
 const Disclaimer = lazy(() => import("./pages/Disclaimer"));
@@ -123,6 +124,7 @@ const App = () => (
             <Route path="/entities/:entityId" element={<EntityDetail />} />
             <Route path="/welcome" element={<Landing />} />
             <Route path="/submit-case" element={<SubmitCase />} />
+            <Route path="/cases/:caseId/add-evidence" element={<AddEvidence />} />
             <Route path="/reports" element={<ReportCenter />} />
             <Route path="/disclaimer" element={<Disclaimer />} />
             <Route path="/terms" element={<Terms />} />

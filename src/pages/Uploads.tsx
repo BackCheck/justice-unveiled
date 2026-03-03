@@ -4,15 +4,18 @@ import { PlatformLayout } from "@/components/layout/PlatformLayout";
 import { EvidenceUploader } from "@/components/evidence/EvidenceUploader";
 import { EvidenceFileList } from "@/components/evidence/EvidenceFileList";
 import { ReanalyzeButton } from "@/components/evidence/ReanalyzeButton";
+import { MySubmissionsList } from "@/components/submissions/MySubmissionsList";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Upload, Lock, LogIn, Shield } from "lucide-react";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useAuth } from "@/contexts/AuthContext";
 
 const UploadsPage = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { canUpload, isAuthenticated, role, isLoading } = useUserRole();
+  const { user } = useAuth();
 
   return (
     <PlatformLayout>
@@ -24,10 +27,10 @@ const UploadsPage = () => {
               <Upload className="w-7 h-7 text-primary" />
               <div>
                 <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                  Evidence Uploads
+                  Upload Center
                 </h2>
                 <p className="text-muted-foreground">
-                  Upload MP3 commentary, PDF documents, and markdown files
+                  Upload evidence, track submissions, and manage your contributions
                 </p>
               </div>
             </div>
@@ -43,6 +46,9 @@ const UploadsPage = () => {
 
       {/* Content */}
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
+        {/* My Submissions - shown to any authenticated user */}
+        {user && <MySubmissionsList />}
+
         {isLoading ? (
           <Card>
             <CardContent className="py-8">
