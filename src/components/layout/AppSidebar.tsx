@@ -1,13 +1,12 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { 
-  Clock, 
-  BarChart3, 
-  BookOpen, 
-  Network, 
-  FileText, 
-  Scale, 
-  Upload, 
+import {
+  Clock,
+  BookOpen,
+  Network,
+  FileText,
+  Scale,
+  Upload,
   Info,
   User,
   Settings,
@@ -32,14 +31,19 @@ import {
   Code,
   Search,
   Rocket,
-  Radar
+  Radar,
+  PlusCircle,
+  FilePlus,
+  UploadCloud,
+  BookMarked,
+  BarChart3,
+  Globe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
-import { GreetingBanner } from "@/components/GreetingBanner";
 import hrpmLogo from "@/assets/human-rights-logo.png";
 import {
   Sidebar,
@@ -70,56 +74,69 @@ import {
 } from "@/components/ui/collapsible";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { useRecentActivity, sortByActivity } from "@/hooks/useRecentActivity";
 
-// Items marked as 'new' will show a badge
-const NEW_ITEMS = new Set([
-  "/threat-profiler",
-  "/legal-intelligence",
-  "/legal-research",
-  "/correlation",
-  "/regulatory-harm",
-  "/compliance",
-  "/analysis-history",
-  "/osint-toolkit",
-]);
+// ── Navigation groups ──────────────────────────────────────────────
 
-const coreNavItems = [
-  { path: "/", labelKey: "nav.home", icon: Home },
-  { path: "/reports", labelKey: "nav.reportBuilder", icon: FileText },
-  { path: "/cases", labelKey: "nav.caseFiles", icon: FolderOpen },
-  { path: "/timeline", labelKey: "nav.timeline", icon: Clock },
-  { path: "/network", labelKey: "nav.entityNetwork", icon: Network },
-  { path: "/evidence", labelKey: "nav.evidenceMatrix", icon: FileText },
-  { path: "/analyze", labelKey: "nav.aiAnalyzer", icon: Brain },
-  { path: "/analysis-history", labelKey: "nav.analysisHistory", icon: Clock },
-  { path: "/investigations", labelKey: "nav.investigations", icon: Target },
-  { path: "/osint-toolkit", labelKey: "nav.osintToolkit", icon: Radar },
-  { path: "/blog", labelKey: "nav.blogNews", icon: Newspaper },
+const exploreItems = [
+  { path: "/", labelKey: "Home", icon: Home },
+  { path: "/cases", labelKey: "Case Library", icon: FolderOpen },
+  { path: "/timeline", labelKey: "Timeline", icon: Clock },
+  { path: "/blog", labelKey: "Blog & News", icon: Newspaper },
 ];
 
-const moreToolsItems = [
-  { path: "/reconstruction", labelKey: "nav.reconstruction", icon: GitBranch },
-  { path: "/correlation", labelKey: "nav.correlation", icon: Scale },
-  { path: "/compliance", labelKey: "nav.complianceChecker", icon: ClipboardCheck },
-  { path: "/threat-profiler", labelKey: "nav.threatProfiler", icon: Shield },
-  { path: "/regulatory-harm", labelKey: "nav.harm", icon: TrendingDown },
-  { path: "/legal-intelligence", labelKey: "nav.legal", icon: Gavel },
-  { path: "/international", labelKey: "nav.international", icon: Scale },
-  { path: "/legal-research", labelKey: "nav.legalResearch", icon: Search },
-  { path: "/intel-briefing", labelKey: "nav.intelBriefing", icon: BookOpen },
-  { path: "/uploads", labelKey: "nav.uploads", icon: Upload },
-  { path: "/docs", labelKey: "nav.documentation", icon: FileText },
-  { path: "/api", labelKey: "nav.developerApi", icon: Code },
-  { path: "/how-to-use", labelKey: "nav.howToUse", icon: HelpCircle },
-  { path: "/changelog", labelKey: "nav.changelog", icon: Rocket },
-  { path: "/about", labelKey: "nav.about", icon: Info },
-  { path: "/contact", labelKey: "nav.contact", icon: Phone },
+const contributeItems = [
+  { path: "/submit-case", labelKey: "Submit a Case", icon: PlusCircle },
+  { path: "/uploads", labelKey: "Upload Center", icon: UploadCloud },
 ];
 
-const navGroupsDef = [
-  { labelKey: "nav.core", items: coreNavItems, defaultOpen: true },
-  { labelKey: "More Tools", items: moreToolsItems, defaultOpen: false },
+const analyzeItems = [
+  { path: "/analyze", labelKey: "AI Analyzer", icon: Brain },
+  { path: "/evidence", labelKey: "Evidence Matrix", icon: FileText },
+  { path: "/network", labelKey: "Entity Network", icon: Network },
+  { path: "/correlation", labelKey: "Claim Correlation", icon: Scale },
+  { path: "/reconstruction", labelKey: "Reconstruction", icon: GitBranch },
+  { path: "/legal-intelligence", labelKey: "Legal Intelligence", icon: Gavel },
+  { path: "/legal-research", labelKey: "Legal Research", icon: Search },
+  { path: "/compliance", labelKey: "Compliance Checker", icon: ClipboardCheck },
+  { path: "/threat-profiler", labelKey: "Threat Profiler", icon: Shield },
+  { path: "/regulatory-harm", labelKey: "Economic Harm", icon: TrendingDown },
+  { path: "/international", labelKey: "International Rights", icon: Globe },
+  { path: "/investigations", labelKey: "Investigation Hub", icon: Target },
+  { path: "/analysis-history", labelKey: "Analysis History", icon: Clock },
+  { path: "/osint-toolkit", labelKey: "OSINT Toolkit", icon: Radar },
+  { path: "/reports", labelKey: "Report Center", icon: BarChart3 },
+  { path: "/intel-briefing", labelKey: "Intel Briefing", icon: BookOpen },
+];
+
+const learnItems = [
+  { path: "/how-to-use", labelKey: "How to Use", icon: HelpCircle },
+  { path: "/docs", labelKey: "Documentation", icon: BookMarked },
+  { path: "/api", labelKey: "Developer API", icon: Code },
+  { path: "/changelog", labelKey: "Changelog", icon: Rocket },
+  { path: "/about", labelKey: "About", icon: Info },
+  { path: "/contact", labelKey: "Contact", icon: Phone },
+];
+
+const adminItems = [
+  { path: "/admin", labelKey: "Admin Panel", icon: Shield },
+  { path: "/admin/entity-review", labelKey: "Entity Review", icon: Eye },
+];
+
+type NavItem = { path: string; labelKey: string; icon: React.ComponentType<{ className?: string }> };
+
+interface NavGroupDef {
+  label: string;
+  items: NavItem[];
+  defaultOpen: boolean;
+  adminOnly?: boolean;
+}
+
+const navGroups: NavGroupDef[] = [
+  { label: "Explore", items: exploreItems, defaultOpen: true },
+  { label: "Contribute", items: contributeItems, defaultOpen: true },
+  { label: "Analyze", items: analyzeItems, defaultOpen: false },
+  { label: "Learn", items: learnItems, defaultOpen: false },
+  { label: "Admin", items: adminItems, defaultOpen: false, adminOnly: true },
 ];
 
 export function AppSidebar() {
@@ -128,13 +145,11 @@ export function AppSidebar() {
   const { t } = useTranslation();
   const { state, toggleSidebar } = useSidebar();
   const { user, profile, signOut } = useAuth();
-  const { role, canEdit, canUpload, isAdmin } = useUserRole();
-  const { data: activityMap = {} } = useRecentActivity();
+  const { role, isAdmin } = useUserRole();
   const collapsed = state === "collapsed";
 
   const isActive = (path: string) => location.pathname === path;
 
-  // Get user display info
   const displayName = profile?.display_name || user?.email?.split("@")[0] || "User";
   const userRoleDisplay = role ? role.charAt(0).toUpperCase() + role.slice(1) : "Analyst";
   const userEmail = user?.email || "";
@@ -152,43 +167,36 @@ export function AppSidebar() {
     navigate("/auth");
   };
 
-  // Check if any item in a group is active
-  const isGroupActive = (items: typeof coreNavItems) => 
-    items.some(item => isActive(item.path));
+  const isGroupActive = (items: NavItem[]) =>
+    items.some((item) => isActive(item.path));
 
-  const NavItem = ({ item }: { item: { path: string; labelKey: string; icon: React.ComponentType<{ className?: string }> } }) => {
+  const NavItemRow = ({ item }: { item: NavItem }) => {
     const Icon = item.icon;
     const active = isActive(item.path);
-    const label = t(item.labelKey);
-    const isNew = NEW_ITEMS.has(item.path);
-    
+
     return (
       <SidebarMenuItem>
-        <SidebarMenuButton asChild tooltip={label}>
-          <Link 
+        <SidebarMenuButton asChild tooltip={item.labelKey}>
+          <Link
             to={item.path}
             className={cn(
-              "relative flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-200 group/item",
-              active 
-                ? "text-primary" 
+              "relative flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-200",
+              active
+                ? "text-primary bg-primary/10"
                 : "text-muted-foreground hover:text-foreground hover:bg-accent/20"
             )}
           >
+            <Icon
+              className={cn(
+                "h-4 w-4 shrink-0 transition-colors",
+                active && "text-primary"
+              )}
+            />
+            <span className={cn("truncate text-sm", collapsed && "sr-only")}>
+              {item.labelKey}
+            </span>
             {active && (
-              <div className="absolute inset-0 bg-primary/10 border border-primary/20 rounded-lg shadow-sm transition-all duration-200" />
-            )}
-            <Icon className={cn(
-              "h-4 w-4 shrink-0 transition-colors duration-200 relative z-10",
-              active && "text-primary"
-            )} />
-            <span className={cn("truncate text-sm relative z-10", collapsed && "sr-only")}>{label}</span>
-            {isNew && !collapsed && (
-              <span className="ml-auto text-[9px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full leading-none animate-pulse relative z-10">
-                new
-              </span>
-            )}
-            {active && !isNew && (
-              <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary relative z-10" />
+              <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
             )}
           </Link>
         </SidebarMenuButton>
@@ -197,18 +205,27 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar h-screen max-h-screen flex flex-col">
+    <Sidebar
+      collapsible="icon"
+      className="border-r border-sidebar-border bg-sidebar h-screen max-h-screen flex flex-col"
+    >
       <SidebarHeader className="border-b border-border/30 p-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group flex-1 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shadow-professional transition-all duration-300 group-hover:shadow-professional-lg group-hover:scale-105 shrink-0 overflow-hidden">
-              <img src={hrpmLogo} alt="HRPM Logo" className="w-8 h-8 object-contain transition-transform duration-500 group-hover:scale-110" />
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shadow-professional shrink-0 overflow-hidden">
+              <img
+                src={hrpmLogo}
+                alt="HRPM Logo"
+                className="w-8 h-8 object-contain"
+              />
             </div>
             {!collapsed && (
               <div className="flex flex-col min-w-0 overflow-hidden">
-                <span className="text-xl font-bold text-primary tracking-tight leading-none">HRPM</span>
+                <span className="text-xl font-bold text-primary tracking-tight leading-none">
+                  HRPM
+                </span>
                 <span className="text-[10px] font-medium text-muted-foreground tracking-wide uppercase mt-0.5 truncate">
-                  Human Rights Protection
+                  Open-Source · Non-Profit
                 </span>
               </div>
             )}
@@ -220,7 +237,7 @@ export function AppSidebar() {
                 size="icon"
                 onClick={toggleSidebar}
                 className={cn(
-                  "h-8 w-8 shrink-0 transition-all duration-200 hover:bg-accent/50",
+                  "h-8 w-8 shrink-0 hover:bg-accent/50",
                   collapsed && "mx-auto"
                 )}
               >
@@ -239,27 +256,21 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent className="px-2 py-3 overflow-y-auto overflow-x-hidden flex-1 min-h-0">
-        {/* Greeting */}
-        {!collapsed && (
-          <div className="mb-3 px-2">
-            <GreetingBanner compact showIcon />
-          </div>
-        )}
+        {navGroups.map((group) => {
+          if (group.adminOnly && !isAdmin) return null;
+          const groupActive = isGroupActive(group.items);
 
-        {/* Nav Groups with Collapsible sections */}
-        {navGroupsDef.map((group) => {
-          const sortedItems = sortByActivity(group.items, activityMap);
-          const groupActive = isGroupActive(sortedItems);
-          const groupLabel = t(group.labelKey);
           return (
-            <SidebarGroup key={group.labelKey} className="mb-1">
+            <SidebarGroup key={group.label} className="mb-1">
               {collapsed ? (
                 <>
-                  <SidebarGroupLabel className="sr-only">{groupLabel}</SidebarGroupLabel>
+                  <SidebarGroupLabel className="sr-only">
+                    {group.label}
+                  </SidebarGroupLabel>
                   <SidebarGroupContent>
                     <SidebarMenu>
-                      {sortedItems.map((item) => (
-                        <NavItem key={item.path} item={item} />
+                      {group.items.map((item) => (
+                        <NavItemRow key={item.path} item={item} />
                       ))}
                     </SidebarMenu>
                   </SidebarGroupContent>
@@ -268,7 +279,7 @@ export function AppSidebar() {
                 <Collapsible defaultOpen={group.defaultOpen || groupActive}>
                   <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors rounded-md hover:bg-accent/10 group/trigger">
                     <span className="flex items-center gap-2">
-                      {groupLabel}
+                      {group.label}
                       {groupActive && (
                         <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                       )}
@@ -278,8 +289,8 @@ export function AppSidebar() {
                   <CollapsibleContent>
                     <SidebarGroupContent>
                       <SidebarMenu className="mt-1">
-                        {sortedItems.map((item) => (
-                          <NavItem key={item.path} item={item} />
+                        {group.items.map((item) => (
+                          <NavItemRow key={item.path} item={item} />
                         ))}
                       </SidebarMenu>
                     </SidebarGroupContent>
@@ -289,27 +300,17 @@ export function AppSidebar() {
             </SidebarGroup>
           );
         })}
-
-        {/* Admin - only visible to admins */}
-        {isAdmin && (
-          <SidebarGroup className="mb-1">
-            <SidebarGroupLabel className={cn("text-[11px] font-semibold text-muted-foreground uppercase tracking-wider", collapsed && "sr-only")}>
-              {t('nav.admin')}
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <NavItem item={{ path: "/admin", labelKey: "nav.admin", icon: Shield }} />
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
       </SidebarContent>
 
       <SidebarFooter className="border-t border-border/30 p-2 shrink-0">
-        {/* Language & Theme Toggle */}
-        <div className={cn("flex items-center gap-2 px-2 py-1", collapsed ? "justify-center flex-col" : "justify-between")}>
+        <div
+          className={cn(
+            "flex items-center gap-2 px-2 py-1",
+            collapsed ? "justify-center flex-col" : "justify-between"
+          )}
+        >
           {!collapsed && (
-            <span className="text-xs text-muted-foreground">{t('nav.settings')}</span>
+            <span className="text-xs text-muted-foreground">Settings</span>
           )}
           <div className="flex items-center gap-1">
             <LanguageSwitcher />
@@ -317,7 +318,6 @@ export function AppSidebar() {
           </div>
         </div>
 
-        {/* User Profile Section */}
         {user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -349,8 +349,8 @@ export function AppSidebar() {
                 )}
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent 
-              side="top" 
+            <DropdownMenuContent
+              side="top"
               align={collapsed ? "center" : "start"}
               className="w-56 mb-2"
             >
@@ -359,25 +359,27 @@ export function AppSidebar() {
                 <p className="text-xs text-muted-foreground">{userEmail}</p>
               </div>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/watchlist")}>
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => navigate("/watchlist")}
+              >
                 <Eye className="mr-2 h-4 w-4" />
                 My Watchlist
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/about")}>
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => navigate("/about")}
+              >
                 <User className="mr-2 h-4 w-4" />
                 Profile
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer" onClick={() => toast.info("Settings are available in the sidebar footer (language & theme).")}>
-                <Settings className="mr-2 h-4 w-4" />
-                {t('nav.settings')}
-              </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 className="cursor-pointer text-destructive focus:text-destructive"
                 onClick={handleSignOut}
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                {t('common.signOut')}
+                Sign Out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -395,8 +397,10 @@ export function AppSidebar() {
             </div>
             {!collapsed && (
               <div className="flex flex-col items-start min-w-0 flex-1">
-                <span className="text-sm font-medium">{t('common.signIn')}</span>
-                <span className="text-xs text-muted-foreground">{t('pages.optional')}</span>
+                <span className="text-sm font-medium">Sign In</span>
+                <span className="text-xs text-muted-foreground">
+                  Required to contribute
+                </span>
               </div>
             )}
           </Link>

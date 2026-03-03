@@ -11,6 +11,7 @@ import { LogoSpinner } from "@/components/ui/LogoSpinner";
 
 // Lazy-load all pages for code splitting
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const HomePage = lazy(() => import("./pages/HomePage"));
 const Index = lazy(() => import("./pages/Index"));
 const NetworkPage = lazy(() => import("./pages/Network"));
 const EvidencePage = lazy(() => import("./pages/Evidence"));
@@ -47,6 +48,7 @@ const AnalysisHistory = lazy(() => import("./pages/AnalysisHistory"));
 const OsintToolkit = lazy(() => import("./pages/OsintToolkit"));
 const Landing = lazy(() => import("./pages/Landing"));
 const EntityReview = lazy(() => import("./pages/EntityReview"));
+const SubmitCase = lazy(() => import("./pages/SubmitCase"));
 const ReportCenter = lazy(() => import("./pages/ReportCenter"));
 const Disclaimer = lazy(() => import("./pages/Disclaimer"));
 const Terms = lazy(() => import("./pages/Terms"));
@@ -80,7 +82,7 @@ const App = () => (
           <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/cases" element={<CasesList />} />
             <Route path="/cases/:caseId" element={<CaseProfile />} />
             <Route path="/timeline" element={<Index />} />
@@ -116,6 +118,7 @@ const App = () => (
             <Route path="/watchlist" element={<Watchlist />} />
             <Route path="/entities/:entityId" element={<EntityDetail />} />
             <Route path="/welcome" element={<Landing />} />
+            <Route path="/submit-case" element={<SubmitCase />} />
             <Route path="/reports" element={<ReportCenter />} />
             <Route path="/disclaimer" element={<Disclaimer />} />
             <Route path="/terms" element={<Terms />} />
