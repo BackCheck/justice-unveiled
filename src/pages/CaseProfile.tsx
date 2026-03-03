@@ -36,6 +36,8 @@ import { useCase, useCaseEvents, useCaseEntities, useCaseDiscrepancies, useCaseE
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { EvidenceRepositoryCard } from "@/components/evidence/EvidenceRepositoryCard";
 import { CaseReportFooter } from "@/components/cases/CaseReportFooter";
+import { TakedownRequestButton } from "@/components/cases/TakedownRequestButton";
+import { CaseDisclaimerStrip } from "@/components/cases/CaseDisclaimerStrip";
 import { CaseReconstructionTab } from "@/components/reconstruction/CaseReconstructionTab";
 import { CaseCorrelationTab } from "@/components/correlation/CaseCorrelationTab";
 import { CaseComplianceTab } from "@/components/compliance/CaseComplianceTab";
@@ -528,6 +530,7 @@ const CaseProfile = () => {
                     </Badge>
                   )}
                 </Button>
+                <TakedownRequestButton caseId={caseId!} />
               </div>
             </div>
 
@@ -556,6 +559,11 @@ const CaseProfile = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Disclaimer strip */}
+      <div className="max-w-6xl mx-auto px-4 pt-6">
+        <CaseDisclaimerStrip />
       </div>
 
       {/* Main Content with Tabs */}

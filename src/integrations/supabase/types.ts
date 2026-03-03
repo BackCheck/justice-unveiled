@@ -2592,6 +2592,56 @@ export type Database = {
           },
         ]
       }
+      takedown_requests: {
+        Row: {
+          admin_notes: string | null
+          case_id: string | null
+          contact: string | null
+          created_at: string
+          id: string
+          reason: string
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+          submitted_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          case_id?: string | null
+          contact?: string | null
+          created_at?: string
+          id?: string
+          reason: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          submitted_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          case_id?: string | null
+          contact?: string | null
+          created_at?: string
+          id?: string
+          reason?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          submitted_by?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "takedown_requests_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -2713,6 +2763,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_submission_rate_limit: {
+        Args: { p_max_per_day?: number; p_user_id: string }
+        Returns: boolean
+      }
       find_similar_entities: {
         Args: {
           p_entity_type: string

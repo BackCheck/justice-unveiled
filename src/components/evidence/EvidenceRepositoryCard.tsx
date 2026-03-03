@@ -8,7 +8,9 @@ import {
   Download, 
   ExternalLink,
   Calendar,
-  HardDrive
+  HardDrive,
+  ShieldCheck,
+  ShieldAlert
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -315,6 +317,23 @@ export const EvidenceRepositoryCard = ({ file, caseNumber, caseTitle }: Evidence
                 {file.category.replace('_', ' ')}
               </Badge>
             )}
+
+            {/* Verification Badge */}
+            <Badge 
+              variant="outline"
+              className={cn(
+                "mt-2 text-xs border",
+                file.category && ["court_record", "legal_document", "witness_statement"].includes(file.category)
+                  ? "border-emerald-500/30 text-emerald-700 dark:text-emerald-300"
+                  : "border-muted-foreground/30 text-muted-foreground"
+              )}
+            >
+              {file.category && ["court_record", "legal_document", "witness_statement"].includes(file.category) ? (
+                <><ShieldCheck className="w-3 h-3 mr-1" />Verified Source</>
+              ) : (
+                <><ShieldAlert className="w-3 h-3 mr-1" />Unverified</>
+              )}
+            </Badge>
           </div>
         </div>
         
