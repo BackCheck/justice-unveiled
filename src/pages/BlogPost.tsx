@@ -124,34 +124,7 @@ const BlogPostPage = () => {
     );
   }
 
-  useSEO({
-    title: post.title,
-    description: post.excerpt || `Read ${post.title} on HRPM - Human Rights Protection & Monitoring.`,
-    image: post.cover_image_url || undefined,
-    url: `https://hrpm.org/blog/${post.slug}`,
-    canonicalUrl: `https://hrpm.org/blog/${post.slug}`,
-    type: "article",
-    publishedTime: post.published_at || post.created_at,
-    author: post.author_name || "HRPM Investigations Unit",
-    section: post.category || "Human Rights",
-    tags: post.tags || [],
-    keywords: post.tags || [],
-    jsonLd: {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      "headline": post.title,
-      "description": post.excerpt || post.title,
-      "image": post.cover_image_url || "https://hrpm.org/og-image.png",
-      "datePublished": post.published_at || post.created_at,
-      "author": { "@type": "Organization", "name": post.author_name || "HRPM" },
-      "publisher": {
-        "@type": "Organization",
-        "name": "HRPM.org",
-        "logo": { "@type": "ImageObject", "url": "https://hrpm.org/favicon.png" }
-      },
-      "mainEntityOfPage": { "@type": "WebPage", "@id": `https://hrpm.org/blog/${post.slug}` }
-    },
-  });
+  // useSEO moved above conditional returns
 
   return (
     <PlatformLayout>
