@@ -50,6 +50,7 @@ const Landing = lazy(() => import("./pages/Landing"));
 const EntityReview = lazy(() => import("./pages/EntityReview"));
 const SubmitCase = lazy(() => import("./pages/SubmitCase"));
 const ReportCenter = lazy(() => import("./pages/ReportCenter"));
+const AnalyzeHub = lazy(() => import("./pages/AnalyzeHub"));
 const Disclaimer = lazy(() => import("./pages/Disclaimer"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
@@ -94,7 +95,8 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/international" element={<InternationalAnalysis />} />
-            <Route path="/analyze" element={<Analyze />} />
+            <Route path="/analyze" element={<AnalyzeHub />} />
+            <Route path="/analyze/ai" element={<Analyze />} />
             <Route path="/investigations" element={<Investigations />} />
             <Route path="/reconstruction" element={<Reconstruction />} />
             <Route path="/correlation" element={<Correlation />} />
