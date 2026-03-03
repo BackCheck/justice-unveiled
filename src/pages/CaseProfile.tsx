@@ -43,7 +43,8 @@ import { CaseCorrelationTab } from "@/components/correlation/CaseCorrelationTab"
 import { CaseComplianceTab } from "@/components/compliance/CaseComplianceTab";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { applyRedaction, RedactionFlags } from "@/lib/redaction";
 
 const severityColors: Record<string, string> = {
   critical: "bg-red-500/20 text-red-700 dark:text-red-300 border-red-500/30",
@@ -78,6 +79,29 @@ const CaseProfile = () => {
   const { data: evidence, isLoading: evidenceLoading } = useCaseEvidence(caseId);
   const [isExporting, setIsExporting] = useState(false);
   const queryClient = useQueryClient();
+
+  // Fetch redaction preferences from the associated submission
+  const { data: redactionFlags } = useQuery({
+    queryKey: ["case-redaction", caseId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("submissions" as any)
+        .select("payload")
+        .eq("case_id", caseId)
+        .eq("submission_type", "case")
+        .limit(1)
+        .maybeSingle();
+      const payload = (data as any)?.payload;
+      return (payload?.redaction as RedactionFlags) || null;
+    },
+    enabled: !!caseId,
+  });
+
+  const redact = (text: string | null | undefined) => {
+    if (!text) return text;
+    if (!redactionFlags) return text;
+    return applyRedaction(text, redactionFlags);
+  };
 
   const handleExportPDF = async () => {
     if (!caseData) return;
@@ -459,7 +483,7 @@ const CaseProfile = () => {
                 {caseData.title}
               </h1>
               <p className="text-muted-foreground max-w-2xl">
-                {caseData.description}
+                {redact(caseData.description)}
               </p>
 
               {/* Meta info */}
