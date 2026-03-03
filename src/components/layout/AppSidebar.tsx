@@ -98,16 +98,16 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
   const [learnOpen, setLearnOpen] = useState(false);
 
+  const isActive = (path: string) => {
+    if (path === "/") return location.pathname === "/";
+    return location.pathname === path || location.pathname.startsWith(path + "/");
+  };
+
   // Auto-open Learn group when navigating to a Learn route
   const isOnLearnRoute = learnItems.some((item) => isActive(item.path));
   useEffect(() => {
     if (isOnLearnRoute && !learnOpen) setLearnOpen(true);
   }, [isOnLearnRoute]);
-
-  const isActive = (path: string) => {
-    if (path === "/") return location.pathname === "/";
-    return location.pathname === path || location.pathname.startsWith(path + "/");
-  };
 
   const displayName = profile?.display_name || user?.email?.split("@")[0] || "User";
   const userRoleDisplay = role ? role.charAt(0).toUpperCase() + role.slice(1) : "Analyst";
