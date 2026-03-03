@@ -93,9 +93,16 @@ export const useGraphData = () => {
       connectionCount[conn.target] = (connectionCount[conn.target] || 0) + 1;
     });
 
-    // Sort entities by connection count (most connected first) and cap
+    // Weighted priority: connections (60%) + confidence (20%) + verified (20%)
+    const entityWeight = (e: CombinedEntity) => {
+      const connScore = (connectionCount[e.id] || 0) * 0.6;
+      const confScore = ((e as any).confidence ?? 0.5) * 0.2;
+      const verifiedScore = (e as any).verified ? 0.2 : 0;
+      return connScore + confScore + verifiedScore;
+    };
+
     const sortedEntities = [...entities].sort((a, b) => 
-      (connectionCount[b.id] || 0) - (connectionCount[a.id] || 0)
+      entityWeight(b) - entityWeight(a)
     ).slice(0, MAX_ENTITY_NODES);
     
     const includedEntityIds = new Set(sortedEntities.map(e => e.id));
@@ -279,7 +286,8 @@ export const useGraphData = () => {
     };
 
     return { nodes, links, stats };
-  }, [entities, connections, discrepancies, extractedEvents, relationships]);
+  // Stabilize memo deps — use lengths/counts instead of full arrays to prevent re-render storms
+  }, [entities.length, connections.length, discrepancies?.length, extractedEvents?.length, relationships?.length]);
 
   return {
     nodes: graphData.nodes,

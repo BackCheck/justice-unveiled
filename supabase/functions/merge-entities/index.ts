@@ -73,6 +73,20 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Safety: prevent cross-type merges (e.g. PERSON into ORG)
+    const { data: winnerCheck } = await adminClient
+      .from("entities")
+      .select("entity_type")
+      .eq("id", winner_entity_id)
+      .single();
+
+    if (winnerCheck && winnerCheck.entity_type !== loserEntity.entity_type) {
+      return new Response(
+        JSON.stringify({ error: `Entity type mismatch: cannot merge ${loserEntity.entity_type} into ${winnerCheck.entity_type}` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // 2. Move aliases from loser to winner
     await adminClient
       .from("entity_aliases_v2")

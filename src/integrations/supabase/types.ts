@@ -925,6 +925,7 @@ export type Database = {
       }
       entities: {
         Row: {
+          canonical_key: string | null
           confidence: number
           created_at: string
           entity_type: string
@@ -936,6 +937,7 @@ export type Database = {
           verified: boolean
         }
         Insert: {
+          canonical_key?: string | null
           confidence?: number
           created_at?: string
           entity_type: string
@@ -947,6 +949,7 @@ export type Database = {
           verified?: boolean
         }
         Update: {
+          canonical_key?: string | null
           confidence?: number
           created_at?: string
           entity_type?: string
