@@ -58,6 +58,35 @@ const BlogPostPage = () => {
     enabled: !!slug,
   });
 
+  useSEO({
+    title: post?.title,
+    description: post?.excerpt || `Read ${post?.title || 'article'} on HRPM - Human Rights Protection & Monitoring.`,
+    image: post?.cover_image_url || undefined,
+    url: post ? `https://hrpm.org/blog/${post.slug}` : undefined,
+    canonicalUrl: post ? `https://hrpm.org/blog/${post.slug}` : undefined,
+    type: "article",
+    publishedTime: post?.published_at || post?.created_at,
+    author: post?.author_name || "HRPM Investigations Unit",
+    section: post?.category || "Human Rights",
+    tags: post?.tags || [],
+    keywords: post?.tags || [],
+    jsonLd: post ? {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": post.title,
+      "description": post.excerpt || post.title,
+      "image": post.cover_image_url || "https://hrpm.org/og-image.png",
+      "datePublished": post.published_at || post.created_at,
+      "author": { "@type": "Organization", "name": post.author_name || "HRPM" },
+      "publisher": {
+        "@type": "Organization",
+        "name": "HRPM.org",
+        "logo": { "@type": "ImageObject", "url": "https://hrpm.org/favicon.png" }
+      },
+      "mainEntityOfPage": { "@type": "WebPage", "@id": `https://hrpm.org/blog/${post.slug}` }
+    } : undefined,
+  });
+
   if (isLoading) {
     return (
       <PlatformLayout>
