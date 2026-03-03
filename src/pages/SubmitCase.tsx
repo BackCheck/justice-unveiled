@@ -5,15 +5,10 @@ import { useSEO } from "@/hooks/useSEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { UploadProgressOverlay } from "@/components/evidence/UploadProgressOverlay";
 import { SubmitCaseStepBasics } from "@/components/submit-case/StepBasics";
 import { SubmitCaseStepPeople } from "@/components/submit-case/StepPeople";
 import { SubmitCaseStepEvidence } from "@/components/submit-case/StepEvidence";
@@ -44,6 +39,7 @@ const SubmitCase = () => {
   const { toast } = useToast();
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0, fileName: "" });
 
   useSEO({
     title: "Submit a Case — HRPM",
@@ -81,12 +77,12 @@ const SubmitCase = () => {
       <PlatformLayout>
         <div className="max-w-xl mx-auto px-4 py-20 text-center">
           <Shield className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-foreground mb-2">Sign in required</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">Sign in to contribute</h1>
           <p className="text-muted-foreground mb-6">
-            You need to sign in before submitting a case.
+            Create an account or sign in to submit a case. Your progress will be here when you return.
           </p>
           <Button asChild>
-            <a href="/auth">Sign In</a>
+            <a href={`/auth?redirect=${encodeURIComponent("/submit-case")}`}>Sign In</a>
           </Button>
         </div>
       </PlatformLayout>
@@ -134,7 +130,10 @@ const SubmitCase = () => {
 
       // Upload evidence files if any
       if (evidenceFiles.length > 0 && caseData) {
-        for (const file of evidenceFiles) {
+        setUploadProgress({ current: 0, total: evidenceFiles.length, fileName: "" });
+        for (let i = 0; i < evidenceFiles.length; i++) {
+          const file = evidenceFiles[i];
+          setUploadProgress({ current: i + 1, total: evidenceFiles.length, fileName: file.name });
           const path = `${caseData.id}/${Date.now()}-${file.name}`;
           const { error: uploadErr } = await supabase.storage
             .from("evidence")
@@ -157,6 +156,7 @@ const SubmitCase = () => {
             });
           }
         }
+        setUploadProgress({ current: 0, total: 0, fileName: "" });
       }
 
       // Create submission record for moderation tracking
@@ -201,6 +201,13 @@ const SubmitCase = () => {
 
   return (
     <PlatformLayout>
+      {uploadProgress.total > 0 && (
+        <UploadProgressOverlay
+          current={uploadProgress.current}
+          total={uploadProgress.total}
+          fileName={uploadProgress.fileName}
+        />
+      )}
       <div className="max-w-3xl mx-auto px-4 py-10">
         {/* Progress */}
         <div className="flex items-center gap-1 mb-10 overflow-x-auto pb-2">

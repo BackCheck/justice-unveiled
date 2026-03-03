@@ -9,21 +9,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FileUploadField } from "@/components/evidence/FileUploadField";
+import { UploadProgressOverlay } from "@/components/evidence/UploadProgressOverlay";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import {
-  ArrowLeft,
-  ArrowRight,
-  CheckCircle2,
-  Upload,
-  FileText,
-  Link as LinkIcon,
-  Send,
-  Shield,
+  ArrowLeft, ArrowRight, CheckCircle2, Upload, FileText,
+  Link as LinkIcon, Send, Shield,
 } from "lucide-react";
 
 const EVIDENCE_LABELS = [
@@ -47,6 +42,7 @@ const AddEvidence = () => {
 
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0, fileName: "" });
 
   // Step 1
   const [evidenceLabel, setEvidenceLabel] = useState("");
@@ -68,9 +64,11 @@ const AddEvidence = () => {
       <PlatformLayout>
         <div className="max-w-xl mx-auto px-4 py-20 text-center">
           <Shield className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-foreground mb-2">Sign in required</h1>
-          <p className="text-muted-foreground mb-6">Sign in to contribute evidence.</p>
-          <Button asChild><a href="/auth">Sign In</a></Button>
+          <h1 className="text-2xl font-bold text-foreground mb-2">Sign in to contribute</h1>
+          <p className="text-muted-foreground mb-6">Sign in to contribute evidence to this case.</p>
+          <Button asChild>
+            <a href={`/auth?redirect=${encodeURIComponent(`/cases/${caseId}/add-evidence`)}`}>Sign In</a>
+          </Button>
         </div>
       </PlatformLayout>
     );
@@ -109,26 +107,31 @@ const AddEvidence = () => {
     try {
       const uploadedPaths: string[] = [];
 
-      // Upload files
-      for (const file of files) {
-        const path = `${caseId}/${Date.now()}-${file.name}`;
-        const { error: uploadErr } = await supabase.storage.from("evidence").upload(path, file);
+      if (files.length > 0) {
+        setUploadProgress({ current: 0, total: files.length, fileName: "" });
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          setUploadProgress({ current: i + 1, total: files.length, fileName: file.name });
+          const path = `${caseId}/${Date.now()}-${file.name}`;
+          const { error: uploadErr } = await supabase.storage.from("evidence").upload(path, file);
 
-        if (!uploadErr) {
-          const { data: urlData } = supabase.storage.from("evidence").getPublicUrl(path);
-          await supabase.from("evidence_uploads").insert({
-            case_id: caseId,
-            file_name: file.name,
-            file_type: file.type,
-            file_size: file.size,
-            storage_path: path,
-            public_url: urlData.publicUrl,
-            category: evidenceLabel || "general",
-            uploaded_by: user.id,
-            description,
-          });
-          uploadedPaths.push(path);
+          if (!uploadErr) {
+            const { data: urlData } = supabase.storage.from("evidence").getPublicUrl(path);
+            await supabase.from("evidence_uploads").insert({
+              case_id: caseId,
+              file_name: file.name,
+              file_type: file.type,
+              file_size: file.size,
+              storage_path: path,
+              public_url: urlData.publicUrl,
+              category: evidenceLabel || "general",
+              uploaded_by: user.id,
+              description,
+            });
+            uploadedPaths.push(path);
+          }
         }
+        setUploadProgress({ current: 0, total: 0, fileName: "" });
       }
 
       // Create submission record
@@ -168,6 +171,13 @@ const AddEvidence = () => {
 
   return (
     <PlatformLayout>
+      {uploadProgress.total > 0 && (
+        <UploadProgressOverlay
+          current={uploadProgress.current}
+          total={uploadProgress.total}
+          fileName={uploadProgress.fileName}
+        />
+      )}
       <div className="max-w-3xl mx-auto px-4 py-10">
         {/* Case context */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
@@ -252,23 +262,8 @@ const AddEvidence = () => {
 
             {step === 1 && (
               <>
-                <div className="space-y-2">
-                  <Label>Upload Files</Label>
-                  <p className="text-sm text-muted-foreground">PDF, images, video, audio. Max 20MB per file.</p>
-                  <Input
-                    type="file"
-                    multiple
-                    accept=".pdf,.jpg,.jpeg,.png,.webp,.mp4,.mp3,.wav,.m4a,.doc,.docx,.txt,.md"
-                    onChange={(e) => setFiles(Array.from(e.target.files || []))}
-                  />
-                  {files.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {files.map((f, i) => (
-                        <Badge key={i} variant="secondary" className="text-xs">{f.name}</Badge>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <FileUploadField files={files} onFilesChange={setFiles} />
+
                 <div className="space-y-2">
                   <Label htmlFor="urls">Or Add URLs (one per line)</Label>
                   <Textarea id="urls" value={urls} onChange={(e) => setUrls(e.target.value)} placeholder="https://example.com/article" rows={3} />
