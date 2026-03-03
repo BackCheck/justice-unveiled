@@ -22,6 +22,7 @@ interface PlatformLayoutProps {
 // Page titles mapped to translation keys
 const pageTitleKeys: Record<string, { titleKey: string; subtitleKey?: string; isAI?: boolean }> = {
   "/": { titleKey: "nav.home" },
+  "/submit-case": { titleKey: "Submit a Case", subtitleKey: "Create a new case submission" },
   "/timeline": { titleKey: "nav.timeline", subtitleKey: "pages.investigativeTimeline" },
   "/dashboard": { titleKey: "nav.intelDashboard", subtitleKey: "pages.intelDashboardSub" },
   "/intel-briefing": { titleKey: "nav.intelBriefing", subtitleKey: "pages.intelligenceBriefing" },
