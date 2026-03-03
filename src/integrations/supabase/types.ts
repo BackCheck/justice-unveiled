@@ -2539,6 +2539,59 @@ export type Database = {
         }
         Relationships: []
       }
+      submissions: {
+        Row: {
+          case_id: string | null
+          contact_info: string | null
+          created_at: string
+          id: string
+          payload: Json
+          reviewer_notes: string | null
+          reviewer_question: string | null
+          status: string
+          submission_type: string
+          submitted_by: string | null
+          submitter_reply: string | null
+          updated_at: string
+        }
+        Insert: {
+          case_id?: string | null
+          contact_info?: string | null
+          created_at?: string
+          id?: string
+          payload?: Json
+          reviewer_notes?: string | null
+          reviewer_question?: string | null
+          status?: string
+          submission_type: string
+          submitted_by?: string | null
+          submitter_reply?: string | null
+          updated_at?: string
+        }
+        Update: {
+          case_id?: string | null
+          contact_info?: string | null
+          created_at?: string
+          id?: string
+          payload?: Json
+          reviewer_notes?: string | null
+          reviewer_question?: string | null
+          status?: string
+          submission_type?: string
+          submitted_by?: string | null
+          submitter_reply?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submissions_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string

@@ -14,12 +14,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { SubmitCaseStepBasics } from "@/components/submit-case/StepBasics";
+import { SubmitCaseStepPeople } from "@/components/submit-case/StepPeople";
+import { SubmitCaseStepEvidence } from "@/components/submit-case/StepEvidence";
+import { SubmitCaseStepPrivacy } from "@/components/submit-case/StepPrivacy";
+import { SubmitCaseStepReview } from "@/components/submit-case/StepReview";
 import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
   FileText,
-  MapPin,
   Users,
   Upload,
   Shield,
@@ -30,37 +34,8 @@ const STEPS = [
   { label: "Case Basics", icon: FileText },
   { label: "People & Entities", icon: Users },
   { label: "Evidence", icon: Upload },
-  { label: "Visibility", icon: Shield },
+  { label: "Privacy & Preferences", icon: Shield },
   { label: "Review & Submit", icon: Send },
-];
-
-const INCIDENT_TYPES = [
-  "Enforced Disappearance",
-  "Extrajudicial Killing",
-  "Torture / Ill-treatment",
-  "Arbitrary Detention",
-  "Business Interference",
-  "Harassment / Intimidation",
-  "Land Grabbing",
-  "Corruption / Fraud",
-  "Media Suppression",
-  "Discrimination",
-  "Other",
-];
-
-const EVIDENCE_LABELS = [
-  "FIR",
-  "Court Order",
-  "CCTV",
-  "Medical Record",
-  "Message Logs",
-  "News Link",
-  "Photograph",
-  "Audio Recording",
-  "Video Recording",
-  "Affidavit",
-  "Government Document",
-  "Other",
 ];
 
 const SubmitCase = () => {
@@ -89,11 +64,17 @@ const SubmitCase = () => {
   const [evidenceFiles, setEvidenceFiles] = useState<File[]>([]);
   const [evidenceLabel, setEvidenceLabel] = useState("");
   const [evidenceSourceType, setEvidenceSourceType] = useState("original");
+  const [evidenceDescription, setEvidenceDescription] = useState("");
 
-  // Step 4: Visibility
+  // Step 4: Privacy
   const [visibility, setVisibility] = useState("public");
   const [consentChecked, setConsentChecked] = useState(false);
   const [autoRedact, setAutoRedact] = useState(true);
+  const [redactCNIC, setRedactCNIC] = useState(true);
+  const [redactPhone, setRedactPhone] = useState(true);
+  const [redactEmail, setRedactEmail] = useState(true);
+  const [faceBlur, setFaceBlur] = useState(false);
+  const [contactChannel, setContactChannel] = useState("");
 
   if (!user) {
     return (
@@ -123,22 +104,23 @@ const SubmitCase = () => {
     try {
       const caseNumber = `CF-${Date.now().toString(36).toUpperCase()}`;
 
-      const { data, error } = await supabase.from("cases").insert({
+      // Create case stub with "under_review" status
+      const { data: caseData, error: caseError } = await supabase.from("cases").insert({
         title,
         case_number: caseNumber,
         description: summary,
         location,
         category: incidentType,
-        status: "draft",
+        status: "under_review",
         severity: "medium",
       }).select().single();
 
-      if (error) throw error;
+      if (caseError) throw caseError;
 
       // Upload evidence files if any
-      if (evidenceFiles.length > 0 && data) {
+      if (evidenceFiles.length > 0 && caseData) {
         for (const file of evidenceFiles) {
-          const path = `${data.id}/${Date.now()}-${file.name}`;
+          const path = `${caseData.id}/${Date.now()}-${file.name}`;
           const { error: uploadErr } = await supabase.storage
             .from("evidence")
             .upload(path, file);
@@ -149,7 +131,7 @@ const SubmitCase = () => {
               .getPublicUrl(path);
 
             await supabase.from("evidence_uploads").insert({
-              case_id: data.id,
+              case_id: caseData.id,
               file_name: file.name,
               file_type: file.type,
               file_size: file.size,
@@ -162,12 +144,35 @@ const SubmitCase = () => {
         }
       }
 
+      // Create submission record for moderation tracking
+      await supabase.from("submissions" as any).insert({
+        submission_type: "case",
+        status: "pending_review",
+        case_id: caseData.id,
+        submitted_by: user.id,
+        contact_info: contactChannel || null,
+        payload: {
+          title,
+          location,
+          incidentType,
+          dateRange,
+          summary,
+          peopleText,
+          evidenceLabel,
+          evidenceSourceType,
+          evidenceDescription,
+          visibility,
+          redaction: { cnic: redactCNIC, phone: redactPhone, email: redactEmail, faceBlur },
+          evidenceFileCount: evidenceFiles.length,
+        },
+      } as any);
+
       toast({
-        title: "Case submitted",
-        description: `Case ${caseNumber} has been created and sent for review.`,
+        title: "Case submitted for review",
+        description: `Case ${caseNumber} has been created and sent for moderation.`,
       });
 
-      navigate(`/cases/${data.id}`);
+      navigate(`/cases/${caseData.id}`);
     } catch (err: any) {
       toast({
         title: "Submission failed",
@@ -225,160 +230,50 @@ const SubmitCase = () => {
           </CardHeader>
           <CardContent className="space-y-5">
             {step === 0 && (
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="title">Case Title *</Label>
-                  <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g., Unlawful detention of journalists in Karachi" />
-                </div>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="location">Location</Label>
-                    <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="City, Country" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Incident Type *</Label>
-                    <Select value={incidentType} onValueChange={setIncidentType}>
-                      <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
-                      <SelectContent>
-                        {INCIDENT_TYPES.map((t) => (
-                          <SelectItem key={t} value={t}>{t}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="dateRange">Date / Date Range</Label>
-                  <Input id="dateRange" value={dateRange} onChange={(e) => setDateRange(e.target.value)} placeholder="e.g., March 2020 – Present" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="summary">Summary</Label>
-                  <Textarea id="summary" value={summary} onChange={(e) => setSummary(e.target.value)} placeholder="Brief description of the case…" rows={4} />
-                </div>
-              </>
+              <SubmitCaseStepBasics
+                title={title} setTitle={setTitle}
+                location={location} setLocation={setLocation}
+                incidentType={incidentType} setIncidentType={setIncidentType}
+                dateRange={dateRange} setDateRange={setDateRange}
+                summary={summary} setSummary={setSummary}
+              />
             )}
-
             {step === 1 && (
-              <div className="space-y-2">
-                <Label htmlFor="people">People & Organizations</Label>
-                <p className="text-sm text-muted-foreground">
-                  List names, aliases, organizations, and their roles (victim, witness, accused, agency, lawyer). One per line.
-                </p>
-                <Textarea
-                  id="people"
-                  value={peopleText}
-                  onChange={(e) => setPeopleText(e.target.value)}
-                  placeholder={"John Doe — Victim\nAcme Corp — Accused Organization\nJane Smith — Witness"}
-                  rows={8}
-                />
-              </div>
+              <SubmitCaseStepPeople
+                peopleText={peopleText} setPeopleText={setPeopleText}
+              />
             )}
-
             {step === 2 && (
-              <>
-                <div className="space-y-2">
-                  <Label>Upload Evidence Files</Label>
-                  <p className="text-sm text-muted-foreground">
-                    PDF, images, video, audio. Max 20MB per file.
-                  </p>
-                  <Input
-                    type="file"
-                    multiple
-                    accept=".pdf,.jpg,.jpeg,.png,.webp,.mp4,.mp3,.wav,.m4a,.doc,.docx,.txt,.md"
-                    onChange={(e) => setEvidenceFiles(Array.from(e.target.files || []))}
-                  />
-                  {evidenceFiles.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {evidenceFiles.map((f, i) => (
-                        <Badge key={i} variant="secondary" className="text-xs">
-                          {f.name}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Evidence Label</Label>
-                    <Select value={evidenceLabel} onValueChange={setEvidenceLabel}>
-                      <SelectTrigger><SelectValue placeholder="Select label" /></SelectTrigger>
-                      <SelectContent>
-                        {EVIDENCE_LABELS.map((l) => (
-                          <SelectItem key={l} value={l}>{l}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Source Type</Label>
-                    <Select value={evidenceSourceType} onValueChange={setEvidenceSourceType}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="original">Original / Primary</SelectItem>
-                        <SelectItem value="secondary">Secondary / Copy</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </>
+              <SubmitCaseStepEvidence
+                evidenceFiles={evidenceFiles} setEvidenceFiles={setEvidenceFiles}
+                evidenceLabel={evidenceLabel} setEvidenceLabel={setEvidenceLabel}
+                evidenceSourceType={evidenceSourceType} setEvidenceSourceType={setEvidenceSourceType}
+                evidenceDescription={evidenceDescription} setEvidenceDescription={setEvidenceDescription}
+              />
             )}
-
             {step === 3 && (
-              <>
-                <div className="space-y-2">
-                  <Label>Visibility</Label>
-                  <Select value={visibility} onValueChange={setVisibility}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="public">Public</SelectItem>
-                      <SelectItem value="restricted">Restricted (authenticated users only)</SelectItem>
-                      <SelectItem value="private">Private (admins only)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Checkbox id="redact" checked={autoRedact} onCheckedChange={(v) => setAutoRedact(!!v)} />
-                  <Label htmlFor="redact" className="text-sm">
-                    Auto-redact sensitive PII (CNIC, phone numbers, email addresses)
-                  </Label>
-                </div>
-                <div className="flex items-start gap-3 pt-2">
-                  <Checkbox id="consent" checked={consentChecked} onCheckedChange={(v) => setConsentChecked(!!v)} />
-                  <Label htmlFor="consent" className="text-sm leading-relaxed">
-                    I confirm this submission is made in good faith for documentation purposes. I understand HRPM may redact or reject submissions that do not meet verification standards. *
-                  </Label>
-                </div>
-              </>
+              <SubmitCaseStepPrivacy
+                visibility={visibility} setVisibility={setVisibility}
+                consentChecked={consentChecked} setConsentChecked={setConsentChecked}
+                autoRedact={autoRedact} setAutoRedact={setAutoRedact}
+                redactCNIC={redactCNIC} setRedactCNIC={setRedactCNIC}
+                redactPhone={redactPhone} setRedactPhone={setRedactPhone}
+                redactEmail={redactEmail} setRedactEmail={setRedactEmail}
+                faceBlur={faceBlur} setFaceBlur={setFaceBlur}
+                contactChannel={contactChannel} setContactChannel={setContactChannel}
+              />
             )}
-
             {step === 4 && (
-              <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">Review your submission before sending.</p>
-                <div className="grid gap-3">
-                  <div className="flex justify-between border-b border-border/30 pb-2">
-                    <span className="text-sm text-muted-foreground">Title</span>
-                    <span className="text-sm font-medium text-foreground">{title}</span>
-                  </div>
-                  <div className="flex justify-between border-b border-border/30 pb-2">
-                    <span className="text-sm text-muted-foreground">Type</span>
-                    <span className="text-sm font-medium text-foreground">{incidentType}</span>
-                  </div>
-                  {location && (
-                    <div className="flex justify-between border-b border-border/30 pb-2">
-                      <span className="text-sm text-muted-foreground">Location</span>
-                      <span className="text-sm font-medium text-foreground">{location}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between border-b border-border/30 pb-2">
-                    <span className="text-sm text-muted-foreground">Visibility</span>
-                    <Badge variant="outline" className="capitalize">{visibility}</Badge>
-                  </div>
-                  <div className="flex justify-between border-b border-border/30 pb-2">
-                    <span className="text-sm text-muted-foreground">Evidence files</span>
-                    <span className="text-sm font-medium text-foreground">{evidenceFiles.length}</span>
-                  </div>
-                </div>
-              </div>
+              <SubmitCaseStepReview
+                title={title}
+                incidentType={incidentType}
+                location={location}
+                visibility={visibility}
+                evidenceFileCount={evidenceFiles.length}
+                dateRange={dateRange}
+                summary={summary}
+                peopleText={peopleText}
+              />
             )}
           </CardContent>
         </Card>

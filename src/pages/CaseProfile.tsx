@@ -482,8 +482,14 @@ const CaseProfile = () => {
                 )}
               </div>
 
-              {/* Actions: RSS + Export PDF */}
+              {/* Actions: Add Evidence + RSS + Export PDF */}
               <div className="mt-4 flex flex-wrap items-center gap-2">
+                <Link to={`/cases/${caseId}/add-evidence`}>
+                  <Button variant="default" size="sm" className="gap-2">
+                    <Upload className="w-4 h-4" />
+                    Add Evidence
+                  </Button>
+                </Link>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
