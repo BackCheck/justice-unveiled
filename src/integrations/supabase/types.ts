@@ -307,6 +307,57 @@ export type Database = {
           },
         ]
       }
+      case_entity_roles: {
+        Row: {
+          case_id: string
+          confidence: number
+          created_at: string
+          end_date: string | null
+          entity_id: string
+          id: string
+          role: string
+          role_notes: string | null
+          start_date: string | null
+        }
+        Insert: {
+          case_id: string
+          confidence?: number
+          created_at?: string
+          end_date?: string | null
+          entity_id: string
+          id?: string
+          role: string
+          role_notes?: string | null
+          start_date?: string | null
+        }
+        Update: {
+          case_id?: string
+          confidence?: number
+          created_at?: string
+          end_date?: string | null
+          entity_id?: string
+          id?: string
+          role?: string
+          role_notes?: string | null
+          start_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_entity_roles_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "case_entity_roles_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       case_law_precedents: {
         Row: {
           case_name: string
@@ -872,6 +923,42 @@ export type Database = {
           },
         ]
       }
+      entities: {
+        Row: {
+          confidence: number
+          created_at: string
+          entity_type: string
+          id: string
+          normalized_name: string
+          primary_name: string
+          status: string
+          updated_at: string
+          verified: boolean
+        }
+        Insert: {
+          confidence?: number
+          created_at?: string
+          entity_type: string
+          id?: string
+          normalized_name: string
+          primary_name: string
+          status?: string
+          updated_at?: string
+          verified?: boolean
+        }
+        Update: {
+          confidence?: number
+          created_at?: string
+          entity_type?: string
+          id?: string
+          normalized_name?: string
+          primary_name?: string
+          status?: string
+          updated_at?: string
+          verified?: boolean
+        }
+        Relationships: []
+      }
       entity_aliases: {
         Row: {
           alias_type: string
@@ -904,6 +991,86 @@ export type Database = {
           verified?: boolean | null
         }
         Relationships: []
+      }
+      entity_aliases_v2: {
+        Row: {
+          alias_name: string
+          alias_normalized: string
+          created_at: string
+          entity_id: string
+          id: string
+          source: string
+        }
+        Insert: {
+          alias_name: string
+          alias_normalized: string
+          created_at?: string
+          entity_id: string
+          id?: string
+          source?: string
+        }
+        Update: {
+          alias_name?: string
+          alias_normalized?: string
+          created_at?: string
+          entity_id?: string
+          id?: string
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entity_aliases_v2_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      entity_merge_history: {
+        Row: {
+          id: string
+          loser_entity_id: string
+          merged_at: string
+          merged_by: string | null
+          reason: string | null
+          snapshot: Json | null
+          winner_entity_id: string
+        }
+        Insert: {
+          id?: string
+          loser_entity_id: string
+          merged_at?: string
+          merged_by?: string | null
+          reason?: string | null
+          snapshot?: Json | null
+          winner_entity_id: string
+        }
+        Update: {
+          id?: string
+          loser_entity_id?: string
+          merged_at?: string
+          merged_by?: string | null
+          reason?: string | null
+          snapshot?: Json | null
+          winner_entity_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entity_merge_history_loser_entity_id_fkey"
+            columns: ["loser_entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entity_merge_history_winner_entity_id_fkey"
+            columns: ["winner_entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       entity_relationships: {
         Row: {
@@ -960,6 +1127,61 @@ export type Database = {
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      entity_review_queue: {
+        Row: {
+          candidate_entity_id: string
+          case_id: string
+          created_at: string
+          id: string
+          possible_duplicate_of: string
+          reason: string
+          score: number
+          status: string
+        }
+        Insert: {
+          candidate_entity_id: string
+          case_id: string
+          created_at?: string
+          id?: string
+          possible_duplicate_of: string
+          reason: string
+          score: number
+          status?: string
+        }
+        Update: {
+          candidate_entity_id?: string
+          case_id?: string
+          created_at?: string
+          id?: string
+          possible_duplicate_of?: string
+          reason?: string
+          score?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entity_review_queue_candidate_entity_id_fkey"
+            columns: ["candidate_entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entity_review_queue_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entity_review_queue_possible_duplicate_of_fkey"
+            columns: ["possible_duplicate_of"]
+            isOneToOne: false
+            referencedRelation: "entities"
             referencedColumns: ["id"]
           },
         ]
@@ -2435,6 +2657,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      find_similar_entities: {
+        Args: {
+          p_entity_type: string
+          p_normalized_name: string
+          p_threshold?: number
+        }
+        Returns: {
+          entity_id: string
+          normalized_name: string
+          primary_name: string
+          similarity_score: number
+        }[]
+      }
       get_analysis_history_stats: {
         Args: { p_case_id?: string }
         Returns: {
@@ -2467,6 +2702,8 @@ export type Database = {
         Args: { _case_id: string }
         Returns: number
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       app_role: "admin" | "editor" | "analyst"

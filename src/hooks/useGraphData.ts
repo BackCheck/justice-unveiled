@@ -79,6 +79,10 @@ export const useGraphData = () => {
   const { data: relationships, isLoading: relationshipsLoading } = useEntityRelationships();
 
   const graphData = useMemo(() => {
+    const MAX_ENTITY_NODES = 150;
+    const MAX_EVENT_NODES = 12;
+    const MAX_DISCREPANCY_NODES = 20;
+    
     const nodes: GraphNode[] = [];
     const links: GraphLink[] = [];
     const connectionCount: Record<string, number> = {};
@@ -89,8 +93,15 @@ export const useGraphData = () => {
       connectionCount[conn.target] = (connectionCount[conn.target] || 0) + 1;
     });
 
-    // Add entities as nodes
-    entities.forEach(entity => {
+    // Sort entities by connection count (most connected first) and cap
+    const sortedEntities = [...entities].sort((a, b) => 
+      (connectionCount[b.id] || 0) - (connectionCount[a.id] || 0)
+    ).slice(0, MAX_ENTITY_NODES);
+    
+    const includedEntityIds = new Set(sortedEntities.map(e => e.id));
+
+    // Add entities as nodes (capped)
+    sortedEntities.forEach(entity => {
       const nodeType: NodeType = entity.type === "person" ? "person" : 
                                   entity.type === "agency" ? "organization" : 
                                   entity.type === "organization" ? "organization" : "person";
@@ -108,35 +119,35 @@ export const useGraphData = () => {
       });
     });
 
-    // Add HR violations as nodes
+    // Add HR violations as nodes (only link to included entities)
     HR_VIOLATIONS.forEach(violation => {
       const violationId = `violation-${violation.id}`;
+      const relevantEntities = violation.relatedEntities.filter(eid => includedEntityIds.has(eid));
+      if (relevantEntities.length === 0) return; // Skip orphaned violations
+      
       nodes.push({
         id: violationId,
         name: violation.name,
         type: "violation",
         riskLevel: violation.severity,
         description: violation.article,
-        connections: violation.relatedEntities.length,
+        connections: relevantEntities.length,
         metadata: { article: violation.article, framework: violation.id.split("-")[0].toUpperCase() }
       });
 
-      // Create links to related entities
-      violation.relatedEntities.forEach(entityId => {
-        if (entities.find(e => e.id === entityId)) {
-          links.push({
-            source: violationId,
-            target: entityId,
-            type: "violation",
-            strength: 4,
-            isInferred: false
-          });
-        }
+      relevantEntities.forEach(entityId => {
+        links.push({
+          source: violationId,
+          target: entityId,
+          type: "violation",
+          strength: 4,
+          isInferred: false
+        });
       });
     });
 
-    // Add discrepancies as nodes
-    (discrepancies || []).forEach(disc => {
+    // Add discrepancies as nodes (capped)
+    (discrepancies || []).slice(0, MAX_DISCREPANCY_NODES).forEach(disc => {
       const discId = `discrepancy-${disc.id}`;
       nodes.push({
         id: discId,
@@ -153,9 +164,9 @@ export const useGraphData = () => {
       });
     });
 
-    // Add key events as nodes (only significant ones)
+    // Add key events as nodes (capped to MAX_EVENT_NODES)
     const allEvents = [...timelineData, ...(extractedEvents || [])];
-    const significantEvents = allEvents.slice(0, 12); // Limit to key events
+    const significantEvents = allEvents.slice(0, MAX_EVENT_NODES);
     
     significantEvents.forEach((event, idx) => {
       const eventId = `event-${idx}`;
@@ -183,9 +194,9 @@ export const useGraphData = () => {
         }
       });
 
-      // Link events to mentioned individuals
+      // Link events to mentioned individuals (only included entities)
       const individuals = event.individuals.toLowerCase();
-      entities.forEach(entity => {
+      sortedEntities.forEach(entity => {
         const firstName = entity.name.split(' ')[0].toLowerCase();
         const lastName = entity.name.split(' ').pop()?.toLowerCase() || '';
         
@@ -204,8 +215,9 @@ export const useGraphData = () => {
       });
     });
 
-    // Add entity connections
+    // Add entity connections (only between included entities)
     connections.forEach(conn => {
+      if (!includedEntityIds.has(conn.source) || !includedEntityIds.has(conn.target)) return;
       links.push({
         source: conn.source,
         target: conn.target,

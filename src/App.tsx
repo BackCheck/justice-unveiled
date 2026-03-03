@@ -46,6 +46,7 @@ const Changelog = lazy(() => import("./pages/Changelog"));
 const AnalysisHistory = lazy(() => import("./pages/AnalysisHistory"));
 const OsintToolkit = lazy(() => import("./pages/OsintToolkit"));
 const Landing = lazy(() => import("./pages/Landing"));
+const EntityReview = lazy(() => import("./pages/EntityReview"));
 const ReportCenter = lazy(() => import("./pages/ReportCenter"));
 const Disclaimer = lazy(() => import("./pages/Disclaimer"));
 const Terms = lazy(() => import("./pages/Terms"));
@@ -109,6 +110,7 @@ const App = () => (
             <Route path="/analysis-history" element={<AnalysisHistory />} />
             <Route path="/osint-toolkit" element={<OsintToolkit />} />
             <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/admin/entity-review" element={<EntityReview />} />
             <Route path="/events/:eventId" element={<EventDetail />} />
             <Route path="/violations/:type/:violationId" element={<ViolationDetail />} />
             <Route path="/watchlist" element={<Watchlist />} />
