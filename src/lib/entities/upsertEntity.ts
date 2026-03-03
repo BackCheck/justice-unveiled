@@ -6,6 +6,20 @@
 import { supabase } from "@/integrations/supabase/client";
 import { normalizeName } from "@/lib/normalizeName";
 
+/** Token-set equality check to prevent merging distinct names with high trigram similarity */
+function tokensMatch(a: string, b: string): boolean {
+  const tokensA = a.split(" ").filter(Boolean).sort();
+  const tokensB = b.split(" ").filter(Boolean).sort();
+  return tokensA.length === tokensB.length && tokensA.every((t, i) => tokensB[i] === t);
+}
+
+/** Deterministic canonical key: sha256(normalized_name::entity_type) */
+async function computeCanonicalKey(normalized: string, entityType: string): Promise<string> {
+  const data = new TextEncoder().encode(`${normalized}::${entityType}`);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
 interface UpsertEntityInput {
   case_id: string;
   name: string;
@@ -67,8 +81,9 @@ export async function upsertEntity(input: UpsertEntityInput): Promise<UpsertEnti
   if (fuzzyMatches && fuzzyMatches.length > 0) {
     const bestMatch = fuzzyMatches[0];
 
-    // If score >= 0.98 and existing is verified, treat as match
-    if (bestMatch.similarity_score >= 0.98) {
+    // If score >= 0.98 AND token sets match exactly, treat as match
+    // This prevents "Saqib Mumtaz" from auto-merging with "Saqib Mehmood"
+    if (bestMatch.similarity_score >= 0.98 && tokensMatch(normalized, bestMatch.normalized_name)) {
       await ensureCaseRole(input.case_id, bestMatch.entity_id, input.role);
       return { entity_id: bestMatch.entity_id, is_new: false, match_type: "fuzzy", review_queued: false };
     }
@@ -97,6 +112,8 @@ export async function upsertEntity(input: UpsertEntityInput): Promise<UpsertEnti
 }
 
 async function createCanonicalEntity(input: UpsertEntityInput, normalized: string): Promise<string> {
+  const canonicalKey = await computeCanonicalKey(normalized, input.entity_type);
+
   const { data, error } = await supabase
     .from("entities")
     .insert({
@@ -106,6 +123,7 @@ async function createCanonicalEntity(input: UpsertEntityInput, normalized: strin
       confidence: input.confidence ?? 0.5,
       status: "ACTIVE",
       verified: false,
+      canonical_key: canonicalKey,
     })
     .select("id")
     .single();
@@ -144,13 +162,21 @@ async function ensureCaseRole(caseId: string, entityId: string, role?: string): 
   }
 }
 
+/**
+ * Neutral role mapping — uses structural legal labels only.
+ * Never maps from adjectives (corrupt, threat) to prevent bias.
+ * Courts require neutral categorization for admissibility.
+ */
 function mapRole(role?: string): string {
   if (!role) return "UNKNOWN";
-  const lower = role.toLowerCase();
-  if (lower.includes("victim") || lower.includes("protagonist") || lower.includes("acquit")) return "PROTAGONIST";
-  if (lower.includes("accus") || lower.includes("antagonist") || lower.includes("corrupt") || lower.includes("threat")) return "ANTAGONIST";
-  if (lower.includes("witness") || lower.includes("pw-") || lower.includes("dw-")) return "WITNESS";
-  if (lower.includes("judge") || lower.includes("court") || lower.includes("official")) return "OFFICIAL";
-  if (lower.includes("counsel") || lower.includes("lawyer") || lower.includes("advocate")) return "COUNSEL";
+  const lower = role.toLowerCase().trim();
+
+  // Structural labels only — no adjectives, no tone inference
+  if (lower.includes("complainant") || lower.includes("victim") || lower.includes("petitioner") || lower.includes("protagonist")) return "PROTAGONIST";
+  if (lower.includes("accused") || lower.includes("respondent") || lower.includes("suspect") || lower.includes("antagonist")) return "ANTAGONIST";
+  if (lower.includes("witness") || lower.includes("pw-") || lower.includes("dw-") || lower.includes("deponent")) return "WITNESS";
+  if (lower.includes("judge") || lower.includes("magistrate") || lower.includes("registrar") || lower.includes("official")) return "OFFICIAL";
+  if (lower.includes("counsel") || lower.includes("lawyer") || lower.includes("advocate") || lower.includes("attorney")) return "COUNSEL";
+  if (lower.includes("victim")) return "VICTIM";
   return "UNKNOWN";
 }
