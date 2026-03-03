@@ -102,6 +102,21 @@ const SubmitCase = () => {
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
+      // Rate limit check
+      const { data: allowed } = await supabase.rpc("check_submission_rate_limit", {
+        p_user_id: user.id,
+        p_max_per_day: 10,
+      });
+      if (allowed === false) {
+        toast({
+          title: "Rate limit reached",
+          description: "You can submit up to 10 cases per day. Please try again tomorrow.",
+          variant: "destructive",
+        });
+        setSubmitting(false);
+        return;
+      }
+
       const caseNumber = `CF-${Date.now().toString(36).toUpperCase()}`;
 
       // Create case stub with "under_review" status

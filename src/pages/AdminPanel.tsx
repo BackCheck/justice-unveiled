@@ -44,7 +44,8 @@ import {
   Settings,
   Video,
   ScrollText,
-  Newspaper
+  Newspaper,
+  ClipboardList
 } from "lucide-react";
 import { useUserRole, AppRole } from "@/hooks/useUserRole";
 import { useAllUserRoles, useUpdateUserRole } from "@/hooks/useAdminRoles";
@@ -54,6 +55,7 @@ import { format } from "date-fns";
 import { AuditLogViewer } from "@/components/admin/AuditLogViewer";
 import { TutorialVideoUploader } from "@/components/admin/TutorialVideoUploader";
 import { BlogPostManager } from "@/components/admin/BlogPostManager";
+import { ModerationQueue } from "@/components/admin/ModerationQueue";
 
 const roleConfig: Record<AppRole, { label: string; icon: typeof Crown; color: string; description: string }> = {
   admin: {
@@ -176,8 +178,12 @@ const AdminPanel = () => {
 
       {/* Content */}
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
-        <Tabs defaultValue="users" className="w-full">
-          <TabsList className="grid w-full max-w-2xl grid-cols-4">
+        <Tabs defaultValue="moderation" className="w-full">
+          <TabsList className="grid w-full max-w-3xl grid-cols-5">
+            <TabsTrigger value="moderation" className="flex items-center gap-2">
+              <ClipboardList className="w-4 h-4" />
+              Moderation
+            </TabsTrigger>
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
               Users
@@ -195,6 +201,10 @@ const AdminPanel = () => {
               Audit
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="moderation" className="mt-6">
+            <ModerationQueue />
+          </TabsContent>
 
           <TabsContent value="users" className="mt-6 space-y-6">
             {/* Role Legend */}
