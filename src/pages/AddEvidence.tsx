@@ -104,9 +104,32 @@ const AddEvidence = () => {
 
   const handleSubmit = async () => {
     setSubmitting(true);
-    try {
-      const uploadedPaths: string[] = [];
+    let submissionId: string | null = null;
 
+    try {
+      // 1. Create submission record FIRST
+      const { data: subData, error: subError } = await supabase.from("submissions" as any).insert({
+        submission_type: "evidence",
+        status: "pending_review",
+        upload_state: "in_progress",
+        case_id: caseId,
+        submitted_by: user.id,
+        payload: {
+          evidenceLabel,
+          description,
+          sourceType,
+          evidenceDate,
+          urls: urls.split("\n").filter(Boolean),
+          fileCount: files.length,
+          proposedEvent: proposeEvent ? { description: eventDescription, date: eventDate } : null,
+        },
+      } as any).select().single();
+
+      if (subError) throw subError;
+      submissionId = (subData as any)?.id;
+
+      // 2. Upload files
+      const uploadedPaths: string[] = [];
       if (files.length > 0) {
         setUploadProgress({ current: 0, total: files.length, fileName: "" });
         for (let i = 0; i < files.length; i++) {
@@ -115,31 +138,30 @@ const AddEvidence = () => {
           const path = `${caseId}/${Date.now()}-${file.name}`;
           const { error: uploadErr } = await supabase.storage.from("evidence").upload(path, file);
 
-          if (!uploadErr) {
-            const { data: urlData } = supabase.storage.from("evidence").getPublicUrl(path);
-            await supabase.from("evidence_uploads").insert({
-              case_id: caseId,
-              file_name: file.name,
-              file_type: file.type,
-              file_size: file.size,
-              storage_path: path,
-              public_url: urlData.publicUrl,
-              category: evidenceLabel || "general",
-              uploaded_by: user.id,
-              description,
-            });
-            uploadedPaths.push(path);
+          if (uploadErr) {
+            throw new Error(`Failed to upload ${file.name}: ${uploadErr.message}`);
           }
+
+          const { data: urlData } = supabase.storage.from("evidence").getPublicUrl(path);
+          await supabase.from("evidence_uploads").insert({
+            case_id: caseId,
+            file_name: file.name,
+            file_type: file.type,
+            file_size: file.size,
+            storage_path: path,
+            public_url: urlData.publicUrl,
+            category: evidenceLabel || "general",
+            uploaded_by: user.id,
+            description,
+          });
+          uploadedPaths.push(path);
         }
         setUploadProgress({ current: 0, total: 0, fileName: "" });
       }
 
-      // Create submission record
-      await supabase.from("submissions" as any).insert({
-        submission_type: "evidence",
-        status: "pending_review",
-        case_id: caseId,
-        submitted_by: user.id,
+      // 3. Mark complete
+      await supabase.from("submissions" as any).update({
+        upload_state: "complete",
         payload: {
           evidenceLabel,
           description,
@@ -150,7 +172,7 @@ const AddEvidence = () => {
           uploadedPaths,
           proposedEvent: proposeEvent ? { description: eventDescription, date: eventDate } : null,
         },
-      } as any);
+      } as any).eq("id", submissionId);
 
       toast({
         title: "Evidence submitted for review",
@@ -159,9 +181,17 @@ const AddEvidence = () => {
 
       navigate(`/cases/${caseId}`);
     } catch (err: any) {
+      if (submissionId) {
+        await supabase.from("submissions" as any).update({
+          status: "failed",
+          upload_state: "error",
+          error_message: err.message || "Upload failed",
+        } as any).eq("id", submissionId);
+      }
+
       toast({
         title: "Upload failed",
-        description: err.message || "Something went wrong.",
+        description: err.message || "Something went wrong. You can retry from the Upload Center.",
         variant: "destructive",
       });
     } finally {
@@ -179,7 +209,6 @@ const AddEvidence = () => {
         />
       )}
       <div className="max-w-3xl mx-auto px-4 py-10">
-        {/* Case context */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
           <Link to={`/cases/${caseId}`} className="hover:text-primary transition-colors flex items-center gap-1">
             <ArrowLeft className="w-4 h-4" /> {caseData.case_number}
@@ -187,7 +216,6 @@ const AddEvidence = () => {
           <span>/ Add Evidence</span>
         </div>
 
-        {/* Progress */}
         <div className="flex items-center gap-1 mb-8 overflow-x-auto pb-2">
           {STEPS.map((s, i) => {
             const Icon = s.icon;
@@ -263,12 +291,10 @@ const AddEvidence = () => {
             {step === 1 && (
               <>
                 <FileUploadField files={files} onFilesChange={setFiles} />
-
                 <div className="space-y-2">
                   <Label htmlFor="urls">Or Add URLs (one per line)</Label>
                   <Textarea id="urls" value={urls} onChange={(e) => setUrls(e.target.value)} placeholder="https://example.com/article" rows={3} />
                 </div>
-
                 <div className="border-t border-border/30 pt-4 space-y-3">
                   <div className="flex items-center gap-3">
                     <Checkbox id="propose-event" checked={proposeEvent} onCheckedChange={(v) => setProposeEvent(!!v)} />

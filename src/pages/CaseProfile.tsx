@@ -44,7 +44,7 @@ import { CaseComplianceTab } from "@/components/compliance/CaseComplianceTab";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { applyRedaction, RedactionFlags } from "@/lib/redaction";
+import { redactText, RedactionFlags } from "@/lib/redaction";
 
 const severityColors: Record<string, string> = {
   critical: "bg-red-500/20 text-red-700 dark:text-red-300 border-red-500/30",
@@ -89,6 +89,7 @@ const CaseProfile = () => {
         .select("payload")
         .eq("case_id", caseId)
         .eq("submission_type", "case")
+        .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
       const payload = (data as any)?.payload;
@@ -97,11 +98,7 @@ const CaseProfile = () => {
     enabled: !!caseId,
   });
 
-  const redact = (text: string | null | undefined) => {
-    if (!text) return text;
-    if (!redactionFlags) return text;
-    return applyRedaction(text, redactionFlags);
-  };
+  const redact = (text: string | null | undefined) => redactText(text, redactionFlags);
 
   const handleExportPDF = async () => {
     if (!caseData) return;
@@ -480,7 +477,7 @@ const CaseProfile = () => {
                 </Badge>
               </div>
               <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-                {caseData.title}
+                {redact(caseData.title)}
               </h1>
               <p className="text-muted-foreground max-w-2xl">
                 {redact(caseData.description)}
