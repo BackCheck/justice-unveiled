@@ -53,7 +53,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // ── Navigation groups ──────────────────────────────────────────────
 
@@ -97,6 +97,12 @@ export function AppSidebar() {
   const { role, isAdmin } = useUserRole();
   const collapsed = state === "collapsed";
   const [learnOpen, setLearnOpen] = useState(false);
+
+  // Auto-open Learn group when navigating to a Learn route
+  const isOnLearnRoute = learnItems.some((item) => isActive(item.path));
+  useEffect(() => {
+    if (isOnLearnRoute && !learnOpen) setLearnOpen(true);
+  }, [isOnLearnRoute]);
 
   const isActive = (path: string) => {
     if (path === "/") return location.pathname === "/";
