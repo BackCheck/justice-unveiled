@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CaseFilterProvider } from "@/contexts/CaseFilterContext";
 import { CookieConsent } from "@/components/CookieConsent";
@@ -72,6 +72,8 @@ const PageLoader = () => (
   </div>
 );
 
+
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -96,7 +98,7 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/international" element={<InternationalAnalysis />} />
             <Route path="/analyze" element={<AnalyzeHub />} />
-            <Route path="/analyze/ai" element={<Analyze />} />
+            <Route path="/analyze/ai" element={<Navigate to="/analyze?tool=ai" replace />} />
             <Route path="/investigations" element={<Investigations />} />
             <Route path="/reconstruction" element={<Reconstruction />} />
             <Route path="/correlation" element={<Correlation />} />
