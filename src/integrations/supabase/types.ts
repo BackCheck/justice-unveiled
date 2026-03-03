@@ -2544,6 +2544,7 @@ export type Database = {
           case_id: string | null
           contact_info: string | null
           created_at: string
+          error_message: string | null
           id: string
           payload: Json
           reviewer_notes: string | null
@@ -2553,11 +2554,13 @@ export type Database = {
           submitted_by: string | null
           submitter_reply: string | null
           updated_at: string
+          upload_state: string | null
         }
         Insert: {
           case_id?: string | null
           contact_info?: string | null
           created_at?: string
+          error_message?: string | null
           id?: string
           payload?: Json
           reviewer_notes?: string | null
@@ -2567,11 +2570,13 @@ export type Database = {
           submitted_by?: string | null
           submitter_reply?: string | null
           updated_at?: string
+          upload_state?: string | null
         }
         Update: {
           case_id?: string | null
           contact_info?: string | null
           created_at?: string
+          error_message?: string | null
           id?: string
           payload?: Json
           reviewer_notes?: string | null
@@ -2581,6 +2586,7 @@ export type Database = {
           submitted_by?: string | null
           submitter_reply?: string | null
           updated_at?: string
+          upload_state?: string | null
         }
         Relationships: [
           {

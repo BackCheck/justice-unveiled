@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-
 /**
  * PII redaction patterns for Pakistan-specific data.
  * Applied when submission has redaction flags enabled.
@@ -23,11 +21,10 @@ export function applyRedaction(text: string, flags: RedactionFlags): string {
 }
 
 /**
- * Hook that returns a redact function based on case submission preferences.
+ * Applies redaction to any nullable string field.
+ * Returns original value if text is null/undefined or no flags set.
  */
-export function useRedaction(flags: RedactionFlags | null | undefined) {
-  return useMemo(() => {
-    if (!flags) return (text: string) => text;
-    return (text: string) => applyRedaction(text, flags);
-  }, [flags]);
+export function redactText(text: string | null | undefined, flags: RedactionFlags | null | undefined): string | null | undefined {
+  if (!text || !flags) return text;
+  return applyRedaction(text, flags);
 }

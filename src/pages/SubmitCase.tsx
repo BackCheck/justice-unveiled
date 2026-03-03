@@ -97,6 +97,9 @@ const SubmitCase = () => {
 
   const handleSubmit = async () => {
     setSubmitting(true);
+    let submissionId: string | null = null;
+    let caseId: string | null = null;
+
     try {
       // Rate limit check
       const { data: allowed } = await supabase.rpc("check_submission_rate_limit", {
@@ -115,55 +118,11 @@ const SubmitCase = () => {
 
       const caseNumber = `CF-${Date.now().toString(36).toUpperCase()}`;
 
-      // Create case stub with "under_review" status
-      const { data: caseData, error: caseError } = await supabase.from("cases").insert({
-        title,
-        case_number: caseNumber,
-        description: summary,
-        location,
-        category: incidentType,
-        status: "under_review",
-        severity: "medium",
-      }).select().single();
-
-      if (caseError) throw caseError;
-
-      // Upload evidence files if any
-      if (evidenceFiles.length > 0 && caseData) {
-        setUploadProgress({ current: 0, total: evidenceFiles.length, fileName: "" });
-        for (let i = 0; i < evidenceFiles.length; i++) {
-          const file = evidenceFiles[i];
-          setUploadProgress({ current: i + 1, total: evidenceFiles.length, fileName: file.name });
-          const path = `${caseData.id}/${Date.now()}-${file.name}`;
-          const { error: uploadErr } = await supabase.storage
-            .from("evidence")
-            .upload(path, file);
-
-          if (!uploadErr) {
-            const { data: urlData } = supabase.storage
-              .from("evidence")
-              .getPublicUrl(path);
-
-            await supabase.from("evidence_uploads").insert({
-              case_id: caseData.id,
-              file_name: file.name,
-              file_type: file.type,
-              file_size: file.size,
-              storage_path: path,
-              public_url: urlData.publicUrl,
-              category: evidenceLabel || "general",
-              uploaded_by: user.id,
-            });
-          }
-        }
-        setUploadProgress({ current: 0, total: 0, fileName: "" });
-      }
-
-      // Create submission record for moderation tracking
-      await supabase.from("submissions" as any).insert({
+      // 1. Create submission record FIRST with upload_state = "in_progress"
+      const { data: subData, error: subError } = await supabase.from("submissions" as any).insert({
         submission_type: "case",
         status: "pending_review",
-        case_id: caseData.id,
+        upload_state: "in_progress",
         submitted_by: user.id,
         contact_info: contactChannel || null,
         payload: {
@@ -180,7 +139,64 @@ const SubmitCase = () => {
           redaction: { cnic: redactCNIC, phone: redactPhone, email: redactEmail, faceBlur },
           evidenceFileCount: evidenceFiles.length,
         },
-      } as any);
+      } as any).select().single();
+
+      if (subError) throw subError;
+      submissionId = (subData as any)?.id;
+
+      // 2. Create case stub
+      const { data: caseData, error: caseError } = await supabase.from("cases").insert({
+        title,
+        case_number: caseNumber,
+        description: summary,
+        location,
+        category: incidentType,
+        status: "under_review",
+        severity: "medium",
+      }).select().single();
+
+      if (caseError) throw caseError;
+      caseId = caseData.id;
+
+      // Link case to submission
+      await supabase.from("submissions" as any).update({ case_id: caseId } as any).eq("id", submissionId);
+
+      // 3. Upload evidence files
+      if (evidenceFiles.length > 0) {
+        setUploadProgress({ current: 0, total: evidenceFiles.length, fileName: "" });
+        for (let i = 0; i < evidenceFiles.length; i++) {
+          const file = evidenceFiles[i];
+          setUploadProgress({ current: i + 1, total: evidenceFiles.length, fileName: file.name });
+          const path = `${caseData.id}/${Date.now()}-${file.name}`;
+          const { error: uploadErr } = await supabase.storage
+            .from("evidence")
+            .upload(path, file);
+
+          if (uploadErr) {
+            throw new Error(`Failed to upload ${file.name}: ${uploadErr.message}`);
+          }
+
+          // Verify upload succeeded before inserting evidence record
+          const { data: urlData } = supabase.storage
+            .from("evidence")
+            .getPublicUrl(path);
+
+          await supabase.from("evidence_uploads").insert({
+            case_id: caseData.id,
+            file_name: file.name,
+            file_type: file.type,
+            file_size: file.size,
+            storage_path: path,
+            public_url: urlData.publicUrl,
+            category: evidenceLabel || "general",
+            uploaded_by: user.id,
+          });
+        }
+        setUploadProgress({ current: 0, total: 0, fileName: "" });
+      }
+
+      // 4. Mark upload as complete
+      await supabase.from("submissions" as any).update({ upload_state: "complete" } as any).eq("id", submissionId);
 
       toast({
         title: "Case submitted for review",
@@ -189,9 +205,18 @@ const SubmitCase = () => {
 
       navigate(`/cases/${caseData.id}`);
     } catch (err: any) {
+      // Mark submission as failed if it was created
+      if (submissionId) {
+        await supabase.from("submissions" as any).update({
+          status: "failed",
+          upload_state: "error",
+          error_message: err.message || "Upload failed",
+        } as any).eq("id", submissionId);
+      }
+
       toast({
         title: "Submission failed",
-        description: err.message || "Something went wrong.",
+        description: err.message || "Something went wrong. You can retry from the Upload Center.",
         variant: "destructive",
       });
     } finally {

@@ -9,13 +9,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
-import { FileText, Upload, Clock, CheckCircle2, XCircle, HelpCircle, Send } from "lucide-react";
+import { FileText, Upload, Clock, CheckCircle2, XCircle, HelpCircle, Send, AlertTriangle, RotateCcw } from "lucide-react";
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
   pending_review: { label: "Pending Review", color: "bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/30", icon: Clock },
   needs_info: { label: "Needs Info", color: "bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/30", icon: HelpCircle },
   approved: { label: "Approved", color: "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/30", icon: CheckCircle2 },
   rejected: { label: "Rejected", color: "bg-red-500/20 text-red-700 dark:text-red-300 border-red-500/30", icon: XCircle },
+  failed: { label: "Failed", color: "bg-gray-500/20 text-gray-700 dark:text-gray-300 border-gray-500/30", icon: AlertTriangle },
 };
 
 export const MySubmissionsList = () => {
@@ -27,20 +28,19 @@ export const MySubmissionsList = () => {
   const [replyText, setReplyText] = useState("");
   const [sending, setSending] = useState(false);
 
-  useEffect(() => {
+  const fetchSubmissions = async () => {
     if (!user) return;
-    const fetchSubmissions = async () => {
-      setLoading(true);
-      const { data } = await supabase
-        .from("submissions" as any)
-        .select("*")
-        .eq("submitted_by", user.id)
-        .order("created_at", { ascending: false });
-      setSubmissions((data as any[]) || []);
-      setLoading(false);
-    };
-    fetchSubmissions();
-  }, [user]);
+    setLoading(true);
+    const { data } = await supabase
+      .from("submissions" as any)
+      .select("*")
+      .eq("submitted_by", user.id)
+      .order("created_at", { ascending: false });
+    setSubmissions((data as any[]) || []);
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchSubmissions(); }, [user]);
 
   const handleReply = async (submissionId: string) => {
     if (!replyText.trim()) return;
@@ -56,15 +56,20 @@ export const MySubmissionsList = () => {
       toast({ title: "Reply sent" });
       setReplyingTo(null);
       setReplyText("");
-      // Refresh
-      const { data } = await supabase
-        .from("submissions" as any)
-        .select("*")
-        .eq("submitted_by", user!.id)
-        .order("created_at", { ascending: false });
-      setSubmissions((data as any[]) || []);
+      fetchSubmissions();
     }
     setSending(false);
+  };
+
+  const handleRetryUpload = async (sub: any) => {
+    // Reset failed submission to pending so user can resubmit
+    await supabase.from("submissions" as any).update({
+      status: "pending_review",
+      upload_state: "complete",
+      error_message: null,
+    } as any).eq("id", sub.id);
+    toast({ title: "Submission reset to pending review" });
+    fetchSubmissions();
   };
 
   if (!user) return null;
@@ -105,6 +110,7 @@ export const MySubmissionsList = () => {
           const config = STATUS_CONFIG[sub.status] || STATUS_CONFIG.pending_review;
           const StatusIcon = config.icon;
           const payload = sub.payload || {};
+          const isFailed = sub.status === "failed";
 
           return (
             <div key={sub.id} className="border border-border/30 rounded-lg p-4 space-y-2">
@@ -134,6 +140,17 @@ export const MySubmissionsList = () => {
                 )}
               </div>
 
+              {/* Failed upload - resume */}
+              {isFailed && (
+                <div className="bg-destructive/10 border border-destructive/30 rounded-md p-3 mt-2">
+                  <p className="text-xs font-semibold text-destructive mb-1">Upload Failed</p>
+                  {sub.error_message && <p className="text-sm text-destructive mb-2">{sub.error_message}</p>}
+                  <Button size="sm" variant="outline" onClick={() => handleRetryUpload(sub)} className="gap-1">
+                    <RotateCcw className="w-3 h-3" /> Resume Upload
+                  </Button>
+                </div>
+              )}
+
               {/* Reviewer question for "needs_info" */}
               {sub.status === "needs_info" && sub.reviewer_question && (
                 <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-md p-3 mt-2">
@@ -142,25 +159,16 @@ export const MySubmissionsList = () => {
 
                   {replyingTo === sub.id ? (
                     <div className="mt-3 space-y-2">
-                      <Textarea
-                        value={replyText}
-                        onChange={(e) => setReplyText(e.target.value)}
-                        placeholder="Type your reply…"
-                        rows={3}
-                      />
+                      <Textarea value={replyText} onChange={(e) => setReplyText(e.target.value)} placeholder="Type your reply…" rows={3} />
                       <div className="flex gap-2">
                         <Button size="sm" onClick={() => handleReply(sub.id)} disabled={sending} className="gap-1">
                           <Send className="w-3 h-3" /> {sending ? "Sending…" : "Send Reply"}
                         </Button>
-                        <Button size="sm" variant="ghost" onClick={() => { setReplyingTo(null); setReplyText(""); }}>
-                          Cancel
-                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => { setReplyingTo(null); setReplyText(""); }}>Cancel</Button>
                       </div>
                     </div>
                   ) : (
-                    <Button size="sm" variant="outline" className="mt-2" onClick={() => setReplyingTo(sub.id)}>
-                      Reply
-                    </Button>
+                    <Button size="sm" variant="outline" className="mt-2" onClick={() => setReplyingTo(sub.id)}>Reply</Button>
                   )}
                 </div>
               )}

@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Globe, Mail, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { getSafeRedirect } from "@/lib/safeRedirect";
 
 const authSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -24,7 +25,7 @@ type AuthFormData = z.infer<typeof authSchema>;
 export default function Auth() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get("redirect") || "/";
+  const redirectTo = getSafeRedirect(searchParams.get("redirect"));
   const { user, isLoading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
