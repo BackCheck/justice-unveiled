@@ -24,9 +24,12 @@ import {
   Users,
   FileUp,
   Clock,
+  Heart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
+import { motion } from "framer-motion";
+import { Waves } from "@/components/ui/waves-background";
 import hrpmLogo from "@/assets/human-rights-logo.png";
 
 // ── How it works ──
