@@ -158,70 +158,130 @@ const HomePage = () => {
   return (
     <PlatformLayout>
       {/* ═══════════════ HERO ═══════════════ */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-primary/4 rounded-full blur-3xl" />
-          <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-primary/3 rounded-full blur-3xl" />
+      <section className="relative overflow-hidden min-h-[85vh] flex items-center">
+        {/* Interactive wave background */}
+        <Waves
+          strokeColor="hsl(199, 100%, 50%)"
+          backgroundColor="transparent"
+          className="z-0"
+        />
+
+        {/* Radial overlay for depth */}
+        <div className="absolute inset-0 pointer-events-none z-[1]">
+          <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/40 to-background/90" />
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/8 rounded-full blur-[120px]" />
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px]" />
         </div>
 
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-20 md:py-32 relative z-10">
-          <div className="flex items-center gap-3 mb-8">
-            <img src={hrpmLogo} alt="" className="w-11 h-11" aria-hidden />
-            <Badge
-              variant="outline"
-              className="text-xs font-medium tracking-wide border-primary/30 text-primary"
-            >
-              Open-Source · Non-Profit
-            </Badge>
-          </div>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-24 md:py-36 relative z-10 w-full">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="flex items-center gap-3 mb-8">
+              <img src={hrpmLogo} alt="" className="w-12 h-12 drop-shadow-lg" aria-hidden />
+              <Badge
+                variant="outline"
+                className="text-xs font-medium tracking-wide border-primary/40 text-primary bg-primary/5 backdrop-blur-sm"
+              >
+                Open-Source · Non-Profit
+              </Badge>
+            </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.08] max-w-3xl">
-            Document injustice.{" "}
-            <span className="text-primary">Build accountability.</span>
-          </h1>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-foreground leading-[1.05] max-w-4xl">
+              Documenting Truth,{" "}
+              <br className="hidden sm:block" />
+              <motion.span
+                className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-chart-2 to-primary bg-[length:200%_auto] animate-gradient-shift inline-block"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              >
+                Defending Rights
+              </motion.span>
+            </h1>
+          </motion.div>
 
-          <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
-            Open-source · Non-profit · Public-interest documentation + AI-assisted analysis.
-          </p>
+          <motion.p
+            className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.4 }}
+          >
+            We stand as witnesses to injustice, documenting human rights violations with precision
+            and compassion. Every story matters. Every voice deserves to be heard.
+          </motion.p>
 
-          <div className="mt-10 flex flex-wrap items-center gap-4">
-            <Button asChild size="lg" className="gap-2 text-base px-6 h-12">
+          <motion.div
+            className="mt-10 flex flex-wrap items-center gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.55 }}
+          >
+            <Button asChild size="lg" className="gap-2 text-base px-6 h-12 shadow-lg shadow-primary/20">
               <Link to="/submit-case">
                 <PlusCircle className="w-5 h-5" />
-                Submit a Case
+                Report a Violation
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="gap-2 text-base px-6 h-12">
+            <Button asChild variant="outline" size="lg" className="gap-2 text-base px-6 h-12 backdrop-blur-sm bg-background/50">
               <Link to="/cases">
-                <FolderSearch className="w-5 h-5" />
-                Explore Cases
+                <Heart className="w-5 h-5" />
+                Support Our Mission
               </Link>
             </Button>
-            <Button asChild variant="ghost" size="lg" className="gap-2 text-base">
-              <a href="#how-it-works">
-                How it Works
-                <ArrowRight className="w-4 h-4" />
-              </a>
-            </Button>
-          </div>
+          </motion.div>
+
+          {/* Feature pills */}
+          <motion.div
+            className="mt-14 flex flex-wrap items-center gap-6"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+          >
+            {[
+              { icon: Shield, label: "Protected Reporting", desc: "Secure, anonymous channels" },
+              { icon: Users, label: "Global Network", desc: "50+ countries worldwide" },
+              { icon: Heart, label: "Survivor Support", desc: "Comprehensive resources" },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border/30 bg-card/40 backdrop-blur-sm"
+              >
+                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <item.icon className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{item.label}</p>
+                  <p className="text-xs text-muted-foreground">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </motion.div>
 
           {/* Stats strip */}
           {stats && (
-            <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <motion.div
+              className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.85 }}
+            >
               {[
                 { label: "Documented Events", value: stats.totalEvents || 0 },
                 { label: "Entities Tracked", value: stats.totalEntities || 0 },
                 { label: "Evidence Files", value: stats.totalSources || 0 },
                 { label: "Legal Precedents", value: stats.totalPrecedents || 0 },
               ].map((s) => (
-                <div key={s.label} className="rounded-xl border border-border/40 bg-card/50 p-4 text-center">
+                <div key={s.label} className="rounded-xl border border-border/30 bg-card/40 backdrop-blur-sm p-4 text-center">
                   <p className="text-2xl md:text-3xl font-bold text-foreground">
                     {typeof s.value === "number" ? s.value.toLocaleString() : s.value}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
                 </div>
               ))}
-            </div>
+            </motion.div>
           )}
         </div>
       </section>
