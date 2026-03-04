@@ -411,6 +411,70 @@
     "newCase": "New Case",
     "viewAll": "View All Cases"
   },
+  "home": {
+    "hero": {
+      "badge": "Open-Source · Non-Profit",
+      "title1": "Documenting Truth,",
+      "title2": "Defending Rights",
+      "description": "We stand as witnesses to injustice, documenting human rights violations with precision and compassion. Every story matters. Every voice deserves to be heard.",
+      "reportViolation": "Report a Violation",
+      "supportMission": "Support Our Mission"
+    },
+    "featurePills": {
+      "protectedReporting": "Protected Reporting",
+      "protectedReportingDesc": "Secure, anonymous channels",
+      "globalNetwork": "Global Network",
+      "globalNetworkDesc": "50+ countries worldwide",
+      "survivorSupport": "Survivor Support",
+      "survivorSupportDesc": "Comprehensive resources"
+    },
+    "stats": {
+      "documentedEvents": "Documented Events",
+      "entitiesTracked": "Entities Tracked",
+      "evidenceFiles": "Evidence Files",
+      "legalPrecedents": "Legal Precedents"
+    },
+    "howItWorks": {
+      "title": "How HRPM Works",
+      "subtitle": "Three steps from submission to court-ready documentation.",
+      "step": "Step",
+      "step1Title": "Submit case or evidence",
+      "step1Desc": "Anyone can submit a new case with documents, media, and witness information — or add evidence to an existing investigation.",
+      "step2Title": "Verification & structuring",
+      "step2Desc": "Submissions are reviewed by moderators. AI extracts timeline events, entities, and legal references automatically.",
+      "step3Title": "Actionable outputs",
+      "step3Desc": "Generate court-ready report packs, evidence matrices, legal citations, and shareable public timelines."
+    },
+    "featuredCases": {
+      "title": "Featured Cases",
+      "subtitle": "Active investigations and documented case files.",
+      "viewAll": "View All",
+      "noCases": "No cases documented yet.",
+      "submitFirst": "Submit the first case"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "subtitle": "Latest signals across all documented cases.",
+      "newTimelineEvents": "New Timeline Events",
+      "newUploads": "New Uploads",
+      "entitiesExtracted": "Entities Extracted"
+    },
+    "trustSafety": {
+      "title": "Trust & Safety",
+      "subtitle": "Built for court-grade credibility. Every output is filtered for legal safety.",
+      "privacy": "Privacy by design",
+      "privacyDesc": "PII auto-redaction, consent controls, and tiered visibility (Public / Restricted / Private) for every submission.",
+      "doNoHarm": "Do-no-harm principle",
+      "doNoHarmDesc": "Safety gate blocks outputs that could endanger victims. Defamation risk detection on all AI-generated content.",
+      "verification": "Verification standards",
+      "verificationDesc": "Every case goes through moderation. AI confidence scores are surfaced, never hidden.",
+      "takedown": "Takedown policy",
+      "takedownDesc": "Content can be flagged, reviewed, and removed. We comply with legal takedown requests and protect whistleblowers.",
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy",
+      "disclaimer": "Disclaimer"
+    }
+  },
   "language": {
     "select": "Language",
     "en": "English",
