@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Printer } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { SocialShareButtons } from "@/components/sharing/SocialShareButtons";
+import { LinkedInShareMenu } from "@/components/sharing/LinkedInShareMenu";
 import { WatchlistButton } from "./WatchlistButton";
 import { WatchlistItem } from "@/hooks/useWatchlist";
 import { cn } from "@/lib/utils";
@@ -125,6 +126,11 @@ export const DetailPageHeader = ({
             <Printer className="w-4 h-4 mr-2" />
             Print
           </Button>
+          <LinkedInShareMenu
+            title={title}
+            description={description}
+            variant="compact"
+          />
           <SocialShareButtons
             title={title}
             description={description}
