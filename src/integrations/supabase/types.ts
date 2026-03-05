@@ -1189,6 +1189,123 @@ export type Database = {
           },
         ]
       }
+      event_entities: {
+        Row: {
+          created_at: string
+          entity_id: string
+          event_id: string
+          id: string
+          role: string | null
+        }
+        Insert: {
+          created_at?: string
+          entity_id: string
+          event_id: string
+          id?: string
+          role?: string | null
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string
+          event_id?: string
+          id?: string
+          role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_entities_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_entities_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "extracted_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_evidence: {
+        Row: {
+          created_at: string
+          event_id: string
+          evidence_id: string
+          id: string
+          relevance_notes: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          evidence_id: string
+          id?: string
+          relevance_notes?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          evidence_id?: string
+          id?: string
+          relevance_notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_evidence_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "extracted_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_evidence_evidence_id_fkey"
+            columns: ["evidence_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_uploads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_violations: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          notes: string | null
+          violation_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          notes?: string | null
+          violation_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          notes?: string | null
+          violation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_violations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "extracted_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_violations_violation_id_fkey"
+            columns: ["violation_id"]
+            isOneToOne: false
+            referencedRelation: "compliance_violations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       evidence_artifacts: {
         Row: {
           artifact_type: string
@@ -1482,6 +1599,7 @@ export type Database = {
           outcome: string
           source_upload_id: string | null
           sources: string
+          title: string | null
           updated_at: string
         }
         Insert: {
@@ -1501,6 +1619,7 @@ export type Database = {
           outcome: string
           source_upload_id?: string | null
           sources: string
+          title?: string | null
           updated_at?: string
         }
         Update: {
@@ -1520,6 +1639,7 @@ export type Database = {
           outcome?: string
           source_upload_id?: string | null
           sources?: string
+          title?: string | null
           updated_at?: string
         }
         Relationships: [
