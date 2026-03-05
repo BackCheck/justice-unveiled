@@ -30,11 +30,11 @@ const ScrollReveal = ({ children, className, delay = 0, direction = "up" }: Scro
   }, []);
 
   const directionClasses = {
-    up: "translate-y-8",
-    down: "-translate-y-8",
-    left: "translate-x-8",
-    right: "-translate-x-8",
-    scale: "scale-95",
+    up: "translate-y-10",
+    down: "-translate-y-10",
+    left: "translate-x-10",
+    right: "-translate-x-10",
+    scale: "scale-90",
   };
 
   return (
