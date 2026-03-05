@@ -15,6 +15,8 @@ interface ReportShellOptions {
   courtMode?: boolean;
   disclaimerHTML?: string;
   distributionHTML?: string;
+  severity?: string | null;
+  leadInvestigator?: string | null;
 }
 
 // Logo placeholder that gets replaced with base64 at runtime
