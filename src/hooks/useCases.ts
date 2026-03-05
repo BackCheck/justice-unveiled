@@ -29,6 +29,7 @@ export const useCases = () => {
       const { data, error } = await supabase
         .from("cases")
         .select("*")
+        .order("is_featured", { ascending: false, nullsFirst: false })
         .order("created_at", { ascending: false });
 
       if (error) throw error;

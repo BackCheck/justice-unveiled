@@ -382,8 +382,8 @@ export async function generateFullCaseReport(caseItem: Case, userIP: string = 'N
   ];
 
   const html = buildReportShell({
-    title: 'Official Case Intelligence Report',
-    subtitle: caseItem.title,
+    title: caseItem.title,
+    subtitle: 'Official Case Intelligence Report',
     caseTitle: caseItem.title,
     caseNumber: caseItem.case_number,
     stats: [
@@ -391,7 +391,9 @@ export async function generateFullCaseReport(caseItem: Case, userIP: string = 'N
       { label: 'Events', value: caseItem.total_events ?? ev.length },
       { label: 'Entities', value: caseItem.total_entities ?? e.length },
     ],
-    sections
+    sections,
+    severity: caseItem.severity,
+    leadInvestigator: caseItem.lead_investigator,
   });
 
   await openReportWindow(html);
