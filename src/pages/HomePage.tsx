@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { MotionScrollReveal } from "@/components/ui/motion-scroll-reveal";
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
 import { useSEO } from "@/hooks/useSEO";
 import { Button } from "@/components/ui/button";
