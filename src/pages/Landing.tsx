@@ -272,22 +272,22 @@ const Landing = () => {
       </section>
 
       {/* Featured Cases - data driven */}
-      <MotionScrollReveal direction="up" delay={100}>
+      <MotionScrollReveal direction="up" delay={0}>
         <FeaturedCasesSection />
       </MotionScrollReveal>
 
       {/* Violation Metrics Dashboard */}
-      <MotionScrollReveal direction="up" delay={150}>
+      <MotionScrollReveal direction="left" delay={100}>
         <ViolationMetrics />
       </MotionScrollReveal>
 
       {/* Interactive Module Explorer */}
-      <MotionScrollReveal direction="scale" delay={100}>
+      <MotionScrollReveal direction="right" delay={100}>
         <InteractiveHeroModules />
       </MotionScrollReveal>
 
       {/* Bottom CTA */}
-      <MotionScrollReveal direction="up" delay={200}>
+      <MotionScrollReveal direction="scale" delay={100}>
         <BottomCTA />
       </MotionScrollReveal>
 
