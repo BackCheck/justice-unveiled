@@ -302,6 +302,7 @@ const HomePage = () => {
                     </CardContent>
                   </Card>
                 </Link>
+                </MotionScrollReveal>
               ))}
             </div>
           ) : (
