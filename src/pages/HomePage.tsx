@@ -403,8 +403,10 @@ const HomePage = () => {
       {/* ═══════════════ TRUST & SAFETY ═══════════════ */}
       <section className="border-t border-border/30 bg-secondary/20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16 md:py-24">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{t("home.trustSafety.title")}</h2>
-          <p className="text-muted-foreground mb-12 max-w-xl">{t("home.trustSafety.subtitle")}</p>
+          <MotionScrollReveal direction="up">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{t("home.trustSafety.title")}</h2>
+            <p className="text-muted-foreground mb-12 max-w-xl">{t("home.trustSafety.subtitle")}</p>
+          </MotionScrollReveal>
 
           <div className="grid sm:grid-cols-2 gap-8">
             {trustItems.map((item, i) => {
