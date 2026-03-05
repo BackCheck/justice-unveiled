@@ -63,6 +63,7 @@ const allPages: SearchResult[] = [
   { id: "about", titleKey: "nav.about", descriptionKey: "pages.aboutSub", path: "/about", icon: Info, categoryKey: "nav.system" },
   
   { id: "contact", titleKey: "nav.contact", descriptionKey: "pages.contactSub", path: "/contact", icon: Phone, categoryKey: "nav.system" },
+  { id: "commitment", titleKey: "nav.commitment", descriptionKey: "pages.commitmentSub", path: "/commitment", icon: Shield, categoryKey: "nav.system" },
   // Investigation - additional
   { id: "osint-toolkit", titleKey: "nav.osintToolkit", descriptionKey: "pages.osintToolkitSub", path: "/osint-toolkit", icon: Search, categoryKey: "nav.investigation", badge: "AI" },
   { id: "analysis-history", titleKey: "nav.analysisHistory", descriptionKey: "pages.analysisHistorySub", path: "/analysis-history", icon: Clock, categoryKey: "nav.investigation", badge: "AI" },
