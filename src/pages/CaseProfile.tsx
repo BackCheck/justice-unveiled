@@ -552,6 +552,27 @@ const CaseProfile = () => {
                     </Badge>
                   )}
                 </Button>
+                <LinkedInShareMenu
+                  title={caseData.title}
+                  description={caseData.description || undefined}
+                  contentData={{
+                    caseTitle: caseData.title,
+                    caseNumber: caseData.case_number,
+                    description: caseData.description || undefined,
+                    severity: caseData.severity || undefined,
+                    location: caseData.location || undefined,
+                    status: caseData.status,
+                    events: events?.map(e => ({ date: e.date, category: e.category, description: e.description, individuals: e.individuals })),
+                    entities: entities?.map(e => ({ name: e.name, entity_type: e.entity_type, role: e.role || undefined, category: e.category || undefined })),
+                    discrepancies: discrepancies?.map(d => ({ title: d.title, severity: d.severity, description: d.description })),
+                    stats: {
+                      sources: caseData.total_sources ?? 0,
+                      events: events?.length || 0,
+                      entities: entities?.length || 0,
+                      discrepancies: discrepancies?.length || 0,
+                    },
+                  }}
+                />
                 <TakedownRequestButton caseId={caseId!} />
               </div>
             </div>
