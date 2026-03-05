@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Filter, Search, X, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChronologyFilters } from "@/hooks/useChronologyEvents";
-import { useMediaQuery } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const CATEGORIES = [
   "Business Interference",
