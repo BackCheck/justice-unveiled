@@ -62,7 +62,8 @@
     "investigation": "Investigation",
     "resources": "Resources",
     "system": "System",
-    "reportBuilder": "Investigative Report Builder"
+    "reportBuilder": "Investigative Report Builder",
+    "commitment": "Commitment"
   },
   "pages": {
     "investigativeTimeline": "Chronological event documentation",
