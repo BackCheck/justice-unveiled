@@ -272,8 +272,9 @@ const HomePage = () => {
 
           {displayCases.length > 0 ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {displayCases.map((c) => (
-                <Link key={c.id} to={`/cases/${c.id}`} className="group">
+              {displayCases.map((c, i) => (
+                <MotionScrollReveal key={c.id} direction="up" delay={i * 100}>
+                <Link to={`/cases/${c.id}`} className="group">
                   <Card className="h-full border-border/40 bg-card/60 transition-all duration-200 group-hover:border-primary/25 group-hover:shadow-md">
                     <CardContent className="p-5">
                       <div className="flex items-center gap-2 mb-3 flex-wrap">
