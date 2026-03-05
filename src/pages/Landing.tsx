@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -160,17 +161,58 @@ const Landing = () => {
               </Badge>
             </ScrollReveal>
 
-            <ScrollReveal delay={200}>
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: { transition: { staggerChildren: 0.12, delayChildren: 0.3 } },
+              }}
+            >
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                <span className="text-foreground">{t('landing.hero.title1')}</span>
+                {String(t('landing.hero.title1')).split(' ').map((word, i) => (
+                  <motion.span
+                    key={`t1-${i}`}
+                    className="inline-block text-foreground mr-[0.3em]"
+                    variants={{
+                      hidden: { opacity: 0, y: 30, filter: 'blur(8px)' },
+                      visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.5, ease: 'easeOut' } },
+                    }}
+                  >
+                    {word}
+                  </motion.span>
+                ))}
                 <br />
-                <span className="text-foreground">{t('landing.hero.title2')} </span>
-                <span className="text-primary relative">
+                {String(t('landing.hero.title2')).split(' ').map((word, i) => (
+                  <motion.span
+                    key={`t2-${i}`}
+                    className="inline-block text-foreground mr-[0.3em]"
+                    variants={{
+                      hidden: { opacity: 0, y: 30, filter: 'blur(8px)' },
+                      visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.5, ease: 'easeOut' } },
+                    }}
+                  >
+                    {word}
+                  </motion.span>
+                ))}{' '}
+                <motion.span
+                  className="text-primary relative inline-block"
+                  variants={{
+                    hidden: { opacity: 0, scale: 0.8, filter: 'blur(8px)' },
+                    visible: { opacity: 1, scale: 1, filter: 'blur(0px)', transition: { duration: 0.6, ease: 'easeOut' } },
+                  }}
+                >
                   {t('landing.hero.title3')}
-                  <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
-                </span>
+                  <motion.span
+                    className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ delay: 1.4, duration: 0.8, ease: 'easeOut' }}
+                    style={{ originX: 0 }}
+                  />
+                </motion.span>
               </h1>
-            </ScrollReveal>
+            </motion.div>
 
             <ScrollReveal delay={300}>
               <div className="text-lg md:text-xl text-foreground/80 mb-4 font-medium">
