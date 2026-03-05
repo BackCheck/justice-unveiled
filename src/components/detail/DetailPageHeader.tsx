@@ -126,6 +126,11 @@ export const DetailPageHeader = ({
             <Printer className="w-4 h-4 mr-2" />
             Print
           </Button>
+          <LinkedInShareMenu
+            title={title}
+            description={description}
+            variant="compact"
+          />
           <SocialShareButtons
             title={title}
             description={description}
