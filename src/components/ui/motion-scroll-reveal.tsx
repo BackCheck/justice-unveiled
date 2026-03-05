@@ -12,11 +12,11 @@ interface MotionScrollRevealProps {
 }
 
 const directionVariants = {
-  up: { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0 } },
-  down: { hidden: { opacity: 0, y: -40 }, visible: { opacity: 1, y: 0 } },
-  left: { hidden: { opacity: 0, x: 40 }, visible: { opacity: 1, x: 0 } },
-  right: { hidden: { opacity: 0, x: -40 }, visible: { opacity: 1, x: 0 } },
-  scale: { hidden: { opacity: 0, scale: 0.9 }, visible: { opacity: 1, scale: 1 } },
+  up: { hidden: { opacity: 0, y: 50, filter: "blur(4px)" }, visible: { opacity: 1, y: 0, filter: "blur(0px)" } },
+  down: { hidden: { opacity: 0, y: -50, filter: "blur(4px)" }, visible: { opacity: 1, y: 0, filter: "blur(0px)" } },
+  left: { hidden: { opacity: 0, x: 60, filter: "blur(4px)" }, visible: { opacity: 1, x: 0, filter: "blur(0px)" } },
+  right: { hidden: { opacity: 0, x: -60, filter: "blur(4px)" }, visible: { opacity: 1, x: 0, filter: "blur(0px)" } },
+  scale: { hidden: { opacity: 0, scale: 0.85, filter: "blur(6px)" }, visible: { opacity: 1, scale: 1, filter: "blur(0px)" } },
 };
 
 export const MotionScrollReveal = ({
@@ -37,9 +37,9 @@ export const MotionScrollReveal = ({
       animate={isInView ? "visible" : "hidden"}
       variants={directionVariants[direction]}
       transition={{
-        duration: 0.6,
+        duration: 0.7,
         delay: delay / 1000,
-        ease: [0.21, 0.47, 0.32, 0.98],
+        ease: [0.16, 1, 0.3, 1],
       }}
     >
       {children}
