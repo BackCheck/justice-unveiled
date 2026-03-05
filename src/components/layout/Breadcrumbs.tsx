@@ -47,6 +47,7 @@ const routeLabels: Record<string, string> = {
   "/terms": "Terms",
   "/privacy": "Privacy",
   "/welcome": "Welcome",
+  "/commitment": "Commitment",
 };
 
 // Parent relationships — only real hierarchy
