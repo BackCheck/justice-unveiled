@@ -55,6 +55,7 @@ const AnalyzeHub = lazy(() => import("./pages/AnalyzeHub"));
 const Disclaimer = lazy(() => import("./pages/Disclaimer"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
+const Commitment = lazy(() => import("./pages/Commitment"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
