@@ -323,8 +323,10 @@ const HomePage = () => {
       {hasSignals && (
         <section className="border-t border-border/30">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16 md:py-24">
+          <MotionScrollReveal direction="left">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{t("home.recentActivity.title")}</h2>
             <p className="text-muted-foreground mb-10">{t("home.recentActivity.subtitle")}</p>
+          </MotionScrollReveal>
 
             <div className="grid md:grid-cols-3 gap-6">
               {recentEvents && recentEvents.length > 0 && (
