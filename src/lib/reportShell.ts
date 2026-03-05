@@ -69,33 +69,31 @@ export function buildReportShell(opts: ReportShellOptions): string {
   <div style="text-align:center;">
     <img src="${LOGO_PLACEHOLDER}" alt="HRPM Logo" style="height:80px;width:auto;margin:0 auto 12px;display:block;" />
     <h1 style="font-size:32px;color:#0087C1;margin:0;">HRPM.org</h1>
-    <p style="font-size:16px;color:#6b7280;">Human Rights Protection & Monitoring</p>
+    <p style="font-size:16px;color:#6b7280;">Human Rights Protection &amp; Monitoring</p>
     <div style="width:100px;height:3px;background:#0087C1;margin:12px auto;border-radius:4px;"></div>
   </div>
   <div style="text-align:center;margin:40px 0;">
     <p style="font-size:11px;letter-spacing:3px;color:#9ca3af;text-transform:uppercase;">${opts.subtitle}</p>
     <h2 style="font-size:26px;margin:12px 0;">${opts.title}</h2>
     ${opts.caseNumber ? `<p style="font-family:monospace;color:#6b7280;font-size:14px;">${opts.caseNumber}</p>` : ''}
-    <p style="color:#6b7280;font-size:14px;">Case: ${opts.caseTitle}</p>
     ${statsRow}
   </div>
-  <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:20px;">
-    <p style="font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#9ca3af;margin-bottom:8px;">Report Details</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;">
-      <div><span style="color:#9ca3af;">Generated:</span> ${formattedDate}</div>
-      <div><span style="color:#9ca3af;">Time:</span> ${formattedTime}</div>
-      <div><span style="color:#9ca3af;">Report Type:</span> ${opts.subtitle}</div>
-      <div><span style="color:#9ca3af;">Sections:</span> ${opts.sections.length}</div>
+  <div style="background:#1e293b;color:#e2e8f0;border-radius:8px;padding:24px 32px;text-align:center;">
+    <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+      <div><span style="color:#94a3b8;">Time:</span> <strong>${formattedTime}</strong></div>
+      ${opts.severity ? `<div><span style="color:#94a3b8;">Severity:</span> <strong style="color:${opts.severity === 'critical' ? '#ef4444' : opts.severity === 'high' ? '#f97316' : '#e2e8f0'};text-transform:uppercase;">${opts.severity}</strong></div>` : ''}
+      ${opts.leadInvestigator ? `<div><span style="color:#94a3b8;">Lead Investigator:</span> <strong style="color:#0087C1;">${opts.leadInvestigator}</strong></div>` : ''}
     </div>
   </div>
   <div style="text-align:center;">
-    <p style="font-weight:600;color:#1f2937;font-size:12px;">Human Rights Protection & Monitoring</p>
+    <p style="font-weight:600;color:#1f2937;font-size:12px;">Human Rights Protection &amp; Monitoring</p>
     <p style="font-size:11px;color:#6b7280;">36 Robinson Road, #20-01 City House, Singapore 068877</p>
     <p style="font-size:11px;color:#6b7280;">Tel: +6531 290 390 | Email: info@hrpm.org</p>
   </div>
-  <div style="text-align:center;border-top:1px solid #e5e7eb;padding-top:12px;font-size:10px;">
-    <p style="font-weight:600;color:#dc2626;">Strictly Confidential – Only for Advocacy Work</p>
-    <p style="color:#6b7280;">© ${now.getFullYear()} Human Rights Protection & Monitoring. All rights reserved.</p>
+  <div style="text-align:center;border-top:1px solid #e5e7eb;padding-top:12px;">
+    <p style="font-size:10px;color:#6b7280;">Published by HRPM for informational and legal reference purposes only. All dates, events, and information are based on official court documents, FIR records, and verified testimonies. This report does not constitute legal advice.</p>
+    <p style="font-weight:600;color:#dc2626;font-size:11px;margin-top:4px;">Strictly Confidential – Only for Advocacy Work</p>
+    <p style="font-size:10px;color:#6b7280;">© ${now.getFullYear()} Human Rights Protection &amp; Monitoring. All rights reserved.</p>
   </div>
 </div>
 
