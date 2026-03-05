@@ -146,7 +146,7 @@ const FilterContent = ({ filters, onFiltersChange }: Omit<ChronologyFiltersPanel
 };
 
 export const ChronologyFiltersPanel = ({ filters, onFiltersChange, activeFilterCount }: ChronologyFiltersPanelProps) => {
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useIsMobile();
 
   if (isMobile) {
     return (
