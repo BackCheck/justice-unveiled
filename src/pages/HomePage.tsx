@@ -256,6 +256,7 @@ const HomePage = () => {
       {/* ═══════════════ FEATURED CASES ═══════════════ */}
       <section className="border-t border-border/30 bg-secondary/20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16 md:py-24">
+        <MotionScrollReveal direction="up">
           <div className="flex items-center justify-between mb-10 flex-wrap gap-4">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{t("home.featuredCases.title")}</h2>
@@ -267,6 +268,7 @@ const HomePage = () => {
               </Link>
             </Button>
           </div>
+        </MotionScrollReveal>
 
           {displayCases.length > 0 ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
