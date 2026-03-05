@@ -481,5 +481,71 @@
     "ur": "اردو",
     "ar": "العربية",
     "zh": "中文"
+  },
+  "commitment": {
+    "badge": "Company Commitment",
+    "title": "HRPM Commitment to Social Impact, Integrity & Inclusion",
+    "subtitle": "Human Rights Protection & Monitoring (HRPM) is committed to ethical investigations, evidence integrity, responsible technology, and inclusive collaboration.",
+    "copyUrl": "Copy Page URL",
+    "copied": "Copied!",
+    "urlCopied": "Page URL copied to clipboard",
+    "intro": {
+      "title": "Who We Are",
+      "body": "HRPM (Human Rights Protection & Monitoring) is an independent, open-source, public-interest documentation and monitoring platform. We support advocates, researchers, and legal teams with evidence-based reporting, structured case documentation, and accountability tooling."
+    },
+    "socialImpact": {
+      "title": "Social Impact",
+      "point1": "Preserves records of human rights violations for long-term accountability.",
+      "point2": "Structures evidence, timelines, and sources into verifiable intelligence.",
+      "point3": "Helps reduce information loss in high-risk and conflict-affected situations.",
+      "point4": "Improves access to investigative tooling for civil society and legal use."
+    },
+    "evidenceIntegrity": {
+      "title": "Evidence Integrity & Verifiability",
+      "point1": "All claims reference verifiable sources and citations.",
+      "point2": "Chain-of-custody mindset applied to all evidence handling.",
+      "point3": "File hashing and integrity checks applied where applicable.",
+      "point4": "Clear separation between allegations and verified findings.",
+      "point5": "Corrections workflow for factual errors and updated information."
+    },
+    "responsibleTech": {
+      "title": "Responsible Technology (AI & OSINT)",
+      "point1": "AI outputs are investigative leads, not final judgments.",
+      "point2": "Human review is required before conclusions are published.",
+      "point3": "Bias awareness, harm minimization, and careful handling of sensitive content.",
+      "point4": "Commitment to transparent, auditable methodology in all tooling."
+    },
+    "dei": {
+      "title": "Diversity, Equity & Inclusion",
+      "point1": "Inclusive collaboration across cultures, backgrounds, gender, belief, and lived experience.",
+      "point2": "Equitable access to documentation tools regardless of geography or resources.",
+      "point3": "Respect and safety for vulnerable communities referenced in investigations.",
+      "point4": "Non-discrimination policy in participation, partnerships, and platform access."
+    },
+    "collaboration": {
+      "title": "Collaboration for Accountability",
+      "body": "HRPM actively welcomes collaboration with professionals and organizations working toward justice and accountability.",
+      "journalists": "Journalists",
+      "civilSociety": "Civil Society Organizations",
+      "legalProfessionals": "Legal Professionals",
+      "researchers": "Researchers",
+      "policyAdvocates": "Policy Advocates"
+    },
+    "principlesTitle": "Our Guiding Principles",
+    "principles": {
+      "publicInterest": "Public Interest",
+      "publicInterestDesc": "All work serves public accountability and human rights protection.",
+      "evidenceIntegrity": "Evidence Integrity",
+      "evidenceIntegrityDesc": "Verifiable sources, chain-of-custody, and corrections workflows.",
+      "responsibleTech": "Responsible Technology",
+      "responsibleTechDesc": "AI as a tool for leads, never a substitute for human judgment.",
+      "transparency": "Transparency",
+      "transparencyDesc": "Open methodology, auditable processes, and public documentation.",
+      "inclusion": "Inclusion & Respect",
+      "inclusionDesc": "Equitable access and dignity for all communities and contributors.",
+      "accountability": "Accountability",
+      "accountabilityDesc": "We hold ourselves to the same standards we demand of others."
+    },
+    "callout": "Our mission is to ensure evidence is preserved, truth remains accessible, and accountability can be pursued through responsible documentation."
   }
 }
