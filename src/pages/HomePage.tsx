@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { MotionScrollReveal } from "@/components/ui/motion-scroll-reveal";
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
 import { useSEO } from "@/hooks/useSEO";
 import { Button } from "@/components/ui/button";
@@ -223,25 +224,29 @@ const HomePage = () => {
       {/* ═══════════════ HOW IT WORKS ═══════════════ */}
       <section id="how-it-works" className="border-t border-border/30">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16 md:py-24">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{t("home.howItWorks.title")}</h2>
-          <p className="text-muted-foreground mb-12 max-w-xl">{t("home.howItWorks.subtitle")}</p>
+          <MotionScrollReveal direction="up">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{t("home.howItWorks.title")}</h2>
+            <p className="text-muted-foreground mb-12 max-w-xl">{t("home.howItWorks.subtitle")}</p>
+          </MotionScrollReveal>
 
           <div className="grid md:grid-cols-3 gap-6">
             {steps.map((step, i) => {
               const Icon = step.icon;
               return (
-                <Card key={i} className="border-border/40 bg-card/60">
-                  <CardContent className="p-6">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                      <Icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <div className="text-xs font-semibold text-primary mb-2 uppercase tracking-wider">
-                      {t("home.howItWorks.step")} {i + 1}
-                    </div>
-                    <h3 className="text-lg font-semibold text-foreground mb-2">{step.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
-                  </CardContent>
-                </Card>
+                <MotionScrollReveal key={i} direction="up" delay={i * 150}>
+                  <Card className="border-border/40 bg-card/60 h-full">
+                    <CardContent className="p-6">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                        <Icon className="w-5 h-5 text-primary" />
+                      </div>
+                      <div className="text-xs font-semibold text-primary mb-2 uppercase tracking-wider">
+                        {t("home.howItWorks.step")} {i + 1}
+                      </div>
+                      <h3 className="text-lg font-semibold text-foreground mb-2">{step.title}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
+                    </CardContent>
+                  </Card>
+                </MotionScrollReveal>
               );
             })}
           </div>
@@ -251,6 +256,7 @@ const HomePage = () => {
       {/* ═══════════════ FEATURED CASES ═══════════════ */}
       <section className="border-t border-border/30 bg-secondary/20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16 md:py-24">
+        <MotionScrollReveal direction="up">
           <div className="flex items-center justify-between mb-10 flex-wrap gap-4">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{t("home.featuredCases.title")}</h2>
@@ -262,11 +268,13 @@ const HomePage = () => {
               </Link>
             </Button>
           </div>
+        </MotionScrollReveal>
 
           {displayCases.length > 0 ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {displayCases.map((c) => (
-                <Link key={c.id} to={`/cases/${c.id}`} className="group">
+              {displayCases.map((c, i) => (
+                <MotionScrollReveal key={c.id} direction="up" delay={i * 100}>
+                <Link to={`/cases/${c.id}`} className="group">
                   <Card className="h-full border-border/40 bg-card/60 transition-all duration-200 group-hover:border-primary/25 group-hover:shadow-md">
                     <CardContent className="p-5">
                       <div className="flex items-center gap-2 mb-3 flex-wrap">
@@ -294,6 +302,7 @@ const HomePage = () => {
                     </CardContent>
                   </Card>
                 </Link>
+                </MotionScrollReveal>
               ))}
             </div>
           ) : (
@@ -314,8 +323,10 @@ const HomePage = () => {
       {hasSignals && (
         <section className="border-t border-border/30">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16 md:py-24">
+          <MotionScrollReveal direction="left">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{t("home.recentActivity.title")}</h2>
             <p className="text-muted-foreground mb-10">{t("home.recentActivity.subtitle")}</p>
+          </MotionScrollReveal>
 
             <div className="grid md:grid-cols-3 gap-6">
               {recentEvents && recentEvents.length > 0 && (
@@ -392,22 +403,26 @@ const HomePage = () => {
       {/* ═══════════════ TRUST & SAFETY ═══════════════ */}
       <section className="border-t border-border/30 bg-secondary/20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16 md:py-24">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{t("home.trustSafety.title")}</h2>
-          <p className="text-muted-foreground mb-12 max-w-xl">{t("home.trustSafety.subtitle")}</p>
+          <MotionScrollReveal direction="up">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{t("home.trustSafety.title")}</h2>
+            <p className="text-muted-foreground mb-12 max-w-xl">{t("home.trustSafety.subtitle")}</p>
+          </MotionScrollReveal>
 
           <div className="grid sm:grid-cols-2 gap-8">
             {trustItems.map((item, i) => {
               const Icon = item.icon;
               return (
-                <div key={i} className="flex gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                    <Icon className="w-5 h-5 text-primary" />
+                <MotionScrollReveal key={i} direction={i % 2 === 0 ? "left" : "right"} delay={i * 100}>
+                  <div className="flex gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                      <Icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground mb-1">{item.title}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-1">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
-                  </div>
-                </div>
+                </MotionScrollReveal>
               );
             })}
           </div>
