@@ -42,6 +42,7 @@ const SiteFooter = ({ compact = false }: { compact?: boolean }) => {
         { text: "Documentation", url: "/docs" },
         { text: "Developer API", url: "/api" },
         { text: "About", url: "/about" },
+        { text: "Changelog", url: "/changelog" },
         { text: "Commitment", url: "/commitment" },
         { text: "Contact", url: "/contact" },
       ],
