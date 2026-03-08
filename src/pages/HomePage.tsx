@@ -66,46 +66,6 @@ const HomePage = () => {
   const { stats } = usePlatformStats();
   const displayCases = cases?.slice(0, 6) || [];
 
-  const { data: recentEvents } = useQuery({
-    queryKey: ["homepage-recent-events"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("extracted_events")
-        .select("id, date, category, description, created_at")
-        .order("created_at", { ascending: false })
-        .limit(5);
-      return data || [];
-    },
-  });
-
-  const { data: recentUploads } = useQuery({
-    queryKey: ["homepage-recent-uploads"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("evidence_uploads")
-        .select("id, file_name, created_at")
-        .order("created_at", { ascending: false })
-        .limit(3);
-      return data || [];
-    },
-  });
-
-  const { data: recentEntities } = useQuery({
-    queryKey: ["homepage-recent-entities"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("extracted_entities")
-        .select("id, name, entity_type, created_at")
-        .order("created_at", { ascending: false })
-        .limit(3);
-      return data || [];
-    },
-  });
-
-  const hasSignals =
-    (recentEvents && recentEvents.length > 0) ||
-    (recentUploads && recentUploads.length > 0) ||
-    (recentEntities && recentEntities.length > 0);
 
   const steps = [
     { icon: Upload, title: t("home.howItWorks.step1Title"), description: t("home.howItWorks.step1Desc") },
