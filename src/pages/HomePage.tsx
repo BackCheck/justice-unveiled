@@ -33,6 +33,7 @@ import { formatDistanceToNow } from "date-fns";
 import { motion } from "framer-motion";
 import { Waves } from "@/components/ui/waves-background";
 import hrpmLogo from "@/assets/human-rights-logo.png";
+import HomepageAIChat from "@/components/landing/HomepageAIChat";
 
 const statusColor = (status: string) => {
   switch (status?.toLowerCase()) {
