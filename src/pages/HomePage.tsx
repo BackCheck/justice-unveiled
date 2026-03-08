@@ -197,36 +197,7 @@ const HomePage = () => {
       </section>
 
       {/* ═══════════════ HOW IT WORKS ═══════════════ */}
-      <section id="how-it-works" className="border-t border-border/30">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16 md:py-24">
-          <MotionScrollReveal direction="up">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{t("home.howItWorks.title")}</h2>
-            <p className="text-muted-foreground mb-12 max-w-xl">{t("home.howItWorks.subtitle")}</p>
-          </MotionScrollReveal>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {steps.map((step, i) => {
-              const Icon = step.icon;
-              return (
-                <MotionScrollReveal key={i} direction="up" delay={i * 150}>
-                  <Card className="border-border/40 bg-card/60 h-full">
-                    <CardContent className="p-6">
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                        <Icon className="w-5 h-5 text-primary" />
-                      </div>
-                      <div className="text-xs font-semibold text-primary mb-2 uppercase tracking-wider">
-                        {t("home.howItWorks.step")} {i + 1}
-                      </div>
-                      <h3 className="text-lg font-semibold text-foreground mb-2">{step.title}</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
-                    </CardContent>
-                  </Card>
-                </MotionScrollReveal>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+      <HowHRPMWorks />
 
       {/* ═══════════════ FEATURED CASES ═══════════════ */}
       <section className="border-t border-border/30 bg-secondary/20">
