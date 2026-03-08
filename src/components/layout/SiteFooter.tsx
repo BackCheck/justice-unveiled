@@ -17,6 +17,19 @@ interface FooterSection {
 }
 
 const SiteFooter = ({ compact = false }: { compact?: boolean }) => {
+  const { data: recentPosts } = useQuery({
+    queryKey: ["recent-blog-posts-footer"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("blog_posts")
+        .select("id, title, slug, published_at, category")
+        .eq("is_published", true)
+        .order("published_at", { ascending: false })
+        .limit(4);
+      return data || [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
   const menuSections: FooterSection[] = [
     {
       title: "Platform",
