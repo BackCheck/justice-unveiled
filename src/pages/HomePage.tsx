@@ -280,86 +280,10 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* ═══════════════ LIVE SIGNALS ═══════════════ */}
-      {hasSignals && (
-        <section className="border-t border-border/30">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16 md:py-24">
-          <MotionScrollReveal direction="left">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{t("home.recentActivity.title")}</h2>
-            <p className="text-muted-foreground mb-10">{t("home.recentActivity.subtitle")}</p>
-          </MotionScrollReveal>
-
-            <div className="grid md:grid-cols-3 gap-6">
-              {recentEvents && recentEvents.length > 0 && (
-                <div>
-                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <Clock className="w-3.5 h-3.5" /> {t("home.recentActivity.newTimelineEvents")}
-                  </h3>
-                  <div className="space-y-2.5">
-                    {recentEvents.slice(0, 4).map((ev) => (
-                      <div key={ev.id} className="flex items-start gap-3 p-3 rounded-lg border border-border/30 bg-card/40">
-                        <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                        <div className="min-w-0">
-                          <p className="text-sm text-foreground line-clamp-1">{ev.description}</p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge variant="secondary" className="text-[9px] h-4">{ev.category}</Badge>
-                            <span className="text-[10px] text-muted-foreground">{ev.date}</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {recentUploads && recentUploads.length > 0 && (
-                <div>
-                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <FileUp className="w-3.5 h-3.5" /> {t("home.recentActivity.newUploads")}
-                  </h3>
-                  <div className="space-y-2.5">
-                    {recentUploads.map((u) => (
-                      <div key={u.id} className="flex items-start gap-3 p-3 rounded-lg border border-border/30 bg-card/40">
-                        <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                        <div className="min-w-0">
-                          <p className="text-sm text-foreground line-clamp-1">{u.file_name}</p>
-                          <span className="text-[10px] text-muted-foreground">
-                            {formatDistanceToNow(new Date(u.created_at), { addSuffix: true })}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {recentEntities && recentEntities.length > 0 && (
-                <div>
-                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <Users className="w-3.5 h-3.5" /> {t("home.recentActivity.entitiesExtracted")}
-                  </h3>
-                  <div className="space-y-2.5">
-                    {recentEntities.map((e) => (
-                      <div key={e.id} className="flex items-start gap-3 p-3 rounded-lg border border-border/30 bg-card/40">
-                        <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                        <div className="min-w-0">
-                          <p className="text-sm text-foreground line-clamp-1">{e.name}</p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge variant="secondary" className="text-[9px] h-4">{e.entity_type}</Badge>
-                            <span className="text-[10px] text-muted-foreground">
-                              {formatDistanceToNow(new Date(e.created_at), { addSuffix: true })}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-      )}
+      {/* ═══════════════ AI ASSISTANT ═══════════════ */}
+      <MotionScrollReveal direction="up">
+        <HomepageAIChat />
+      </MotionScrollReveal>
 
       {/* ═══════════════ TRUST & SAFETY ═══════════════ */}
       <section className="border-t border-border/30 bg-secondary/20">

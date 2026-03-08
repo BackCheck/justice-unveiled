@@ -137,6 +137,34 @@ const SiteFooter = ({ compact = false }: { compact?: boolean }) => {
                     </ul>
                   </div>
                 ))}
+                {/* Latest Posts column */}
+                <div>
+                  <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                    <Newspaper className="w-3 h-3" />
+                    Latest Posts
+                  </h4>
+                  <ul className="space-y-2">
+                    {recentPosts && recentPosts.length > 0 ? (
+                      recentPosts.map((post) => (
+                        <li key={post.id}>
+                          <Link
+                            to={`/blog/${post.slug}`}
+                            className="text-sm text-muted-foreground hover:text-primary transition-colors line-clamp-1"
+                          >
+                            {post.title}
+                          </Link>
+                          {post.published_at && (
+                            <p className="text-[10px] text-muted-foreground/60">
+                              {formatDistanceToNow(new Date(post.published_at), { addSuffix: true })}
+                            </p>
+                          )}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-xs text-muted-foreground/50">No posts yet</li>
+                    )}
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
