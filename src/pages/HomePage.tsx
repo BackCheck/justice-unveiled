@@ -23,6 +23,7 @@ import {
   AlertTriangle,
   MapPin,
   Calendar,
+  Users,
   Heart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
