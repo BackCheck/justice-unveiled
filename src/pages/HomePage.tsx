@@ -53,11 +53,11 @@ const HomePage = () => {
   const { t } = useTranslation();
 
   useSEO({
-    title: "HRPM — Document Injustice. Build Accountability.",
+    title: "HRPM — Documenting Evidence. Advancing Accountability.",
     description:
-      "Open-source, non-profit documentation and monitoring platform for human rights cases. Submit evidence, track investigations, generate court-ready reports.",
+      "Open investigative platform structuring complex legal, regulatory, and human rights cases into verifiable evidence records, entity networks, and analytical timelines.",
     url: "https://hrpm.org",
-    keywords: ["human rights", "documentation", "accountability", "case management", "evidence"],
+    keywords: ["investigative platform", "evidence documentation", "entity networks", "legal analysis", "forensic intelligence"],
   });
 
   const { data: cases } = useCases();
