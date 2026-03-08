@@ -1,5 +1,8 @@
 import { Link } from "react-router-dom";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone, Newspaper } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { formatDistanceToNow } from "date-fns";
 import hrpmLogo from "@/assets/human-rights-logo.png";
 
 interface FooterLink {
@@ -14,6 +17,19 @@ interface FooterSection {
 }
 
 const SiteFooter = ({ compact = false }: { compact?: boolean }) => {
+  const { data: recentPosts } = useQuery({
+    queryKey: ["recent-blog-posts-footer"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("blog_posts")
+        .select("id, title, slug, published_at, category")
+        .eq("is_published", true)
+        .order("published_at", { ascending: false })
+        .limit(4);
+      return data || [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
   const menuSections: FooterSection[] = [
     {
       title: "Platform",
@@ -88,9 +104,9 @@ const SiteFooter = ({ compact = false }: { compact?: boolean }) => {
               </div>
             </div>
 
-            {/* 3 columns */}
+            {/* Nav columns + blog */}
             <div className="lg:col-span-8">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
                 {menuSections.map((section) => (
                   <div key={section.title}>
                     <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">
@@ -121,6 +137,34 @@ const SiteFooter = ({ compact = false }: { compact?: boolean }) => {
                     </ul>
                   </div>
                 ))}
+                {/* Latest Posts column */}
+                <div>
+                  <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                    <Newspaper className="w-3 h-3" />
+                    Latest Posts
+                  </h4>
+                  <ul className="space-y-2">
+                    {recentPosts && recentPosts.length > 0 ? (
+                      recentPosts.map((post) => (
+                        <li key={post.id}>
+                          <Link
+                            to={`/blog/${post.slug}`}
+                            className="text-sm text-muted-foreground hover:text-primary transition-colors line-clamp-1"
+                          >
+                            {post.title}
+                          </Link>
+                          {post.published_at && (
+                            <p className="text-[10px] text-muted-foreground/60">
+                              {formatDistanceToNow(new Date(post.published_at), { addSuffix: true })}
+                            </p>
+                          )}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-xs text-muted-foreground/50">No posts yet</li>
+                    )}
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
