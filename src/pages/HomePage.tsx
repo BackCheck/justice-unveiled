@@ -32,6 +32,7 @@ import { motion } from "framer-motion";
 import { Waves } from "@/components/ui/waves-background";
 import hrpmLogo from "@/assets/human-rights-logo.png";
 import { FloatingAiAssistant } from "@/components/ui/glowing-ai-chat-assistant";
+import HowHRPMWorks from "@/components/landing/HowHRPMWorks";
 
 const statusColor = (status: string) => {
   switch (status?.toLowerCase()) {
