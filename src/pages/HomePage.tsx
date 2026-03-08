@@ -31,7 +31,7 @@ import { formatDistanceToNow } from "date-fns";
 import { motion } from "framer-motion";
 import { Waves } from "@/components/ui/waves-background";
 import hrpmLogo from "@/assets/human-rights-logo.png";
-import HomepageAIChat from "@/components/landing/HomepageAIChat";
+import { FloatingAiAssistant } from "@/components/ui/glowing-ai-chat-assistant";
 
 const statusColor = (status: string) => {
   switch (status?.toLowerCase()) {
@@ -278,10 +278,8 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* ═══════════════ AI ASSISTANT ═══════════════ */}
-      <MotionScrollReveal direction="up">
-        <HomepageAIChat />
-      </MotionScrollReveal>
+      {/* ═══════════════ FLOATING AI ASSISTANT ═══════════════ */}
+      <FloatingAiAssistant />
 
       {/* ═══════════════ TRUST & SAFETY ═══════════════ */}
       <section className="border-t border-border/30 bg-secondary/20">
