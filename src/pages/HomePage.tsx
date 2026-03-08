@@ -278,10 +278,8 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* ═══════════════ AI ASSISTANT ═══════════════ */}
-      <MotionScrollReveal direction="up">
-        <HomepageAIChat />
-      </MotionScrollReveal>
+      {/* ═══════════════ FLOATING AI ASSISTANT ═══════════════ */}
+      <FloatingAiAssistant />
 
       {/* ═══════════════ TRUST & SAFETY ═══════════════ */}
       <section className="border-t border-border/30 bg-secondary/20">
