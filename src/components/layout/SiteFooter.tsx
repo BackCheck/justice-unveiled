@@ -104,9 +104,9 @@ const SiteFooter = ({ compact = false }: { compact?: boolean }) => {
               </div>
             </div>
 
-            {/* 3 columns */}
+            {/* Nav columns + blog */}
             <div className="lg:col-span-8">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
                 {menuSections.map((section) => (
                   <div key={section.title}>
                     <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">
