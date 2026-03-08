@@ -112,7 +112,7 @@ const HomePage = () => {
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-foreground leading-[1.05] max-w-4xl">
-              {t("home.hero.title1")}{" "}
+              Documenting Evidence.{" "}
               <br className="hidden sm:block" />
               <motion.span
                 className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-chart-2 to-primary bg-[length:200%_auto] animate-gradient-shift inline-block"
@@ -120,7 +120,7 @@ const HomePage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
               >
-                {t("home.hero.title2")}
+                Advancing Accountability.
               </motion.span>
             </h1>
           </motion.div>
@@ -131,21 +131,36 @@ const HomePage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.4 }}
           >
-            {t("home.hero.description")}
+            HRPM is an open investigative platform that structures complex legal, regulatory, and human rights cases into verifiable evidence records, entity networks, and analytical timelines.
+          </motion.p>
+
+          <motion.p
+            className="mt-3 text-base text-muted-foreground/80 max-w-2xl leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.5 }}
+          >
+            By combining forensic documentation, intelligence mapping, and legal analysis, HRPM transforms fragmented information into structured investigative insight.
           </motion.p>
 
           <motion.div className="mt-10 flex flex-wrap items-center gap-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.55 }}>
             <Button asChild size="lg" className="gap-2 text-base px-6 h-12 shadow-lg shadow-primary/20">
-              <Link to="/submit-case">
-                <PlusCircle className="w-5 h-5" />
-                {t("home.hero.reportViolation")}
+              <Link to="/cases">
+                <FolderSearch className="w-5 h-5" />
+                Explore Investigations
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="gap-2 text-base px-6 h-12 backdrop-blur-sm bg-background/50">
-              <Link to="/cases">
-                <Heart className="w-5 h-5" />
-                {t("home.hero.supportMission")}
+              <Link to="/evidence">
+                <FileText className="w-5 h-5" />
+                View Evidence Library
               </Link>
+            </Button>
+            <Button asChild variant="ghost" size="lg" className="gap-2 text-base px-6 h-12">
+              <a href="#how-it-works">
+                <ArrowRight className="w-5 h-5" />
+                How It Works
+              </a>
             </Button>
           </motion.div>
 
