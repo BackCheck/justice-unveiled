@@ -66,9 +66,9 @@ const HomePage = () => {
 
 
   const steps = [
-    { icon: Upload, title: t("home.howItWorks.step1Title"), description: t("home.howItWorks.step1Desc") },
-    { icon: CheckCircle2, title: t("home.howItWorks.step2Title"), description: t("home.howItWorks.step2Desc") },
-    { icon: FileText, title: t("home.howItWorks.step3Title"), description: t("home.howItWorks.step3Desc") },
+    { icon: Upload, title: "Evidence Documentation", description: "Structured forensic documentation of digital evidence, legal records, and investigative materials." },
+    { icon: Users, title: "Intelligence Mapping", description: "Entity relationship analysis revealing networks, actors, and patterns within complex investigations." },
+    { icon: Scale, title: "Legal Analysis", description: "Mapping procedural violations, legal precedents, and international rights frameworks." },
   ];
 
   const trustItems = [
@@ -79,16 +79,16 @@ const HomePage = () => {
   ];
 
   const featurePills = [
-    { icon: Shield, label: t("home.featurePills.protectedReporting"), desc: t("home.featurePills.protectedReportingDesc") },
-    { icon: Users, label: t("home.featurePills.globalNetwork"), desc: t("home.featurePills.globalNetworkDesc") },
-    { icon: Heart, label: t("home.featurePills.survivorSupport"), desc: t("home.featurePills.survivorSupportDesc") },
+    { icon: Shield, label: "Forensic Documentation", desc: "Structured evidence records" },
+    { icon: Users, label: "Entity Networks", desc: "Actor & relationship mapping" },
+    { icon: Scale, label: "Legal Intelligence", desc: "Precedent & compliance analysis" },
   ];
 
   const statsItems = [
-    { label: t("home.stats.documentedEvents"), value: stats?.totalEvents || 0 },
-    { label: t("home.stats.entitiesTracked"), value: stats?.totalEntities || 0 },
-    { label: t("home.stats.evidenceFiles"), value: stats?.totalSources || 0 },
-    { label: t("home.stats.legalPrecedents"), value: stats?.totalPrecedents || 0 },
+    { label: "Documented Events", value: stats?.totalEvents || 0 },
+    { label: "Entities Identified", value: stats?.totalEntities || 0 },
+    { label: "Evidence Records", value: stats?.totalSources || 0 },
+    { label: "Legal References", value: stats?.totalPrecedents || 0 },
   ];
 
   return (
