@@ -107,7 +107,7 @@ const HomePage = () => {
             <div className="flex items-center gap-3 mb-8">
               <img src={hrpmLogo} alt="" className="w-12 h-12 drop-shadow-lg" aria-hidden />
               <Badge variant="outline" className="text-xs font-medium tracking-wide border-primary/40 text-primary bg-primary/5 backdrop-blur-sm">
-                {t("home.hero.badge")}
+                Open-Source Investigative Intelligence
               </Badge>
             </div>
 
