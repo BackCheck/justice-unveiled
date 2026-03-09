@@ -568,7 +568,7 @@ const CaseProfile = () => {
                     entities: entities?.map(e => ({ name: e.name, entity_type: e.entity_type, role: e.role || undefined, category: e.category || undefined })),
                     discrepancies: discrepancies?.map(d => ({ title: d.title, severity: d.severity, description: d.description })),
                     stats: {
-                      sources: caseData.total_sources ?? 0,
+                      sources: evidence?.length || 0,
                       events: events?.length || 0,
                       entities: entities?.length || 0,
                       discrepancies: discrepancies?.length || 0,
