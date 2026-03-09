@@ -359,7 +359,7 @@ const CaseProfile = () => {
     <div style="width:60px;height:4px;background:#0087C1;margin:0 auto 24px;border-radius:4px;"></div>
     <h2 style="font-size:22px;">End of Report</h2>
     <p style="color:#6b7280;font-size:13px;margin:16px 0;">
-      This report summarizes intelligence gathered from ${caseData.total_sources ?? 0} verified sources
+      This report summarizes intelligence gathered from ${evidence?.length || 0} verified sources
       covering ${events?.length || 0} documented events and ${entities?.length || 0} mapped entities
       for case ${caseData.case_number}.
     </p>
