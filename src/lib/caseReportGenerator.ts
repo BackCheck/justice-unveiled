@@ -387,9 +387,9 @@ export async function generateFullCaseReport(caseItem: Case, userIP: string = 'N
     caseTitle: caseItem.title,
     caseNumber: caseItem.case_number,
     stats: [
-      { label: 'Sources', value: caseItem.total_sources ?? upl.length },
-      { label: 'Events', value: caseItem.total_events ?? ev.length },
-      { label: 'Entities', value: caseItem.total_entities ?? e.length },
+      { label: 'Sources', value: upl.length },
+      { label: 'Events', value: ev.length },
+      { label: 'Entities', value: e.length },
     ],
     sections,
     severity: caseItem.severity,

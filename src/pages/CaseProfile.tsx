@@ -186,11 +186,13 @@ const CaseProfile = () => {
     <h2 style="font-size:28px;margin:12px 0;">${caseData.title}</h2>
     <p style="font-family:monospace;color:#6b7280;font-size:16px;">${caseData.case_number}</p>
     <div style="margin-top:24px;display:inline-flex;gap:32px;padding:16px 32px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;">
-      <div><span style="font-size:24px;font-weight:700;color:#0087C1;">${caseData.total_sources ?? 0}</span> <span style="color:#6b7280;">Sources</span></div>
+      <div><span style="font-size:24px;font-weight:700;color:#0087C1;">${evidence?.length || 0}</span> <span style="color:#6b7280;">Sources</span></div>
       <div style="color:#d1d5db;">|</div>
       <div><span style="font-size:24px;font-weight:700;color:#0087C1;">${events?.length || 0}</span> <span style="color:#6b7280;">Events</span></div>
       <div style="color:#d1d5db;">|</div>
       <div><span style="font-size:24px;font-weight:700;color:#0087C1;">${entities?.length || 0}</span> <span style="color:#6b7280;">Entities</span></div>
+      <div style="color:#d1d5db;">|</div>
+      <div><span style="font-size:24px;font-weight:700;color:#0087C1;">${discrepancies?.length || 0}</span> <span style="color:#6b7280;">Issues</span></div>
     </div>
   </div>
   <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:24px;">
