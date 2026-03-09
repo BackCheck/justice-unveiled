@@ -17,6 +17,7 @@ import {
   Eye,
   ChevronUp,
   ChevronDown,
+  Terminal,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserRole } from "@/hooks/useUserRole";
