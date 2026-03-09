@@ -118,6 +118,7 @@ const App = () => (
             <Route path="/changelog" element={<Changelog />} />
             <Route path="/analysis-history" element={<AnalysisHistory />} />
             <Route path="/osint-toolkit" element={<OsintToolkit />} />
+            <Route path="/osint-commands" element={<OsintCommands />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/admin/entity-review" element={<EntityReview />} />
             <Route path="/events/:eventId" element={<EventDetail />} />
