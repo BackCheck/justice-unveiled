@@ -415,37 +415,67 @@
   },
   "home": {
     "hero": {
-      "badge": "Open-Source · Non-Profit",
-      "title1": "Documenting Truth,",
-      "title2": "Defending Rights",
-      "description": "We stand as witnesses to injustice, documenting human rights violations with precision and compassion. Every story matters. Every voice deserves to be heard.",
-      "reportViolation": "Report a Violation",
-      "supportMission": "Support Our Mission"
+      "badge": "Open-Source Investigative Intelligence",
+      "title1": "Documenting Evidence.",
+      "title2": "Advancing Accountability.",
+      "description": "HRPM is an open investigative platform that structures complex legal, regulatory, and human rights cases into verifiable evidence records, entity networks, and analytical timelines.",
+      "description2": "By combining forensic documentation, intelligence mapping, and legal analysis, HRPM transforms fragmented information into structured investigative insight.",
+      "exploreInvestigations": "Explore Investigations",
+      "viewEvidenceLibrary": "View Evidence Library",
+      "howItWorks": "How It Works"
     },
     "featurePills": {
-      "protectedReporting": "Protected Reporting",
-      "protectedReportingDesc": "Secure, anonymous channels",
-      "globalNetwork": "Global Network",
-      "globalNetworkDesc": "50+ countries worldwide",
-      "survivorSupport": "Survivor Support",
-      "survivorSupportDesc": "Comprehensive resources"
+      "forensicDoc": "Forensic Documentation",
+      "forensicDocDesc": "Structured evidence records",
+      "entityNetworks": "Entity Networks",
+      "entityNetworksDesc": "Actor & relationship mapping",
+      "legalIntelligence": "Legal Intelligence",
+      "legalIntelligenceDesc": "Precedent & compliance analysis"
     },
     "stats": {
       "documentedEvents": "Documented Events",
-      "entitiesTracked": "Entities Tracked",
-      "evidenceFiles": "Evidence Files",
-      "legalPrecedents": "Legal Precedents"
+      "entitiesIdentified": "Entities Identified",
+      "evidenceRecords": "Evidence Records",
+      "legalReferences": "Legal References"
+    },
+    "steps": {
+      "evidenceDoc": "Evidence Documentation",
+      "evidenceDocDesc": "Structured forensic documentation of digital evidence, legal records, and investigative materials.",
+      "intelligenceMapping": "Intelligence Mapping",
+      "intelligenceMappingDesc": "Entity relationship analysis revealing networks, actors, and patterns within complex investigations.",
+      "legalAnalysis": "Legal Analysis",
+      "legalAnalysisDesc": "Mapping procedural violations, legal precedents, and international rights frameworks."
     },
     "howItWorks": {
       "title": "How HRPM Works",
-      "subtitle": "Three steps from submission to court-ready documentation.",
-      "step": "Step",
-      "step1Title": "Submit case or evidence",
-      "step1Desc": "Anyone can submit a new case with documents, media, and witness information — or add evidence to an existing investigation.",
-      "step2Title": "Verification & structuring",
-      "step2Desc": "Submissions are reviewed by moderators. AI extracts timeline events, entities, and legal references automatically.",
-      "step3Title": "Actionable outputs",
-      "step3Desc": "Generate court-ready report packs, evidence matrices, legal citations, and shareable public timelines."
+      "subtitle": "HRPM transforms fragmented legal records, digital evidence, and investigative materials into structured intelligence through a multi-stage analytical workflow.",
+      "step1Title": "Evidence Collection",
+      "step1Desc": "Digital evidence, legal filings, witness records, and investigative documents are collected and preserved with forensic integrity.",
+      "step1Detail1": "Court records",
+      "step1Detail2": "Digital files",
+      "step1Detail3": "Communications",
+      "step1Detail4": "Regulatory documents",
+      "step2Title": "Entity Identification",
+      "step2Desc": "People, organizations, institutions, and locations are extracted from evidence and structured into an entity database.",
+      "step2Detail1": "Roles",
+      "step2Detail2": "Relationships",
+      "step2Detail3": "Repeated appearances across events",
+      "step3Title": "Timeline Reconstruction",
+      "step3Desc": "Events are chronologically reconstructed to identify patterns, sequences, and escalation points within the case history.",
+      "step3Detail1": "Procedural developments",
+      "step3Detail2": "Legal actions",
+      "step3Detail3": "Harassment patterns",
+      "step3Detail4": "Regulatory events",
+      "step4Title": "Legal & Rights Analysis",
+      "step4Desc": "Events and actions are evaluated against national laws and international human rights frameworks.",
+      "step4Detail1": "Procedural violations",
+      "step4Detail2": "Legal inconsistencies",
+      "step4Detail3": "Potential rights infringements",
+      "exploreInvestigations": "Explore Investigations",
+      "pipelineEvidence": "Evidence",
+      "pipelineEntities": "Entities",
+      "pipelineTimeline": "Timeline",
+      "pipelineLegalAnalysis": "Legal Analysis"
     },
     "featuredCases": {
       "title": "Featured Cases",
@@ -453,13 +483,6 @@
       "viewAll": "View All",
       "noCases": "No cases documented yet.",
       "submitFirst": "Submit the first case"
-    },
-    "recentActivity": {
-      "title": "Recent Activity",
-      "subtitle": "Latest signals across all documented cases.",
-      "newTimelineEvents": "New Timeline Events",
-      "newUploads": "New Uploads",
-      "entitiesExtracted": "Entities Extracted"
     },
     "trustSafety": {
       "title": "Trust & Safety",

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { MotionScrollReveal } from "@/components/ui/motion-scroll-reveal";
@@ -11,71 +12,75 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { type LucideIcon } from "lucide-react";
 
-const workflowSteps = [
-  {
-    icon: FileSearch,
-    title: "Evidence Collection",
-    description:
-      "Digital evidence, legal filings, witness records, and investigative documents are collected and preserved with forensic integrity.",
-    details: [
-      "Court records",
-      "Digital files",
-      "Communications",
-      "Regulatory documents",
-    ],
-  },
-  {
-    icon: Users,
-    title: "Entity Identification",
-    description:
-      "People, organizations, institutions, and locations are extracted from evidence and structured into an entity database.",
-    details: [
-      "Roles",
-      "Relationships",
-      "Repeated appearances across events",
-    ],
-  },
-  {
-    icon: CalendarClock,
-    title: "Timeline Reconstruction",
-    description:
-      "Events are chronologically reconstructed to identify patterns, sequences, and escalation points within the case history.",
-    details: [
-      "Procedural developments",
-      "Legal actions",
-      "Harassment patterns",
-      "Regulatory events",
-    ],
-  },
-  {
-    icon: Scale,
-    title: "Legal & Rights Analysis",
-    description:
-      "Events and actions are evaluated against national laws and international human rights frameworks.",
-    details: [
-      "Procedural violations",
-      "Legal inconsistencies",
-      "Potential rights infringements",
-    ],
-  },
-];
-
-const pipelineLabels = ["Evidence", "Entities", "Timeline", "Legal Analysis"];
+const stepIcons: LucideIcon[] = [FileSearch, Users, CalendarClock, Scale];
 
 const HowHRPMWorks = () => {
+  const { t } = useTranslation();
+
+  const workflowSteps = [
+    {
+      icon: stepIcons[0],
+      title: t("home.howItWorks.step1Title"),
+      description: t("home.howItWorks.step1Desc"),
+      details: [
+        t("home.howItWorks.step1Detail1"),
+        t("home.howItWorks.step1Detail2"),
+        t("home.howItWorks.step1Detail3"),
+        t("home.howItWorks.step1Detail4"),
+      ],
+    },
+    {
+      icon: stepIcons[1],
+      title: t("home.howItWorks.step2Title"),
+      description: t("home.howItWorks.step2Desc"),
+      details: [
+        t("home.howItWorks.step2Detail1"),
+        t("home.howItWorks.step2Detail2"),
+        t("home.howItWorks.step2Detail3"),
+      ],
+    },
+    {
+      icon: stepIcons[2],
+      title: t("home.howItWorks.step3Title"),
+      description: t("home.howItWorks.step3Desc"),
+      details: [
+        t("home.howItWorks.step3Detail1"),
+        t("home.howItWorks.step3Detail2"),
+        t("home.howItWorks.step3Detail3"),
+        t("home.howItWorks.step3Detail4"),
+      ],
+    },
+    {
+      icon: stepIcons[3],
+      title: t("home.howItWorks.step4Title"),
+      description: t("home.howItWorks.step4Desc"),
+      details: [
+        t("home.howItWorks.step4Detail1"),
+        t("home.howItWorks.step4Detail2"),
+        t("home.howItWorks.step4Detail3"),
+      ],
+    },
+  ];
+
+  const pipelineLabels = [
+    t("home.howItWorks.pipelineEvidence"),
+    t("home.howItWorks.pipelineEntities"),
+    t("home.howItWorks.pipelineTimeline"),
+    t("home.howItWorks.pipelineLegalAnalysis"),
+  ];
+
   return (
     <section id="how-it-works" className="border-t border-border/30">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-24">
         {/* Header */}
         <MotionScrollReveal direction="up">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-            How HRPM Works
+            {t("home.howItWorks.title")}
           </h2>
           <p className="text-muted-foreground mb-14 max-w-2xl leading-relaxed">
-            HRPM transforms fragmented legal records, digital evidence, and
-            investigative materials into structured intelligence through a
-            multi-stage analytical workflow.
+            {t("home.howItWorks.subtitle")}
           </p>
         </MotionScrollReveal>
 
@@ -148,7 +153,7 @@ const HowHRPMWorks = () => {
           <div className="mt-12 text-center">
             <Button asChild size="lg" className="gap-2 text-base px-6 h-12 shadow-lg shadow-primary/20">
               <Link to="/cases">
-                Explore Investigations
+                {t("home.howItWorks.exploreInvestigations")}
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </Button>
