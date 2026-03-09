@@ -583,7 +583,7 @@ const CaseProfile = () => {
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-3 lg:min-w-[200px]">
               <Card className="glass-card text-center p-4">
                 <FileText className="w-5 h-5 mx-auto mb-1 text-primary" />
-                <p className="text-2xl font-bold">{caseData.total_sources}</p>
+                <p className="text-2xl font-bold">{evidence?.length || 0}</p>
                 <p className="text-xs text-muted-foreground">Sources</p>
               </Card>
               <Card className="glass-card text-center p-4">
