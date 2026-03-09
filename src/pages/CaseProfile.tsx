@@ -186,11 +186,13 @@ const CaseProfile = () => {
     <h2 style="font-size:28px;margin:12px 0;">${caseData.title}</h2>
     <p style="font-family:monospace;color:#6b7280;font-size:16px;">${caseData.case_number}</p>
     <div style="margin-top:24px;display:inline-flex;gap:32px;padding:16px 32px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;">
-      <div><span style="font-size:24px;font-weight:700;color:#0087C1;">${caseData.total_sources ?? 0}</span> <span style="color:#6b7280;">Sources</span></div>
+      <div><span style="font-size:24px;font-weight:700;color:#0087C1;">${evidence?.length || 0}</span> <span style="color:#6b7280;">Sources</span></div>
       <div style="color:#d1d5db;">|</div>
       <div><span style="font-size:24px;font-weight:700;color:#0087C1;">${events?.length || 0}</span> <span style="color:#6b7280;">Events</span></div>
       <div style="color:#d1d5db;">|</div>
       <div><span style="font-size:24px;font-weight:700;color:#0087C1;">${entities?.length || 0}</span> <span style="color:#6b7280;">Entities</span></div>
+      <div style="color:#d1d5db;">|</div>
+      <div><span style="font-size:24px;font-weight:700;color:#0087C1;">${discrepancies?.length || 0}</span> <span style="color:#6b7280;">Issues</span></div>
     </div>
   </div>
   <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:24px;">
@@ -357,7 +359,7 @@ const CaseProfile = () => {
     <div style="width:60px;height:4px;background:#0087C1;margin:0 auto 24px;border-radius:4px;"></div>
     <h2 style="font-size:22px;">End of Report</h2>
     <p style="color:#6b7280;font-size:13px;margin:16px 0;">
-      This report summarizes intelligence gathered from ${caseData.total_sources ?? 0} verified sources
+      This report summarizes intelligence gathered from ${evidence?.length || 0} verified sources
       covering ${events?.length || 0} documented events and ${entities?.length || 0} mapped entities
       for case ${caseData.case_number}.
     </p>
@@ -581,7 +583,7 @@ const CaseProfile = () => {
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-3 lg:min-w-[200px]">
               <Card className="glass-card text-center p-4">
                 <FileText className="w-5 h-5 mx-auto mb-1 text-primary" />
-                <p className="text-2xl font-bold">{caseData.total_sources}</p>
+                <p className="text-2xl font-bold">{evidence?.length || 0}</p>
                 <p className="text-xs text-muted-foreground">Sources</p>
               </Card>
               <Card className="glass-card text-center p-4">

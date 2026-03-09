@@ -29,7 +29,7 @@ export async function generateFullCaseReport(caseItem: Case, userIP: string = 'N
     { data: losses },
   ] = await Promise.all([
     supabase.from('extracted_entities').select('*').eq('case_id', caseId),
-    supabase.from('extracted_events').select('*').eq('case_id', caseId).eq('is_hidden', false).order('date'),
+    supabase.from('extracted_events').select('*').eq('case_id', caseId).eq('is_hidden', false).eq('is_approved', true).order('date'),
     supabase.from('entity_relationships').select('*').eq('case_id', caseId),
     supabase.from('extracted_discrepancies').select('*').eq('case_id', caseId),
     supabase.from('compliance_violations').select('*').eq('case_id', caseId),
@@ -387,9 +387,9 @@ export async function generateFullCaseReport(caseItem: Case, userIP: string = 'N
     caseTitle: caseItem.title,
     caseNumber: caseItem.case_number,
     stats: [
-      { label: 'Sources', value: caseItem.total_sources ?? upl.length },
-      { label: 'Events', value: caseItem.total_events ?? ev.length },
-      { label: 'Entities', value: caseItem.total_entities ?? e.length },
+      { label: 'Sources', value: upl.length },
+      { label: 'Events', value: ev.length },
+      { label: 'Entities', value: e.length },
     ],
     sections,
     severity: caseItem.severity,
