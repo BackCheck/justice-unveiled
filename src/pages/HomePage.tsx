@@ -7,8 +7,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useCases } from "@/hooks/useCases";
 import { usePlatformStats } from "@/hooks/usePlatformStats";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "react-i18next";
 import {
   ArrowRight,
@@ -18,13 +16,11 @@ import {
   Scale,
   Shield,
   Upload,
-  CheckCircle2,
   Eye,
   AlertTriangle,
   MapPin,
   Calendar,
   Users,
-  Heart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
@@ -65,11 +61,10 @@ const HomePage = () => {
   const { stats } = usePlatformStats();
   const displayCases = cases?.slice(0, 6) || [];
 
-
   const steps = [
-    { icon: Upload, title: "Evidence Documentation", description: "Structured forensic documentation of digital evidence, legal records, and investigative materials." },
-    { icon: Users, title: "Intelligence Mapping", description: "Entity relationship analysis revealing networks, actors, and patterns within complex investigations." },
-    { icon: Scale, title: "Legal Analysis", description: "Mapping procedural violations, legal precedents, and international rights frameworks." },
+    { icon: Upload, title: t("home.steps.evidenceDoc"), description: t("home.steps.evidenceDocDesc") },
+    { icon: Users, title: t("home.steps.intelligenceMapping"), description: t("home.steps.intelligenceMappingDesc") },
+    { icon: Scale, title: t("home.steps.legalAnalysis"), description: t("home.steps.legalAnalysisDesc") },
   ];
 
   const trustItems = [
@@ -80,16 +75,16 @@ const HomePage = () => {
   ];
 
   const featurePills = [
-    { icon: Shield, label: "Forensic Documentation", desc: "Structured evidence records" },
-    { icon: Users, label: "Entity Networks", desc: "Actor & relationship mapping" },
-    { icon: Scale, label: "Legal Intelligence", desc: "Precedent & compliance analysis" },
+    { icon: Shield, label: t("home.featurePills.forensicDoc"), desc: t("home.featurePills.forensicDocDesc") },
+    { icon: Users, label: t("home.featurePills.entityNetworks"), desc: t("home.featurePills.entityNetworksDesc") },
+    { icon: Scale, label: t("home.featurePills.legalIntelligence"), desc: t("home.featurePills.legalIntelligenceDesc") },
   ];
 
   const statsItems = [
-    { label: "Documented Events", value: stats?.totalEvents || 0 },
-    { label: "Entities Identified", value: stats?.totalEntities || 0 },
-    { label: "Evidence Records", value: stats?.totalSources || 0 },
-    { label: "Legal References", value: stats?.totalPrecedents || 0 },
+    { label: t("home.stats.documentedEvents"), value: stats?.totalEvents || 0 },
+    { label: t("home.stats.entitiesIdentified"), value: stats?.totalEntities || 0 },
+    { label: t("home.stats.evidenceRecords"), value: stats?.totalSources || 0 },
+    { label: t("home.stats.legalReferences"), value: stats?.totalPrecedents || 0 },
   ];
 
   return (
@@ -108,12 +103,12 @@ const HomePage = () => {
             <div className="flex items-center gap-3 mb-8">
               <img src={hrpmLogo} alt="" className="w-12 h-12 drop-shadow-lg" aria-hidden />
               <Badge variant="outline" className="text-xs font-medium tracking-wide border-primary/40 text-primary bg-primary/5 backdrop-blur-sm">
-                Open-Source Investigative Intelligence
+                {t("home.hero.badge")}
               </Badge>
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-foreground leading-[1.05] max-w-4xl">
-              Documenting Evidence.{" "}
+              {t("home.hero.title1")}{" "}
               <br className="hidden sm:block" />
               <motion.span
                 className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-chart-2 to-primary bg-[length:200%_auto] animate-gradient-shift inline-block"
@@ -121,7 +116,7 @@ const HomePage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
               >
-                Advancing Accountability.
+                {t("home.hero.title2")}
               </motion.span>
             </h1>
           </motion.div>
@@ -132,7 +127,7 @@ const HomePage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.4 }}
           >
-            HRPM is an open investigative platform that structures complex legal, regulatory, and human rights cases into verifiable evidence records, entity networks, and analytical timelines.
+            {t("home.hero.description")}
           </motion.p>
 
           <motion.p
@@ -141,26 +136,26 @@ const HomePage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.5 }}
           >
-            By combining forensic documentation, intelligence mapping, and legal analysis, HRPM transforms fragmented information into structured investigative insight.
+            {t("home.hero.description2")}
           </motion.p>
 
           <motion.div className="mt-10 flex flex-wrap items-center gap-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.55 }}>
             <Button asChild size="lg" className="gap-2 text-base px-6 h-12 shadow-lg shadow-primary/20">
               <Link to="/cases">
                 <FolderSearch className="w-5 h-5" />
-                Explore Investigations
+                {t("home.hero.exploreInvestigations")}
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="gap-2 text-base px-6 h-12 backdrop-blur-sm bg-background/50">
               <Link to="/evidence">
                 <FileText className="w-5 h-5" />
-                View Evidence Library
+                {t("home.hero.viewEvidenceLibrary")}
               </Link>
             </Button>
             <Button asChild variant="ghost" size="lg" className="gap-2 text-base px-6 h-12">
               <a href="#how-it-works">
                 <ArrowRight className="w-5 h-5" />
-                How It Works
+                {t("home.hero.howItWorks")}
               </a>
             </Button>
           </motion.div>

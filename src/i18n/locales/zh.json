@@ -403,6 +403,93 @@
     "newCase": "新案件",
     "viewAll": "查看所有案件"
   },
+  "home": {
+    "hero": {
+      "badge": "开源调查情报",
+      "title1": "记录证据。",
+      "title2": "推进问责。",
+      "description": "HRPM是一个开放的调查平台，将复杂的法律、监管和人权案件构建为可验证的证据记录、实体网络和分析时间线。",
+      "description2": "通过结合法证文档、情报映射和法律分析，HRPM将碎片化信息转化为结构化的调查洞察。",
+      "exploreInvestigations": "探索调查",
+      "viewEvidenceLibrary": "查看证据库",
+      "howItWorks": "如何运作"
+    },
+    "featurePills": {
+      "forensicDoc": "法证文档",
+      "forensicDocDesc": "结构化证据记录",
+      "entityNetworks": "实体网络",
+      "entityNetworksDesc": "行为者和关系映射",
+      "legalIntelligence": "法律情报",
+      "legalIntelligenceDesc": "判例和合规分析"
+    },
+    "stats": {
+      "documentedEvents": "已记录事件",
+      "entitiesIdentified": "已识别实体",
+      "evidenceRecords": "证据记录",
+      "legalReferences": "法律参考"
+    },
+    "steps": {
+      "evidenceDoc": "证据文档",
+      "evidenceDocDesc": "对数字证据、法律记录和调查材料的结构化法证记录。",
+      "intelligenceMapping": "情报映射",
+      "intelligenceMappingDesc": "实体关系分析揭示复杂调查中的网络、行为者和模式。",
+      "legalAnalysis": "法律分析",
+      "legalAnalysisDesc": "映射程序违规、法律先例和国际权利框架。"
+    },
+    "howItWorks": {
+      "title": "HRPM如何运作",
+      "subtitle": "HRPM通过多阶段分析工作流程，将碎片化的法律记录、数字证据和调查材料转化为结构化情报。",
+      "step1Title": "证据收集",
+      "step1Desc": "以法证完整性收集和保存数字证据、法律文件、证人记录和调查文件。",
+      "step1Detail1": "法庭记录",
+      "step1Detail2": "数字文件",
+      "step1Detail3": "通信记录",
+      "step1Detail4": "监管文件",
+      "step2Title": "实体识别",
+      "step2Desc": "从证据中提取人物、组织、机构和地点，并构建到实体数据库中。",
+      "step2Detail1": "角色",
+      "step2Detail2": "关系",
+      "step2Detail3": "跨事件重复出现",
+      "step3Title": "时间线重建",
+      "step3Desc": "按时间顺序重建事件，以识别案件历史中的模式、序列和升级点。",
+      "step3Detail1": "程序性进展",
+      "step3Detail2": "法律行动",
+      "step3Detail3": "骚扰模式",
+      "step3Detail4": "监管事件",
+      "step4Title": "法律与权利分析",
+      "step4Desc": "根据国家法律和国际人权框架评估事件和行动。",
+      "step4Detail1": "程序违规",
+      "step4Detail2": "法律不一致",
+      "step4Detail3": "潜在权利侵犯",
+      "exploreInvestigations": "探索调查",
+      "pipelineEvidence": "证据",
+      "pipelineEntities": "实体",
+      "pipelineTimeline": "时间线",
+      "pipelineLegalAnalysis": "法律分析"
+    },
+    "featuredCases": {
+      "title": "重点案件",
+      "subtitle": "活跃调查和已记录的案件档案。",
+      "viewAll": "查看全部",
+      "noCases": "尚未记录任何案件。",
+      "submitFirst": "提交第一个案件"
+    },
+    "trustSafety": {
+      "title": "信任与安全",
+      "subtitle": "为法庭级别的可信度而构建。每个输出都经过法律安全过滤。",
+      "privacy": "隐私设计",
+      "privacyDesc": "个人信息自动脱敏、同意控制，以及每次提交的分级可见性（公开/受限/私密）。",
+      "doNoHarm": "不伤害原则",
+      "doNoHarmDesc": "安全门阻止可能危害受害者的输出。对所有AI生成内容进行诽谤风险检测。",
+      "verification": "验证标准",
+      "verificationDesc": "每个案件都经过审核。AI置信度分数公开展示，从不隐藏。",
+      "takedown": "删除政策",
+      "takedownDesc": "内容可被标记、审查和删除。我们遵守法律删除请求并保护举报人。",
+      "termsOfService": "服务条款",
+      "privacyPolicy": "隐私政策",
+      "disclaimer": "免责声明"
+    }
+  },
   "language": {
     "select": "语言",
     "en": "English",
