@@ -17,6 +17,7 @@ import {
   Eye,
   ChevronUp,
   ChevronDown,
+  Terminal,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -52,6 +53,7 @@ const contributeItems: NavItem[] = [
 
 const analyzeItems: NavItem[] = [
   { path: "/analyze", label: "Analyze Hub", icon: Brain },
+  { path: "/osint-commands", label: "OSINT Commands", icon: Terminal },
 ];
 
 const learnItems: NavItem[] = [
