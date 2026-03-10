@@ -14,7 +14,7 @@ const routeLabels: Record<string, string> = {
   "/cases": "Case Library",
   "/timeline": "Timeline",
   "/blog": "Blog & News",
-  "/submit-case": "Submit a Case",
+  "/evidence/new": "Contribute Evidence",
   "/uploads": "Upload Center",
   "/analyze": "Analyze Hub",
   "/evidence": "Evidence Matrix",

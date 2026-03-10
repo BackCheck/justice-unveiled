@@ -75,9 +75,9 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
               {/* Right: settings + notifications + profile */}
               <div className="flex items-center gap-1.5 shrink-0">
                 <Button asChild size="sm" className="hidden sm:flex gap-1.5 h-8 text-xs">
-                  <Link to="/submit-case">
-                    <PlusCircle className="w-3.5 h-3.5" />
-                    Submit a Case
+                  <Link to="/evidence/new">
+                    <Plus className="w-3.5 h-3.5" />
+                    Contribute Evidence
                   </Link>
                 </Button>
 
