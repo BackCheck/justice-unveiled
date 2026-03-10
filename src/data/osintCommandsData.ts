@@ -68,11 +68,11 @@ export const osintCategories: OsintCategory[] = [
         name: "Resumes, CVs & Work History",
         icon: "📜",
         commands: [
-          { id: "r1", title: "Find someone's resume or CV", command: `"John Doe" filetype:pdf | filetype:doc "resume" | "curriculum vitae"` },
-          { id: "r2", title: "Look for employment history on LinkedIn", command: `site:linkedin.com/in "John Doe"` },
-          { id: "r3", title: "Find past job applications", command: `"John Doe" site:indeed.com | site:glassdoor.com` },
-          { id: "r4", title: "Find academic papers or research", command: `site:researchgate.net OR site:academia.edu "John Doe"` },
-          { id: "r5", title: "Find an author's books and writings", command: `site:goodreads.com OR site:medium.com OR site:substack.com "John Doe"` },
+          { id: "r1", title: "Find someone's resume or CV", command: `"John Doe" filetype:pdf | filetype:doc "resume" | "curriculum vitae"`, example: "Use case: People upload resumes to job boards and personal sites. This finds PDF/DOC files containing their name and resume keywords — reveals work history, skills, and contact info." },
+          { id: "r2", title: "Look for employment history on LinkedIn", command: `site:linkedin.com/in "John Doe"`, example: "Use case: LinkedIn profiles show job titles, companies, education, and connections. Even if you can't see the full profile without logging in, Google's cached version often shows more." },
+          { id: "r3", title: "Find past job applications", command: `"John Doe" site:indeed.com | site:glassdoor.com`, example: "Use case: Check if someone has publicly visible job applications or company reviews. Glassdoor reviews sometimes reveal salary info and workplace complaints." },
+          { id: "r4", title: "Find academic papers or research", command: `site:researchgate.net OR site:academia.edu "John Doe"`, example: "Use case: Verify someone's academic credentials or find their published research. Useful for checking if claimed qualifications are real." },
+          { id: "r5", title: "Find an author's books and writings", command: `site:goodreads.com OR site:medium.com OR site:substack.com "John Doe"`, example: "Use case: Discover books, articles, or newsletters written by someone. Their writing can reveal beliefs, affiliations, and expertise areas." },
         ],
       },
       {
