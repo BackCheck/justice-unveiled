@@ -1,6 +1,6 @@
 import { ReactNode, lazy, Suspense } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { PlusCircle, LogOut, LogIn, Eye, ChevronDown } from "lucide-react";
+import { Plus, LogOut, LogIn, Eye, ChevronDown } from "lucide-react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { Breadcrumbs } from "./Breadcrumbs";
@@ -75,9 +75,9 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
               {/* Right: settings + notifications + profile */}
               <div className="flex items-center gap-1.5 shrink-0">
                 <Button asChild size="sm" className="hidden sm:flex gap-1.5 h-8 text-xs">
-                  <Link to="/submit-case">
-                    <PlusCircle className="w-3.5 h-3.5" />
-                    Submit a Case
+                  <Link to="/evidence/new">
+                    <Plus className="w-3.5 h-3.5" />
+                    Contribute Evidence
                   </Link>
                 </Button>
 

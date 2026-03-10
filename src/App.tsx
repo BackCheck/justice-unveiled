@@ -126,6 +126,7 @@ const App = () => (
             <Route path="/watchlist" element={<Watchlist />} />
             <Route path="/entities/:entityId" element={<EntityDetail />} />
             <Route path="/welcome" element={<Landing />} />
+            <Route path="/evidence/new" element={<SubmitCase />} />
             <Route path="/submit-case" element={<SubmitCase />} />
             <Route path="/cases/:caseId/add-evidence" element={<AddEvidence />} />
             <Route path="/reports" element={<ReportCenter />} />

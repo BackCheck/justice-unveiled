@@ -42,8 +42,8 @@ const SubmitCase = () => {
   const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0, fileName: "" });
 
   useSEO({
-    title: "Submit a Case — HRPM",
-    description: "Submit a new human rights case for documentation and investigation.",
+    title: "Contribute Evidence — HRPM",
+    description: "Contribute evidence to an existing or new human rights investigation.",
   });
 
   // Step 1: Basics
@@ -79,10 +79,10 @@ const SubmitCase = () => {
           <Shield className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-foreground mb-2">Sign in to contribute</h1>
           <p className="text-muted-foreground mb-6">
-            Create an account or sign in to submit a case. Your progress will be here when you return.
+            Create an account or sign in to contribute evidence. Your progress will be here when you return.
           </p>
           <Button asChild>
-            <a href={`/auth?redirect=${encodeURIComponent("/submit-case")}`}>Sign In</a>
+            <a href={`/auth?redirect=${encodeURIComponent("/evidence/new")}`}>Sign In</a>
           </Button>
         </div>
       </PlatformLayout>

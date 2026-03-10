@@ -36,7 +36,7 @@ const SiteFooter = ({ compact = false }: { compact?: boolean }) => {
       links: [
         { text: "Case Library", url: "/cases" },
         { text: "Timeline", url: "/timeline" },
-        { text: "Submit a Case", url: "/submit-case" },
+        { text: "Contribute Evidence", url: "/evidence/new" },
         { text: "Blog & News", url: "/blog" },
         { text: "Report Center", url: "/reports" },
       ],

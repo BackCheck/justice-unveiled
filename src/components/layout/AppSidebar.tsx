@@ -4,7 +4,7 @@ import {
   FolderOpen,
   Clock,
   Newspaper,
-  PlusCircle,
+  Plus,
   UploadCloud,
   Brain,
   HelpCircle,
@@ -47,7 +47,7 @@ const exploreItems: NavItem[] = [
 ];
 
 const contributeItems: NavItem[] = [
-  { path: "/submit-case", label: "Submit a Case", icon: PlusCircle },
+  { path: "/evidence/new", label: "Contribute Evidence", icon: Plus },
   { path: "/uploads", label: "Upload Center", icon: UploadCloud },
 ];
 

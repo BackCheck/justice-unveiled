@@ -251,7 +251,7 @@ const HomePage = () => {
               <FolderSearch className="w-10 h-10 mx-auto mb-3 opacity-40" />
               <p className="text-sm">{t("home.featuredCases.noCases")}</p>
               <Button asChild variant="outline" size="sm" className="mt-4 gap-2">
-                <Link to="/submit-case">
+                <Link to="/evidence/new">
                   <PlusCircle className="w-4 h-4" /> {t("home.featuredCases.submitFirst")}
                 </Link>
               </Button>
