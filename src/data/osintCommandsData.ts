@@ -164,11 +164,11 @@ export const osintCategories: OsintCategory[] = [
         name: "Facebook",
         icon: "📘",
         commands: [
-          { id: "fb1", title: "Find all Facebook groups a user is in", command: `google "site:facebook.com/groups username"` },
-          { id: "fb2", title: "Find Facebook posts from a specific location", command: `google "site:facebook.com intext:'📍 New York'"` },
-          { id: "fb3", title: "Search for Facebook profiles linked to a phone number", command: `google "site:facebook.com intext:'+1234567890'"` },
-          { id: "fb4", title: "Search for leaked Facebook IDs in breaches", command: `google "site:pastebin.com facebook.com/profile.php?id="` },
-          { id: "fb5", title: "Find a person's Facebook profile by location", command: `site:facebook.com "John Doe" "New York"` },
+          { id: "fb1", title: "Find all Facebook groups a user is in", command: `google "site:facebook.com/groups username"`, example: "Use case: Facebook group memberships reveal interests, affiliations, and communities someone belongs to. This can uncover connections not visible on their public profile." },
+          { id: "fb2", title: "Find Facebook posts from a specific location", command: `google "site:facebook.com intext:'📍 New York'"`, example: "Use case: Find Facebook posts tagged with a specific location. Useful for gathering witness accounts or social media activity around a geographic area of interest." },
+          { id: "fb3", title: "Search for Facebook profiles linked to a phone number", command: `google "site:facebook.com intext:'+1234567890'"`, example: "Use case: If you have a phone number, this searches Facebook for profiles or posts containing it. Many people list phone numbers on their Facebook pages." },
+          { id: "fb4", title: "Search for leaked Facebook IDs in breaches", command: `google "site:pastebin.com facebook.com/profile.php?id="`, example: "Use case: After major Facebook data breaches, profile IDs get dumped on paste sites. This checks if specific profiles were part of known leaks." },
+          { id: "fb5", title: "Find a person's Facebook profile by location", command: `site:facebook.com "John Doe" "New York"`, example: "Use case: When a name is common, adding a city helps narrow down the right profile. Google indexes Facebook profile info including location." },
         ],
       },
       {
