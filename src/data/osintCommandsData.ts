@@ -3,6 +3,7 @@ export interface OsintCommand {
   title: string;
   command: string;
   description?: string;
+  example?: string;
   isLink?: boolean;
   linkUrl?: string;
 }
