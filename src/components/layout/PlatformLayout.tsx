@@ -1,6 +1,6 @@
 import { ReactNode, lazy, Suspense } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { PlusCircle, LogOut, LogIn, Eye, ChevronDown } from "lucide-react";
+import { Plus, LogOut, LogIn, Eye, ChevronDown } from "lucide-react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { Breadcrumbs } from "./Breadcrumbs";
