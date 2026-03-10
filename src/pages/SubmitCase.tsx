@@ -42,8 +42,8 @@ const SubmitCase = () => {
   const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0, fileName: "" });
 
   useSEO({
-    title: "Submit a Case — HRPM",
-    description: "Submit a new human rights case for documentation and investigation.",
+    title: "Contribute Evidence — HRPM",
+    description: "Contribute evidence to an existing or new human rights investigation.",
   });
 
   // Step 1: Basics
