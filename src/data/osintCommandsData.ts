@@ -175,11 +175,11 @@ export const osintCategories: OsintCategory[] = [
         name: "Instagram",
         icon: "📸",
         commands: [
-          { id: "ig1", title: "Download all Instagram stories from a target", command: `instaloader --stories username` },
-          { id: "ig2", title: "Extract Instagram metadata (location, device info)", command: `instaloader --metadata-json username` },
-          { id: "ig3", title: "Find all Instagram profiles linked to an email", command: `google "site:instagram.com intext:email@example.com"` },
-          { id: "ig4", title: "Extract geotagged Instagram posts", command: `google "site:instagram.com intext:'📍 London'"` },
-          { id: "ig5", title: "Find Instagram users with similar interests", command: `google "site:instagram.com intext:'#hacking #cybersecurity'"` },
+          { id: "ig1", title: "Download all Instagram stories from a target", command: `instaloader --stories username`, example: "Use case: Save Instagram stories before they disappear after 24 hours. Instaloader downloads them to your computer for offline analysis and evidence preservation." },
+          { id: "ig2", title: "Extract Instagram metadata (location, device info)", command: `instaloader --metadata-json username`, example: "Use case: Each Instagram post contains metadata — timestamps, device info, and sometimes GPS coordinates. This exports all metadata as JSON for analysis." },
+          { id: "ig3", title: "Find all Instagram profiles linked to an email", command: `google "site:instagram.com intext:email@example.com"`, example: "Use case: Search for Instagram profiles that mention a specific email address in their bio or posts. Helps connect an email to a social media identity." },
+          { id: "ig4", title: "Extract geotagged Instagram posts", command: `google "site:instagram.com intext:'📍 London'"`, example: "Use case: Find Instagram posts tagged at a specific location. Useful for placing someone at a location during a specific time period." },
+          { id: "ig5", title: "Find Instagram users with similar interests", command: `google "site:instagram.com intext:'#hacking #cybersecurity'"`, example: "Use case: Find people in specific communities by searching for relevant hashtag combinations in Instagram posts indexed by Google." },
         ],
       },
       {
