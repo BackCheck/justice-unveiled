@@ -4,7 +4,7 @@ import {
   FolderOpen,
   Clock,
   Newspaper,
-  PlusCircle,
+  Plus,
   UploadCloud,
   Brain,
   HelpCircle,
