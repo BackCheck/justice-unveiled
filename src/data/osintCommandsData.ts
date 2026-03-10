@@ -186,11 +186,11 @@ export const osintCategories: OsintCategory[] = [
         name: "LinkedIn",
         icon: "💼",
         commands: [
-          { id: "li1", title: "Scrape all employees from a company", command: `linkedin-scraper -c "Google"` },
-          { id: "li2", title: "Extract job postings and hidden email contacts", command: `google "site:linkedin.com/jobs 'Cybersecurity Analyst' 'Remote'"` },
-          { id: "li3", title: "Find LinkedIn profiles with leaked credentials", command: `google "site:linkedin.com/in 'password' OR 'email@example.com'"` },
-          { id: "li4", title: "Identify users who worked for a company in the past", command: `google "site:linkedin.com/in 'Worked at Google'"` },
-          { id: "li5", title: "Search for LinkedIn users by job title", command: `google "site:linkedin.com/in 'Cybersecurity Researcher' 'India'"` },
+          { id: "li1", title: "Scrape all employees from a company", command: `linkedin-scraper -c "Google"`, example: "Use case: Automatically collect employee names, titles, and profiles from a company's LinkedIn page. Helps map organizational hierarchy and identify key personnel." },
+          { id: "li2", title: "Extract job postings and hidden email contacts", command: `google "site:linkedin.com/jobs 'Cybersecurity Analyst' 'Remote'"`, example: "Use case: Find specific job openings along with recruiter contact info. Job posts sometimes contain direct email addresses or phone numbers." },
+          { id: "li3", title: "Find LinkedIn profiles with leaked credentials", command: `google "site:linkedin.com/in 'password' OR 'email@example.com'"`, example: "Use case: Check if LinkedIn profile URLs appear alongside leaked credentials. This can indicate a person's account was compromised." },
+          { id: "li4", title: "Identify users who worked for a company in the past", command: `google "site:linkedin.com/in 'Worked at Google'"`, example: "Use case: Find former employees of a company. Ex-employees may be willing to share information and provide insider perspective on an organization." },
+          { id: "li5", title: "Search for LinkedIn users by job title", command: `google "site:linkedin.com/in 'Cybersecurity Researcher' 'India'"`, example: "Use case: Find professionals in a specific role and location. Useful for identifying experts, potential sources, or persons of interest in a specific field." },
         ],
       },
       {
