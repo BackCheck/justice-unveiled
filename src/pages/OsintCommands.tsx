@@ -20,6 +20,7 @@ export default function OsintCommands() {
 
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [showGuide, setShowGuide] = useState(false);
 
   const totalCommands = useMemo(
     () => osintCategories.reduce((sum, cat) => sum + cat.subcategories.reduce((s, sub) => s + sub.commands.length, 0), 0),
