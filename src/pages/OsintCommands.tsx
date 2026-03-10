@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { osintCategories } from "@/data/osintCommandsData";
-import { Search, Copy, Check, ExternalLink, Terminal, ChevronRight, Hash, Layers, Command } from "lucide-react";
+import { Search, Copy, Check, ExternalLink, Terminal, ChevronRight, Hash, Layers, Command, Lightbulb, BookOpen } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
