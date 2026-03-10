@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { osintCategories } from "@/data/osintCommandsData";
-import { Search, Copy, Check, ExternalLink, Terminal, ChevronRight, Hash, Layers, Command } from "lucide-react";
+import { Search, Copy, Check, ExternalLink, Terminal, ChevronRight, Hash, Layers, Command, Lightbulb, BookOpen } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -20,6 +20,7 @@ export default function OsintCommands() {
 
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [showGuide, setShowGuide] = useState(false);
 
   const totalCommands = useMemo(
     () => osintCategories.reduce((sum, cat) => sum + cat.subcategories.reduce((s, sub) => s + sub.commands.length, 0), 0),
@@ -81,6 +82,58 @@ export default function OsintCommands() {
               // source: <a href="https://github.com/yogsec/One-Liner-OSINT" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary transition-colors">yogsec/One-Liner-OSINT</a> — curated for HRPM investigators
             </p>
           </div>
+        </div>
+
+        {/* Quick Start Guide */}
+        <div className="rounded-lg border border-primary/20 bg-card overflow-hidden">
+          <button
+            onClick={() => setShowGuide(!showGuide)}
+            className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-4 w-4 text-primary" />
+              <span className="text-sm font-semibold text-foreground">Quick Start Guide — How to Use These Commands</span>
+            </div>
+            <Badge variant="outline" className="text-[10px] font-mono border-primary/30 text-primary">
+              {showGuide ? "HIDE" : "SHOW"}
+            </Badge>
+          </button>
+          {showGuide && (
+            <div className="px-4 pb-4 space-y-3 border-t border-border/30">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 mt-3">
+                <div className="p-3 rounded-md bg-muted/40 border border-border/30">
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-chart-5/10 text-chart-5 border border-chart-5/20">Google Search</span>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed mt-2">
+                    Commands with <code className="text-foreground/80 bg-muted px-1 rounded">site:</code> or quoted text — paste directly into <strong>Google Search</strong>.
+                  </p>
+                </div>
+                <div className="p-3 rounded-md bg-muted/40 border border-border/30">
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-chart-2/10 text-chart-2 border border-chart-2/20">Terminal</span>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed mt-2">
+                    Commands with <code className="text-foreground/80 bg-muted px-1 rounded">curl</code>, <code className="text-foreground/80 bg-muted px-1 rounded">wget</code> — run in a <strong>terminal/command prompt</strong>.
+                  </p>
+                </div>
+                <div className="p-3 rounded-md bg-muted/40 border border-border/30">
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-chart-1/10 text-chart-1 border border-chart-1/20">CLI Tool</span>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed mt-2">
+                    Tools like <code className="text-foreground/80 bg-muted px-1 rounded">sherlock</code>, <code className="text-foreground/80 bg-muted px-1 rounded">holehe</code> — <strong>install first</strong>, then run in terminal.
+                  </p>
+                </div>
+                <div className="p-3 rounded-md bg-muted/40 border border-border/30">
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-chart-4/10 text-chart-4 border border-chart-4/20">Web Tool</span>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed mt-2">
+                    Click the <strong>external link button</strong> to open web tools directly in your browser.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2 p-3 rounded-md bg-primary/5 border border-primary/20">
+                <Lightbulb className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  <strong className="text-foreground">Tip:</strong> Click the 💡 bulb icon on any command card to see a practical explanation. Replace placeholder values like "John Doe" or "target.com" with your actual targets.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Search & Filters */}
