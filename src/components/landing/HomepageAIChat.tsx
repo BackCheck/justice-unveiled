@@ -1,21 +1,17 @@
 import { useState, useRef, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
-  MessageSquare,
   Send,
-  Sparkles,
   Bot,
   Loader2,
   AlertCircle,
-  Radio,
+  Terminal,
+  ChevronRight,
   Shield,
   Scale,
   FileText,
   Users,
+  Circle,
 } from "lucide-react";
 
 type Message = {
@@ -156,84 +152,106 @@ const HomepageAIChat = () => {
   return (
     <section className="border-t border-border/30">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16 md:py-24">
+        {/* Section Header */}
         <div className="text-center mb-10">
-          <Badge variant="outline" className="mb-4 bg-primary/10 text-primary border-primary/30 gap-1.5">
-            <Radio className="w-3 h-3" />
-            Live AI Assistant
-          </Badge>
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+          <div className="inline-flex items-center gap-2 mb-4 px-3 py-1.5 rounded-full border border-chart-2/30 bg-chart-2/10 font-mono text-xs tracking-wider uppercase text-chart-2">
+            <Terminal className="w-3.5 h-3.5" />
+            <span>Live Intel Terminal</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-chart-2 animate-pulse" />
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2 font-['Playfair_Display',serif]">
             Ask Our AI About HRPM
           </h2>
-          <p className="text-muted-foreground max-w-lg mx-auto">
+          <p className="text-muted-foreground max-w-lg mx-auto text-sm">
             Have questions about the platform, our cases, or human rights documentation? Our AI analyst can help.
           </p>
         </div>
 
-        <Card className="max-w-3xl mx-auto border-border/40 bg-card/60 overflow-hidden">
-          <CardContent className="p-0">
-            {/* Messages */}
-            <ScrollArea className="h-[320px] p-4" ref={scrollRef}>
+        {/* Terminal Window */}
+        <div className="max-w-3xl mx-auto rounded-lg border border-border/60 overflow-hidden shadow-xl shadow-black/10 dark:shadow-black/40">
+          {/* Terminal Title Bar */}
+          <div className="flex items-center gap-2 px-4 py-2.5 bg-muted/80 dark:bg-muted/50 border-b border-border/60">
+            <div className="flex items-center gap-1.5">
+              <Circle className="w-3 h-3 fill-destructive text-destructive/80" />
+              <Circle className="w-3 h-3 fill-chart-5 text-chart-5/80" />
+              <Circle className="w-3 h-3 fill-chart-2 text-chart-2/80" />
+            </div>
+            <div className="flex-1 text-center">
+              <span className="font-mono text-[11px] text-muted-foreground tracking-wide">
+                hrpm@intel-analyst:~
+              </span>
+            </div>
+            <div className="flex items-center gap-1 text-[10px] font-mono text-chart-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-chart-2 animate-pulse" />
+              CONNECTED
+            </div>
+          </div>
+
+          {/* Terminal Body */}
+          <div className="bg-card dark:bg-[hsl(200,30%,6%)]">
+            <ScrollArea className="h-[340px] p-4" ref={scrollRef}>
               {messages.length === 0 ? (
-                <div className="space-y-4">
-                  <div className="text-center text-muted-foreground text-sm py-6">
-                    <Bot className="w-10 h-10 mx-auto mb-2 opacity-40" />
-                    <p className="font-medium text-foreground/70">AI Intelligence Analyst</p>
-                    <p className="text-xs mt-1">
-                      Ask anything about HRPM, documented cases, or how to contribute
+                <div className="space-y-4 font-mono">
+                  {/* Boot sequence */}
+                  <div className="space-y-1 text-xs text-muted-foreground">
+                    <p><span className="text-chart-2">✓</span> System initialized</p>
+                    <p><span className="text-chart-2">✓</span> Intel database connected</p>
+                    <p><span className="text-chart-2">✓</span> AI analyst ready</p>
+                    <p className="text-primary mt-2">
+                      Type a query or select a topic below:
                     </p>
                   </div>
-                  <div className="grid sm:grid-cols-2 gap-2">
+                  <div className="space-y-1.5 mt-4">
                     {suggestions.map((q, i) => {
                       const Icon = q.icon;
                       return (
-                        <Button
+                        <button
                           key={i}
-                          variant="outline"
-                          size="sm"
-                          className="justify-start text-left h-auto py-2.5 px-3 border-border/50 hover:border-primary/30 hover:bg-primary/5 transition-all"
                           onClick={() => streamChat(q.text)}
                           disabled={isLoading}
+                          className="w-full text-left flex items-center gap-2 px-3 py-2 rounded border border-border/40 bg-muted/30 dark:bg-muted/20 hover:border-chart-2/50 hover:bg-chart-2/5 transition-all group font-mono text-xs text-muted-foreground hover:text-foreground"
                         >
-                          <Icon className="w-4 h-4 mr-2 shrink-0 text-primary" />
-                          <span className="text-sm">{q.text}</span>
-                        </Button>
+                          <ChevronRight className="w-3 h-3 text-chart-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
+                          <span>{q.text}</span>
+                        </button>
                       );
                     })}
                   </div>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-3 font-mono text-sm">
                   {messages.map((msg, i) => (
-                    <div
-                      key={i}
-                      className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                    >
-                      {msg.role === "assistant" && (
-                        <Avatar className="w-7 h-7 shrink-0">
-                          <AvatarFallback className="bg-primary/10 text-primary">
-                            <Bot className="w-3.5 h-3.5" />
-                          </AvatarFallback>
-                        </Avatar>
+                    <div key={i}>
+                      {msg.role === "user" ? (
+                        <div className="flex items-start gap-2">
+                          <span className="text-chart-2 shrink-0 select-none text-xs font-bold mt-0.5">
+                            ❯
+                          </span>
+                          <span className="text-foreground text-xs whitespace-pre-wrap">
+                            {msg.content}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-start gap-2 mt-1">
+                          <span className="text-primary shrink-0 select-none text-xs font-bold mt-0.5">
+                            ◆
+                          </span>
+                          <span className="text-muted-foreground text-xs whitespace-pre-wrap leading-relaxed">
+                            {msg.content}
+                          </span>
+                        </div>
                       )}
-                      <div
-                        className={`max-w-[80%] rounded-lg px-3 py-2 text-sm whitespace-pre-wrap ${
-                          msg.role === "user"
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-accent/50 text-foreground"
-                        }`}
-                      >
-                        {msg.content}
-                      </div>
                     </div>
                   ))}
                   {isLoading && messages[messages.length - 1]?.role === "user" && (
-                    <div className="flex gap-3 items-center">
-                      <Avatar className="w-7 h-7 shrink-0">
-                        <AvatarFallback className="bg-primary/10 text-primary">
-                          <Bot className="w-3.5 h-3.5" />
-                        </AvatarFallback>
-                      </Avatar>
-                      <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                    <div className="flex items-center gap-2">
+                      <span className="text-primary text-xs font-bold">◆</span>
+                      <span className="inline-flex gap-1 text-muted-foreground">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse [animation-delay:0.2s]" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse [animation-delay:0.4s]" />
+                      </span>
                     </div>
                   )}
                 </div>
@@ -242,41 +260,40 @@ const HomepageAIChat = () => {
 
             {/* Error */}
             {error && (
-              <div className="mx-4 mb-2 flex items-center gap-2 text-xs text-destructive bg-destructive/10 rounded-md p-2">
+              <div className="mx-4 mb-2 flex items-center gap-2 text-xs font-mono text-destructive bg-destructive/10 border border-destructive/20 rounded px-3 py-2">
                 <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                {error}
+                <span>ERROR: {error}</span>
               </div>
             )}
 
-            {/* Input */}
+            {/* Terminal Input */}
             <form
               onSubmit={handleSubmit}
-              className="border-t border-border/30 p-3 flex gap-2"
+              className="border-t border-border/40 px-4 py-3 flex items-center gap-2 bg-muted/20 dark:bg-muted/10"
             >
+              <span className="text-chart-2 font-mono text-sm font-bold select-none">❯</span>
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about HRPM, cases, or human rights..."
-                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none px-2"
+                placeholder="Enter query..."
+                className="flex-1 bg-transparent font-mono text-xs text-foreground placeholder:text-muted-foreground/60 outline-none"
                 disabled={isLoading}
               />
-              <Button
+              <button
                 type="submit"
-                size="sm"
                 disabled={!input.trim() || isLoading}
-                className="gap-1.5"
+                className="p-1.5 rounded bg-primary/10 text-primary hover:bg-primary/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 {isLoading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
                 ) : (
-                  <Send className="w-4 h-4" />
+                  <Send className="w-3.5 h-3.5" />
                 )}
-                Send
-              </Button>
+              </button>
             </form>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </section>
   );
