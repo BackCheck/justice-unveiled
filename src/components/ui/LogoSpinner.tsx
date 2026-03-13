@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import hrpmLogo from "@/assets/human-rights-logo.png";
 
 interface LogoSpinnerProps {
   size?: "sm" | "md" | "lg" | "xl";
