@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import hrpmLogo from "@/assets/human-rights-logo.png";
 
 interface LogoSpinnerProps {
   size?: "sm" | "md" | "lg" | "xl";
@@ -49,7 +50,7 @@ export function LogoSpinner({ size = "md", className, showText = false }: LogoSp
         >
           <div className="w-full h-full bg-gradient-to-tr from-primary/20 via-primary/40 to-primary/20 animate-spin rounded-full" style={{ animationDuration: "1.5s" }} />
           <div className={cn("absolute inset-1 rounded-full bg-background flex items-center justify-center")}>
-            <div className="w-1/2 h-1/2 rounded-full bg-primary/30 animate-pulse" />
+            <img src={hrpmLogo} alt="HRPM" className="w-3/5 h-3/5 object-contain animate-pulse" />
           </div>
         </div>
       </div>
