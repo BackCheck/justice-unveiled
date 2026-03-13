@@ -191,6 +191,9 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* ═══════════════ AI COMM WIDGET ═══════════════ */}
+      <HomepageAIChat />
+
       {/* ═══════════════ HOW IT WORKS ═══════════════ */}
       <HowHRPMWorks />
 
