@@ -150,7 +150,25 @@ const HomepageAIChat = () => {
   };
 
   return (
-    <div className="h-full flex flex-col rounded-lg border border-border/60 overflow-hidden shadow-xl shadow-black/10 dark:shadow-black/40">
+    <section className="border-t border-border/30">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16 md:py-24">
+        {/* Section Header */}
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-2 mb-4 px-3 py-1.5 rounded-full border border-chart-2/30 bg-chart-2/10 font-mono text-xs tracking-wider uppercase text-chart-2">
+            <Terminal className="w-3.5 h-3.5" />
+            <span>Live Intel Terminal</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-chart-2 animate-pulse" />
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2 font-['Playfair_Display',serif]">
+            Ask Our AI About HRPM
+          </h2>
+          <p className="text-muted-foreground max-w-lg mx-auto text-sm">
+            Have questions about the platform, our cases, or human rights documentation? Our AI analyst can help.
+          </p>
+        </div>
+
+        {/* Terminal Window */}
+        <div className="max-w-3xl mx-auto rounded-lg border border-border/60 overflow-hidden shadow-xl shadow-black/10 dark:shadow-black/40">
           {/* Terminal Title Bar */}
           <div className="flex items-center gap-2 px-4 py-2.5 bg-muted/80 dark:bg-muted/50 border-b border-border/60">
             <div className="flex items-center gap-1.5">
@@ -275,7 +293,9 @@ const HomepageAIChat = () => {
               </button>
             </form>
           </div>
-    </div>
+        </div>
+      </div>
+    </section>
   );
 };
 
