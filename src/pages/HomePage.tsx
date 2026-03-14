@@ -30,6 +30,7 @@ import hrpmLogo from "@/assets/human-rights-logo.png";
 import { FloatingAiAssistant } from "@/components/ui/glowing-ai-chat-assistant";
 import HowHRPMWorks from "@/components/landing/HowHRPMWorks";
 import HomepageAIChat from "@/components/landing/HomepageAIChat";
+import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 
 const statusColor = (status: string) => {
   switch (status?.toLowerCase()) {
@@ -193,7 +194,23 @@ const HomePage = () => {
       </section>
 
       {/* ═══════════════ AI COMM WIDGET ═══════════════ */}
-      <HomepageAIChat />
+      <ContainerScroll
+        titleComponent={
+          <div className="flex flex-col items-center gap-3">
+            <h2 className="text-2xl md:text-4xl font-bold text-foreground">
+              Live Intelligence{" "}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-chart-2">
+                Terminal
+              </span>
+            </h2>
+            <p className="text-sm md:text-base text-muted-foreground max-w-lg">
+              Ask questions, explore cases, and get AI-powered insights in real time.
+            </p>
+          </div>
+        }
+      >
+        <HomepageAIChat />
+      </ContainerScroll>
 
       {/* ═══════════════ HOW IT WORKS ═══════════════ */}
       <HowHRPMWorks />
