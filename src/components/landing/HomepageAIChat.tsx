@@ -277,7 +277,7 @@ const HomepageAIChat = () => {
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 
