@@ -196,17 +196,12 @@ const HomePage = () => {
       {/* ═══════════════ AI COMM WIDGET ═══════════════ */}
       <ContainerScroll
         titleComponent={
-          <div className="flex flex-col items-center gap-3">
-            <h2 className="text-2xl md:text-4xl font-bold text-foreground">
-              Live Intelligence{" "}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-chart-2">
-                Terminal
-              </span>
-            </h2>
-            <p className="text-sm md:text-base text-muted-foreground max-w-lg">
-              Ask questions, explore cases, and get AI-powered insights in real time.
-            </p>
-          </div>
+          <h2 className="text-2xl md:text-4xl font-bold text-foreground">
+            Live Intelligence{" "}
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-chart-2">
+              Terminal
+            </span>
+          </h2>
         }
       >
         <HomepageAIChat />
