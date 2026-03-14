@@ -275,8 +275,6 @@ const HomepageAIChat = () => {
               </button>
             </form>
           </div>
-        </div>
-      </div>
     </div>
   );
 };
