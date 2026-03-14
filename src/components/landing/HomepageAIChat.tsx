@@ -274,7 +274,7 @@ const HomepageAIChat = () => {
                             [INTEL]
                           </span>
                           <span className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                            {msg.content}
+                            {stripMarkdown(msg.content)}
                           </span>
                         </div>
                       )}
