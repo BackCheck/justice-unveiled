@@ -23,6 +23,18 @@ const suggestions = [
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/intel-chat`;
 
+const stripMarkdown = (text: string): string =>
+  text
+    .replace(/```[\s\S]*?```/g, (m) => m.replace(/```\w*\n?/g, "").replace(/```/g, ""))
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/\*(.+?)\*/g, "$1")
+    .replace(/__(.+?)__/g, "$1")
+    .replace(/_(.+?)_/g, "$1")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/^[>\-\*]\s+/gm, "• ")
+    .replace(/`([^`]+)`/g, "$1");
+
 const ASCII_BANNER = `
 ██╗  ██╗██████╗ ██████╗ ███╗   ███╗
 ██║  ██║██╔══██╗██╔══██╗████╗ ████║
