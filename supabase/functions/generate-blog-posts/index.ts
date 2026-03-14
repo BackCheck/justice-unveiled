@@ -93,21 +93,27 @@ Your reporting style is evidence-driven, citing specific laws, conventions (UDHR
 
 IMPORTANT: You have access to REAL CASE DATA from the HRPM platform. Use it to write deeply contextualized, case-specific investigative reports that directly reference documented entities, events, violations, and procedural discrepancies from these cases.`;
 
-    const anglePool = [
-      "entity profile deep-dive on a key person or institution from the case data",
-      "timeline analysis connecting documented events to human rights violations",
-      "procedural failures and compliance violations documented in the case",
-      "legal framework analysis comparing domestic law breaches with international conventions",
-      "investigative spotlight on documented discrepancies and evidence gaps",
-      "institutional accountability analysis of official bodies involved in the cases",
-      "victim impact assessment based on documented violations",
-      "comparative analysis of case patterns with global human rights precedents",
-      "systemic corruption patterns revealed through cross-case entity connections",
-      "judicial independence and rule of law analysis through documented procedural violations",
+    // Case-specific investigative angles drawn from real events
+    const caseSpecificAngles = [
+      "Noreen's behavioral red flags: pattern analysis of documented manipulative, deceptive, or coercive behavior by Noreen as revealed in case evidence and witness statements",
+      "How Danish Thanvi's wedding ended: a forensic reconstruction of events surrounding the wedding breakdown, documenting who did what and when based on case evidence",
+      "Noreen's family interference: documenting patterns of undue family influence, control tactics, and boundary violations backed by extracted events",
+      "Financial exploitation patterns: tracking documented monetary losses, dowry-related demands, and economic coercion tied to Noreen and associates",
+      "Red flags ignored: a timeline of early warning signs, inconsistencies in Noreen's statements, and missed indicators documented across case evidence",
+      "The role of institutional failure: how police, courts, or agencies failed Danish Thanvi at critical moments as shown in compliance violations",
+      "Witness testimony contradictions: analyzing documented discrepancies between official statements and evidence in the case",
+      "Emotional and psychological abuse patterns: mapping documented incidents of gaslighting, intimidation, and psychological harm",
+      "Legal rights violated: specific constitutional and statutory protections denied to Danish Thanvi with legal framework references",
+      "The aftermath and ongoing injustice: documenting continued harassment, procedural delays, and denial of due process after the wedding collapse",
+      "Social media and digital evidence: analyzing documented digital footprints, communications, and online behavior patterns from case artifacts",
+      "Noreen's inconsistent narratives: cross-referencing her documented statements across different proceedings to expose contradictions",
+      "The dowry question: evidence-based analysis of financial transactions, gift demands, and material expectations documented in the case",
+      "Character witness analysis: profiling key individuals who enabled or witnessed the documented events and their documented roles",
+      "Comparative injustice: how Danish Thanvi's case mirrors documented patterns of marital fraud and abuse in South Asian human rights cases",
     ];
 
     // Pick random angles for diversity
-    const selectedAngles = anglePool
+    const selectedAngles = caseSpecificAngles
       .sort(() => Math.random() - 0.5)
       .slice(0, count)
       .map((a, i) => `${i + 1}. ${a}`)
