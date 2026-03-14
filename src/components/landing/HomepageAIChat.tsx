@@ -188,16 +188,6 @@ const HomepageAIChat = () => {
   return (
     <section className="border-t border-border/30">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16 md:py-24">
-        {/* Section Header */}
-        <div className="text-center mb-10">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2 font-['Playfair_Display',serif]">
-            Live Intel Terminal
-          </h2>
-          <p className="text-muted-foreground max-w-lg mx-auto text-sm">
-            Ask our AI analyst about HRPM, cases, or human rights documentation.
-          </p>
-        </div>
-
         {/* Terminal Window */}
         <div
           ref={terminalRef}
