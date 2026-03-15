@@ -1,10 +1,6 @@
-# HRPM.org Documentation
+# HRPM.org ReadMe
 
 ## Human Rights Protection & Monitoring - Investigative Intelligence Platform
-
-**Version:** 2.0  
-**Last Updated:** February 2026  
-**Status:** Production
 
 ---
 
