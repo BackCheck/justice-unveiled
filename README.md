@@ -113,7 +113,7 @@ Multi-case architecture supporting parallel investigations with full data isolat
 ## 🚀 Quick Start
 
 ### For Investigators
-1. Navigate to [hrpm.lovable.app](https://hrpm.lovable.app)
+1. Navigate to hrpm.org
 2. Create an account or sign in
 3. Browse existing cases or create a new investigation
 4. Upload documents for AI analysis
@@ -176,12 +176,6 @@ npm run dev
 - Verified precedent protection
 
 ---
-
-## 📞 Support
-
-- **Website:** [hrpm.lovable.app](https://hrpm.lovable.app)
-- **Contact:** See the [Contact Page](/contact)
-- **Issues:** Report via the platform
 
 ---
 
