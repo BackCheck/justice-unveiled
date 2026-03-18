@@ -229,8 +229,38 @@ Return ONLY the JSON array, no other text.`;
 
     console.log(`Generated ${inserted.length} case-enriched investigation reports`);
 
+    // Auto-post each new blog to LinkedIn (HRPM + Backcheck Group pages)
+    const linkedinResults = [];
+    for (const post of inserted) {
+      try {
+        const linkedinResp = await fetch(
+          `${supabaseUrl}/functions/v1/post-to-linkedin`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${supabaseKey}`,
+            },
+            body: JSON.stringify({
+              title: post.title,
+              excerpt: posts.find((p: any) => p.slug === post.slug)?.excerpt || "",
+              slug: post.slug,
+              tags: posts.find((p: any) => p.slug === post.slug)?.tags || [],
+              category: posts.find((p: any) => p.slug === post.slug)?.category || "",
+            }),
+          },
+        );
+        const linkedinData = await linkedinResp.json();
+        linkedinResults.push({ slug: post.slug, ...linkedinData });
+        console.log(`LinkedIn post for "${post.title}":`, linkedinData.success ? "✅" : "❌");
+      } catch (err) {
+        console.error(`LinkedIn posting failed for ${post.slug}:`, err);
+        linkedinResults.push({ slug: post.slug, success: false });
+      }
+    }
+
     return new Response(
-      JSON.stringify({ success: true, posts: inserted }),
+      JSON.stringify({ success: true, posts: inserted, linkedin: linkedinResults }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
