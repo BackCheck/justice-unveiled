@@ -99,10 +99,7 @@ serve(async (req) => {
 
     const hrpmOrgId = Deno.env.get("LINKEDIN_HRPM_ORG_ID");
     const backcheckOrgId = Deno.env.get("LINKEDIN_BACKCHECK_ORG_ID");
-
-    if (!hrpmOrgId && !backcheckOrgId) {
-      throw new Error("No LinkedIn organization IDs configured");
-    }
+    const personUrn = Deno.env.get("LINKEDIN_PERSON_URN");
 
     const body: LinkedInPostRequest = await req.json();
     if (!body.title || !body.slug) {
@@ -115,17 +112,23 @@ serve(async (req) => {
     const text = buildLinkedInPost(body);
     const articleUrl = `https://hrpm.lovable.app/blog/${body.slug}`;
 
-    // Determine which orgs to post to
-    const orgIds = body.orgIds || [hrpmOrgId, backcheckOrgId].filter(Boolean) as string[];
+    // Build list of authors: org pages + personal profile
+    const authors: string[] = [];
+    if (hrpmOrgId) authors.push(`urn:li:organization:${hrpmOrgId}`);
+    if (backcheckOrgId) authors.push(`urn:li:organization:${backcheckOrgId}`);
+    if (personUrn) authors.push(personUrn.startsWith("urn:") ? personUrn : `urn:li:person:${personUrn}`);
+
+    if (authors.length === 0) {
+      throw new Error("No LinkedIn targets configured (org IDs or person URN)");
+    }
 
     const results = await Promise.allSettled(
-      orgIds.map(orgId => postToLinkedInOrg(accessToken, orgId, text, articleUrl, body.title)),
+      authors.map(author => postToLinkedIn(accessToken, author, text, articleUrl, body.title)),
     );
 
     const outcomes = results.map(r => r.status === "fulfilled" ? r.value : { success: false, error: "Promise rejected" });
-
     const successCount = outcomes.filter(o => o.success).length;
-    console.log(`LinkedIn posting: ${successCount}/${orgIds.length} succeeded`);
+    console.log(`LinkedIn posting: ${successCount}/${authors.length} succeeded (orgs + personal)`);
 
     return new Response(
       JSON.stringify({ success: successCount > 0, results: outcomes }),
