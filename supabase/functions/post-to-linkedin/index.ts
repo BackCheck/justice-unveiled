@@ -33,15 +33,15 @@ function buildLinkedInPost(post: LinkedInPostRequest): string {
   return text;
 }
 
-async function postToLinkedInOrg(
+async function postToLinkedIn(
   accessToken: string,
-  orgId: string,
+  authorUrn: string,
   text: string,
   articleUrl: string,
   title: string,
-): Promise<{ success: boolean; orgId: string; error?: string; postId?: string }> {
+): Promise<{ success: boolean; author: string; error?: string; postId?: string }> {
   const body = {
-    author: `urn:li:organization:${orgId}`,
+    author: authorUrn,
     lifecycleState: "PUBLISHED",
     specificContent: {
       "com.linkedin.ugc.ShareContent": {
@@ -74,17 +74,17 @@ async function postToLinkedInOrg(
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`LinkedIn API error for org ${orgId} [${response.status}]:`, errorText);
-      return { success: false, orgId, error: `HTTP ${response.status}: ${errorText}` };
+      console.error(`LinkedIn API error for ${authorUrn} [${response.status}]:`, errorText);
+      return { success: false, author: authorUrn, error: `HTTP ${response.status}: ${errorText}` };
     }
 
     const postId = response.headers.get("x-restli-id") || "unknown";
-    await response.text(); // consume body
-    return { success: true, orgId, postId };
+    await response.text();
+    return { success: true, author: authorUrn, postId };
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unknown error";
-    console.error(`LinkedIn post failed for org ${orgId}:`, msg);
-    return { success: false, orgId, error: msg };
+    console.error(`LinkedIn post failed for ${authorUrn}:`, msg);
+    return { success: false, author: authorUrn, error: msg };
   }
 }
 
