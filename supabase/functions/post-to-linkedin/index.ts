@@ -121,7 +121,6 @@ serve(async (req) => {
       );
     }
 
-    const text = buildLinkedInPost(body);
     const articleUrl = `https://hrpm.lovable.app/blog/${body.slug}`;
 
     // Build list of authors: org pages + personal profile
