@@ -195,7 +195,7 @@ export function AppSidebar() {
             <Link to="/" className="flex items-center gap-2.5">
               <div className="relative">
                 <img src={hrpmLogo} alt="HRPM" className="w-8 h-8 rounded-lg" />
-                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-sidebar-background" />
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-sidebar-background bg-primary/80" />
               </div>
               <div className="flex flex-col">
                 <span className="font-bold text-sidebar-foreground text-sm tracking-tight leading-none">HRPM</span>
