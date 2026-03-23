@@ -14,22 +14,34 @@ interface LinkedInPostRequest {
   orgIds?: string[]; // Override default org IDs
 }
 
-function buildLinkedInPost(post: LinkedInPostRequest): string {
+function buildLinkedInPost(post: LinkedInPostRequest, authorUrn: string): string {
   const url = `https://hrpm.lovable.app/blog/${post.slug}`;
   const hashtags = (post.tags || [])
     .slice(0, 5)
     .map(t => `#${t.replace(/\s+/g, "")}`)
     .join(" ");
 
-  let text = `🔍 ${post.title}\n\n`;
-  if (post.excerpt) {
-    text += `${post.excerpt}\n\n`;
+  const isBackcheck = authorUrn.includes("organization") && authorUrn.includes(Deno.env.get("LINKEDIN_BACKCHECK_ORG_ID") || "__none__");
+
+  let text = "";
+
+  if (isBackcheck) {
+    // Backcheck Group branded format
+    text += `🛡️ BACKCHECK GROUP | Compliance. Intelligence.\n\n`;
+    text += `🔍 ${post.title}\n\n`;
+    if (post.excerpt) text += `${post.excerpt}\n\n`;
+    text += `Full-Spectrum Intelligence & Global Risk Mitigation\n\n`;
+    text += `Read the full investigation:\n${url}\n\n`;
+    text += `${hashtags} #Compliance #Intelligence #BackcheckGroup #RegTech #DueDiligence #RiskMitigation`;
+  } else {
+    // HRPM / Personal profile format
+    text += `🔍 ${post.title}\n\n`;
+    if (post.excerpt) text += `${post.excerpt}\n\n`;
+    if (post.category) text += `📂 ${post.category}\n\n`;
+    text += `Read the full investigation:\n${url}\n\n`;
+    text += `${hashtags} #HumanRights #HRPM #Justice #Accountability`;
   }
-  if (post.category) {
-    text += `📂 ${post.category}\n\n`;
-  }
-  text += `Read the full investigation:\n${url}\n\n`;
-  text += `${hashtags} #HumanRights #HRPM #Justice #Accountability`;
+
   return text;
 }
 
@@ -109,7 +121,6 @@ serve(async (req) => {
       );
     }
 
-    const text = buildLinkedInPost(body);
     const articleUrl = `https://hrpm.lovable.app/blog/${body.slug}`;
 
     // Build list of authors: org pages + personal profile
@@ -123,7 +134,10 @@ serve(async (req) => {
     }
 
     const results = await Promise.allSettled(
-      authors.map(author => postToLinkedIn(accessToken, author, text, articleUrl, body.title)),
+      authors.map(author => {
+        const text = buildLinkedInPost(body, author);
+        return postToLinkedIn(accessToken, author, text, articleUrl, body.title);
+      }),
     );
 
     const outcomes = results.map(r => r.status === "fulfilled" ? r.value : { success: false, error: "Promise rejected" });

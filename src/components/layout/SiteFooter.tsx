@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import hrpmLogo from "@/assets/human-rights-logo.png";
+import backcheckLogo from "@/assets/backcheck-logo.png";
 
 interface FooterLink {
   text: string;
@@ -185,6 +186,18 @@ const SiteFooter = ({ compact = false }: { compact?: boolean }) => {
                 {link.text}
               </Link>
             ))}
+          </div>
+        </div>
+
+        {/* Backcheck Group partner strip */}
+        <div className="border-t border-border/20 py-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a href="https://backcheckgroup.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group">
+              <img src={backcheckLogo} alt="Backcheck Group" className="w-6 h-6 transition-transform group-hover:scale-110" loading="lazy" width={512} height={512} />
+              <span className="text-xs font-semibold text-muted-foreground group-hover:text-foreground transition-colors tracking-wide">BACKCHECK GROUP</span>
+            </a>
+            <span className="hidden sm:inline text-muted-foreground/40">·</span>
+            <span className="text-[10px] text-muted-foreground/60 italic">Compliance. Intelligence.</span>
           </div>
         </div>
 
