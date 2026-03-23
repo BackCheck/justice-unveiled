@@ -30,6 +30,7 @@ import hrpmLogo from "@/assets/human-rights-logo.png";
 import { FloatingAiAssistant } from "@/components/ui/glowing-ai-chat-assistant";
 import HowHRPMWorks from "@/components/landing/HowHRPMWorks";
 import HomepageAIChat from "@/components/landing/HomepageAIChat";
+import HeroTerminal from "@/components/landing/HeroTerminal";
 
 const statusColor = (status: string) => {
   switch (status?.toLowerCase()) {
@@ -90,91 +91,93 @@ const HomePage = () => {
 
   return (
     <PlatformLayout>
-      {/* ═══════════════ HERO ═══════════════ */}
-      <section className="relative overflow-hidden min-h-[85vh] flex items-center">
+      {/* ═══════════════ HERO — SPLIT LAYOUT ═══════════════ */}
+      <section className="relative overflow-hidden min-h-[90vh] flex items-center">
         <Waves strokeColor="hsl(199, 100%, 50%)" backgroundColor="transparent" className="z-0" />
         <div className="absolute inset-0 pointer-events-none z-[1]">
           <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/40 to-background/90" />
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/8 rounded-full blur-[120px]" />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px]" />
+          <div className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/8 rounded-full blur-[120px]" />
+          <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px]" />
         </div>
 
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-24 md:py-36 relative z-10 w-full">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>
-            <div className="flex items-center gap-3 mb-8">
-              <img src={hrpmLogo} alt="" className="w-12 h-12 drop-shadow-lg" aria-hidden />
-              <Badge variant="outline" className="text-xs font-medium tracking-wide border-primary/40 text-primary bg-primary/5 backdrop-blur-sm">
-                {t("home.hero.badge")}
-              </Badge>
-            </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24 relative z-10 w-full">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            {/* ── LEFT: Copy ── */}
+            <div>
+              <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>
+                <div className="flex items-center gap-3 mb-6">
+                  <img src={hrpmLogo} alt="" className="w-11 h-11 drop-shadow-lg" aria-hidden />
+                  <Badge variant="outline" className="text-xs font-medium tracking-wide border-primary/40 text-primary bg-primary/5 backdrop-blur-sm">
+                    {t("home.hero.badge")}
+                  </Badge>
+                </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-foreground leading-[1.05] max-w-4xl">
-              {t("home.hero.title1")}{" "}
-              <br className="hidden sm:block" />
-              <motion.span
-                className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-chart-2 to-primary bg-[length:200%_auto] animate-gradient-shift inline-block"
+                <h1 className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-foreground leading-[1.08]">
+                  {t("home.hero.title1")}{" "}
+                  <br className="hidden sm:block" />
+                  <motion.span
+                    className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-chart-2 to-primary bg-[length:200%_auto] animate-gradient-shift inline-block"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    {t("home.hero.title2")}
+                  </motion.span>
+                </h1>
+              </motion.div>
+
+              <motion.p
+                className="mt-5 text-base md:text-lg text-muted-foreground max-w-lg leading-relaxed"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.7, delay: 0.4 }}
               >
-                {t("home.hero.title2")}
-              </motion.span>
-            </h1>
-          </motion.div>
+                {t("home.hero.description")}
+              </motion.p>
 
-          <motion.p
-            className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.4 }}
-          >
-            {t("home.hero.description")}
-          </motion.p>
+              <motion.div className="mt-8 flex flex-wrap items-center gap-3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.55 }}>
+                <Button asChild size="lg" className="gap-2 text-base px-6 h-12 shadow-lg shadow-primary/20">
+                  <Link to="/cases">
+                    <FolderSearch className="w-5 h-5" />
+                    {t("home.hero.exploreInvestigations")}
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="gap-2 text-base px-6 h-12 backdrop-blur-sm bg-background/50">
+                  <Link to="/evidence">
+                    <FileText className="w-5 h-5" />
+                    {t("home.hero.viewEvidenceLibrary")}
+                  </Link>
+                </Button>
+              </motion.div>
 
-          <motion.p
-            className="mt-3 text-base text-muted-foreground/80 max-w-2xl leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.5 }}
-          >
-            {t("home.hero.description2")}
-          </motion.p>
+              {/* Feature check-marks row */}
+              <motion.div
+                className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+              >
+                {featurePills.map((item, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-chart-2/15 flex items-center justify-center">
+                      <svg className="w-3 h-3 text-chart-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                    </div>
+                    <span>{item.label}</span>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
 
-          <motion.div className="mt-10 flex flex-wrap items-center gap-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.55 }}>
-            <Button asChild size="lg" className="gap-2 text-base px-6 h-12 shadow-lg shadow-primary/20">
-              <Link to="/cases">
-                <FolderSearch className="w-5 h-5" />
-                {t("home.hero.exploreInvestigations")}
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="gap-2 text-base px-6 h-12 backdrop-blur-sm bg-background/50">
-              <Link to="/evidence">
-                <FileText className="w-5 h-5" />
-                {t("home.hero.viewEvidenceLibrary")}
-              </Link>
-            </Button>
-            <Button asChild variant="ghost" size="lg" className="gap-2 text-base px-6 h-12">
-              <a href="#how-it-works">
-                <ArrowRight className="w-5 h-5" />
-                {t("home.hero.howItWorks")}
-              </a>
-            </Button>
-          </motion.div>
-
-          {/* Feature pills */}
-          <motion.div className="mt-14 flex flex-wrap items-center gap-6" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.7 }}>
-            {featurePills.map((item, i) => (
-              <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border/30 bg-card/40 backdrop-blur-sm">
-                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <item.icon className="w-4 h-4 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{item.label}</p>
-                  <p className="text-xs text-muted-foreground">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </motion.div>
+            {/* ── RIGHT: Floating Terminal ── */}
+            <motion.div
+              initial={{ opacity: 0, x: 40, y: 20 }}
+              animate={{ opacity: 1, x: 0, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="lg:pl-4"
+            >
+              <HeroTerminal />
+            </motion.div>
+          </div>
 
           {/* Stats strip */}
           {stats && (
@@ -191,9 +194,6 @@ const HomePage = () => {
           )}
         </div>
       </section>
-
-      {/* ═══════════════ AI COMM WIDGET ═══════════════ */}
-      <HomepageAIChat />
 
       {/* ═══════════════ HOW IT WORKS ═══════════════ */}
       <HowHRPMWorks />
