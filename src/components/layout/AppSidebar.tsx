@@ -18,6 +18,11 @@ import {
   ChevronUp,
   ChevronDown,
   Terminal,
+  Compass,
+  HandHelping,
+  Search,
+  GraduationCap,
+  Lock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -32,12 +37,13 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { SidebarHoverMenu, type SidebarMenuNavItem } from "@/components/ui/sidebar-hover-menu";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState, useEffect } from "react";
 
 // ── Navigation groups ──────────────────────────────────────────────
 
-type NavItem = { path: string; label: string; icon: React.ComponentType<{ className?: string }> };
+type NavItem = SidebarMenuNavItem;
 
 const exploreItems: NavItem[] = [
   { path: "/", label: "Home", icon: Home },
@@ -69,6 +75,15 @@ const adminItems: NavItem[] = [
   { path: "/admin", label: "Admin Panel", icon: Shield },
   { path: "/admin/entity-review", label: "Entity Review", icon: Eye },
 ];
+
+// Group icons for collapsed hover menus
+const groupIcons = {
+  Explore: Compass,
+  Contribute: HandHelping,
+  Analyze: Search,
+  Learn: GraduationCap,
+  Admin: Lock,
+};
 
 export function AppSidebar() {
   const location = useLocation();
@@ -112,20 +127,34 @@ export function AppSidebar() {
     );
   };
 
-  const renderGroup = (label: string, items: NavItem[]) => (
-    <SidebarGroup key={label} className="mb-1">
-      {collapsed ? (
-        <SidebarGroupLabel className="sr-only">{label}</SidebarGroupLabel>
-      ) : (
-        <SidebarGroupLabel className="px-3 py-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-          {label}
-        </SidebarGroupLabel>
-      )}
-      <SidebarGroupContent>
-        <SidebarMenu>{items.map(renderNavItem)}</SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
-  );
+  const renderGroup = (label: string, items: NavItem[]) => {
+    const GroupIcon = groupIcons[label as keyof typeof groupIcons] || Compass;
+
+    return (
+      <SidebarGroup key={label} className="mb-1">
+        {/* Collapsed: show hover menu trigger */}
+        {collapsed ? (
+          <SidebarGroupContent>
+            <SidebarHoverMenu
+              groupLabel={label}
+              groupIcon={GroupIcon}
+              items={items}
+              collapsed={collapsed}
+            />
+          </SidebarGroupContent>
+        ) : (
+          <>
+            <SidebarGroupLabel className="px-3 py-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+              {label}
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>{items.map(renderNavItem)}</SidebarMenu>
+            </SidebarGroupContent>
+          </>
+        )}
+      </SidebarGroup>
+    );
+  };
 
   return (
     <Sidebar
@@ -138,16 +167,20 @@ export function AppSidebar() {
         {renderGroup("Contribute", contributeItems)}
         {renderGroup("Analyze", analyzeItems)}
 
-        {/* Learn — collapsed by default */}
-        <SidebarGroup className="mb-1">
-          {collapsed ? (
-            <>
-              <SidebarGroupLabel className="sr-only">Learn</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>{learnItems.map(renderNavItem)}</SidebarMenu>
-              </SidebarGroupContent>
-            </>
-          ) : (
+        {/* Learn — collapsible when expanded, hover menu when collapsed */}
+        {collapsed ? (
+          <SidebarGroup className="mb-1">
+            <SidebarGroupContent>
+              <SidebarHoverMenu
+                groupLabel="Learn"
+                groupIcon={groupIcons.Learn}
+                items={learnItems}
+                collapsed={collapsed}
+              />
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ) : (
+          <SidebarGroup className="mb-1">
             <Collapsible open={learnOpen} onOpenChange={setLearnOpen}>
               <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors">
                 Learn
@@ -159,8 +192,8 @@ export function AppSidebar() {
                 </SidebarGroupContent>
               </CollapsibleContent>
             </Collapsible>
-          )}
-        </SidebarGroup>
+          </SidebarGroup>
+        )}
 
         {/* Admin — role-gated */}
         {isAdmin && renderGroup("Admin", adminItems)}
