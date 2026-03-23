@@ -30,6 +30,7 @@ import hrpmLogo from "@/assets/human-rights-logo.png";
 import { FloatingAiAssistant } from "@/components/ui/glowing-ai-chat-assistant";
 import HowHRPMWorks from "@/components/landing/HowHRPMWorks";
 import HomepageAIChat from "@/components/landing/HomepageAIChat";
+import HeroTerminal from "@/components/landing/HeroTerminal";
 
 const statusColor = (status: string) => {
   switch (status?.toLowerCase()) {
