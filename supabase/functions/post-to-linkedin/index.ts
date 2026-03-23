@@ -135,7 +135,10 @@ serve(async (req) => {
     }
 
     const results = await Promise.allSettled(
-      authors.map(author => postToLinkedIn(accessToken, author, text, articleUrl, body.title)),
+      authors.map(author => {
+        const text = buildLinkedInPost(body, author);
+        return postToLinkedIn(accessToken, author, text, articleUrl, body.title);
+      }),
     );
 
     const outcomes = results.map(r => r.status === "fulfilled" ? r.value : { success: false, error: "Promise rejected" });
