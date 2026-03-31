@@ -1019,6 +1019,12 @@ const CaseProfile = () => {
               </Card>
             )}
           </TabsContent>
+
+          {caseData.case_number === "CF-002" && (
+            <TabsContent value="forensic-module" className="space-y-6">
+              <CF002CaseModule />
+            </TabsContent>
+          )}
         </Tabs>
 
         {/* Case Report Footer */}
