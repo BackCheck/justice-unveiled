@@ -1,0 +1,1 @@
+UPDATE cases SET is_featured = true WHERE id = '83ce73b7-3bf6-430a-bc64-51e86ea9f871';
