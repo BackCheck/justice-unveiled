@@ -644,6 +644,12 @@ const CaseProfile = () => {
               <FileText className="w-4 h-4" />
               Evidence
             </TabsTrigger>
+            {caseData.case_number === "CF-002" && (
+              <TabsTrigger value="forensic-module" className="gap-2 text-destructive">
+                <Shield className="w-4 h-4" />
+                Forensic Module
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {/* Timeline Tab */}
