@@ -11,7 +11,31 @@ serve(async (req) => {
   }
 
   try {
-    const { title, sections, additionalContext, data } = await req.json();
+    // Authenticate user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Authentication required" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2");
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(authHeader.replace("Bearer ", ""));
+    if (claimsError || !claimsData?.claims) {
+      return new Response(JSON.stringify({ error: "Invalid or expired token" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const body = await req.json();
+    const title = typeof body.title === "string" ? body.title.slice(0, 500) : "Untitled Report";
+    const sections = Array.isArray(body.sections) ? body.sections.slice(0, 20).map((s: any) => typeof s === "string" ? s.slice(0, 200) : "") : [];
+    const additionalContext = typeof body.additionalContext === "string" ? body.additionalContext.slice(0, 5000) : "";
+    const data = body.data || { stats: {}, events: [], entities: [], discrepancies: [] };
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
