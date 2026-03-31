@@ -9,7 +9,34 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { template, prompt, caseTitle, caseNumber, courtName, filingType, existingSections } = await req.json();
+    // Authenticate user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Authentication required" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2");
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(authHeader.replace("Bearer ", ""));
+    if (claimsError || !claimsData?.claims) {
+      return new Response(JSON.stringify({ error: "Invalid or expired token" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const body = await req.json();
+    const template = typeof body.template === "string" ? body.template.slice(0, 50) : "investigation";
+    const prompt = typeof body.prompt === "string" ? body.prompt.slice(0, 5000) : "";
+    const caseTitle = typeof body.caseTitle === "string" ? body.caseTitle.slice(0, 300) : "";
+    const caseNumber = typeof body.caseNumber === "string" ? body.caseNumber.slice(0, 100) : "";
+    const courtName = typeof body.courtName === "string" ? body.courtName.slice(0, 200) : "";
+    const filingType = typeof body.filingType === "string" ? body.filingType.slice(0, 100) : "";
+    const existingSections = Array.isArray(body.existingSections) ? body.existingSections.slice(0, 30) : [];
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
