@@ -61,6 +61,8 @@ export default function EventDetail() {
     description: eventTitle || "Detailed timeline event with linked evidence and entity analysis.",
     url: eventId ? `https://hrpm.org/events/${eventId}` : undefined,
   });
+
+  if (dbLoading) {
     return (
       <PlatformLayout>
         <div className="flex items-center justify-center min-h-[400px]">
