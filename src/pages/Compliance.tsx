@@ -42,7 +42,7 @@ const Compliance = () => {
     updateCheckStatus,
     runAutoDetection,
     refreshData
-  } = useCompliance(selectedCaseId);
+  } = useCompliance(selectedCaseId || '');
 
   // Initialize checks when case changes
   useEffect(() => {
