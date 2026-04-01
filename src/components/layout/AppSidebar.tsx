@@ -69,11 +69,13 @@ const quickAccessItems: NavItem[] = [
 
 // ─── Build Your Case (primary user workflow) ───
 const buildCaseItems: NavItem[] = [
+  { path: "/submit-case", label: "Submit New Case", icon: FileText },
   { path: "/evidence/new", label: "Add Evidence", icon: Plus, badge: "New", badgeVariant: "default" },
   { path: "/uploads", label: "Upload Center", icon: UploadCloud },
+  { path: "/evidence", label: "Evidence Matrix", icon: Folder },
+  { path: "/analyze", label: "Analyze Documents", icon: Brain, badge: "AI", badgeVariant: "secondary" },
   { path: "/timeline", label: "Timeline", icon: Clock },
   { path: "/network", label: "Entity Network", icon: Network },
-  { path: "/submit-case", label: "Submit New Case", icon: FileText },
 ];
 
 // ─── Analyze & Investigate ───
