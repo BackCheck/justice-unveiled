@@ -4,13 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { 
   ClipboardCheck, 
   Sparkles, 
@@ -21,8 +14,8 @@ import {
   Scale
 } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
-import { useCases } from "@/hooks/useCases";
 import { useCompliance } from "@/hooks/useCompliance";
+import { useCaseFilter } from "@/contexts/CaseFilterContext";
 import { 
   ComplianceStatsHeader, 
   ComplianceChecklist, 
@@ -37,15 +30,7 @@ const Compliance = () => {
     description: "Systematic audit of investigative procedures against legal SOPs with auto-detection of violations.",
   });
 
-  const { data: cases = [], isLoading: casesLoading } = useCases();
-  const [selectedCaseId, setSelectedCaseId] = useState<string>('');
-
-  // Set default case when loaded
-  useEffect(() => {
-    if (cases.length > 0 && !selectedCaseId) {
-      setSelectedCaseId(cases[0].id);
-    }
-  }, [cases, selectedCaseId]);
+  const { selectedCaseId } = useCaseFilter();
 
   const {
     requirements,
