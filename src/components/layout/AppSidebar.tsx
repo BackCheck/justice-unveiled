@@ -304,6 +304,10 @@ export function AppSidebar() {
           </>
         )}
       </SidebarContent>
+
+      <SidebarFooter className="px-2 py-2 border-t border-border/30">
+        <AccessibilityPanel variant="sidebar" collapsed={collapsed} />
+      </SidebarFooter>
     </Sidebar>
   );
 }
