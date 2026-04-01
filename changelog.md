@@ -12,6 +12,61 @@ author: HRPM
 > Open investigative platform structuring complex legal, regulatory, and human rights cases into verifiable evidence records, entity networks, and analytical timelines.
 
 ---
+### v2.20.0
+
+Major Release
+
+Apr 1, 2026
+
+#### Comprehensive Accessibility Suite
+
+Dedicated floating accessibility panel with high-contrast, color vision deficiency modes, large text, dyslexia-friendly fonts, reduced motion, and enhanced focus — all working alongside existing dark/light themes.
+
+-   Floating ♿ accessibility panel with toggle for 7+ assistive modes
+-   High Contrast mode with black/white/yellow palette and bold borders
+-   Color Vision Deficiency modes: Deuteranopia, Protanopia, and Tritanopia safe palettes
+-   Large Text mode (18px base) with adjustable line spacing up to 2.2x
+-   Dyslexia-Friendly font toggle loading OpenDyslexic typeface
+-   Reduced Motion mode disabling all CSS animations and transitions
+-   Large Cursor and Enhanced Focus Outline toggles for motor accessibility
+-   All settings persist to localStorage and work with both dark and light themes
+-   One-click Reset All button to restore default accessibility settings
+
+### v2.19.0
+
+Major Release
+
+Mar 30, 2026
+
+#### Intel Dashboard Redesign & Case-Aware Navigation
+
+Complete overhaul of the Intelligence Dashboard with prominent case selector, context-aware AI chat, and dynamic data across all platform pages.
+
+-   Redesigned Intel Dashboard with clear section explanations and purpose-driven layout
+-   Prominent case selector dropdown in platform header — auto-selects most recent case
+-   All dashboard widgets, stats, and charts dynamically update per selected case
+-   Live Comm AI chat suggestions change based on active case details
+-   Case-aware navigation across Timeline, Evidence, Network, Compliance, and Legal pages
+-   Removed Contribute Evidence button from header for cleaner UX
+-   Report Center routing fixed and wired to case context
+
+### v2.18.0
+
+Major Release
+
+Mar 28, 2026
+
+#### Hover Sidebar & Evidence Workflow Mapping
+
+Auto-expanding sidebar on mouse hover with collapsible groups, and streamlined evidence-to-analysis workflow mapped in site navigation.
+
+-   Sidebar auto-expands on mouse hover and collapses on mouse exit
+-   Evidence workflow steps (Upload → AI Analysis → Timeline → Correlation) mapped in navigation
+-   Document analysis accessible directly from evidence uploads without re-uploading
+-   Blog posts created for new Corporate Hostile Takeover case with deep links
+-   Featured case pinning for Background Check Group case
+-   HRPM logo updated across all report templates and cover pages
+
 ### v2.17.0
 
 Major Release
