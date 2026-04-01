@@ -17,7 +17,7 @@ import {
   Gavel,
   Sparkles,
   TrendingUp,
-  Filter,
+  
 } from "lucide-react";
 import { useReconstruction } from "@/hooks/useReconstruction";
 import { useCases } from "@/hooks/useCases";
