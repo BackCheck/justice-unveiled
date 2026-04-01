@@ -47,7 +47,7 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { redactText, RedactionFlags } from "@/lib/redaction";
 import { LinkedInShareMenu } from "@/components/sharing/LinkedInShareMenu";
 import { CF002CaseModule } from "@/components/cases/cf002";
-
+import { useSEO } from "@/hooks/useSEO";
 const severityColors: Record<string, string> = {
   critical: "bg-red-500/20 text-red-700 dark:text-red-300 border-red-500/30",
   high: "bg-orange-500/20 text-orange-700 dark:text-orange-300 border-orange-500/30",
