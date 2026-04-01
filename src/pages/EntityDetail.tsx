@@ -69,6 +69,14 @@ const EntityDetail = () => {
   
   const canEdit = role === "admin" || role === "editor";
 
+  // SEO metadata
+  const entityName = dbEntity?.name || "";
+  useSEO({
+    title: entityName ? `${entityName} — Entity Intelligence Profile` : "Entity Intelligence Profile",
+    description: `Detailed profile, connections, and influence analysis for ${entityName || "this entity"}.`,
+    url: entityId ? `https://hrpm.org/entities/${entityId}` : undefined,
+  });
+
   // Find entity from combined entities (includes both static and AI-extracted with ai- prefix)
   let entity: CombinedEntity | undefined = combinedEntities.find(e => e.id === entityId);
   // Also try with ai- prefix
