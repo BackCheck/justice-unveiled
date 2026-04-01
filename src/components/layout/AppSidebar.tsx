@@ -263,10 +263,22 @@ export function AppSidebar() {
     );
   };
 
+  const handleMouseEnter = () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => setOpen(true), 150);
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => setOpen(false), 300);
+  };
+
   return (
     <Sidebar
       collapsible="icon"
       className="border-r border-border/30 h-screen max-h-screen flex flex-col"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <SidebarContent className="px-2 py-3 overflow-y-auto overflow-x-hidden flex-1 min-h-0">
         {/* Quick Access — always visible */}
