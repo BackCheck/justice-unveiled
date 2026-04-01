@@ -66,6 +66,9 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
                 <span className="font-bold text-primary text-lg tracking-tight">HRPM</span>
               </Link>
 
+              {/* Case Selector — prominent and always visible */}
+              <CaseSelector />
+
               {/* Center: global search */}
               <div className="flex-1 flex justify-center min-w-0">
                 <div className="w-full max-w-md">
