@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { CaseSelector } from "./CaseSelector";
 import SiteFooter from "./SiteFooter";
 import hrpmLogo from "@/assets/human-rights-logo.png";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -64,6 +65,9 @@ export const PlatformLayout = ({ children }: PlatformLayoutProps) => {
                 <img src={hrpmLogo} alt="HRPM" className="w-7 h-7" />
                 <span className="font-bold text-primary text-lg tracking-tight">HRPM</span>
               </Link>
+
+              {/* Case Selector — prominent and always visible */}
+              <CaseSelector />
 
               {/* Center: global search */}
               <div className="flex-1 flex justify-center min-w-0">
