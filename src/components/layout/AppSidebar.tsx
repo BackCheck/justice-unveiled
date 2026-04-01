@@ -80,7 +80,6 @@ const buildCaseItems: NavItem[] = [
 
 // ─── Analyze & Investigate ───
 const analyzeItems: NavItem[] = [
-  { path: "/analyze", label: "AI Analyzer", icon: Brain },
   { path: "/investigations", label: "Investigations", icon: Search },
   { path: "/reconstruction", label: "Reconstruction", icon: GitBranch },
   { path: "/correlation", label: "Claim Correlation", icon: Crosshair },
