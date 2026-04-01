@@ -95,6 +95,7 @@ IMPORTANT: You have access to REAL CASE DATA from the HRPM platform. Use it to w
 
     // Case-specific investigative angles drawn from real events
     const caseSpecificAngles = [
+      // CF-001 angles
       "Noreen's behavioral red flags: pattern analysis of documented manipulative, deceptive, or coercive behavior by Noreen as revealed in case evidence and witness statements",
       "How Danish Thanvi's wedding ended: a forensic reconstruction of events surrounding the wedding breakdown, documenting who did what and when based on case evidence",
       "Noreen's family interference: documenting patterns of undue family influence, control tactics, and boundary violations backed by extracted events",
@@ -105,11 +106,17 @@ IMPORTANT: You have access to REAL CASE DATA from the HRPM platform. Use it to w
       "Emotional and psychological abuse patterns: mapping documented incidents of gaslighting, intimidation, and psychological harm",
       "Legal rights violated: specific constitutional and statutory protections denied to Danish Thanvi with legal framework references",
       "The aftermath and ongoing injustice: documenting continued harassment, procedural delays, and denial of due process after the wedding collapse",
-      "Social media and digital evidence: analyzing documented digital footprints, communications, and online behavior patterns from case artifacts",
-      "Noreen's inconsistent narratives: cross-referencing her documented statements across different proceedings to expose contradictions",
-      "The dowry question: evidence-based analysis of financial transactions, gift demands, and material expectations documented in the case",
-      "Character witness analysis: profiling key individuals who enabled or witnessed the documented events and their documented roles",
-      "Comparative injustice: how Danish Thanvi's case mirrors documented patterns of marital fraud and abuse in South Asian human rights cases",
+      // CF-002 Corporate Hostile Takeover angles
+      "Corporate hostile takeover anatomy: how Muhammad Imran orchestrated the seizure of Background Check Group through Form A/29 share transfers, forged board resolutions, and SECP filings — a step-by-step forensic reconstruction",
+      "The insider threat kill chain: mapping the APT-style digital espionage against Danish Farrukh Thanvi — Screen Memory malware, Macrium Reflect disk imaging, Google Takeout data exfiltration, and identity hijacking (Zubair as Sharjeel)",
+      "Financial hemorrhage: tracking the revenue siphoning from Background Check Group through parallel Wise UK accounts, unauthorized UBL credit card payments, personal cash withdrawals by Dilawar and Imran, and the PKR 1.5M FBR tax shortfall",
+      "The Singapore connection: how Background Check Group Pte Ltd (Singapore) was weaponized in the hostile takeover — analyzing Companies Act violations, unauthorized directorship changes, and cross-border corporate fraud",
+      "Syndicate network analysis: profiling the key actors in the CF-002 case — Muhammad Imran, Dilawar Hussain, Zubair/Sharjeel identity fraud, Noreen's enabling role — and their documented relationships, financial flows, and coordinated actions",
+      "Digital forensics deep dive: the malware and surveillance toolkit deployed against Background Check Group's founder — evidence of screen capture software, unauthorized system imaging, and data exfiltration patterns",
+      "Regulatory failures in corporate fraud: how FBR, SECP, and banking regulators failed to detect or prevent the systematic financial exploitation documented in CF-002",
+      "The legal battle ahead: mapping the statutory violations in the Background Check Group takeover — Pakistan Penal Code (fraud, forgery, criminal breach of trust), PECA (unauthorized access, data theft), and Companies Act contraventions",
+      "From employee to predator: Dilawar Hussain's documented transformation from trusted employee to active participant in corporate theft, financial siphoning, and evidence destruction",
+      "Cross-border corporate crime: how the CF-002 syndicate exploited jurisdictional gaps between Pakistan and Singapore to execute their hostile takeover and evade regulatory oversight",
     ];
 
     // Pick random angles for diversity
