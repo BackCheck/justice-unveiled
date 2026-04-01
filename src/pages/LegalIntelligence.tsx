@@ -48,46 +48,7 @@ const LegalIntelligence = () => {
           </div>
         </div>
 
-        {/* Case Selector */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <FolderOpen className="h-5 w-5 text-muted-foreground" />
-              Select Case
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Select value={selectedCaseId} onValueChange={setSelectedCaseId}>
-              <SelectTrigger className="max-w-md">
-                <SelectValue placeholder="Choose a case to analyze..." />
-              </SelectTrigger>
-              <SelectContent>
-                {casesLoading ? (
-                  <SelectItem value="loading" disabled>
-                    Loading cases...
-                  </SelectItem>
-                ) : cases && cases.length > 0 ? (
-                  cases
-                    .filter((c) => c.id && c.id.trim() !== "")
-                    .map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs text-muted-foreground">
-                            {c.case_number}
-                          </span>
-                          <span>{c.title}</span>
-                        </div>
-                      </SelectItem>
-                    ))
-                ) : (
-                  <SelectItem value="none" disabled>
-                    No cases found
-                  </SelectItem>
-                )}
-              </SelectContent>
-            </Select>
-          </CardContent>
-        </Card>
+        {/* Case is selected via global header selector */}
 
         {/* Legal Intelligence Content */}
         {selectedCaseId ? (

@@ -90,18 +90,6 @@ const RegulatoryHarm = () => {
                   generateReport={() => generateEconomicHarmReport(incidents, losses, stats, cases.find(c => c.id === selectedCaseId)?.title || "Active Investigation", cases.find(c => c.id === selectedCaseId)?.case_number)}
                   qaContext={{ reportType: "Financial Assessment" }}
                 />
-                <Select value={selectedCaseId} onValueChange={setSelectedCaseId}>
-                  <SelectTrigger className="w-[250px]">
-                    <SelectValue placeholder="Select a case..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {cases.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.case_number}: {c.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
 
                 <Button variant="outline" size="sm" onClick={refreshData} disabled={loading || !selectedCaseId}>
                   <RefreshCw className="w-4 h-4 mr-2" />

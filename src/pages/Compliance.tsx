@@ -73,19 +73,6 @@ const Compliance = () => {
               </div>
 
               <div className="flex items-center gap-3">
-                {/* Case Selector */}
-                <Select value={selectedCaseId} onValueChange={setSelectedCaseId}>
-                  <SelectTrigger className="w-[250px]">
-                    <SelectValue placeholder="Select a case..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {cases.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.case_number}: {c.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
 
                 <Button 
                   variant="outline" 

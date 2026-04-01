@@ -135,21 +135,7 @@ const Reconstruction = () => {
                   discrepancies: contradictions || [],
                 }}
               />
-              {/* Case Filter */}
-              <Select value={selectedCaseId || "all"} onValueChange={(val) => setSelectedCaseId(val === "all" ? "" : val)}>
-                <SelectTrigger className="w-[200px] glass-card">
-                  <Filter className="w-4 h-4 mr-2" />
-                  <SelectValue placeholder="All Cases" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Cases</SelectItem>
-                  {cases?.filter(c => c.id && c.id.trim() !== "").map(c => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.case_number} - {c.title.substring(0, 20)}...
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {/* Case is selected via global header selector */}
 
               {/* View Mode */}
               <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1">
