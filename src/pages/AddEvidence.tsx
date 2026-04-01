@@ -143,7 +143,7 @@ const AddEvidence = () => {
           }
 
           const { data: urlData } = supabase.storage.from("evidence").getPublicUrl(path);
-          await supabase.from("evidence_uploads").insert({
+          const { data: uploadRecord } = await supabase.from("evidence_uploads").insert({
             case_id: caseId,
             file_name: file.name,
             file_type: file.type,
@@ -153,8 +153,22 @@ const AddEvidence = () => {
             category: evidenceLabel || "general",
             uploaded_by: user.id,
             description,
-          });
+          }).select().single();
           uploadedPaths.push(path);
+
+          // Auto-trigger AI analysis
+          if (uploadRecord) {
+            supabase.functions.invoke('analyze-document', {
+              body: {
+                uploadId: uploadRecord.id,
+                documentContent: '',
+                fileName: file.name,
+                documentType: evidenceLabel || 'general',
+                caseId: caseId || null,
+                storagePath: path,
+              }
+            }).catch(err => console.warn('Auto-analysis queued but failed:', err));
+          }
         }
         setUploadProgress({ current: 0, total: 0, fileName: "" });
       }
