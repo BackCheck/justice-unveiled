@@ -18,16 +18,16 @@ export const CaseFilterProvider = ({ children }: { children: ReactNode }) => {
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
   const [initialized, setInitialized] = useState(false);
 
-  // Fetch the featured case to use as default
-  const { data: featuredCase } = useQuery({
-    queryKey: ["featured-case-default"],
+  // Fetch the most recent case to use as default
+  const { data: mostRecentCase } = useQuery({
+    queryKey: ["most-recent-case-default"],
     queryFn: async () => {
       const { data } = await supabase
         .from("cases")
         .select("id")
-        .eq("is_featured", true)
+        .order("created_at", { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
       return data;
     },
     staleTime: Infinity,
