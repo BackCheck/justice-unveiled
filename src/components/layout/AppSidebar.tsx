@@ -98,7 +98,7 @@ const legalItems: NavItem[] = [
 
 // ─── Reports & Intel ───
 const reportsItems: NavItem[] = [
-  { path: "/report-center", label: "Report Center", icon: FileText },
+  { path: "/reports", label: "Report Center", icon: FileText },
   { path: "/intel-briefing", label: "Intel Briefing", icon: TrendingUp },
   { path: "/blog", label: "Blog & News", icon: Newspaper },
 ];
