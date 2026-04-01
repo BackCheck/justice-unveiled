@@ -8,7 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { CaseFilterProvider } from "@/contexts/CaseFilterContext";
 import { AccessibilityProvider } from "@/contexts/AccessibilityContext";
 import { CookieConsent } from "@/components/CookieConsent";
-import { AccessibilityPanel } from "@/components/AccessibilityPanel";
+
 import { LogoSpinner } from "@/components/ui/LogoSpinner";
 
 // Lazy-load all pages for code splitting
