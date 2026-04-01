@@ -8,6 +8,9 @@ import {
   Shield,
   BarChart3,
   Compass,
+  ArrowRight,
+  Upload,
+  BookOpen,
 } from "lucide-react";
 import { usePlatformStats } from "@/hooks/usePlatformStats";
 
@@ -17,7 +20,8 @@ export const QuickNavigationGrid = () => {
   const modules = [
     {
       title: "Timeline",
-      description: `${stats.totalEvents} events`,
+      description: "View all events in chronological order. Build and verify the narrative of what happened and when.",
+      stat: `${stats.totalEvents} events`,
       icon: Clock,
       href: "/",
       color: "text-primary",
@@ -26,8 +30,9 @@ export const QuickNavigationGrid = () => {
       badge: null,
     },
     {
-      title: "Network",
-      description: `${stats.totalEntities} entities`,
+      title: "Entity Network",
+      description: "Explore relationships between people, organizations, and institutions involved in the case.",
+      stat: `${stats.totalEntities} entities`,
       icon: Network,
       href: "/network",
       color: "text-chart-2",
@@ -36,8 +41,9 @@ export const QuickNavigationGrid = () => {
       badge: stats.aiExtractedEntities > 0 ? `+${stats.aiExtractedEntities} AI` : null,
     },
     {
-      title: "Evidence",
-      description: `${stats.totalSources} sources`,
+      title: "Evidence Vault",
+      description: "Access all uploaded documents, forensic artifacts, and digital evidence linked to events.",
+      stat: `${stats.totalSources} sources`,
       icon: FileSearch,
       href: "/evidence",
       color: "text-chart-4",
@@ -47,7 +53,8 @@ export const QuickNavigationGrid = () => {
     },
     {
       title: "AI Analyzer",
-      description: `${stats.documentsAnalyzed} analyzed`,
+      description: "Upload documents for AI extraction of events, entities, and discrepancies automatically.",
+      stat: `${stats.documentsAnalyzed} analyzed`,
       icon: Brain,
       href: "/analyze",
       color: "text-amber-500",
@@ -57,7 +64,8 @@ export const QuickNavigationGrid = () => {
     },
     {
       title: "Rights Audit",
-      description: `${stats.internationalFrameworks} frameworks`,
+      description: "Track violations against international frameworks (UDHR, ICCPR, CAT) and local statutes.",
+      stat: `${stats.internationalFrameworks} frameworks`,
       icon: Shield,
       href: "/international-analysis",
       color: "text-orange-500",
@@ -67,7 +75,8 @@ export const QuickNavigationGrid = () => {
     },
     {
       title: "Investigations",
-      description: "Analysis tools",
+      description: "Run threat profiling, pattern detection, link analysis, and risk assessments on case data.",
+      stat: "Analysis tools",
       icon: BarChart3,
       href: "/investigations",
       color: "text-purple-500",
@@ -77,14 +86,60 @@ export const QuickNavigationGrid = () => {
     },
   ];
 
+  // Determine suggested actions based on current data state
+  const suggestedActions = [];
+  if (stats.totalSources === 0) {
+    suggestedActions.push({ label: "Upload your first document", href: "/add-evidence", icon: Upload });
+  }
+  if (stats.totalSources > 0 && stats.documentsAnalyzed === 0) {
+    suggestedActions.push({ label: "Analyze uploaded documents with AI", href: "/analyze", icon: Brain });
+  }
+  if (stats.totalEntities > 0 && stats.totalConnections === 0) {
+    suggestedActions.push({ label: "Map entity relationships", href: "/network", icon: Network });
+  }
+  if (stats.internationalFrameworks === 0 && stats.totalEvents > 0) {
+    suggestedActions.push({ label: "Run rights violation audit", href: "/international-analysis", icon: Shield });
+  }
+
   return (
     <div>
-      <div className="flex items-center gap-2 mb-4">
-        <Compass className="w-4 h-4 text-muted-foreground" />
-        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Quick Navigation</h2>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Compass className="w-4 h-4 text-muted-foreground" />
+          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            Investigation Modules
+          </h2>
+        </div>
+        <span className="text-[11px] text-muted-foreground">
+          Click any module to navigate • Hover for details
+        </span>
       </div>
+
+      {/* Suggested Next Steps */}
+      {suggestedActions.length > 0 && (
+        <div className="mb-4 p-3 rounded-lg border border-amber-500/20 bg-amber-500/5">
+          <div className="flex items-center gap-2 mb-2">
+            <BookOpen className="w-3.5 h-3.5 text-amber-600" />
+            <span className="text-xs font-semibold text-amber-700 uppercase tracking-wide">Suggested Next Steps</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {suggestedActions.map((action) => {
+              const Icon = action.icon;
+              return (
+                <Link key={action.label} to={action.href}>
+                  <Badge variant="secondary" className="gap-1.5 text-xs py-1 px-2.5 cursor-pointer hover:bg-amber-500/15 transition-colors border border-amber-500/20 bg-amber-500/10 text-amber-700">
+                    <Icon className="w-3 h-3" />
+                    {action.label}
+                    <ArrowRight className="w-3 h-3" />
+                  </Badge>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
       
-      <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {modules.map((module, index) => {
           const Icon = module.icon;
           return (
@@ -97,7 +152,8 @@ export const QuickNavigationGrid = () => {
                   <Icon className={`w-5 h-5 ${module.color}`} />
                 </div>
                 <h3 className="text-sm font-medium text-foreground/90 mb-0.5">{module.title}</h3>
-                <p className="text-[10px] text-muted-foreground">{module.description}</p>
+                <p className="text-[10px] text-muted-foreground mb-1">{module.stat}</p>
+                <p className="text-[9px] text-muted-foreground/60 line-clamp-2 leading-snug hidden md:block">{module.description}</p>
                 {module.badge && (
                   <Badge variant="secondary" className="text-[9px] px-1.5 mt-1.5 bg-amber-500/10 text-amber-600 border-0">
                     {module.badge}
