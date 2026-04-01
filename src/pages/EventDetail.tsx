@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useSEO } from "@/hooks/useSEO";
 
 // Helper to get property with different naming conventions
 const getEventProp = (event: any, snakeCase: string, camelCase: string): string => {
