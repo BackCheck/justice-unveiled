@@ -1,13 +1,11 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Scale, Gavel, FolderOpen } from "lucide-react";
+import { BookOpen, Scale, Gavel } from "lucide-react";
 import { useCases } from "@/hooks/useCases";
 import { CaseLegalTab } from "@/components/legal-intelligence";
 import { useSEO } from "@/hooks/useSEO";
+import { useCaseFilter } from "@/contexts/CaseFilterContext";
 
 const LegalIntelligence = () => {
   useSEO({
@@ -16,9 +14,8 @@ const LegalIntelligence = () => {
     url: "https://hrpm.org/legal-intelligence",
     keywords: ["legal intelligence", "case law", "statute analysis", "doctrine mapping", "legal research"],
   });
-  const navigate = useNavigate();
-  const [selectedCaseId, setSelectedCaseId] = useState<string>("");
-  const { data: cases, isLoading: casesLoading } = useCases();
+  const { selectedCaseId } = useCaseFilter();
+  const { data: cases } = useCases();
 
   const selectedCase = cases?.find((c) => c.id === selectedCaseId);
 
