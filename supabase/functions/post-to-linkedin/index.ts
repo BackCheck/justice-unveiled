@@ -110,8 +110,10 @@ serve(async (req) => {
     if (!accessToken) throw new Error("LINKEDIN_ACCESS_TOKEN is not configured");
 
     const hrpmOrgId = Deno.env.get("LINKEDIN_HRPM_ORG_ID");
-    const backcheckOrgId = Deno.env.get("LINKEDIN_BACKCHECK_ORG_ID");
-    const personUrn = Deno.env.get("LINKEDIN_PERSON_URN");
+    // Backcheck Group page posting disabled
+    // const backcheckOrgId = Deno.env.get("LINKEDIN_BACKCHECK_ORG_ID");
+    // Personal profile posting temporarily on hold
+    // const personUrn = Deno.env.get("LINKEDIN_PERSON_URN");
 
     const body: LinkedInPostRequest = await req.json();
     if (!body.title || !body.slug) {
@@ -123,11 +125,9 @@ serve(async (req) => {
 
     const articleUrl = `https://hrpm.lovable.app/blog/${body.slug}`;
 
-    // Build list of authors: org pages + personal profile
+    // Only post to HRPM LinkedIn page
     const authors: string[] = [];
     if (hrpmOrgId) authors.push(`urn:li:organization:${hrpmOrgId}`);
-    if (backcheckOrgId) authors.push(`urn:li:organization:${backcheckOrgId}`);
-    if (personUrn) authors.push(personUrn.startsWith("urn:") ? personUrn : `urn:li:person:${personUrn}`);
 
     if (authors.length === 0) {
       throw new Error("No LinkedIn targets configured (org IDs or person URN)");
