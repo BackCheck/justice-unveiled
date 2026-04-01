@@ -22,7 +22,12 @@ const visionModes: { value: AccessibilityMode; label: string; description: strin
   { value: "color-blind-tritanopia", label: "Tritanopia", description: "Blue-yellow blind, red/cyan palette", icon: "🔴" },
 ];
 
-export const AccessibilityPanel = () => {
+interface AccessibilityPanelProps {
+  variant?: "floating" | "sidebar";
+  collapsed?: boolean;
+}
+
+export const AccessibilityPanel = ({ variant = "floating", collapsed = false }: AccessibilityPanelProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { 
     settings, setMode, toggleLargeText, toggleDyslexiaFont, 
@@ -30,31 +35,54 @@ export const AccessibilityPanel = () => {
     toggleFocusHighlight, resetAll, hasAnyActive,
   } = useAccessibility();
 
+  const isSidebar = variant === "sidebar";
+
   return (
     <>
-      {/* Floating trigger button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "fixed bottom-6 right-6 z-[9999] w-12 h-12 rounded-full",
-          "flex items-center justify-center",
-          "shadow-lg border-2 transition-all duration-200",
-          "hover:scale-110 focus:outline-none focus:ring-4 focus:ring-ring",
-          "no-print",
-          hasAnyActive
-            ? "bg-primary text-primary-foreground border-primary animate-pulse"
-            : "bg-card text-foreground border-border hover:border-primary"
-        )}
-        aria-label="Accessibility Settings"
-        title="Accessibility Settings"
-      >
-        <Accessibility className="w-6 h-6" />
-        {hasAnyActive && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive rounded-full text-[10px] text-destructive-foreground flex items-center justify-center font-bold">
-            ✓
-          </span>
-        )}
-      </button>
+      {/* Trigger */}
+      {isSidebar ? (
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className={cn(
+            "flex items-center gap-2 w-full px-3 py-2 rounded-md text-sm transition-colors",
+            "hover:bg-accent/50 focus:outline-none focus:ring-2 focus:ring-ring",
+            hasAnyActive
+              ? "text-primary font-medium"
+              : "text-muted-foreground hover:text-foreground"
+          )}
+          aria-label="Accessibility Settings"
+          title="Accessibility Settings"
+        >
+          <Accessibility className="w-4 h-4 shrink-0" />
+          {!collapsed && <span>Accessibility</span>}
+          {hasAnyActive && (
+            <span className="ml-auto w-2 h-2 rounded-full bg-primary animate-pulse" />
+          )}
+        </button>
+      ) : (
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className={cn(
+            "fixed bottom-6 right-6 z-[9999] w-12 h-12 rounded-full",
+            "flex items-center justify-center",
+            "shadow-lg border-2 transition-all duration-200",
+            "hover:scale-110 focus:outline-none focus:ring-4 focus:ring-ring",
+            "no-print",
+            hasAnyActive
+              ? "bg-primary text-primary-foreground border-primary animate-pulse"
+              : "bg-card text-foreground border-border hover:border-primary"
+          )}
+          aria-label="Accessibility Settings"
+          title="Accessibility Settings"
+        >
+          <Accessibility className="w-6 h-6" />
+          {hasAnyActive && (
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive rounded-full text-[10px] text-destructive-foreground flex items-center justify-center font-bold">
+              ✓
+            </span>
+          )}
+        </button>
+      )}
 
       {/* Panel overlay */}
       {isOpen && (

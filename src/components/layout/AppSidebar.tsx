@@ -32,12 +32,14 @@ import {
   Gavel,
   BarChart3,
   Folder,
+  Accessibility,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserRole } from "@/hooks/useUserRole";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -46,6 +48,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+
+import { AccessibilityPanel } from "@/components/AccessibilityPanel";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -300,6 +304,10 @@ export function AppSidebar() {
           </>
         )}
       </SidebarContent>
+
+      <SidebarFooter className="px-2 py-2 border-t border-border/30">
+        <AccessibilityPanel variant="sidebar" collapsed={collapsed} />
+      </SidebarFooter>
     </Sidebar>
   );
 }
