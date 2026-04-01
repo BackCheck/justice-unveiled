@@ -129,9 +129,10 @@ type CollapsibleGroup = {
 
 export function AppSidebar() {
   const location = useLocation();
-  const { state } = useSidebar();
+  const { state, setOpen } = useSidebar();
   const { isAdmin } = useUserRole();
   const collapsed = state === "collapsed";
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     "Quick Access": true,
