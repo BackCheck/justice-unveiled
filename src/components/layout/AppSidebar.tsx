@@ -47,7 +47,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 
 // ── Navigation groups ──────────────────────────────────────────────
@@ -129,9 +129,10 @@ type CollapsibleGroup = {
 
 export function AppSidebar() {
   const location = useLocation();
-  const { state } = useSidebar();
+  const { state, setOpen } = useSidebar();
   const { isAdmin } = useUserRole();
   const collapsed = state === "collapsed";
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     "Quick Access": true,
@@ -262,10 +263,22 @@ export function AppSidebar() {
     );
   };
 
+  const handleMouseEnter = () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => setOpen(true), 150);
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => setOpen(false), 300);
+  };
+
   return (
     <Sidebar
       collapsible="icon"
       className="border-r border-border/30 h-screen max-h-screen flex flex-col"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <SidebarContent className="px-2 py-3 overflow-y-auto overflow-x-hidden flex-1 min-h-0">
         {/* Quick Access — always visible */}
