@@ -4,13 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { 
   ClipboardCheck, 
   Sparkles, 
@@ -21,8 +14,8 @@ import {
   Scale
 } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
-import { useCases } from "@/hooks/useCases";
 import { useCompliance } from "@/hooks/useCompliance";
+import { useCaseFilter } from "@/contexts/CaseFilterContext";
 import { 
   ComplianceStatsHeader, 
   ComplianceChecklist, 
@@ -37,15 +30,7 @@ const Compliance = () => {
     description: "Systematic audit of investigative procedures against legal SOPs with auto-detection of violations.",
   });
 
-  const { data: cases = [], isLoading: casesLoading } = useCases();
-  const [selectedCaseId, setSelectedCaseId] = useState<string>('');
-
-  // Set default case when loaded
-  useEffect(() => {
-    if (cases.length > 0 && !selectedCaseId) {
-      setSelectedCaseId(cases[0].id);
-    }
-  }, [cases, selectedCaseId]);
+  const { selectedCaseId } = useCaseFilter();
 
   const {
     requirements,
@@ -57,7 +42,7 @@ const Compliance = () => {
     updateCheckStatus,
     runAutoDetection,
     refreshData
-  } = useCompliance(selectedCaseId);
+  } = useCompliance(selectedCaseId || '');
 
   // Initialize checks when case changes
   useEffect(() => {
@@ -88,19 +73,6 @@ const Compliance = () => {
               </div>
 
               <div className="flex items-center gap-3">
-                {/* Case Selector */}
-                <Select value={selectedCaseId} onValueChange={setSelectedCaseId}>
-                  <SelectTrigger className="w-[250px]">
-                    <SelectValue placeholder="Select a case..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {cases.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.case_number}: {c.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
 
                 <Button 
                   variant="outline" 

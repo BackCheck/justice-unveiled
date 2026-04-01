@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import type { LegalClaim, ClaimType, ClaimStatus, LegalFramework } from "@/types/correlation";
 import { useSEO } from "@/hooks/useSEO";
+import { useCaseFilter } from "@/contexts/CaseFilterContext";
 
 const CorrelationPage = () => {
   useSEO({
@@ -41,6 +42,7 @@ const CorrelationPage = () => {
     url: "https://hrpm.org/correlation",
     keywords: ["evidence correlation", "legal claims", "exhibit management", "support scoring"],
   });
+  const { selectedCaseId } = useCaseFilter();
   const {
     claims,
     requirements,
@@ -52,7 +54,7 @@ const CorrelationPage = () => {
     linkEvidence,
     unsupportedClaims,
     claimsWithMissingEvidence,
-  } = useCorrelation();
+  } = useCorrelation(selectedCaseId || undefined);
 
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
