@@ -141,10 +141,12 @@ const App = () => (
           </Routes>
           </Suspense>
           <CookieConsent />
+          <AccessibilityPanel />
           </CaseFilterProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
+    </AccessibilityProvider>
   </QueryClientProvider>
 );
 
