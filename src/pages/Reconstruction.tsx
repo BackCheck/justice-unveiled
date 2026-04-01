@@ -22,6 +22,7 @@ import {
 import { useReconstruction } from "@/hooks/useReconstruction";
 import { useCases } from "@/hooks/useCases";
 import { useSEO } from "@/hooks/useSEO";
+import { useCaseFilter } from "@/contexts/CaseFilterContext";
 import {
   ParallelTimeline,
   DelayAlerts,
