@@ -82,7 +82,13 @@ const CaseProfile = () => {
   const [isExporting, setIsExporting] = useState(false);
   const queryClient = useQueryClient();
 
-  // Fetch redaction preferences from the associated submission
+  useSEO({
+    title: caseData ? `${caseData.title} — Case ${caseData.case_number}` : "Case Profile",
+    description: caseData?.description || "Detailed investigative case profile with evidence, entities, timeline, and compliance analysis.",
+    url: caseId ? `https://hrpm.org/cases/${caseId}` : undefined,
+    keywords: ["case profile", "investigation", "human rights", caseData?.title || ""].filter(Boolean),
+  });
+
   const { data: redactionFlags } = useQuery({
     queryKey: ["case-redaction", caseId],
     queryFn: async () => {
