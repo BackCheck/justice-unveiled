@@ -43,7 +43,7 @@ const Reconstruction = () => {
     keywords: ["case reconstruction", "timeline analysis", "contradiction detection", "institutional response"],
   });
   const [viewMode, setViewMode] = useState<ViewMode>("track");
-  const [selectedCaseId, setSelectedCaseId] = useState<string>("");
+  const { selectedCaseId } = useCaseFilter();
   const [selectedEvent, setSelectedEvent] = useState<ReconstructedEvent | null>(null);
   const [activeTab, setActiveTab] = useState("timeline");
 
