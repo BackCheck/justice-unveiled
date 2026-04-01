@@ -76,7 +76,6 @@ const PageLoader = () => (
 );
 
 
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
