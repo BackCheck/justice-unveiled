@@ -55,7 +55,12 @@ export default function EventDetail() {
   const event = dbEvent || staticEvent;
   const isExtracted = !!dbEvent;
 
-  if (dbLoading) {
+  const eventTitle = event ? (getEventProp(event, 'event_title', 'title') || getEventProp(event, 'description', 'description')) : '';
+  useSEO({
+    title: eventTitle ? `${eventTitle.slice(0, 60)} — Event Detail` : "Event Detail",
+    description: eventTitle || "Detailed timeline event with linked evidence and entity analysis.",
+    url: eventId ? `https://hrpm.org/events/${eventId}` : undefined,
+  });
     return (
       <PlatformLayout>
         <div className="flex items-center justify-center min-h-[400px]">
