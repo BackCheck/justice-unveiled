@@ -32,6 +32,7 @@ import {
   Gavel,
   BarChart3,
   Folder,
+  Accessibility,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserRole } from "@/hooks/useUserRole";
