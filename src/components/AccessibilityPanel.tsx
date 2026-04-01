@@ -22,7 +22,12 @@ const visionModes: { value: AccessibilityMode; label: string; description: strin
   { value: "color-blind-tritanopia", label: "Tritanopia", description: "Blue-yellow blind, red/cyan palette", icon: "🔴" },
 ];
 
-export const AccessibilityPanel = () => {
+interface AccessibilityPanelProps {
+  variant?: "floating" | "sidebar";
+  collapsed?: boolean;
+}
+
+export const AccessibilityPanel = ({ variant = "floating", collapsed = false }: AccessibilityPanelProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { 
     settings, setMode, toggleLargeText, toggleDyslexiaFont, 
