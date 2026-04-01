@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { PlatformLayout } from "@/components/layout/PlatformLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,13 +6,6 @@ import { ReportExportButton } from "@/components/reports/ReportExportButton";
 import { generateEconomicHarmReport } from "@/lib/reportGenerators";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { 
   FileWarning, 
   Plus, 
@@ -24,6 +17,7 @@ import {
 import { useSEO } from "@/hooks/useSEO";
 import { useCases } from "@/hooks/useCases";
 import { useRegulatoryHarm } from "@/hooks/useRegulatoryHarm";
+import { useCaseFilter } from "@/contexts/CaseFilterContext";
 import { 
   HarmStatsHeader, 
   IncidentCard, 
@@ -39,14 +33,8 @@ const RegulatoryHarm = () => {
     description: "Track regulatory actions, business impacts, and quantify financial losses with affidavit documentation.",
   });
 
-  const { data: cases = [], isLoading: casesLoading } = useCases();
-  const [selectedCaseId, setSelectedCaseId] = useState<string>('');
-
-  useEffect(() => {
-    if (cases.length > 0 && !selectedCaseId) {
-      setSelectedCaseId(cases[0].id);
-    }
-  }, [cases, selectedCaseId]);
+  const { data: cases = [] } = useCases();
+  const { selectedCaseId } = useCaseFilter();
 
   const {
     incidents,
