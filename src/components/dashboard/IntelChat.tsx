@@ -30,6 +30,9 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { useCaseFilter } from "@/contexts/CaseFilterContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 type Message = {
   role: "user" | "assistant";
@@ -37,30 +40,80 @@ type Message = {
   timestamp: Date;
 };
 
-const caseCommsSuggestions = [
-  { icon: Users, text: "Who are the main antagonists and their connections?" },
-  { icon: Clock, text: "What is the timeline of the FIA raid and its aftermath?" },
-  { icon: Shield, text: "Summarize the key evidence fabrication findings" },
-  { icon: Scale, text: "What procedural violations led to the acquittal?" },
+type Suggestion = { icon: typeof Users; text: string };
+
+const fallbackCommsSuggestions: Suggestion[] = [
+  { icon: Users, text: "Who are the key entities across all cases?" },
+  { icon: Clock, text: "What are the most recent events in the platform?" },
+  { icon: Shield, text: "Summarize the most critical violations found" },
+  { icon: Scale, text: "What procedural patterns exist across cases?" },
 ];
 
-const legalSuggestions = [
-  { icon: Gavel, text: "Draft a High Court submission for PECA §33 violations" },
-  { icon: FileText, text: "Generate a statement on chain-of-custody failures" },
-  { icon: Scale, text: "Prepare jurisdiction-aware positioning for Sindh High Court" },
-  { icon: Shield, text: "Auto-generate a comprehensive case report for appeal" },
+const fallbackLegalSuggestions: Suggestion[] = [
+  { icon: Gavel, text: "Draft a summary of legal violations across all cases" },
+  { icon: FileText, text: "Generate a comparative case analysis" },
+  { icon: Scale, text: "Identify common procedural failures" },
+  { icon: Shield, text: "Auto-generate a cross-case compliance report" },
 ];
 
-const searchSuggestions = [
-  { icon: Search, text: "Search for NADRA contract termination evidence" },
-  { icon: Search, text: "Find all events involving SI Imran Saad" },
-  { icon: Search, text: "Enrich entity profile for Major Mumtaz Shah" },
-  { icon: Search, text: "Cross-reference FIA raid timeline with forensic evidence" },
+const fallbackSearchSuggestions: Suggestion[] = [
+  { icon: Search, text: "Search for the most cited entities" },
+  { icon: Search, text: "Find events with the highest severity" },
+  { icon: Search, text: "List all unresolved violations" },
+  { icon: Search, text: "Cross-reference evidence across cases" },
 ];
+
+const buildCaseSuggestions = (caseData: { title: string; case_number: string; description?: string | null; category?: string | null }) => {
+  const title = caseData.title;
+  const num = caseData.case_number;
+
+  const comms: Suggestion[] = [
+    { icon: Users, text: `Who are the key actors in ${num}?` },
+    { icon: Clock, text: `What is the full timeline for ${num}?` },
+    { icon: Shield, text: `Summarize the key findings in "${title}"` },
+    { icon: Scale, text: `What violations were identified in ${num}?` },
+  ];
+
+  const legal: Suggestion[] = [
+    { icon: Gavel, text: `Draft a legal brief for ${num}` },
+    { icon: FileText, text: `Generate an evidence summary for ${num}` },
+    { icon: Scale, text: `Identify procedural failures in "${title}"` },
+    { icon: Shield, text: `Auto-generate a comprehensive report for ${num}` },
+  ];
+
+  const search: Suggestion[] = [
+    { icon: Search, text: `Search all evidence linked to ${num}` },
+    { icon: Search, text: `Find entities connected to "${title}"` },
+    { icon: Search, text: `List all discrepancies found in ${num}` },
+    { icon: Search, text: `Cross-reference ${num} timeline with evidence` },
+  ];
+
+  return { comms, legal, search };
+};
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/intel-chat`;
 
 export const IntelChat = () => {
+  const { selectedCaseId } = useCaseFilter();
+
+  const { data: selectedCase } = useQuery({
+    queryKey: ["intel-chat-case", selectedCaseId],
+    queryFn: async () => {
+      if (!selectedCaseId) return null;
+      const { data } = await supabase
+        .from("cases")
+        .select("title, case_number, description, category")
+        .eq("id", selectedCaseId)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!selectedCaseId,
+    staleTime: 60_000,
+  });
+
+  const { comms: caseCommsSuggestions, legal: legalSuggestions, search: searchSuggestions } = selectedCase
+    ? buildCaseSuggestions(selectedCase)
+    : { comms: fallbackCommsSuggestions, legal: fallbackLegalSuggestions, search: fallbackSearchSuggestions };
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
