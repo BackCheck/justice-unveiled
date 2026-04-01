@@ -236,7 +236,7 @@ Return ONLY the JSON array, no other text.`;
 
     console.log(`Generated ${inserted.length} case-enriched investigation reports`);
 
-    // Auto-post each new blog to LinkedIn (HRPM + Backcheck Group pages)
+    // Auto-post each new blog to LinkedIn (HRPM page only)
     const linkedinResults = [];
     for (const post of inserted) {
       try {
