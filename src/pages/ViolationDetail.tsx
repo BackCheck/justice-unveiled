@@ -34,6 +34,12 @@ export default function ViolationDetail() {
       : mapping.internationalViolations.includes(violationId || '')
   );
 
+  const violationTitle = violation ? ('statute' in violation ? violation.statute : violation.article) : '';
+  useSEO({
+    title: violationTitle ? `${violationTitle} — ${isLocal ? 'Local' : 'International'} Violation` : "Violation Detail",
+    description: violation ? `Analysis of ${isLocal ? 'local statutory' : 'international rights'} violation with related incidents and legal context.` : "Violation detail page.",
+  });
+
   if (!violation) {
     return (
       <PlatformLayout>
