@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { CaseSelector } from "./CaseSelector";
 import SiteFooter from "./SiteFooter";
 import hrpmLogo from "@/assets/human-rights-logo.png";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
