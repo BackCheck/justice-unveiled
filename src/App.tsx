@@ -80,6 +80,7 @@ const PageLoader = () => (
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <AccessibilityProvider>
     <TooltipProvider>
       <Toaster />
       <Sonner />
