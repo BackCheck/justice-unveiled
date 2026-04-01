@@ -19,6 +19,7 @@ import { RoleTagsEditor } from "@/components/network/RoleTagsEditor";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useSEO } from "@/hooks/useSEO";
 
 const typeIcons: Record<EntityType, typeof Users> = {
   person: Users,
