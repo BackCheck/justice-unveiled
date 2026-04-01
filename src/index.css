@@ -950,3 +950,177 @@
   border-radius: 0.5rem;
   margin: 1rem 0;
 }
+
+/* =============================================
+   ACCESSIBILITY MODES
+   ============================================= */
+
+/* --- HIGH CONTRAST --- */
+.a11y-high-contrast {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --card: 0 0% 5%;
+  --card-foreground: 0 0% 100%;
+  --popover: 0 0% 5%;
+  --popover-foreground: 0 0% 100%;
+  --primary: 55 100% 50%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 0 0% 15%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 0 0% 12%;
+  --muted-foreground: 0 0% 75%;
+  --accent: 0 0% 18%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 100% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 0 0% 40%;
+  --input: 0 0% 20%;
+  --ring: 55 100% 50%;
+  --sidebar-background: 0 0% 2%;
+  --sidebar-foreground: 0 0% 95%;
+  --sidebar-primary: 55 100% 50%;
+  --sidebar-primary-foreground: 0 0% 0%;
+  --sidebar-accent: 0 0% 15%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-border: 0 0% 35%;
+  --sidebar-ring: 55 100% 50%;
+}
+.a11y-high-contrast * {
+  border-color: hsl(0 0% 40%) !important;
+  text-shadow: none !important;
+}
+.a11y-high-contrast img {
+  filter: contrast(1.2);
+}
+
+/* --- COLOR VISION DEFICIENCY: Deuteranopia (red-green, most common) --- */
+.a11y-deuteranopia {
+  --primary: 210 100% 50%;
+  --destructive: 30 100% 50%;
+  --chart-1: 210 100% 50%;
+  --chart-2: 45 100% 50%;
+  --chart-3: 30 100% 55%;
+  --chart-4: 270 60% 60%;
+  --chart-5: 180 60% 45%;
+}
+.a11y-deuteranopia .text-green-500,
+.a11y-deuteranopia .text-green-600,
+.a11y-deuteranopia .bg-green-500,
+.a11y-deuteranopia .bg-green-600 {
+  filter: hue-rotate(90deg);
+}
+
+/* --- COLOR VISION DEFICIENCY: Protanopia (red-blind) --- */
+.a11y-protanopia {
+  --primary: 210 100% 50%;
+  --destructive: 45 100% 50%;
+  --chart-1: 210 100% 50%;
+  --chart-2: 55 90% 50%;
+  --chart-3: 35 100% 55%;
+  --chart-4: 275 50% 55%;
+  --chart-5: 185 70% 45%;
+}
+
+/* --- COLOR VISION DEFICIENCY: Tritanopia (blue-yellow blind) --- */
+.a11y-tritanopia {
+  --primary: 0 80% 55%;
+  --destructive: 330 100% 45%;
+  --chart-1: 0 80% 55%;
+  --chart-2: 170 70% 45%;
+  --chart-3: 330 90% 50%;
+  --chart-4: 15 90% 55%;
+  --chart-5: 190 60% 50%;
+}
+
+/* --- LARGE TEXT --- */
+.a11y-large-text {
+  font-size: 18px !important;
+}
+.a11y-large-text h1 { font-size: 2.25rem !important; }
+.a11y-large-text h2 { font-size: 1.875rem !important; }
+.a11y-large-text h3 { font-size: 1.5rem !important; }
+.a11y-large-text p,
+.a11y-large-text li,
+.a11y-large-text span,
+.a11y-large-text label { font-size: 1.125rem !important; }
+.a11y-large-text .text-xs { font-size: 0.875rem !important; }
+.a11y-large-text .text-sm { font-size: 1rem !important; }
+
+/* --- DYSLEXIA-FRIENDLY FONT --- */
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/woff/OpenDyslexic-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/woff/OpenDyslexic-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+.a11y-dyslexia-font,
+.a11y-dyslexia-font * {
+  font-family: 'OpenDyslexic', sans-serif !important;
+  letter-spacing: 0.05em;
+  word-spacing: 0.15em;
+}
+
+/* --- LINE SPACING --- */
+.a11y-line-wide {
+  line-height: 1.8 !important;
+}
+.a11y-line-wide p, .a11y-line-wide li, .a11y-line-wide span {
+  line-height: 1.8 !important;
+}
+.a11y-line-extra-wide {
+  line-height: 2.2 !important;
+}
+.a11y-line-extra-wide p, .a11y-line-extra-wide li, .a11y-line-extra-wide span {
+  line-height: 2.2 !important;
+}
+
+/* --- REDUCED MOTION --- */
+.a11y-reduced-motion,
+.a11y-reduced-motion * {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+.a11y-reduced-motion .animate-pulse,
+.a11y-reduced-motion .animate-spin,
+.a11y-reduced-motion .animate-bounce,
+.a11y-reduced-motion .animate-fade-in,
+.a11y-reduced-motion .animate-scale-in {
+  animation: none !important;
+}
+
+/* --- LARGE CURSOR --- */
+.a11y-cursor-large,
+.a11y-cursor-large * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M5 2l20 14-10 2-4 10z' fill='black' stroke='white' stroke-width='2'/%3E%3C/svg%3E") 5 2, auto !important;
+}
+.a11y-cursor-large a,
+.a11y-cursor-large button,
+.a11y-cursor-large [role="button"],
+.a11y-cursor-large input,
+.a11y-cursor-large select,
+.a11y-cursor-large textarea {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M10 4v24h4l4-8h8l-16-16z' fill='black' stroke='white' stroke-width='2'/%3E%3C/svg%3E") 10 4, pointer !important;
+}
+
+/* --- ENHANCED FOCUS --- */
+.a11y-focus-highlight a:focus,
+.a11y-focus-highlight button:focus,
+.a11y-focus-highlight input:focus,
+.a11y-focus-highlight select:focus,
+.a11y-focus-highlight textarea:focus,
+.a11y-focus-highlight [tabindex]:focus,
+.a11y-focus-highlight [role="button"]:focus {
+  outline: 3px solid hsl(var(--primary)) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 6px hsl(var(--primary) / 0.25) !important;
+}

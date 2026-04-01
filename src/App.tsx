@@ -6,7 +6,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CaseFilterProvider } from "@/contexts/CaseFilterContext";
+import { AccessibilityProvider } from "@/contexts/AccessibilityContext";
 import { CookieConsent } from "@/components/CookieConsent";
+import { AccessibilityPanel } from "@/components/AccessibilityPanel";
 import { LogoSpinner } from "@/components/ui/LogoSpinner";
 
 // Lazy-load all pages for code splitting
@@ -78,6 +80,7 @@ const PageLoader = () => (
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <AccessibilityProvider>
     <TooltipProvider>
       <Toaster />
       <Sonner />
@@ -138,10 +141,12 @@ const App = () => (
           </Routes>
           </Suspense>
           <CookieConsent />
+          <AccessibilityPanel />
           </CaseFilterProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
+    </AccessibilityProvider>
   </QueryClientProvider>
 );
 
