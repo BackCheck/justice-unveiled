@@ -15,6 +15,7 @@ import {
   Link2
 } from "lucide-react";
 import { format } from "date-fns";
+import { useSEO } from "@/hooks/useSEO";
 
 export default function ViolationDetail() {
   const { type, violationId } = useParams<{ type: 'local' | 'international'; violationId: string }>();
