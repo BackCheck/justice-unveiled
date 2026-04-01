@@ -15,6 +15,7 @@ import {
   Link2
 } from "lucide-react";
 import { format } from "date-fns";
+import { useSEO } from "@/hooks/useSEO";
 
 export default function ViolationDetail() {
   const { type, violationId } = useParams<{ type: 'local' | 'international'; violationId: string }>();
@@ -32,6 +33,12 @@ export default function ViolationDetail() {
       ? mapping.localViolations.includes(violationId || '')
       : mapping.internationalViolations.includes(violationId || '')
   );
+
+  const violationTitle = violation ? ('statute' in violation ? violation.statute : violation.article) : '';
+  useSEO({
+    title: violationTitle ? `${violationTitle} — ${isLocal ? 'Local' : 'International'} Violation` : "Violation Detail",
+    description: violation ? `Analysis of ${isLocal ? 'local statutory' : 'international rights'} violation with related incidents and legal context.` : "Violation detail page.",
+  });
 
   if (!violation) {
     return (

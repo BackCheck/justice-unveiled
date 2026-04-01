@@ -47,7 +47,7 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { redactText, RedactionFlags } from "@/lib/redaction";
 import { LinkedInShareMenu } from "@/components/sharing/LinkedInShareMenu";
 import { CF002CaseModule } from "@/components/cases/cf002";
-
+import { useSEO } from "@/hooks/useSEO";
 const severityColors: Record<string, string> = {
   critical: "bg-red-500/20 text-red-700 dark:text-red-300 border-red-500/30",
   high: "bg-orange-500/20 text-orange-700 dark:text-orange-300 border-orange-500/30",
@@ -82,7 +82,13 @@ const CaseProfile = () => {
   const [isExporting, setIsExporting] = useState(false);
   const queryClient = useQueryClient();
 
-  // Fetch redaction preferences from the associated submission
+  useSEO({
+    title: caseData ? `${caseData.title} — Case ${caseData.case_number}` : "Case Profile",
+    description: caseData?.description || "Detailed investigative case profile with evidence, entities, timeline, and compliance analysis.",
+    url: caseId ? `https://hrpm.org/cases/${caseId}` : undefined,
+    keywords: ["case profile", "investigation", "human rights", caseData?.title || ""].filter(Boolean),
+  });
+
   const { data: redactionFlags } = useQuery({
     queryKey: ["case-redaction", caseId],
     queryFn: async () => {

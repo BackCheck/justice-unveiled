@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useSEO } from "@/hooks/useSEO";
 
 // Helper to get property with different naming conventions
 const getEventProp = (event: any, snakeCase: string, camelCase: string): string => {
@@ -53,6 +54,13 @@ export default function EventDetail() {
 
   const event = dbEvent || staticEvent;
   const isExtracted = !!dbEvent;
+
+  const eventTitle = event ? (getEventProp(event, 'event_title', 'title') || getEventProp(event, 'description', 'description')) : '';
+  useSEO({
+    title: eventTitle ? `${eventTitle.slice(0, 60)} — Event Detail` : "Event Detail",
+    description: eventTitle || "Detailed timeline event with linked evidence and entity analysis.",
+    url: eventId ? `https://hrpm.org/events/${eventId}` : undefined,
+  });
 
   if (dbLoading) {
     return (
