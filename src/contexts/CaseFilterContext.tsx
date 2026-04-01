@@ -34,11 +34,11 @@ export const CaseFilterProvider = ({ children }: { children: ReactNode }) => {
   });
 
   useEffect(() => {
-    if (!initialized && featuredCase?.id) {
-      setSelectedCaseId(featuredCase.id);
+    if (!initialized && mostRecentCase?.id) {
+      setSelectedCaseId(mostRecentCase.id);
       setInitialized(true);
     }
-  }, [featuredCase, initialized]);
+  }, [mostRecentCase, initialized]);
 
   return (
     <CaseFilterContext.Provider value={{ selectedCaseId, setSelectedCaseId }}>
