@@ -8,6 +8,7 @@ interface UserProfile {
   display_name: string | null;
   role: string | null;
   avatar_url: string | null;
+  preferences: Record<string, any>;
 }
 
 interface AuthContextType {
