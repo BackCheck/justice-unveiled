@@ -68,10 +68,51 @@ export const AccessibilityProvider = ({ children }: { children: ReactNode }) => 
     }
   });
 
-  // Persist to localStorage
+  const syncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Persist to localStorage + sync to profile (debounced)
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    
+    // Debounced sync to user profile
+    if (syncTimerRef.current) clearTimeout(syncTimerRef.current);
+    syncTimerRef.current = setTimeout(() => {
+      try {
+        // Dynamic import to avoid circular deps
+        import("@/integrations/supabase/client").then(({ supabase }) => {
+          supabase.auth.getUser().then(({ data: { user } }) => {
+            if (user) {
+              supabase
+                .from("profiles")
+                .update({ preferences: { accessibility: settings } } as any)
+                .eq("user_id", user.id)
+                .then(() => {});
+            }
+          });
+        });
+      } catch {}
+    }, 2000);
   }, [settings]);
+
+  // Load from profile on mount (if logged in)
+  useEffect(() => {
+    import("@/integrations/supabase/client").then(({ supabase }) => {
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (!user) return;
+        supabase
+          .from("profiles")
+          .select("preferences")
+          .eq("user_id", user.id)
+          .single()
+          .then(({ data }) => {
+            const prefs = data?.preferences as any;
+            if (prefs?.accessibility && typeof prefs.accessibility === 'object') {
+              setSettings(prev => ({ ...defaultSettings, ...prefs.accessibility }));
+            }
+          });
+      });
+    });
+  }, []);
 
   // Apply CSS classes to <html> element
   useEffect(() => {
