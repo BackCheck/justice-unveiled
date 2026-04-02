@@ -72,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    setProfile(data);
+    setProfile({ ...data, preferences: data.preferences ?? {} });
   };
 
   const signOut = async () => {
