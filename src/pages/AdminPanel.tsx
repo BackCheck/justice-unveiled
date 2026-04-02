@@ -56,6 +56,9 @@ import { AuditLogViewer } from "@/components/admin/AuditLogViewer";
 import { TutorialVideoUploader } from "@/components/admin/TutorialVideoUploader";
 import { BlogPostManager } from "@/components/admin/BlogPostManager";
 import { ModerationQueue } from "@/components/admin/ModerationQueue";
+import { lazy, Suspense } from "react";
+
+const ModuleManager = lazy(() => import("@/components/admin/ModuleManager"));
 
 const roleConfig: Record<AppRole, { label: string; icon: typeof Crown; color: string; description: string }> = {
   admin: {
@@ -179,10 +182,14 @@ const AdminPanel = () => {
       {/* Content */}
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
         <Tabs defaultValue="moderation" className="w-full">
-          <TabsList className="grid w-full max-w-3xl grid-cols-5">
+          <TabsList className="grid w-full max-w-4xl grid-cols-6">
             <TabsTrigger value="moderation" className="flex items-center gap-2">
               <ClipboardList className="w-4 h-4" />
               Moderation
+            </TabsTrigger>
+            <TabsTrigger value="modules" className="flex items-center gap-2">
+              <Settings className="w-4 h-4" />
+              Modules
             </TabsTrigger>
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
@@ -193,7 +200,7 @@ const AdminPanel = () => {
               Blog
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
-              <Settings className="w-4 h-4" />
+              <Video className="w-4 h-4" />
               Settings
             </TabsTrigger>
             <TabsTrigger value="audit" className="flex items-center gap-2">
@@ -204,6 +211,12 @@ const AdminPanel = () => {
 
           <TabsContent value="moderation" className="mt-6">
             <ModerationQueue />
+          </TabsContent>
+
+          <TabsContent value="modules" className="mt-6">
+            <Suspense fallback={<div className="py-8 text-center text-muted-foreground">Loading modules...</div>}>
+              <ModuleManager />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="users" className="mt-6 space-y-6">

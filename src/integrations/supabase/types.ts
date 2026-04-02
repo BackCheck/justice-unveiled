@@ -2629,6 +2629,45 @@ export type Database = {
           },
         ]
       }
+      site_modules: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          icon_name: string | null
+          id: string
+          is_enabled: boolean
+          module_key: string
+          module_name: string
+          routes: string[]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon_name?: string | null
+          id?: string
+          is_enabled?: boolean
+          module_key: string
+          module_name: string
+          routes?: string[]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon_name?: string | null
+          id?: string
+          is_enabled?: boolean
+          module_key?: string
+          module_name?: string
+          routes?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           created_at: string

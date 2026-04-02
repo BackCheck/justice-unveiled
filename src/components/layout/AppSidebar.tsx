@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useIsModuleEnabled } from "@/hooks/useModules";
 import {
   Sidebar,
   SidebarContent,
@@ -135,6 +136,7 @@ export function AppSidebar() {
   const location = useLocation();
   const { state, setOpen } = useSidebar();
   const { isAdmin } = useUserRole();
+  const { isRouteEnabled } = useIsModuleEnabled();
   const collapsed = state === "collapsed";
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -175,6 +177,7 @@ export function AppSidebar() {
   }, [location.pathname]);
 
   const renderNavItem = (item: NavItem) => {
+    if (!isRouteEnabled(item.path)) return null;
     const Icon = item.icon;
     const active = isActive(item.path);
     return (
@@ -209,25 +212,31 @@ export function AppSidebar() {
   };
 
   // Always-open group (no collapsible)
-  const renderStaticGroup = (label: string, items: NavItem[]) => (
-    <SidebarGroup key={label} className="mb-1">
-      {collapsed ? (
-        <SidebarGroupLabel className="sr-only">{label}</SidebarGroupLabel>
-      ) : (
-        <SidebarGroupLabel className="px-3 py-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-          {label}
-        </SidebarGroupLabel>
-      )}
-      <SidebarGroupContent>
-        <SidebarMenu>{items.map(renderNavItem)}</SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
-  );
+  const renderStaticGroup = (label: string, items: NavItem[]) => {
+    const filteredItems = items.filter((item) => isRouteEnabled(item.path));
+    if (filteredItems.length === 0) return null;
+    return (
+      <SidebarGroup key={label} className="mb-1">
+        {collapsed ? (
+          <SidebarGroupLabel className="sr-only">{label}</SidebarGroupLabel>
+        ) : (
+          <SidebarGroupLabel className="px-3 py-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+            {label}
+          </SidebarGroupLabel>
+        )}
+        <SidebarGroupContent>
+          <SidebarMenu>{filteredItems.map(renderNavItem)}</SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
+    );
+  };
 
   // Collapsible group
   const renderCollapsibleGroup = (group: CollapsibleGroup) => {
+    const filteredItems = group.items.filter((item) => isRouteEnabled(item.path));
+    if (filteredItems.length === 0) return null;
     const isOpen = openGroups[group.label] ?? group.defaultOpen ?? false;
-    const hasActive = group.items.some((item) => isActive(item.path));
+    const hasActive = filteredItems.some((item) => isActive(item.path));
 
     return (
       <SidebarGroup key={group.label} className="mb-1">
@@ -235,7 +244,7 @@ export function AppSidebar() {
           <>
             <SidebarGroupLabel className="sr-only">{group.label}</SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu>{group.items.map(renderNavItem)}</SidebarMenu>
+              <SidebarMenu>{filteredItems.map(renderNavItem)}</SidebarMenu>
             </SidebarGroupContent>
           </>
         ) : (
@@ -258,7 +267,7 @@ export function AppSidebar() {
             </CollapsibleTrigger>
             <CollapsibleContent>
               <SidebarGroupContent>
-                <SidebarMenu>{group.items.map(renderNavItem)}</SidebarMenu>
+                <SidebarMenu>{filteredItems.map(renderNavItem)}</SidebarMenu>
               </SidebarGroupContent>
             </CollapsibleContent>
           </Collapsible>
