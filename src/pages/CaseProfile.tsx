@@ -183,7 +183,7 @@ const CaseProfile = () => {
 <!-- COVER -->
 <div style="min-height:95vh;display:flex;flex-direction:column;justify-content:space-between;padding:48px;">
   <div style="text-align:center;">
-    <img src="https://hrpm.lovable.app/favicon.png" alt="HRPM Logo" style="height:96px;width:auto;margin:0 auto 16px;display:block;" />
+    <img src="${logoBase64}" alt="HRPM Logo" style="height:96px;width:auto;margin:0 auto 16px;display:block;" />
     <h1 style="font-size:36px;color:#0087C1;margin:0;">HRPM.org</h1>
     <p style="font-size:18px;color:#6b7280;">Human Rights Protection & Monitoring</p>
     <div style="width:120px;height:4px;background:#0087C1;margin:16px auto;border-radius:4px;"></div>
