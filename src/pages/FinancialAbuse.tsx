@@ -82,8 +82,8 @@ const FinancialAbuse = () => {
     let investigation = investigations[0];
     if (!investigation) {
       const inv = await createInvestigation(
-        `Financial Investigation — ${selectedCase?.title || "General"}`,
-        `AI-powered financial abuse analysis for ${selectedCase?.case_number || "general investigation"}`
+        `Financial Investigation — ${caseLabel}`,
+        `AI-powered financial abuse analysis for ${caseLabel}`
       );
       if (!inv) return;
       investigation = inv;
