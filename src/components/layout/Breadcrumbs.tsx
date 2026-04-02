@@ -26,6 +26,7 @@ const routeLabels: Record<string, string> = {
   "/compliance": "Procedural Compliance Audit",
   "/threat-profiler": "AI Threat Profiler",
   "/regulatory-harm": "Regulatory & Economic Harm",
+  "/financial-abuse": "Financial Abuse Intelligence",
   "/international": "International Rights Analysis",
   "/investigations": "Investigation Command Center",
   "/analysis-history": "AI Analysis Archive",
