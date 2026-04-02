@@ -60,7 +60,7 @@ const HomePage = () => {
   });
 
   const { data: cases } = useCases();
-  const { stats } = usePlatformStats();
+  const { stats } = usePlatformStats(null);
   const displayCases = cases?.slice(0, 6) || [];
 
   const steps = [
