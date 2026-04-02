@@ -213,6 +213,12 @@ const AdminPanel = () => {
             <ModerationQueue />
           </TabsContent>
 
+          <TabsContent value="modules" className="mt-6">
+            <Suspense fallback={<div className="py-8 text-center text-muted-foreground">Loading modules...</div>}>
+              <ModuleManager />
+            </Suspense>
+          </TabsContent>
+
           <TabsContent value="users" className="mt-6 space-y-6">
             {/* Role Legend */}
             <div className="grid md:grid-cols-3 gap-4">
