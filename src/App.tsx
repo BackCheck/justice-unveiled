@@ -94,34 +94,34 @@ const App = () => (
             <Route path="/" element={<HomePage />} />
             <Route path="/cases" element={<CasesList />} />
             <Route path="/cases/:caseId" element={<CaseProfile />} />
-            <Route path="/timeline" element={<Index />} />
+            <Route path="/timeline" element={<ModuleGate route="/timeline"><Index /></ModuleGate>} />
             <Route path="/about" element={<About />} />
-            <Route path="/network" element={<NetworkPage />} />
-            <Route path="/evidence" element={<EvidencePage />} />
-            <Route path="/uploads" element={<UploadsPage />} />
-            <Route path="/intel-briefing" element={<IntelBriefing />} />
+            <Route path="/network" element={<ModuleGate route="/network"><NetworkPage /></ModuleGate>} />
+            <Route path="/evidence" element={<ModuleGate route="/evidence"><EvidencePage /></ModuleGate>} />
+            <Route path="/uploads" element={<ModuleGate route="/uploads"><UploadsPage /></ModuleGate>} />
+            <Route path="/intel-briefing" element={<ModuleGate route="/intel-briefing"><IntelBriefing /></ModuleGate>} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/international" element={<InternationalAnalysis />} />
-            <Route path="/analyze" element={<AnalyzeHub />} />
+            <Route path="/international" element={<ModuleGate route="/international"><InternationalAnalysis /></ModuleGate>} />
+            <Route path="/analyze" element={<ModuleGate route="/analyze"><AnalyzeHub /></ModuleGate>} />
             <Route path="/analyze/ai" element={<Navigate to="/analyze?tool=ai" replace />} />
-            <Route path="/investigations" element={<Investigations />} />
-            <Route path="/reconstruction" element={<Reconstruction />} />
-            <Route path="/correlation" element={<Correlation />} />
-            <Route path="/compliance" element={<Compliance />} />
-            <Route path="/regulatory-harm" element={<RegulatoryHarm />} />
-            <Route path="/legal-intelligence" element={<LegalIntelligence />} />
+            <Route path="/investigations" element={<ModuleGate route="/investigations"><Investigations /></ModuleGate>} />
+            <Route path="/reconstruction" element={<ModuleGate route="/reconstruction"><Reconstruction /></ModuleGate>} />
+            <Route path="/correlation" element={<ModuleGate route="/correlation"><Correlation /></ModuleGate>} />
+            <Route path="/compliance" element={<ModuleGate route="/compliance"><Compliance /></ModuleGate>} />
+            <Route path="/regulatory-harm" element={<ModuleGate route="/regulatory-harm"><RegulatoryHarm /></ModuleGate>} />
+            <Route path="/legal-intelligence" element={<ModuleGate route="/legal-intelligence"><LegalIntelligence /></ModuleGate>} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
-            <Route path="/legal-research" element={<LegalResearch />} />
+            <Route path="/legal-research" element={<ModuleGate route="/legal-research"><LegalResearch /></ModuleGate>} />
             <Route path="/api" element={<Api />} />
             <Route path="/how-to-use" element={<HowToUse />} />
             <Route path="/docs" element={<Documentation />} />
-            <Route path="/threat-profiler" element={<ThreatProfilerPage />} />
+            <Route path="/threat-profiler" element={<ModuleGate route="/threat-profiler"><ThreatProfilerPage /></ModuleGate>} />
             <Route path="/changelog" element={<Changelog />} />
-            <Route path="/analysis-history" element={<AnalysisHistory />} />
-            <Route path="/osint-toolkit" element={<OsintToolkit />} />
-            <Route path="/osint-commands" element={<OsintCommands />} />
+            <Route path="/analysis-history" element={<ModuleGate route="/analysis-history"><AnalysisHistory /></ModuleGate>} />
+            <Route path="/osint-toolkit" element={<ModuleGate route="/osint-toolkit"><OsintToolkit /></ModuleGate>} />
+            <Route path="/osint-commands" element={<ModuleGate route="/osint-commands"><OsintCommands /></ModuleGate>} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/admin/entity-review" element={<EntityReview />} />
             <Route path="/events/:eventId" element={<EventDetail />} />
@@ -132,7 +132,7 @@ const App = () => (
             <Route path="/evidence/new" element={<SubmitCase />} />
             <Route path="/submit-case" element={<SubmitCase />} />
             <Route path="/cases/:caseId/add-evidence" element={<AddEvidence />} />
-            <Route path="/reports" element={<ReportCenter />} />
+            <Route path="/reports" element={<ModuleGate route="/reports"><ReportCenter /></ModuleGate>} />
             <Route path="/disclaimer" element={<Disclaimer />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
