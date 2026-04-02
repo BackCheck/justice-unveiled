@@ -75,6 +75,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setProfile({ ...data, preferences: data.preferences ?? {} });
   };
 
+  const updatePreferences = async (prefs: Record<string, any>) => {
+    if (!profile) return;
+    const merged = { ...profile.preferences, ...prefs };
+    const { error } = await supabase
+      .from("profiles")
+      .update({ preferences: merged })
+      .eq("user_id", profile.user_id);
+    if (!error) {
+      setProfile(prev => prev ? { ...prev, preferences: merged } : prev);
+    }
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
