@@ -99,7 +99,7 @@ const FinancialAbuse = () => {
         toast.error(`${file.name} exceeds 20MB limit`);
         continue;
       }
-      await uploadAndAnalyze(investigation.id, file, selectedCase?.title);
+      await uploadAndAnalyze(investigation.id, file, caseLabel);
     }
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
