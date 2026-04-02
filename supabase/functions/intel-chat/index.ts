@@ -55,23 +55,22 @@ serve(async (req) => {
   }
 
   try {
-    // Authenticate user
+    // Auth is optional — public pages use the anon key, authenticated users use their JWT
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Authentication required" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
-    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(authHeader.replace("Bearer ", ""));
-    if (claimsError || !claimsData?.claims) {
-      return new Response(JSON.stringify({ error: "Invalid or expired token" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    let userId: string | null = null;
+
+    if (authHeader?.startsWith("Bearer ")) {
+      try {
+        const supabaseClient = createClient(
+          Deno.env.get("SUPABASE_URL")!,
+          Deno.env.get("SUPABASE_ANON_KEY")!,
+          { global: { headers: { Authorization: authHeader } } }
+        );
+        const { data: userData } = await supabaseClient.auth.getUser();
+        userId = userData?.user?.id ?? null;
+      } catch {
+        // Token validation failed — continue as anonymous
+      }
     }
 
     const body = await req.json();
