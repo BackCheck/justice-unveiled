@@ -60,6 +60,7 @@ const Disclaimer = lazy(() => import("./pages/Disclaimer"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Commitment = lazy(() => import("./pages/Commitment"));
+const FinancialAbuse = lazy(() => import("./pages/FinancialAbuse"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -110,6 +111,7 @@ const App = () => (
             <Route path="/correlation" element={<ModuleGate route="/correlation"><Correlation /></ModuleGate>} />
             <Route path="/compliance" element={<ModuleGate route="/compliance"><Compliance /></ModuleGate>} />
             <Route path="/regulatory-harm" element={<ModuleGate route="/regulatory-harm"><RegulatoryHarm /></ModuleGate>} />
+            <Route path="/financial-abuse" element={<ModuleGate route="/financial-abuse"><FinancialAbuse /></ModuleGate>} />
             <Route path="/legal-intelligence" element={<ModuleGate route="/legal-intelligence"><LegalIntelligence /></ModuleGate>} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />

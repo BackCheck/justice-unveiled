@@ -98,6 +98,7 @@ const legalItems: NavItem[] = [
   { path: "/legal-intelligence", label: "Legal Intelligence", icon: Scale },
   { path: "/legal-research", label: "Statute Browser", icon: Gavel },
   { path: "/regulatory-harm", label: "Harm Assessment", icon: FileWarning },
+  { path: "/financial-abuse", label: "Financial Abuse Intel", icon: TrendingUp, badge: "AI", badgeVariant: "secondary" },
   { path: "/international", label: "Int'l Frameworks", icon: Globe },
 ];
 
