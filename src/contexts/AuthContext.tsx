@@ -17,6 +17,7 @@ interface AuthContextType {
   profile: UserProfile | null;
   isLoading: boolean;
   signOut: () => Promise<void>;
+  updatePreferences: (prefs: Record<string, any>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
