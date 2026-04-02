@@ -8,6 +8,7 @@ interface UserProfile {
   display_name: string | null;
   role: string | null;
   avatar_url: string | null;
+  preferences: Record<string, any>;
 }
 
 interface AuthContextType {
@@ -16,6 +17,7 @@ interface AuthContextType {
   profile: UserProfile | null;
   isLoading: boolean;
   signOut: () => Promise<void>;
+  updatePreferences: (prefs: Record<string, any>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -70,7 +72,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    setProfile(data);
+    setProfile({ ...data, preferences: (typeof data.preferences === 'object' && data.preferences !== null && !Array.isArray(data.preferences) ? data.preferences : {}) as Record<string, any> });
+  };
+
+  const updatePreferences = async (prefs: Record<string, any>) => {
+    if (!profile) return;
+    const merged = { ...profile.preferences, ...prefs };
+    const { error } = await supabase
+      .from("profiles")
+      .update({ preferences: merged })
+      .eq("user_id", profile.user_id);
+    if (!error) {
+      setProfile(prev => prev ? { ...prev, preferences: merged } : prev);
+    }
   };
 
   const signOut = async () => {
@@ -81,7 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, profile, isLoading, signOut }}>
+    <AuthContext.Provider value={{ user, session, profile, isLoading, signOut, updatePreferences }}>
       {children}
     </AuthContext.Provider>
   );
