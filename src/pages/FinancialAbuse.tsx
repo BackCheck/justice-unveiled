@@ -62,8 +62,7 @@ const FinancialAbuse = () => {
     description: "AI-powered financial abuse detection, corporate fraud investigation, and forensic financial analysis for human rights cases.",
   });
 
-  const { selectedCaseId, cases } = useCaseFilter();
-  const selectedCase = cases.find(c => c.id === selectedCaseId);
+  const { selectedCaseId } = useCaseFilter();
   const { user } = useAuth();
   const {
     investigations, findings, actors, evidence,
