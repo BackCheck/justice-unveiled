@@ -32,10 +32,12 @@ import { useCombinedEntities } from "@/hooks/useCombinedEntities";
 import { usePlatformStats } from "@/hooks/usePlatformStats";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useCaseFilter } from "@/contexts/CaseFilterContext";
 
 import { useSEO } from "@/hooks/useSEO";
 
 const IntelBriefing = () => {
+  const { selectedCaseId } = useCaseFilter();
   useSEO({
     title: "Intelligence Briefing",
     description: "Comprehensive threat intelligence briefing with forensic evidence analysis, digital surveillance findings, and actionable recommendations.",
@@ -47,9 +49,12 @@ const IntelBriefing = () => {
   const { entities } = useCombinedEntities();
   const { stats: platformStats } = usePlatformStats();
   const { data: caseData } = useQuery({
-    queryKey: ["case-for-report-intel"],
+    queryKey: ["case-for-report-intel", selectedCaseId],
     queryFn: async () => {
-      const { data } = await supabase.from("cases").select("title, case_number").eq("is_featured", true).limit(1).maybeSingle();
+      let q = supabase.from("cases").select("title, case_number");
+      if (selectedCaseId) q = q.eq("id", selectedCaseId);
+      else q = q.order("created_at", { ascending: false });
+      const { data } = await q.limit(1).maybeSingle();
       return data;
     },
   });

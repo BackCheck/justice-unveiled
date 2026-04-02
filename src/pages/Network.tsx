@@ -6,13 +6,18 @@ import { useCombinedEntities } from "@/hooks/useCombinedEntities";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { generateNetworkReport } from "@/lib/reportGenerators";
+import { useCaseFilter } from "@/contexts/CaseFilterContext";
 
 const NetworkPage = () => {
+  const { selectedCaseId } = useCaseFilter();
   const { entities, connections } = useCombinedEntities();
   const { data: caseData } = useQuery({
-    queryKey: ["case-for-report-network"],
+    queryKey: ["case-for-report-network", selectedCaseId],
     queryFn: async () => {
-      const { data } = await supabase.from("cases").select("title, case_number").eq("is_featured", true).limit(1).maybeSingle();
+      let q = supabase.from("cases").select("title, case_number");
+      if (selectedCaseId) q = q.eq("id", selectedCaseId);
+      else q = q.order("created_at", { ascending: false });
+      const { data } = await q.limit(1).maybeSingle();
       return data;
     },
   });
