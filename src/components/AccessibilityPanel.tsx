@@ -92,13 +92,13 @@ export const AccessibilityPanel = ({ variant = "floating", collapsed = false }: 
       {/* Settings panel */}
       <div
         className={cn(
-          "fixed bottom-20 right-6 z-[9999] w-[340px] max-h-[80vh]",
+          "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[9999] w-[380px] max-h-[85vh]",
           "rounded-xl border-2 border-border bg-card shadow-2xl",
           "overflow-y-auto overscroll-contain",
           "transition-all duration-300 no-print",
           isOpen 
-            ? "opacity-100 translate-y-0 pointer-events-auto" 
-            : "opacity-0 translate-y-4 pointer-events-none"
+            ? "opacity-100 scale-100 pointer-events-auto" 
+            : "opacity-0 scale-95 pointer-events-none"
         )}
         role="dialog"
         aria-label="Accessibility Settings Panel"
