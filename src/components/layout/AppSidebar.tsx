@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useIsModuleEnabled } from "@/hooks/useModules";
 import {
   Sidebar,
   SidebarContent,
