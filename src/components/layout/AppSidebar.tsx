@@ -233,8 +233,10 @@ export function AppSidebar() {
 
   // Collapsible group
   const renderCollapsibleGroup = (group: CollapsibleGroup) => {
+    const filteredItems = group.items.filter((item) => isRouteEnabled(item.path));
+    if (filteredItems.length === 0) return null;
     const isOpen = openGroups[group.label] ?? group.defaultOpen ?? false;
-    const hasActive = group.items.some((item) => isActive(item.path));
+    const hasActive = filteredItems.some((item) => isActive(item.path));
 
     return (
       <SidebarGroup key={group.label} className="mb-1">
