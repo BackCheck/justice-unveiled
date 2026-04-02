@@ -136,6 +136,7 @@ export function AppSidebar() {
   const location = useLocation();
   const { state, setOpen } = useSidebar();
   const { isAdmin } = useUserRole();
+  const { isRouteEnabled } = useIsModuleEnabled();
   const collapsed = state === "collapsed";
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
