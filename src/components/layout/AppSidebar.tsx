@@ -267,7 +267,7 @@ export function AppSidebar() {
             </CollapsibleTrigger>
             <CollapsibleContent>
               <SidebarGroupContent>
-                <SidebarMenu>{group.items.map(renderNavItem)}</SidebarMenu>
+                <SidebarMenu>{filteredItems.map(renderNavItem)}</SidebarMenu>
               </SidebarGroupContent>
             </CollapsibleContent>
           </Collapsible>
