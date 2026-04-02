@@ -60,6 +60,7 @@ const Disclaimer = lazy(() => import("./pages/Disclaimer"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Commitment = lazy(() => import("./pages/Commitment"));
+const FinancialAbuse = lazy(() => import("./pages/FinancialAbuse"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
