@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { CaseFilterProvider } from "@/contexts/CaseFilterContext";
 import { AccessibilityProvider } from "@/contexts/AccessibilityContext";
 import { CookieConsent } from "@/components/CookieConsent";
+import { ModuleGate } from "@/components/ModuleGate";
 
 import { LogoSpinner } from "@/components/ui/LogoSpinner";
 
