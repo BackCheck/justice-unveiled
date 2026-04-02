@@ -127,6 +127,18 @@ const CaseProfile = () => {
       hour: "2-digit", minute: "2-digit", second: "2-digit", timeZoneName: "short",
     });
 
+    // Convert logo to base64 for PDF
+    let logoBase64 = "/human-rights-logo-blue.png";
+    try {
+      const logoResp = await fetch("/human-rights-logo-blue.png");
+      const logoBlob = await logoResp.blob();
+      logoBase64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(logoBlob);
+      });
+    } catch { /* fallback to path */ }
+
     // Build timeline HTML grouped by year
     const eventsByYearForPDF = (events || []).reduce((acc, event) => {
       const year = event.date?.split("-")[0] || "Unknown";
