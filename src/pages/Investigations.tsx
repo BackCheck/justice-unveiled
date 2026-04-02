@@ -37,8 +37,10 @@ import { useCombinedTimeline } from "@/hooks/useCombinedTimeline";
 import { useCombinedEntities } from "@/hooks/useCombinedEntities";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useCaseFilter } from "@/contexts/CaseFilterContext";
 
 const Investigations = () => {
+  const { selectedCaseId } = useCaseFilter();
   useSEO({
     title: "Investigation Hub",
     description: "AI-powered investigation suite for comprehensive case analysis, threat profiling, and pattern detection.",
@@ -48,16 +50,21 @@ const Investigations = () => {
   const { events } = useCombinedTimeline(false);
   const { entities, connections } = useCombinedEntities();
   const { data: discrepancies } = useQuery({
-    queryKey: ["discrepancies-for-inv-report"],
+    queryKey: ["discrepancies-for-inv-report", selectedCaseId],
     queryFn: async () => {
-      const { data } = await supabase.from("extracted_discrepancies").select("*");
+      let q = supabase.from("extracted_discrepancies").select("*");
+      if (selectedCaseId) q = q.eq("case_id", selectedCaseId);
+      const { data } = await q;
       return data || [];
     },
   });
   const { data: caseData } = useQuery({
-    queryKey: ["case-for-report-inv"],
+    queryKey: ["case-for-report-inv", selectedCaseId],
     queryFn: async () => {
-      const { data } = await supabase.from("cases").select("title, case_number").eq("is_featured", true).limit(1).maybeSingle();
+      let q = supabase.from("cases").select("title, case_number");
+      if (selectedCaseId) q = q.eq("id", selectedCaseId);
+      else q = q.order("created_at", { ascending: false });
+      const { data } = await q.limit(1).maybeSingle();
       return data;
     },
   });
