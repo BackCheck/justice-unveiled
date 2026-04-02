@@ -1659,6 +1659,60 @@ export type Database = {
           },
         ]
       }
+      financial_actors: {
+        Row: {
+          actor_name: string
+          case_id: string | null
+          created_at: string
+          id: string
+          investigation_id: string
+          pattern_types: string[] | null
+          risk_score: number | null
+          role_description: string | null
+          total_amount: number | null
+          transaction_count: number | null
+        }
+        Insert: {
+          actor_name: string
+          case_id?: string | null
+          created_at?: string
+          id?: string
+          investigation_id: string
+          pattern_types?: string[] | null
+          risk_score?: number | null
+          role_description?: string | null
+          total_amount?: number | null
+          transaction_count?: number | null
+        }
+        Update: {
+          actor_name?: string
+          case_id?: string | null
+          created_at?: string
+          id?: string
+          investigation_id?: string
+          pattern_types?: string[] | null
+          risk_score?: number | null
+          role_description?: string | null
+          total_amount?: number | null
+          transaction_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_actors_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_actors_investigation_id_fkey"
+            columns: ["investigation_id"]
+            isOneToOne: false
+            referencedRelation: "financial_investigations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       financial_affidavits: {
         Row: {
           affidavit_date: string | null
@@ -1737,6 +1791,191 @@ export type Database = {
             columns: ["loss_id"]
             isOneToOne: false
             referencedRelation: "financial_losses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financial_evidence: {
+        Row: {
+          analysis_result: Json | null
+          analysis_status: string | null
+          case_id: string | null
+          created_at: string
+          file_name: string
+          file_size: number
+          file_type: string
+          id: string
+          investigation_id: string
+          public_url: string
+          storage_path: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          analysis_result?: Json | null
+          analysis_status?: string | null
+          case_id?: string | null
+          created_at?: string
+          file_name: string
+          file_size: number
+          file_type: string
+          id?: string
+          investigation_id: string
+          public_url: string
+          storage_path: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          analysis_result?: Json | null
+          analysis_status?: string | null
+          case_id?: string | null
+          created_at?: string
+          file_name?: string
+          file_size?: number
+          file_type?: string
+          id?: string
+          investigation_id?: string
+          public_url?: string
+          storage_path?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_evidence_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_evidence_investigation_id_fkey"
+            columns: ["investigation_id"]
+            isOneToOne: false
+            referencedRelation: "financial_investigations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financial_findings: {
+        Row: {
+          actor_names: string[] | null
+          amount: number | null
+          case_id: string | null
+          category: string
+          created_at: string
+          currency: string | null
+          date_detected: string | null
+          description: string | null
+          evidence_references: string[] | null
+          finding_type: string
+          id: string
+          investigation_id: string
+          raw_data: Json | null
+          risk_score: number | null
+          title: string
+        }
+        Insert: {
+          actor_names?: string[] | null
+          amount?: number | null
+          case_id?: string | null
+          category: string
+          created_at?: string
+          currency?: string | null
+          date_detected?: string | null
+          description?: string | null
+          evidence_references?: string[] | null
+          finding_type: string
+          id?: string
+          investigation_id: string
+          raw_data?: Json | null
+          risk_score?: number | null
+          title: string
+        }
+        Update: {
+          actor_names?: string[] | null
+          amount?: number | null
+          case_id?: string | null
+          category?: string
+          created_at?: string
+          currency?: string | null
+          date_detected?: string | null
+          description?: string | null
+          evidence_references?: string[] | null
+          finding_type?: string
+          id?: string
+          investigation_id?: string
+          raw_data?: Json | null
+          risk_score?: number | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_findings_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_findings_investigation_id_fkey"
+            columns: ["investigation_id"]
+            isOneToOne: false
+            referencedRelation: "financial_investigations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financial_investigations: {
+        Row: {
+          case_id: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          investigation_summary: string | null
+          risk_level: string
+          status: string
+          title: string
+          total_actors: number | null
+          total_findings: number | null
+          total_suspicious_amount: number | null
+          updated_at: string
+        }
+        Insert: {
+          case_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          investigation_summary?: string | null
+          risk_level?: string
+          status?: string
+          title: string
+          total_actors?: number | null
+          total_findings?: number | null
+          total_suspicious_amount?: number | null
+          updated_at?: string
+        }
+        Update: {
+          case_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          investigation_summary?: string | null
+          risk_level?: string
+          status?: string
+          title?: string
+          total_actors?: number | null
+          total_findings?: number | null
+          total_suspicious_amount?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_investigations_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
             referencedColumns: ["id"]
           },
         ]
