@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback, useRef } from "react";
 
 export type AccessibilityMode = 
   | "none" 
@@ -15,6 +15,7 @@ interface AccessibilitySettings {
   lineSpacing: "normal" | "wide" | "extra-wide";
   cursorSize: "default" | "large";
   focusHighlight: boolean;
+  theme?: "light" | "dark" | "auto";
 }
 
 interface AccessibilityContextType {
