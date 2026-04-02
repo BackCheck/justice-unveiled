@@ -63,6 +63,7 @@ const FinancialAbuse = () => {
   });
 
   const { selectedCaseId } = useCaseFilter();
+  const caseLabel = selectedCaseId || "General";
   const { user } = useAuth();
   const {
     investigations, findings, actors, evidence,
