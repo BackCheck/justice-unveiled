@@ -182,10 +182,14 @@ const AdminPanel = () => {
       {/* Content */}
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
         <Tabs defaultValue="moderation" className="w-full">
-          <TabsList className="grid w-full max-w-3xl grid-cols-5">
+          <TabsList className="grid w-full max-w-4xl grid-cols-6">
             <TabsTrigger value="moderation" className="flex items-center gap-2">
               <ClipboardList className="w-4 h-4" />
               Moderation
+            </TabsTrigger>
+            <TabsTrigger value="modules" className="flex items-center gap-2">
+              <Settings className="w-4 h-4" />
+              Modules
             </TabsTrigger>
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
@@ -196,7 +200,7 @@ const AdminPanel = () => {
               Blog
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
-              <Settings className="w-4 h-4" />
+              <Video className="w-4 h-4" />
               Settings
             </TabsTrigger>
             <TabsTrigger value="audit" className="flex items-center gap-2">
