@@ -177,6 +177,7 @@ export function AppSidebar() {
   }, [location.pathname]);
 
   const renderNavItem = (item: NavItem) => {
+    if (!isRouteEnabled(item.path)) return null;
     const Icon = item.icon;
     const active = isActive(item.path);
     return (
@@ -211,20 +212,24 @@ export function AppSidebar() {
   };
 
   // Always-open group (no collapsible)
-  const renderStaticGroup = (label: string, items: NavItem[]) => (
-    <SidebarGroup key={label} className="mb-1">
-      {collapsed ? (
-        <SidebarGroupLabel className="sr-only">{label}</SidebarGroupLabel>
-      ) : (
-        <SidebarGroupLabel className="px-3 py-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-          {label}
-        </SidebarGroupLabel>
-      )}
-      <SidebarGroupContent>
-        <SidebarMenu>{items.map(renderNavItem)}</SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
-  );
+  const renderStaticGroup = (label: string, items: NavItem[]) => {
+    const filteredItems = items.filter((item) => isRouteEnabled(item.path));
+    if (filteredItems.length === 0) return null;
+    return (
+      <SidebarGroup key={label} className="mb-1">
+        {collapsed ? (
+          <SidebarGroupLabel className="sr-only">{label}</SidebarGroupLabel>
+        ) : (
+          <SidebarGroupLabel className="px-3 py-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+            {label}
+          </SidebarGroupLabel>
+        )}
+        <SidebarGroupContent>
+          <SidebarMenu>{filteredItems.map(renderNavItem)}</SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
+    );
+  };
 
   // Collapsible group
   const renderCollapsibleGroup = (group: CollapsibleGroup) => {
