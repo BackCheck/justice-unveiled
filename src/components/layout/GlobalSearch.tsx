@@ -51,6 +51,7 @@ const allPages: SearchResult[] = [
   { id: "regulatory-harm", titleKey: "nav.harm", descriptionKey: "pages.harmSub", path: "/regulatory-harm", icon: TrendingDown, categoryKey: "nav.analysis" },
   { id: "legal-intelligence", titleKey: "nav.legal", descriptionKey: "pages.legalIntelligenceSub", path: "/legal-intelligence", icon: Gavel, categoryKey: "nav.analysis" },
   { id: "international", titleKey: "nav.international", descriptionKey: "pages.internationalRightsSub", path: "/international", icon: Scale, categoryKey: "nav.analysis" },
+  { id: "financial-abuse", titleKey: "Financial Abuse Intel", descriptionKey: "AI-powered financial abuse detection & corporate fraud investigation", path: "/financial-abuse", icon: TrendingDown, categoryKey: "nav.analysis", badge: "AI" },
   { id: "legal-research", titleKey: "nav.legalResearch", descriptionKey: "pages.legalResearchSub", path: "/legal-research", icon: SearchIcon, categoryKey: "nav.analysis" },
   // Resources
   { id: "intel-briefing", titleKey: "nav.intelBriefing", descriptionKey: "pages.intelligenceBriefing", path: "/intel-briefing", icon: BookOpen, categoryKey: "nav.resources" },
