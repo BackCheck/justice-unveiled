@@ -72,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    setProfile({ ...data, preferences: data.preferences ?? {} });
+    setProfile({ ...data, preferences: (typeof data.preferences === 'object' && data.preferences !== null && !Array.isArray(data.preferences) ? data.preferences : {}) as Record<string, any> });
   };
 
   const updatePreferences = async (prefs: Record<string, any>) => {
