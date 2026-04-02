@@ -244,7 +244,7 @@ export function AppSidebar() {
           <>
             <SidebarGroupLabel className="sr-only">{group.label}</SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu>{group.items.map(renderNavItem)}</SidebarMenu>
+              <SidebarMenu>{filteredItems.map(renderNavItem)}</SidebarMenu>
             </SidebarGroupContent>
           </>
         ) : (
