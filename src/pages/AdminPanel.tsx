@@ -56,6 +56,9 @@ import { AuditLogViewer } from "@/components/admin/AuditLogViewer";
 import { TutorialVideoUploader } from "@/components/admin/TutorialVideoUploader";
 import { BlogPostManager } from "@/components/admin/BlogPostManager";
 import { ModerationQueue } from "@/components/admin/ModerationQueue";
+import { lazy, Suspense } from "react";
+
+const ModuleManager = lazy(() => import("@/components/admin/ModuleManager"));
 
 const roleConfig: Record<AppRole, { label: string; icon: typeof Crown; color: string; description: string }> = {
   admin: {
