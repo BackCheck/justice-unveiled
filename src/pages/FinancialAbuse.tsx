@@ -41,6 +41,7 @@ const FinancialAbuse = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeView, setActiveView] = useState<InvestigationView>("overview");
+  const [investigationMode, setInvestigationMode] = useState(false);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
