@@ -17,7 +17,13 @@ import {
   DollarSign, AlertTriangle, Users, Upload, Shield, TrendingUp,
   FileText, BarChart3, Clock, Target, Sparkles, AlertOctagon,
   CreditCard, Banknote, UserX, FileWarning, Activity, Eye,
+  GitBranch, Brain, Zap, Map,
 } from "lucide-react";
+import { ActorNetworkGraph } from "@/components/financial/ActorNetworkGraph";
+import { MoneyFlowChart } from "@/components/financial/MoneyFlowChart";
+import { PatternCorrelationEngine } from "@/components/financial/PatternCorrelationEngine";
+import { GovernanceControlMap } from "@/components/financial/GovernanceControlMap";
+import { IntelligenceDashboard } from "@/components/financial/IntelligenceDashboard";
 
 const riskColors: Record<string, string> = {
   critical: "bg-destructive/20 text-destructive border-destructive/30",
