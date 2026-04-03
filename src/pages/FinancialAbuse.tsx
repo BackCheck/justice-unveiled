@@ -17,7 +17,13 @@ import {
   DollarSign, AlertTriangle, Users, Upload, Shield, TrendingUp,
   FileText, BarChart3, Clock, Target, Sparkles, AlertOctagon,
   CreditCard, Banknote, UserX, FileWarning, Activity, Eye,
+  GitBranch, Brain, Zap, Map,
 } from "lucide-react";
+import { ActorNetworkGraph } from "@/components/financial/ActorNetworkGraph";
+import { MoneyFlowChart } from "@/components/financial/MoneyFlowChart";
+import { PatternCorrelationEngine } from "@/components/financial/PatternCorrelationEngine";
+import { GovernanceControlMap } from "@/components/financial/GovernanceControlMap";
+import { IntelligenceDashboard } from "@/components/financial/IntelligenceDashboard";
 
 const riskColors: Record<string, string> = {
   critical: "bg-destructive/20 text-destructive border-destructive/30",
@@ -184,15 +190,45 @@ const FinancialAbuse = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full max-w-2xl grid-cols-5">
+          <TabsList className="flex flex-wrap w-full max-w-5xl gap-1">
             <TabsTrigger value="dashboard"><BarChart3 className="w-4 h-4 mr-1" />Dashboard</TabsTrigger>
+            <TabsTrigger value="intelligence"><Brain className="w-4 h-4 mr-1" />Intelligence</TabsTrigger>
             <TabsTrigger value="findings"><AlertTriangle className="w-4 h-4 mr-1" />Findings</TabsTrigger>
             <TabsTrigger value="actors"><Users className="w-4 h-4 mr-1" />Actors</TabsTrigger>
+            <TabsTrigger value="graph"><GitBranch className="w-4 h-4 mr-1" />Graph</TabsTrigger>
+            <TabsTrigger value="moneyflow"><TrendingUp className="w-4 h-4 mr-1" />Money Flow</TabsTrigger>
+            <TabsTrigger value="patterns"><Zap className="w-4 h-4 mr-1" />Patterns</TabsTrigger>
+            <TabsTrigger value="controlmap"><Map className="w-4 h-4 mr-1" />Control Map</TabsTrigger>
             <TabsTrigger value="timeline"><Clock className="w-4 h-4 mr-1" />Timeline</TabsTrigger>
             <TabsTrigger value="evidence"><FileText className="w-4 h-4 mr-1" />Evidence</TabsTrigger>
           </TabsList>
 
-          {/* Dashboard Tab */}
+          {/* Intelligence Tab */}
+          <TabsContent value="intelligence" className="mt-4">
+            <IntelligenceDashboard investigations={investigations} actors={actors} findings={findings} />
+          </TabsContent>
+
+          {/* Graph Tab */}
+          <TabsContent value="graph" className="mt-4">
+            <ActorNetworkGraph actors={actors} findings={findings} />
+          </TabsContent>
+
+          {/* Money Flow Tab */}
+          <TabsContent value="moneyflow" className="mt-4">
+            <MoneyFlowChart actors={actors} findings={findings} />
+          </TabsContent>
+
+          {/* Patterns Tab */}
+          <TabsContent value="patterns" className="mt-4">
+            <PatternCorrelationEngine actors={actors} findings={findings} />
+          </TabsContent>
+
+          {/* Control Map Tab */}
+          <TabsContent value="controlmap" className="mt-4">
+            <GovernanceControlMap actors={actors} findings={findings} />
+          </TabsContent>
+
+
           <TabsContent value="dashboard" className="space-y-6 mt-4">
             {findings.length === 0 ? (
               <Card className="border-dashed">
