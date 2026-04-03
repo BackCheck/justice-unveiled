@@ -86,7 +86,7 @@ const FinancialAbuse = () => {
   const renderView = () => {
     switch (activeView) {
       case "overview":
-        return <OverviewView stats={stats} findings={findings} actors={actors} investigations={investigations} onUpload={triggerUpload} />;
+        return <OverviewView stats={stats} findings={findings} actors={actors} investigations={investigations} onUpload={triggerUpload} onNavigate={setActiveView} />;
       case "timeline":
         return <TimelineView findings={findings} />;
       case "actors":
