@@ -190,10 +190,15 @@ const FinancialAbuse = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full max-w-2xl grid-cols-5">
+          <TabsList className="flex flex-wrap w-full max-w-5xl gap-1">
             <TabsTrigger value="dashboard"><BarChart3 className="w-4 h-4 mr-1" />Dashboard</TabsTrigger>
+            <TabsTrigger value="intelligence"><Brain className="w-4 h-4 mr-1" />Intelligence</TabsTrigger>
             <TabsTrigger value="findings"><AlertTriangle className="w-4 h-4 mr-1" />Findings</TabsTrigger>
             <TabsTrigger value="actors"><Users className="w-4 h-4 mr-1" />Actors</TabsTrigger>
+            <TabsTrigger value="graph"><GitBranch className="w-4 h-4 mr-1" />Graph</TabsTrigger>
+            <TabsTrigger value="moneyflow"><TrendingUp className="w-4 h-4 mr-1" />Money Flow</TabsTrigger>
+            <TabsTrigger value="patterns"><Zap className="w-4 h-4 mr-1" />Patterns</TabsTrigger>
+            <TabsTrigger value="controlmap"><Map className="w-4 h-4 mr-1" />Control Map</TabsTrigger>
             <TabsTrigger value="timeline"><Clock className="w-4 h-4 mr-1" />Timeline</TabsTrigger>
             <TabsTrigger value="evidence"><FileText className="w-4 h-4 mr-1" />Evidence</TabsTrigger>
           </TabsList>
