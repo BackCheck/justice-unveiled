@@ -203,7 +203,32 @@ const FinancialAbuse = () => {
             <TabsTrigger value="evidence"><FileText className="w-4 h-4 mr-1" />Evidence</TabsTrigger>
           </TabsList>
 
-          {/* Dashboard Tab */}
+          {/* Intelligence Tab */}
+          <TabsContent value="intelligence" className="mt-4">
+            <IntelligenceDashboard investigations={investigations} actors={actors} findings={findings} />
+          </TabsContent>
+
+          {/* Graph Tab */}
+          <TabsContent value="graph" className="mt-4">
+            <ActorNetworkGraph actors={actors} findings={findings} />
+          </TabsContent>
+
+          {/* Money Flow Tab */}
+          <TabsContent value="moneyflow" className="mt-4">
+            <MoneyFlowChart actors={actors} findings={findings} />
+          </TabsContent>
+
+          {/* Patterns Tab */}
+          <TabsContent value="patterns" className="mt-4">
+            <PatternCorrelationEngine actors={actors} findings={findings} />
+          </TabsContent>
+
+          {/* Control Map Tab */}
+          <TabsContent value="controlmap" className="mt-4">
+            <GovernanceControlMap actors={actors} findings={findings} />
+          </TabsContent>
+
+
           <TabsContent value="dashboard" className="space-y-6 mt-4">
             {findings.length === 0 ? (
               <Card className="border-dashed">
