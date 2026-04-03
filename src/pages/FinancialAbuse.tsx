@@ -41,6 +41,7 @@ const FinancialAbuse = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeView, setActiveView] = useState<InvestigationView>("overview");
+  const [investigationMode, setInvestigationMode] = useState(false);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -85,7 +86,7 @@ const FinancialAbuse = () => {
   const renderView = () => {
     switch (activeView) {
       case "overview":
-        return <OverviewView stats={stats} findings={findings} actors={actors} investigations={investigations} onUpload={triggerUpload} />;
+        return <OverviewView stats={stats} findings={findings} actors={actors} investigations={investigations} onUpload={triggerUpload} onNavigate={setActiveView} />;
       case "timeline":
         return <TimelineView findings={findings} />;
       case "actors":
@@ -129,6 +130,9 @@ const FinancialAbuse = () => {
           caseLabel={caseLabel}
           analyzing={analyzing}
           onUpload={triggerUpload}
+          investigationMode={investigationMode}
+          onToggleMode={() => setInvestigationMode(m => !m)}
+          onGenerateReport={() => setActiveView("reports")}
         />
         <div className="flex-1 flex min-h-0">
           <InvestigationSidebar
