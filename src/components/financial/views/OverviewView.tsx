@@ -6,7 +6,7 @@ import {
   DollarSign, Users, AlertTriangle, AlertOctagon, Shield,
   Target, Upload, Clock, UserX, FileText, Scale,
   TrendingUp, Brain, CheckCircle2, Circle, Network,
-  ArrowRight, Zap,
+  ArrowRight, Zap, FileBarChart,
 } from "lucide-react";
 import type { FinancialFinding, FinancialActor, FinancialInvestigation } from "@/hooks/useFinancialAbuse";
 import type { InvestigationView } from "@/components/financial/InvestigationSidebar";
