@@ -6,7 +6,7 @@ import {
   DollarSign, Users, AlertTriangle, AlertOctagon, Shield,
   Target, Upload, Clock, UserX, FileText, Scale,
   TrendingUp, Brain, CheckCircle2, Circle, Network,
-  ArrowRight, Zap,
+  ArrowRight, Zap, FileBarChart,
 } from "lucide-react";
 import type { FinancialFinding, FinancialActor, FinancialInvestigation } from "@/hooks/useFinancialAbuse";
 import type { InvestigationView } from "@/components/financial/InvestigationSidebar";
@@ -17,7 +17,7 @@ interface Props {
   actors: FinancialActor[];
   investigations: FinancialInvestigation[];
   onUpload: () => void;
-  onNavigate?: (view: InvestigationView) => void;
+  onNavigate?: (view: InvestigationView, reportType?: string) => void;
 }
 
 const riskColors: Record<string, string> = {
@@ -159,11 +159,19 @@ export const OverviewView = ({ stats, findings, actors, investigations, onUpload
             <CardTitle className="text-sm">Quick Start Investigation</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
               <QuickButton icon={Clock} label="Timeline" onClick={() => nav("timeline")} />
               <QuickButton icon={Users} label="Actors" onClick={() => nav("actors")} />
               <QuickButton icon={FileText} label="Evidence" onClick={() => nav("evidence")} />
               <QuickButton icon={Scale} label="Legal" onClick={() => nav("legal")} />
+            </div>
+            <div className="border-t border-border/50 pt-3">
+              <p className="text-[10px] text-muted-foreground mb-2 uppercase tracking-wider">Quick Reports</p>
+              <div className="grid grid-cols-3 gap-2">
+                <QuickButton icon={FileBarChart} label="Executive" onClick={() => onNavigate?.("reports", "executive")} />
+                <QuickButton icon={Clock} label="Timeline" onClick={() => onNavigate?.("reports", "timeline")} />
+                <QuickButton icon={FileText} label="Full Report" onClick={() => onNavigate?.("reports", "full")} />
+              </div>
             </div>
           </CardContent>
         </Card>
