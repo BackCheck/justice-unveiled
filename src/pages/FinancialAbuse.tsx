@@ -84,10 +84,19 @@ const FinancialAbuse = () => {
     );
   }
 
+  const handleNavigate = (view: InvestigationView, reportType?: string) => {
+    setActiveView(view);
+    if (view === "reports" && reportType) {
+      setQuickReportType(reportType);
+    } else {
+      setQuickReportType(undefined);
+    }
+  };
+
   const renderView = () => {
     switch (activeView) {
       case "overview":
-        return <OverviewView stats={stats} findings={findings} actors={actors} investigations={investigations} onUpload={triggerUpload} onNavigate={setActiveView} />;
+        return <OverviewView stats={stats} findings={findings} actors={actors} investigations={investigations} onUpload={triggerUpload} onNavigate={handleNavigate} />;
       case "timeline":
         return <TimelineView findings={findings} />;
       case "actors":
@@ -109,7 +118,16 @@ const FinancialAbuse = () => {
       case "legal":
         return <LegalView findings={findings} actors={actors} stats={stats} />;
       case "reports":
-        return <ReportsView />;
+        return (
+          <ReportsView
+            investigations={investigations}
+            findings={findings}
+            actors={actors}
+            evidence={evidence}
+            stats={stats}
+            initialReportType={quickReportType as any}
+          />
+        );
       default:
         return null;
     }
