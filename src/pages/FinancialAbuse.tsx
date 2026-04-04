@@ -151,7 +151,7 @@ const FinancialAbuse = () => {
           onUpload={triggerUpload}
           investigationMode={investigationMode}
           onToggleMode={() => setInvestigationMode(m => !m)}
-          onGenerateReport={() => setActiveView("reports")}
+          onGenerateReport={() => handleNavigate("reports")}
         />
         <div className="flex-1 flex min-h-0">
           <InvestigationSidebar

@@ -17,7 +17,7 @@ interface Props {
   actors: FinancialActor[];
   investigations: FinancialInvestigation[];
   onUpload: () => void;
-  onNavigate?: (view: InvestigationView) => void;
+  onNavigate?: (view: InvestigationView, reportType?: string) => void;
 }
 
 const riskColors: Record<string, string> = {
