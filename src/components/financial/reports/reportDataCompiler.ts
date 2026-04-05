@@ -198,6 +198,7 @@ function getSectionsForType(reportType: ReportType): string[] {
     timeline: ["Investigation Phases", "Year-Grouped Events", "Linked Actors", "Linked Evidence", "Escalation Notes"],
     actor_risk: ["Actor Profiles", "Risk Rankings", "Timeline Events", "Patterns", "Linked Evidence"],
     evidence_summary: ["Document Inventory", "Evidence Types", "Linked Actors", "Linked Events", "Analysis Status"],
+    board: ["Case Snapshot", "Risk Assessment", "Key Findings", "Recommended Actions"],
   };
   return map[reportType];
 }
@@ -270,6 +271,7 @@ export function buildReportPrompt(data: CompiledReportData): string {
     timeline: "Timeline Report",
     actor_risk: "Actor Risk Report",
     evidence_summary: "Evidence Summary Report",
+    board: "Board Summary Report",
   };
 
   let prompt = `Generate a ${reportTypeLabels[data.reportType]} for the following investigation case.\n\n`;

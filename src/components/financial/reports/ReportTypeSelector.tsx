@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 
 export type ReportType =
-  | "executive" | "full" | "legal" | "timeline" | "actor_risk" | "evidence_summary";
+  | "executive" | "full" | "legal" | "timeline" | "actor_risk" | "evidence_summary" | "board";
 
 interface ReportTypeDef {
   id: ReportType;
@@ -60,6 +60,14 @@ export const reportTypes: ReportTypeDef[] = [
     desc: "Document inventory with analysis status, linked actors, and evidentiary value.",
     icon: Shield,
     sections: ["File List", "Evidence Types", "Linked Actors", "Linked Events", "Analysis Status"],
+  },
+  {
+    id: "board",
+    title: "Board Summary Report",
+    desc: "One-page executive-level briefing for board members — clean, concise, decision-ready.",
+    icon: FileBarChart,
+    badge: "New",
+    sections: ["Case Snapshot", "Risk Assessment", "Key Findings", "Recommended Actions"],
   },
 ];
 

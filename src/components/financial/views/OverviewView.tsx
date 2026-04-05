@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
   DollarSign, Users, AlertTriangle, AlertOctagon, Shield,
-  Target, Upload, Clock, UserX, FileText, Scale,
-  TrendingUp, Brain, CheckCircle2, Circle, Network,
+  Target, Upload, Clock, FileText, Scale,
+  TrendingUp, Brain, CheckCircle2, Circle,
   ArrowRight, Zap, FileBarChart,
 } from "lucide-react";
 import type { FinancialFinding, FinancialActor, FinancialInvestigation } from "@/hooks/useFinancialAbuse";
 import type { InvestigationView } from "@/components/financial/InvestigationSidebar";
+import { useInvestigationIntelligence } from "@/hooks/useInvestigationIntelligence";
+import { IntelligenceSidebar } from "@/components/financial/IntelligenceSidebar";
 
 interface Props {
   stats: any;
@@ -72,6 +74,9 @@ const progressSteps = [
 ];
 
 export const OverviewView = ({ stats, findings, actors, investigations, onUpload, onNavigate }: Props) => {
+  const evidence = []; // placeholder for evidence prop
+  const intel = useInvestigationIntelligence(findings, actors, evidence, investigations);
+
   if (findings.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -125,7 +130,8 @@ export const OverviewView = ({ stats, findings, actors, investigations, onUpload
   const nav = (view: InvestigationView) => onNavigate?.(view);
 
   return (
-    <div className="space-y-6">
+    <div className="flex gap-6">
+    <div className="flex-1 space-y-6">
       {/* ── Executive Summary ── */}
       <Card className="border-primary/20 bg-gradient-to-r from-card to-primary/5">
         <CardContent className="p-5">
@@ -167,8 +173,9 @@ export const OverviewView = ({ stats, findings, actors, investigations, onUpload
             </div>
             <div className="border-t border-border/50 pt-3">
               <p className="text-[10px] text-muted-foreground mb-2 uppercase tracking-wider">Quick Reports</p>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 <QuickButton icon={FileBarChart} label="Executive" onClick={() => onNavigate?.("reports", "executive")} />
+                <QuickButton icon={FileBarChart} label="Board" onClick={() => onNavigate?.("reports", "board")} />
                 <QuickButton icon={Clock} label="Timeline" onClick={() => onNavigate?.("reports", "timeline")} />
                 <QuickButton icon={FileText} label="Full Report" onClick={() => onNavigate?.("reports", "full")} />
               </div>
@@ -338,6 +345,15 @@ export const OverviewView = ({ stats, findings, actors, investigations, onUpload
           </CardContent>
         </Card>
       )}
+    </div>
+    <IntelligenceSidebar
+      intelligenceScore={intel.intelligenceScore}
+      escalations={intel.escalations}
+      actorInfluence={intel.actorInfluence}
+      caseStrength={intel.caseStrength}
+      detectedPhases={intel.detectedPhases}
+      recommendations={intel.recommendations}
+    />
     </div>
   );
 };
