@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LogoSpinner } from "@/components/ui/LogoSpinner";
-import { FileBarChart, History, Clock, FileText } from "lucide-react";
+import { FileBarChart, History, Clock, FileText, AlertTriangle, RefreshCw } from "lucide-react";
 import { ReportTypeSelector, type ReportType, reportTypes } from "./ReportTypeSelector";
 import { ReportPreview } from "./ReportPreview";
 import { compileReportData, buildReportPrompt, type CompiledReportData } from "./reportDataCompiler";
