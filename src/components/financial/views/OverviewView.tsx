@@ -74,6 +74,9 @@ const progressSteps = [
 ];
 
 export const OverviewView = ({ stats, findings, actors, investigations, onUpload, onNavigate }: Props) => {
+  const evidence = []; // placeholder for evidence prop
+  const intel = useInvestigationIntelligence(findings, actors, evidence, investigations);
+
   if (findings.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
