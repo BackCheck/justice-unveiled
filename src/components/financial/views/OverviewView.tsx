@@ -173,8 +173,9 @@ export const OverviewView = ({ stats, findings, actors, investigations, onUpload
             </div>
             <div className="border-t border-border/50 pt-3">
               <p className="text-[10px] text-muted-foreground mb-2 uppercase tracking-wider">Quick Reports</p>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 <QuickButton icon={FileBarChart} label="Executive" onClick={() => onNavigate?.("reports", "executive")} />
+                <QuickButton icon={FileBarChart} label="Board" onClick={() => onNavigate?.("reports", "board")} />
                 <QuickButton icon={Clock} label="Timeline" onClick={() => onNavigate?.("reports", "timeline")} />
                 <QuickButton icon={FileText} label="Full Report" onClick={() => onNavigate?.("reports", "full")} />
               </div>
