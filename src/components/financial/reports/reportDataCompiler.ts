@@ -15,6 +15,10 @@ export interface CompiledReportData {
   totalEvidence: number;
   suspiciousAmount: number;
   caseHealth: { label: string; pct: number };
+  confidenceScore: { score: number; level: string };
+  evidenceStrength: { label: string; score: number };
+  legalReadiness: { label: string; score: number };
+  investigationMaturity: { label: string; score: number };
   actors: { name: string; role: string; riskScore: number; transactionCount: number; patterns: string[] }[];
   criticalFindings: { title: string; description: string; amount: number; currency: string; riskScore: number; date: string; actors: string[] }[];
   discrepancies: { title: string; description: string; riskScore: number; actors: string[] }[];
@@ -23,6 +27,7 @@ export interface CompiledReportData {
   controlMap: { domain: string; controller: string }[];
   insights: string[];
   recommendations: string[];
+  keyFindings: string[];
   sections: string[];
 }
 
@@ -48,10 +53,68 @@ function getCaseHealth(findings: FinancialFinding[], actors: FinancialActor[]) {
   return { label: "Weak", pct: score };
 }
 
-function formatCurrency(amount: number): string {
-  if (amount >= 1_000_000) return `PKR ${(amount / 1_000_000).toFixed(1)}M`;
-  if (amount >= 1_000) return `PKR ${(amount / 1_000).toFixed(0)}K`;
-  return `PKR ${amount.toLocaleString()}`;
+function getConfidenceScore(findings: FinancialFinding[], actors: FinancialActor[], evidence: any[]): { score: number; level: string } {
+  let score = 0;
+  // Evidence density (up to 30)
+  score += Math.min(evidence.length * 3, 30);
+  // Actor linkage (up to 20)
+  const linkedActors = actors.filter(a => a.transaction_count > 0).length;
+  score += Math.min(linkedActors * 5, 20);
+  // Timeline consistency (up to 25)
+  const datedFindings = findings.filter(f => f.date_detected).length;
+  score += Math.min((datedFindings / Math.max(findings.length, 1)) * 25, 25);
+  // Pattern detection (up to 15)
+  const highRiskFindings = findings.filter(f => f.risk_score >= 70).length;
+  score += Math.min(highRiskFindings * 3, 15);
+  // Cross-referencing (up to 10)
+  const evidenceLinked = findings.filter(f => f.evidence_references?.length).length;
+  score += Math.min(evidenceLinked * 2, 10);
+
+  score = Math.min(Math.round(score), 100);
+  const level = score >= 85 ? "Very High" : score >= 70 ? "High" : score >= 50 ? "Moderate" : "Low";
+  return { score, level };
+}
+
+function getEvidenceStrength(findings: FinancialFinding[], evidence: any[]): { label: string; score: number } {
+  let score = 0;
+  score += Math.min(evidence.length * 5, 30);
+  const linkedFindings = findings.filter(f => f.evidence_references?.length).length;
+  score += Math.min((linkedFindings / Math.max(findings.length, 1)) * 30, 30);
+  const datedFindings = findings.filter(f => f.date_detected).length;
+  score += Math.min((datedFindings / Math.max(findings.length, 1)) * 20, 20);
+  score += Math.min(findings.filter(f => f.risk_score >= 80).length * 4, 20);
+  score = Math.min(Math.round(score), 100);
+  const label = score >= 80 ? "Very Strong" : score >= 60 ? "Strong" : score >= 35 ? "Moderate" : "Weak";
+  return { label, score };
+}
+
+function getLegalReadiness(findings: FinancialFinding[], actors: FinancialActor[], evidence: any[]): { label: string; score: number } {
+  let score = 0;
+  if (evidence.length >= 5) score += 20;
+  if (findings.filter(f => f.evidence_references?.length).length >= 3) score += 20;
+  if (actors.filter(a => a.risk_score >= 70).length >= 2) score += 15;
+  if (findings.filter(f => f.date_detected).length >= 5) score += 15;
+  if (findings.length >= 10) score += 15;
+  if (actors.length >= 3) score += 15;
+  score = Math.min(Math.round(score), 100);
+  const label = score >= 80 ? "Court Ready" : score >= 60 ? "Strong" : score >= 35 ? "Partial" : "Not Ready";
+  return { label, score };
+}
+
+function getInvestigationMaturity(findings: FinancialFinding[], actors: FinancialActor[], evidence: any[]): { label: string; score: number } {
+  let score = 0;
+  if (findings.length > 0) score += 15;
+  if (actors.length > 0) score += 15;
+  if (evidence.length > 0) score += 10;
+  if (findings.length >= 5) score += 10;
+  if (actors.length >= 3) score += 10;
+  if (evidence.length >= 5) score += 10;
+  if (findings.some(f => f.evidence_references?.length)) score += 10;
+  if (findings.filter(f => f.risk_score >= 70).length >= 3) score += 10;
+  if (actors.filter(a => a.risk_score >= 80).length >= 2) score += 10;
+  score = Math.min(Math.round(score), 100);
+  const label = score >= 80 ? "Mature" : score >= 60 ? "Advanced" : score >= 35 ? "Developing" : "Early";
+  return { label, score };
 }
 
 function getDateRange(findings: FinancialFinding[]): string {
@@ -60,6 +123,23 @@ function getDateRange(findings: FinancialFinding[]): string {
   const start = dates[0].slice(0, 4);
   const end = dates[dates.length - 1].slice(0, 4);
   return start === end ? start : `${start}–${end}`;
+}
+
+function deriveKeyFindings(findings: FinancialFinding[], actors: FinancialActor[], stats: any): string[] {
+  const kf: string[] = [];
+  if (actors.length >= 3 && findings.filter(f => f.risk_score >= 70).length >= 3)
+    kf.push("Multi-actor coordination detected across critical financial operations");
+  if (actors.filter(a => a.risk_score >= 80).length >= 2)
+    kf.push("Financial control concentration among high-risk actors");
+  if (findings.some(f => f.category === "salary_manipulation"))
+    kf.push("Systematic salary manipulation pattern identified");
+  if (stats.totalSuspiciousAmount > 500000)
+    kf.push("Significant suspicious financial activity exceeding PKR 500K");
+  if (findings.filter(f => f.risk_score >= 80).length >= 5)
+    kf.push("Timeline escalation pattern with increasing severity");
+  if (actors.some(a => (a.pattern_types?.length || 0) >= 2))
+    kf.push("Identity and governance anomalies detected");
+  return kf.slice(0, 7);
 }
 
 function deriveInsights(findings: FinancialFinding[], actors: FinancialActor[], stats: any): string[] {
@@ -143,6 +223,10 @@ export function compileReportData(
     totalEvidence: evidence.length,
     suspiciousAmount: stats.totalSuspiciousAmount || 0,
     caseHealth: getCaseHealth(findings, actors),
+    confidenceScore: getConfidenceScore(findings, actors, evidence),
+    evidenceStrength: getEvidenceStrength(findings, evidence),
+    legalReadiness: getLegalReadiness(findings, actors, evidence),
+    investigationMaturity: getInvestigationMaturity(findings, actors, evidence),
     actors: sortedActors.map(a => ({
       name: a.actor_name,
       role: a.role_description || "Unknown",
@@ -170,6 +254,7 @@ export function compileReportData(
     controlMap: deriveControlMap(actors),
     insights: deriveInsights(findings, actors, stats),
     recommendations: deriveRecommendations(findings, actors),
+    keyFindings: deriveKeyFindings(findings, actors, stats),
     sections: getSectionsForType(reportType),
   };
 }
@@ -193,9 +278,17 @@ export function buildReportPrompt(data: CompiledReportData): string {
   prompt += `TIMELINE: ${data.dateRange}\n`;
   prompt += `ACTORS: ${data.totalActors} | FINDINGS: ${data.totalFindings} | EVIDENCE FILES: ${data.totalEvidence}\n`;
   prompt += `SUSPICIOUS AMOUNT: PKR ${data.suspiciousAmount.toLocaleString()}\n`;
-  prompt += `CASE STRENGTH: ${data.caseHealth.label} (${data.caseHealth.pct}%)\n\n`;
+  prompt += `CASE STRENGTH: ${data.caseHealth.label} (${data.caseHealth.pct}%)\n`;
+  prompt += `CONFIDENCE SCORE: ${data.confidenceScore.score}% (${data.confidenceScore.level})\n`;
+  prompt += `EVIDENCE STRENGTH: ${data.evidenceStrength.label} (${data.evidenceStrength.score}%)\n`;
+  prompt += `LEGAL READINESS: ${data.legalReadiness.label} (${data.legalReadiness.score}%)\n`;
+  prompt += `INVESTIGATION MATURITY: ${data.investigationMaturity.label} (${data.investigationMaturity.score}%)\n\n`;
 
   prompt += `SECTIONS TO INCLUDE:\n${data.sections.map(s => `- ${s}`).join("\n")}\n\n`;
+
+  if (data.keyFindings.length) {
+    prompt += `KEY FINDINGS (highlight these prominently):\n${data.keyFindings.map((f, i) => `${i + 1}. ${f}`).join("\n")}\n\n`;
+  }
 
   prompt += `KEY ACTORS (ranked by risk):\n`;
   data.actors.slice(0, 10).forEach(a => {
