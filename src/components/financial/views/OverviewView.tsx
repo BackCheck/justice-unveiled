@@ -130,7 +130,8 @@ export const OverviewView = ({ stats, findings, actors, investigations, onUpload
   const nav = (view: InvestigationView) => onNavigate?.(view);
 
   return (
-    <div className="space-y-6">
+    <div className="flex gap-6">
+    <div className="flex-1 space-y-6">
       {/* ── Executive Summary ── */}
       <Card className="border-primary/20 bg-gradient-to-r from-card to-primary/5">
         <CardContent className="p-5">
