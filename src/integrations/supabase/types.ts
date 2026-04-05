@@ -2062,41 +2062,62 @@ export type Database = {
         Row: {
           annexures_count: number | null
           case_id: string | null
+          compiled_data: Json | null
+          confidence_score: number | null
           created_at: string
           description: string | null
+          evidence_strength: string | null
           generated_by: string | null
           id: string
+          investigation_maturity: string | null
+          legal_readiness: string | null
+          markdown_content: string | null
           metadata: Json | null
           report_type: string
           sections_count: number | null
           template: string | null
           title: string
+          version: number
         }
         Insert: {
           annexures_count?: number | null
           case_id?: string | null
+          compiled_data?: Json | null
+          confidence_score?: number | null
           created_at?: string
           description?: string | null
+          evidence_strength?: string | null
           generated_by?: string | null
           id?: string
+          investigation_maturity?: string | null
+          legal_readiness?: string | null
+          markdown_content?: string | null
           metadata?: Json | null
           report_type?: string
           sections_count?: number | null
           template?: string | null
           title: string
+          version?: number
         }
         Update: {
           annexures_count?: number | null
           case_id?: string | null
+          compiled_data?: Json | null
+          confidence_score?: number | null
           created_at?: string
           description?: string | null
+          evidence_strength?: string | null
           generated_by?: string | null
           id?: string
+          investigation_maturity?: string | null
+          legal_readiness?: string | null
+          markdown_content?: string | null
           metadata?: Json | null
           report_type?: string
           sections_count?: number | null
           template?: string | null
           title?: string
+          version?: number
         }
         Relationships: [
           {

@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LogoSpinner } from "@/components/ui/LogoSpinner";
-import { FileBarChart, History, Loader2 } from "lucide-react";
+import { FileBarChart, History, Clock, FileText } from "lucide-react";
 import { ReportTypeSelector, type ReportType, reportTypes } from "./ReportTypeSelector";
 import { ReportPreview } from "./ReportPreview";
 import { compileReportData, buildReportPrompt, type CompiledReportData } from "./reportDataCompiler";
@@ -19,11 +19,21 @@ interface Props {
   actors: FinancialActor[];
   evidence: any[];
   stats: any;
-  /** Pre-select a report type (from quick start) */
   initialReportType?: ReportType;
 }
 
 type View = "select" | "generating" | "preview";
+
+interface SavedReport {
+  id: string;
+  report_type: string;
+  title: string;
+  version: number;
+  confidence_score: number;
+  evidence_strength: string;
+  legal_readiness: string;
+  created_at: string;
+}
 
 export const AutoReportEngine = ({ investigations, findings, actors, evidence, stats, initialReportType }: Props) => {
   const { user } = useAuth();
@@ -34,6 +44,20 @@ export const AutoReportEngine = ({ investigations, findings, actors, evidence, s
   const [markdown, setMarkdown] = useState("");
   const [compiledData, setCompiledData] = useState<CompiledReportData | null>(null);
   const [generating, setGenerating] = useState(false);
+  const [savedReports, setSavedReports] = useState<SavedReport[]>([]);
+
+  // Load saved reports
+  useEffect(() => {
+    const loadReports = async () => {
+      const { data } = await supabase
+        .from("generated_reports")
+        .select("id, report_type, title, version, confidence_score, evidence_strength, legal_readiness, created_at")
+        .order("created_at", { ascending: false })
+        .limit(20);
+      if (data) setSavedReports(data as SavedReport[]);
+    };
+    loadReports();
+  }, [view]);
 
   const generate = async (reportType: ReportType) => {
     if (!user) {
@@ -87,8 +111,25 @@ export const AutoReportEngine = ({ investigations, findings, actors, evidence, s
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
-      setMarkdown(data.report || "Report generation returned empty content.");
+      const reportMarkdown = data.report || "Report generation returned empty content.";
+      setMarkdown(reportMarkdown);
       setView("preview");
+
+      // Save to database (versioning)
+      const existingCount = savedReports.filter(r => r.report_type === reportType).length;
+      await supabase.from("generated_reports").insert({
+        case_id: investigations[0]?.id || null,
+        report_type: reportType,
+        title: `${typeDef?.title || "Report"} — ${compiled.caseTitle}`,
+        markdown_content: reportMarkdown,
+        compiled_data: compiled as any,
+        confidence_score: compiled.confidenceScore.score,
+        evidence_strength: compiled.evidenceStrength.label,
+        legal_readiness: compiled.legalReadiness.label,
+        investigation_maturity: compiled.investigationMaturity.label,
+        version: existingCount + 1,
+        generated_by: user.id,
+      });
     } catch (err: any) {
       console.error("Report generation error:", err);
       toast({
@@ -171,6 +212,45 @@ export const AutoReportEngine = ({ investigations, findings, actors, evidence, s
       )}
 
       <ReportTypeSelector onSelect={generate} generating={generating} />
+
+      {/* Report History */}
+      {savedReports.length > 0 && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <History className="w-4 h-4 text-muted-foreground" />
+            <h3 className="text-sm font-semibold">Report History</h3>
+            <Badge variant="outline" className="text-[9px] py-0">{savedReports.length} reports</Badge>
+          </div>
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3">
+            {savedReports.slice(0, 6).map(r => (
+              <Card key={r.id} className="hover:border-primary/30 transition-colors">
+                <CardContent className="p-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold truncate">{r.title}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant="outline" className="text-[9px] py-0">{r.report_type}</Badge>
+                        <span className="text-[9px] text-muted-foreground">v{r.version}</span>
+                      </div>
+                    </div>
+                    <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                  </div>
+                  <div className="flex items-center justify-between mt-2 text-[9px] text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {new Date(r.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span>Confidence: {r.confidence_score}%</span>
+                      <Badge variant="outline" className="text-[8px] py-0">{r.legal_readiness}</Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
