@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
   DollarSign, Users, AlertTriangle, AlertOctagon, Shield,
-  Target, Upload, Clock, UserX, FileText, Scale,
-  TrendingUp, Brain, CheckCircle2, Circle, Network,
+  Target, Upload, Clock, FileText, Scale,
+  TrendingUp, Brain, CheckCircle2, Circle,
   ArrowRight, Zap, FileBarChart,
 } from "lucide-react";
 import type { FinancialFinding, FinancialActor, FinancialInvestigation } from "@/hooks/useFinancialAbuse";
 import type { InvestigationView } from "@/components/financial/InvestigationSidebar";
+import { useInvestigationIntelligence } from "@/hooks/useInvestigationIntelligence";
+import { IntelligenceSidebar } from "@/components/financial/IntelligenceSidebar";
 
 interface Props {
   stats: any;
