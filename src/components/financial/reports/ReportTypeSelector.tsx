@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 
 export type ReportType =
-  | "executive" | "full" | "legal" | "timeline" | "actor_risk" | "evidence_summary";
+  | "executive" | "full" | "legal" | "timeline" | "actor_risk" | "evidence_summary" | "board";
 
 interface ReportTypeDef {
   id: ReportType;
