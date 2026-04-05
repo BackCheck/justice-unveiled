@@ -271,6 +271,7 @@ export function buildReportPrompt(data: CompiledReportData): string {
     timeline: "Timeline Report",
     actor_risk: "Actor Risk Report",
     evidence_summary: "Evidence Summary Report",
+    board: "Board Summary Report",
   };
 
   let prompt = `Generate a ${reportTypeLabels[data.reportType]} for the following investigation case.\n\n`;
