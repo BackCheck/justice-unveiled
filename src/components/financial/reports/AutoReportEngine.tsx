@@ -183,6 +183,32 @@ export const AutoReportEngine = ({ investigations, findings, actors, evidence, s
 
   return (
     <div className="space-y-6">
+      {/* Report Staleness Alert */}
+      {savedReports.length > 0 && findings.length > 0 && (() => {
+        const lastReport = savedReports[0];
+        const reportTime = new Date(lastReport.created_at).getTime();
+        const newFindings = findings.filter(f => new Date(f.created_at || "").getTime() > reportTime).length;
+        if (newFindings > 0) return (
+          <Card className="border-yellow-500/30 bg-yellow-500/5">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-yellow-500" />
+                  <div>
+                    <p className="text-sm font-semibold">Report Outdated</p>
+                    <p className="text-[10px] text-muted-foreground">{newFindings} new findings since last report — intelligence may have changed</p>
+                  </div>
+                </div>
+                <Button size="sm" variant="outline" className="text-xs gap-1.5 border-yellow-500/30" onClick={() => generate(lastReport.report_type as ReportType)}>
+                  <RefreshCw className="w-3.5 h-3.5" /> Update Report
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        );
+        return null;
+      })()}
+
       {/* Quick Generate Buttons */}
       {findings.length > 0 && (
         <Card className="border-primary/20 bg-primary/5">
@@ -195,12 +221,15 @@ export const AutoReportEngine = ({ investigations, findings, actors, evidence, s
                   <p className="text-[10px] text-muted-foreground">Auto-generate from {findings.length} findings & {actors.length} actors</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <Button size="sm" variant="outline" className="text-xs gap-1.5" onClick={() => generate("executive")}>
-                  Executive Report
+                  Executive
+                </Button>
+                <Button size="sm" variant="outline" className="text-xs gap-1.5" onClick={() => generate("board")}>
+                  Board Summary
                 </Button>
                 <Button size="sm" variant="outline" className="text-xs gap-1.5" onClick={() => generate("timeline")}>
-                  Timeline Report
+                  Timeline
                 </Button>
                 <Button size="sm" className="text-xs gap-1.5" onClick={() => generate("full")}>
                   Full Report
