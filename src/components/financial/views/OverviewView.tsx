@@ -345,6 +345,15 @@ export const OverviewView = ({ stats, findings, actors, investigations, onUpload
         </Card>
       )}
     </div>
+    <IntelligenceSidebar
+      intelligenceScore={intel.intelligenceScore}
+      escalations={intel.escalations}
+      actorInfluence={intel.actorInfluence}
+      caseStrength={intel.caseStrength}
+      detectedPhases={intel.detectedPhases}
+      recommendations={intel.recommendations}
+    />
+    </div>
   );
 };
 
