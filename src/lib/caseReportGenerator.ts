@@ -199,7 +199,7 @@ export async function generateFullCaseReport(caseItem: Case, userIP: string = 'N
     return false;
   });
   const disc = discrepancies || [];
-  const viol = violations || [];
+  // viol declared above for filtering
   const upl = uploads || [];
   const checks = complianceChecks || [];
   const cl = claims || [];
