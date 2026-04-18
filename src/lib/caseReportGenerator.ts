@@ -177,8 +177,25 @@ export async function generateFullCaseReport(caseItem: Case, userIP: string = 'N
   ]);
 
   const e = entities || [];
-  const ev = events || [];
+  const evAll = events || [];
   const conn = connections || [];
+
+  // ── Filter timeline to case-relevant incidents only ──
+  // Keep events that are: linked to evidence, high/critical severity, tied to violations/claims,
+  // or contain incident-related keywords. Drops generic/low-significance entries.
+  const incidentKeywords = ['fir', 'fraud', 'unauthorized', 'violation', 'breach', 'harassment', 'threat', 'court', 'petition', 'notice', 'complaint', 'exclusion', 'manipulation', 'forgery', 'illegal', 'attack', 'incident', 'arrest', 'raid', 'seizure', 'tampering', 'misappropriation', 'embezzlement', 'theft', 'assault', 'detention', 'fired', 'terminated', 'removed', 'blocked', 'denied', 'transfer', 'salary', 'payment', 'loss'];
+  const violationEventIds = new Set(
+    (await supabase.from('event_violations').select('event_id').in('violation_id', viol.map(v => v.id).length ? viol.map(v => v.id) : ['00000000-0000-0000-0000-000000000000'])).data?.map((r: any) => r.event_id) || []
+  );
+  const ev = evAll.filter(event => {
+    if (event.source_upload_id) return true; // has evidence
+    if (violationEventIds.has(event.id)) return true; // tied to violation
+    const sev = (event.severity || '').toLowerCase();
+    if (sev === 'critical' || sev === 'high') return true;
+    const text = `${event.description || ''} ${event.category || ''} ${event.outcome || ''}`.toLowerCase();
+    if (incidentKeywords.some(k => text.includes(k))) return true;
+    return false;
+  });
   const disc = discrepancies || [];
   const viol = violations || [];
   const upl = uploads || [];
