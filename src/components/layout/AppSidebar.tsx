@@ -65,12 +65,51 @@ type NavItem = {
   badgeVariant?: "default" | "destructive" | "secondary" | "outline";
 };
 
-// ─── Quick Access ───
+// ─── Quick Access (top 5) ───
 const quickAccessItems: NavItem[] = [
   { path: "/", label: "Home", icon: Home },
   { path: "/dashboard", label: "Intel Dashboard", icon: BarChart3 },
   { path: "/cases", label: "Case Library", icon: FolderOpen },
+  { path: "/reports", label: "Report Center", icon: FileText },
+  { path: "/timeline", label: "Timeline", icon: Clock },
 ];
+
+// Track recently used routes in localStorage
+const RECENT_KEY = "hrpm-recent-routes";
+const RECENT_MAX = 10;
+
+function getRecentRoutes(): string[] {
+  try {
+    const raw = localStorage.getItem(RECENT_KEY);
+    return raw ? (JSON.parse(raw) as string[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function pushRecentRoute(path: string) {
+  try {
+    const list = getRecentRoutes().filter((p) => p !== path);
+    list.unshift(path);
+    localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, RECENT_MAX)));
+  } catch {
+    // ignore
+  }
+}
+
+/**
+ * Sort nav items so the most recently visited appear first,
+ * preserving original relative order for the rest.
+ */
+function sortByRecent<T extends { path: string }>(items: T[], recent: string[]): T[] {
+  if (recent.length === 0) return items;
+  const rank = new Map(recent.map((p, i) => [p, i] as const));
+  return [...items].sort((a, b) => {
+    const ra = rank.has(a.path) ? rank.get(a.path)! : Number.POSITIVE_INFINITY;
+    const rb = rank.has(b.path) ? rank.get(b.path)! : Number.POSITIVE_INFINITY;
+    return ra - rb;
+  });
+}
 
 // ─── Build Your Case (primary user workflow) ───
 const buildCaseItems: NavItem[] = [
