@@ -289,7 +289,7 @@ export function AppSidebar() {
 
   // Collapsible group
   const renderCollapsibleGroup = (group: CollapsibleGroup) => {
-    const filteredItems = group.items.filter((item) => isRouteEnabled(item.path));
+    const filteredItems = sortByRecent(group.items.filter((item) => isRouteEnabled(item.path)), recent);
     if (filteredItems.length === 0) return null;
     const isOpen = openGroups[group.label] ?? group.defaultOpen ?? false;
     const hasActive = filteredItems.some((item) => isActive(item.path));
