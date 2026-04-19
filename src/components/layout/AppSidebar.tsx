@@ -216,6 +216,22 @@ export function AppSidebar() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
+  const [recent, setRecent] = useState<string[]>(() => getRecentRoutes());
+
+  useEffect(() => {
+    pushRecentRoute(location.pathname);
+    setRecent(getRecentRoutes());
+  }, [location.pathname]);
+
+  useEffect(() => {
+    for (const group of collapsibleGroups) {
+      if (group.items.some((item) => isActive(item.path))) {
+        setOpenGroups((prev) => ({ ...prev, [group.label]: true }));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
+
   const renderNavItem = (item: NavItem) => {
     if (!isRouteEnabled(item.path)) return null;
     const Icon = item.icon;
@@ -253,7 +269,7 @@ export function AppSidebar() {
 
   // Always-open group (no collapsible)
   const renderStaticGroup = (label: string, items: NavItem[]) => {
-    const filteredItems = items.filter((item) => isRouteEnabled(item.path));
+    const filteredItems = sortByRecent(items.filter((item) => isRouteEnabled(item.path)), recent);
     if (filteredItems.length === 0) return null;
     return (
       <SidebarGroup key={label} className="mb-1">
