@@ -34,7 +34,7 @@ interface AccessibilityContextType {
 const STORAGE_KEY = "hrpm-accessibility";
 
 const defaultSettings: AccessibilitySettings = {
-  mode: "none",
+  mode: "color-blind-deuteranopia",
   largeText: false,
   dyslexiaFont: false,
   reducedMotion: false,
