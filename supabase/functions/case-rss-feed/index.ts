@@ -25,9 +25,23 @@ Deno.serve(async (req) => {
 
   try {
     const url = new URL(req.url);
-    const caseId = url.searchParams.get("caseId");
-    const format = (url.searchParams.get("format") || "rss").toLowerCase(); // rss, atom, json
-    const feedType = url.searchParams.get("type") || "all"; // all, cases, blog, events
+    const rawCaseId = url.searchParams.get("caseId");
+    const rawFormat = (url.searchParams.get("format") || "rss").toLowerCase();
+    const rawType = url.searchParams.get("type") || "all";
+
+    // Input validation
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const ALLOWED_FORMATS = new Set(["rss", "atom", "json"]);
+    const ALLOWED_TYPES = new Set(["all", "cases", "blog", "events"]);
+
+    if (rawCaseId && !UUID_RE.test(rawCaseId)) {
+      return new Response(JSON.stringify({ error: "Invalid caseId (must be UUID)" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const caseId = rawCaseId;
+    const format = ALLOWED_FORMATS.has(rawFormat) ? rawFormat : "rss";
+    const feedType = ALLOWED_TYPES.has(rawType) ? rawType : "all";
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
