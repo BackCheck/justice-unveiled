@@ -78,10 +78,10 @@ const IntelHeader = ({ caseData, stats, intelligence }: {
         {/* Right: Actions */}
         <div className="flex items-center gap-2 shrink-0">
           <Button variant="outline" size="sm" className="gap-1.5 text-xs" asChild>
-            <Link to="/add-evidence"><Upload className="w-3.5 h-3.5" />Upload</Link>
+            <Link to="/uploads"><Upload className="w-3.5 h-3.5" />Upload</Link>
           </Button>
           <Button size="sm" className="gap-1.5 text-xs" asChild>
-            <Link to="/report-center"><FileText className="w-3.5 h-3.5" />Report</Link>
+            <Link to="/reports"><FileText className="w-3.5 h-3.5" />Report</Link>
           </Button>
         </div>
       </div>
@@ -404,8 +404,8 @@ const InvestigationProgress = ({ intelligence, stats }: { intelligence: any; sta
 // ── Quick Actions ──
 const QuickActions = () => {
   const actions = [
-    { label: "Generate Report", icon: FileText, href: "/report-center", color: "text-chart-2 bg-chart-2/10" },
-    { label: "Upload Evidence", icon: Upload, href: "/add-evidence", color: "text-primary bg-primary/10" },
+    { label: "Generate Report", icon: FileText, href: "/reports", color: "text-chart-2 bg-chart-2/10" },
+    { label: "Upload Evidence", icon: Upload, href: "/uploads", color: "text-primary bg-primary/10" },
     { label: "View Timeline", icon: Clock, href: "/", color: "text-chart-4 bg-chart-4/10" },
     { label: "View Actors", icon: Users, href: "/network", color: "text-orange-500 bg-orange-500/10" },
     { label: "Network Graph", icon: Network, href: "/network", color: "text-purple-500 bg-purple-500/10" },
