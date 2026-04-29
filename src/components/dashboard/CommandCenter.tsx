@@ -404,8 +404,8 @@ const InvestigationProgress = ({ intelligence, stats }: { intelligence: any; sta
 // ── Quick Actions ──
 const QuickActions = () => {
   const actions = [
-    { label: "Generate Report", icon: FileText, href: "/report-center", color: "text-chart-2 bg-chart-2/10" },
-    { label: "Upload Evidence", icon: Upload, href: "/add-evidence", color: "text-primary bg-primary/10" },
+    { label: "Generate Report", icon: FileText, href: "/reports", color: "text-chart-2 bg-chart-2/10" },
+    { label: "Upload Evidence", icon: Upload, href: "/uploads", color: "text-primary bg-primary/10" },
     { label: "View Timeline", icon: Clock, href: "/", color: "text-chart-4 bg-chart-4/10" },
     { label: "View Actors", icon: Users, href: "/network", color: "text-orange-500 bg-orange-500/10" },
     { label: "Network Graph", icon: Network, href: "/network", color: "text-purple-500 bg-purple-500/10" },
