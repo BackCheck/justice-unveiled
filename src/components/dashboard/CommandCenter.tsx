@@ -78,10 +78,10 @@ const IntelHeader = ({ caseData, stats, intelligence }: {
         {/* Right: Actions */}
         <div className="flex items-center gap-2 shrink-0">
           <Button variant="outline" size="sm" className="gap-1.5 text-xs" asChild>
-            <Link to="/add-evidence"><Upload className="w-3.5 h-3.5" />Upload</Link>
+            <Link to="/uploads"><Upload className="w-3.5 h-3.5" />Upload</Link>
           </Button>
           <Button size="sm" className="gap-1.5 text-xs" asChild>
-            <Link to="/report-center"><FileText className="w-3.5 h-3.5" />Report</Link>
+            <Link to="/reports"><FileText className="w-3.5 h-3.5" />Report</Link>
           </Button>
         </div>
       </div>
