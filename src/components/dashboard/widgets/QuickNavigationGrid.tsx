@@ -89,7 +89,7 @@ export const QuickNavigationGrid = () => {
   // Determine suggested actions based on current data state
   const suggestedActions = [];
   if (stats.totalSources === 0) {
-    suggestedActions.push({ label: "Upload your first document", href: "/add-evidence", icon: Upload });
+    suggestedActions.push({ label: "Upload your first document", href: "/uploads", icon: Upload });
   }
   if (stats.totalSources > 0 && stats.documentsAnalyzed === 0) {
     suggestedActions.push({ label: "Analyze uploaded documents with AI", href: "/analyze", icon: Brain });
