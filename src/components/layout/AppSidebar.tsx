@@ -128,7 +128,8 @@ const analyzeItems: NavItem[] = [
   { path: "/reconstruction", label: "Reconstruction", icon: GitBranch },
   { path: "/correlation", label: "Claim Correlation", icon: Crosshair },
   { path: "/threat-profiler", label: "Threat Profiler", icon: AlertTriangle },
-  { path: "/osint-toolkit", label: "OSINT Toolkit", icon: Terminal },
+  { path: "/osint-toolkit", label: "OSINT Lab", icon: Terminal },
+  { path: "/osint-commands", label: "OSINT Commands", icon: Terminal },
 ];
 
 // ─── Legal & Compliance ───
