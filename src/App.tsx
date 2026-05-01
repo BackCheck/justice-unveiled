@@ -51,6 +51,7 @@ const Changelog = lazy(() => import("./pages/Changelog"));
 const AnalysisHistory = lazy(() => import("./pages/AnalysisHistory"));
 const OsintToolkit = lazy(() => import("./pages/OsintToolkit"));
 const OsintCommands = lazy(() => import("./pages/OsintCommands"));
+const OsintLabOnboarding = lazy(() => import("./pages/OsintLabOnboarding"));
 const Landing = lazy(() => import("./pages/Landing"));
 const EntityReview = lazy(() => import("./pages/EntityReview"));
 const SubmitCase = lazy(() => import("./pages/SubmitCase"));
@@ -123,6 +124,7 @@ const App = () => (
             <Route path="/threat-profiler" element={<ModuleGate route="/threat-profiler"><ThreatProfilerPage /></ModuleGate>} />
             <Route path="/changelog" element={<Changelog />} />
             <Route path="/analysis-history" element={<ModuleGate route="/analysis-history"><AnalysisHistory /></ModuleGate>} />
+            <Route path="/osint-lab" element={<ModuleGate route="/osint-toolkit"><OsintLabOnboarding /></ModuleGate>} />
             <Route path="/osint-toolkit" element={<ModuleGate route="/osint-toolkit"><OsintToolkit /></ModuleGate>} />
             <Route path="/osint-commands" element={<ModuleGate route="/osint-commands"><OsintCommands /></ModuleGate>} />
             <Route path="/admin" element={<AdminPanel />} />
