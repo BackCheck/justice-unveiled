@@ -124,6 +124,7 @@ const App = () => (
             <Route path="/threat-profiler" element={<ModuleGate route="/threat-profiler"><ThreatProfilerPage /></ModuleGate>} />
             <Route path="/changelog" element={<Changelog />} />
             <Route path="/analysis-history" element={<ModuleGate route="/analysis-history"><AnalysisHistory /></ModuleGate>} />
+            <Route path="/osint-lab" element={<ModuleGate route="/osint-toolkit"><OsintLabOnboarding /></ModuleGate>} />
             <Route path="/osint-toolkit" element={<ModuleGate route="/osint-toolkit"><OsintToolkit /></ModuleGate>} />
             <Route path="/osint-commands" element={<ModuleGate route="/osint-commands"><OsintCommands /></ModuleGate>} />
             <Route path="/admin" element={<AdminPanel />} />
