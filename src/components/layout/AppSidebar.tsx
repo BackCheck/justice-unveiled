@@ -33,6 +33,7 @@ import {
   BarChart3,
   Folder,
   Accessibility,
+  Compass,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserRole } from "@/hooks/useUserRole";
